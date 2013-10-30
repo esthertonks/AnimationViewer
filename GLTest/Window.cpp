@@ -37,7 +37,7 @@ Window::Window(
 }
  
 void Window::OnShow(
-	wxShowEvent& event
+	wxShowEvent& WXUNUSED(event)
 	)
 {
 	m_canvas->InitGL();

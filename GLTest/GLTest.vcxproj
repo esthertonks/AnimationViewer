@@ -84,11 +84,17 @@
   <ItemGroup>
     <ClCompile Include="GLCanvas.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="ShaderComponent.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GLCanvas.h" />
+    <ClInclude Include="ShaderComponent.h" />
     <ClInclude Include="Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="basic.frag" />
+    <None Include="basic.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
