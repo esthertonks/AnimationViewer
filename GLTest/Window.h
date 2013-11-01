@@ -4,6 +4,8 @@
 #include <wx/log.h>
 #include "GLCanvas.h"
 
+namespace Render
+{
 class Window : public wxFrame
 {
 
@@ -34,4 +36,5 @@ private:
 	GLCanvas *m_canvas;
 
 };
+}
 

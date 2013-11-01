@@ -10,7 +10,9 @@
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
 
-class ShaderComponent;
+namespace Render
+{
+	class ShaderComponent;
 
 class GLCanvas : public wxGLCanvas
 {
@@ -60,4 +62,6 @@ private:
 	wxGLContext* m_context;
 	ShaderComponent *m_shaderComponent;
 };
+
+}
 

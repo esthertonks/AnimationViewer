@@ -5,6 +5,9 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+namespace Render
+{
+
 BEGIN_EVENT_TABLE(GLCanvas, wxGLCanvas)
 	EVT_PAINT(GLCanvas::Render)
 	EVT_SIZE(GLCanvas::OnSize)
@@ -169,4 +172,5 @@ GLCanvas::~GLCanvas()
 
 	delete m_shaderComponent;
 	m_shaderComponent = NULL;
+}
 }

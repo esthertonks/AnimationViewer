@@ -11,7 +11,7 @@ IMPLEMENT_APP(MyApp)
 
 bool MyApp::OnInit()
 {
-	wxFrame *frame = new Window(NULL, wxT("Testing"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE);
+	wxFrame *frame = new Render::Window(NULL, wxT("Testing"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE);
 
 	frame->Show(TRUE);
 

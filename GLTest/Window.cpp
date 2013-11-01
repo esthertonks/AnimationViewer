@@ -1,5 +1,8 @@
 #include "Window.h"
 
+namespace Render
+{
+
 BEGIN_EVENT_TABLE(Window, wxFrame)
 	EVT_SHOW(Window::OnShow)
 	EVT_MENU(wxID_EXIT, Window::OnQuit)
@@ -58,4 +61,5 @@ void Window::OnAbout(
 
 	wxMessageBox("This is a wxWindows Hello world sample",
 		"About Hello World", wxOK | wxICON_INFORMATION, this);
+}
 }
