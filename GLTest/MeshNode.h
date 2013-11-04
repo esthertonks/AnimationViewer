@@ -2,6 +2,7 @@
 
 #include <glm\glm.hpp>
 #include <string>
+#include <boost\shared_array.hpp>
 #include "Vertex.h"
 #include "Triangle.h"
 
@@ -12,10 +13,38 @@ class MeshNode
 {
 public:
 
-	void SetName(std::string& name)
+	MeshNode();
+	~MeshNode();
+
+	void SetName(
+		const std::string& name
+		)
 	{
 		m_name = name;
+	};
+
+	const std::string&	GetName()
+	{		
+		return m_name;
 	}
+
+	boost::shared_array<Vertex> &GetVertices()
+	{
+		return m_vertexArray;
+	}
+
+	boost::shared_array<Triangle> &GetTriangles()
+	{
+		return m_triangleArray;
+	}
+
+	void							AllocateVertices(
+										const int numVertices
+										);
+
+	void							AllocateTriangles(
+										const int numTriangles
+										);
 
 	MeshNode *child;
 	MeshNode *parent;
@@ -28,8 +57,8 @@ private:
 
 	// uvsets?
 
-	Vertex *m_vertexArray;
-	Triangle *m_triangleArray;
+	boost::shared_array<Vertex> m_vertexArray;
+	boost::shared_array<Triangle> m_triangleArray;
 };
 
 

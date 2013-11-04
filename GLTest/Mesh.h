@@ -3,30 +3,30 @@
 //MeshNodeHierarchy
 #pragma once
 
-#include "SkinnedVertex.h"
-#include "Triangle.h"
-
-class MeshNode;
-class BoneNode;
+#include "MeshNode.h"
 
 namespace mesh
 {
 
-	class Mesh
+class MeshNode;
+class BoneNode;
+
+class Mesh
+{
+public:
+
+	MeshNode* GetNodeHierarchy()
 	{
-	public:
+		return m_meshHierarchyRoot;
+	}
 
-		MeshNode* GetNodeHierarchy()
-		{
-			return m_meshHierarchyRoot;
-		}
+	void AddNode(
+		MeshNode &node
+		)
+	{
+		m_meshHierarchyRoot->child = &node;
+	}
 
-		void AddNode(MeshNode &node)
-		{
-			m_meshHierarchyRoot->child = &node;
-		}
-
-
-		MeshNode* m_meshHierarchyRoot;
-	};
+	MeshNode *m_meshHierarchyRoot;
+};
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm\glm.hpp>
 
 namespace mesh
 {
@@ -8,11 +9,10 @@ class Vertex
 {
 public:
 
-	float m_position[3];
-	float m_normal[3];//Vertex normal
-	float m_u;
-	float m_v;
-	float m_colour;
+	glm::vec4 m_position;
+	glm::vec4 m_normal;//Vertex normal
+	glm::vec2 m_uvs;
+	glm::vec3 m_colour;
 };
 
 }
