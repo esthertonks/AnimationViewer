@@ -38,6 +38,69 @@ private:
 		const unsigned int triangleCornerId
 		) const;
 
+	/**
+		@brief Loads a material id for the given triangle
+	*/
+	void LoadMaterials(
+	FbxMesh &fbxMesh,			// FBX mesh to import data from
+	int triangleIndex,			// Index of the current triangle being loaded
+	mesh::MeshNode &meshNode	// The mesh node which will store the imported material and texture data
+		);
+
+	/**
+		@brief Loads the vertex indeces for the given triangle
+	*/
+	void LoadVertexIndeces(
+		FbxMesh &fbxMesh,			// FBX mesh to import data from
+		int triangleIndex,			// Index of the current triangle being loaded
+		mesh::Triangle &triangle	// The current triangle to store the imported data
+		);
+
+	/**
+		@brief Loads the colours at each corner of the given triangle
+	*/
+	void LoadColours(
+		FbxMesh &fbxMesh,			// FBX mesh to import data from
+		int triangleIndex,			// Index of the current triangle being loaded
+		mesh::Triangle &triangle	// The current triangle to store the imported data
+		);
+
+	/**
+		@brief Loads the uvs at each corner of the given triangle
+	*/
+	void LoadUVs(
+		FbxMesh &fbxMesh,			// FBX mesh to import data from
+		int triangleIndex,			// Index of the current triangle being loaded
+		mesh::Triangle &triangle	// The current triangle to store the imported data
+		);
+
+	/**
+		@brief Loads the normals at each corner of the given triangle
+	*/
+	void LoadNormals(
+		FbxMesh &fbxMesh,			// FBX mesh to import data from
+		int triangleIndex,			// Index of the current triangle being loaded
+		mesh::Triangle &triangle	// The current triangle to store the imported data
+		);
+
+	/**
+		@brief Loads the binormals at each corner of the given triangle
+	*/
+	void LoadBinormals(
+		FbxMesh &fbxMesh,			// FBX mesh to import data from
+		int triangleIndex,			// Index of the current triangle being loaded
+		mesh::Triangle &triangle	// The current triangle to store the imported data
+		);
+
+	/**
+		@brief Loads the tangents at each corner of the given triangle
+	*/
+	void LoadTangents(
+		FbxMesh &fbxMesh,			// FBX mesh to import data from
+		int triangleIndex,			// Index of the current triangle being loaded
+		mesh::Triangle &triangle	// The current triangle to store the imported data
+		);
+
 	void LoadVector4VertexElement(
 		FbxLayerElementTemplate<FbxVector4> &element,
 		glm::vec4 &data,

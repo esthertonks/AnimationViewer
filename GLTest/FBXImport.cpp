@@ -94,8 +94,6 @@ bool FBXImport::Import(
 	mesh::MeshNode &meshNode = *new mesh::MeshNode;
 	LoadMeshNodes(fbxRootNode, meshNode);
 
-
-
 	fbxImporter->Destroy();
 	m_fbxScene->Destroy();
 	ioSettings->Destroy();
@@ -119,6 +117,7 @@ void FBXImport::LoadMeshNodes(
 	FbxGeometryConverter fbxGeometryConverter(m_fbxManager);	
 	nodeAttribute = fbxGeometryConverter.Triangulate(nodeAttribute, true);
 
+	// The mesh belonging to this node
 	FbxMesh& fbxMesh = *(FbxMesh *)nodeAttribute;
 
 	// Extract and store vertices
@@ -142,63 +141,23 @@ void FBXImport::LoadMeshNodes(
 	meshNode.AllocateTriangles(numTriangles);
 	boost::shared_array<mesh::Triangle> triangleArray = meshNode.GetTriangles();
 
+	// Load per triangle data
 	for(int triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
 	{
 		int triangleSize = fbxMesh.GetPolygonSize(triangleIndex);
-
 		assert(triangleSize == 3); // The mesh was triangulated above.
 
-		for (int triangleCornerId = 0; triangleCornerId < triangleSize; triangleCornerId++)
-		{
-			// Get the index into the vertex array for this vertex on this polygon
-			int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
-			triangleArray[triangleIndex].SetVertexIndex(triangleCornerId, vertexIndex);
+		mesh::Triangle &triangle = triangleArray[triangleIndex];
+		LoadMaterials(fbxMesh, triangleIndex, meshNode);
 
-			for (int vertexColourIndex = 0; vertexColourIndex < fbxMesh.GetElementVertexColorCount(); vertexColourIndex++)
-			{
-				FbxGeometryElementVertexColor* vertexColourElement = fbxMesh.GetElementVertexColor(vertexColourIndex);
-				if(vertexColourElement)
-				{
-					LoadColourVertexElement(*vertexColourElement, vertexArray[vertexIndex].m_colour, triangleCornerId, vertexIndex);
-				}
-			}
+		LoadVertexIndeces(fbxMesh, triangleIndex, triangle);
 
-			for (int uvIndex = 0; uvIndex < fbxMesh.GetElementUVCount(); uvIndex++)
-			{
-				FbxGeometryElementUV* uvElement = fbxMesh.GetElementUV(uvIndex);
-				if(uvElement)
-				{
-					LoadVector2VertexElement(*uvElement, vertexArray[vertexIndex].m_uvs, triangleIndex, triangleCornerId, vertexIndex);
-				}
-			}
+		LoadColours(fbxMesh, triangleIndex, triangle);
+		LoadUVs(fbxMesh, triangleIndex, triangle);
 
-			for(int normalIndex = 0; normalIndex < fbxMesh.GetElementNormalCount(); normalIndex++)
-			{
-				FbxGeometryElementNormal* normalElement = fbxMesh.GetElementNormal(normalIndex);
-				if(normalElement)
-				{
-					LoadVector4VertexElement(*normalElement, vertexArray[vertexIndex].m_normal, triangleCornerId, vertexIndex);
-				}
-			} 
-
-			for(int binormalIndex = 0; binormalIndex < fbxMesh.GetElementNormalCount(); binormalIndex++)
-			{
-				FbxGeometryElementBinormal* binormalElement = fbxMesh.GetElementBinormal(binormalIndex);
-				if(binormalElement)
-				{
-					LoadVector4VertexElement(*binormalElement, vertexArray[vertexIndex].m_normal, triangleCornerId, vertexIndex);
-				}
-			} 
-
-			for(int tangentIndex = 0; tangentIndex < fbxMesh.GetElementNormalCount(); tangentIndex++)
-			{
-				FbxGeometryElementTangent* tangentElement = fbxMesh.GetElementTangent(tangentIndex);
-				if(tangentElement)
-				{
-					LoadVector4VertexElement(*tangentElement, vertexArray[vertexIndex].m_normal, triangleCornerId, vertexIndex);
-				}
-			} 
-		}
+		LoadNormals(fbxMesh, triangleIndex, triangle);
+		LoadBinormals(fbxMesh, triangleIndex, triangle);		
+		LoadTangents(fbxMesh, triangleIndex, triangle);
 	}	
 
 	for(int childIndex = 0; childIndex < fbxNode.GetChildCount(); childIndex++)
@@ -209,6 +168,212 @@ void FBXImport::LoadMeshNodes(
 	}
 
 }
+
+/**
+	@brief Loads a material id for the given triangle
+*/
+void FBXImport::LoadMaterials(
+	FbxMesh &fbxMesh,			// FBX mesh to import data from
+	int triangleIndex,			// Index of the current triangle being loaded
+	mesh::MeshNode &meshNode	// The mesh node which will store the imported material and texture data
+	)
+{
+	// Get the per triangle material index
+	const int materialCount = fbxMesh.GetElementMaterialCount();
+	for(int materialIndex = 0; materialIndex < materialCount; materialIndex++)
+	{
+		const FbxGeometryElementMaterial &materialElement = *fbxMesh.GetElementMaterial(materialIndex);
+		const int materialId = materialElement.GetIndexArray().GetAt(triangleIndex);
+		if (materialId >= 0)
+		{
+			const FbxSurfaceMaterial& surfaceMaterial = *fbxMesh.GetNode()->GetMaterial(materialId);
+			meshNode.m_triangleArray[triangleIndex].m_materialId = materialId;
+
+			FbxProperty materialProperty;
+			// Just get the diffuse for now. Will load normal/bump and other textures here in future.
+			materialProperty = surfaceMaterial.FindProperty(FbxSurfaceMaterial::sDiffuse);
+
+			int lNbTextures = materialProperty.GetSrcObjectCount<FbxTexture>();
+
+			unsigned int textureCount = materialProperty.GetSrcObjectCount<FbxTexture>();
+			if(textureCount == 0)
+			{
+				FBXSDK_printf("Material %s has no associated texture. Mesh will not be textured.\n"); // May support more uv sets later
+			}
+			else // If there is a texture associated with this material
+			{
+				FbxFileTexture* fbxFileTexture = materialProperty.GetSrcObject<FbxFileTexture>(0); // Get the first texture
+
+				std::string textureFilename = fbxFileTexture->GetFileName();
+				if(!meshNode.m_materialTable.count(materialId))
+				{
+					std::pair<unsigned int, std::string> materialInfo;
+					materialInfo.first = materialId;
+					materialInfo.second = materialProperty.GetName();
+					meshNode.m_materialTable.insert(materialInfo);
+
+					std::pair<unsigned int, std::string> textureInfo;
+					textureInfo.first = materialId;
+					textureInfo.second = materialProperty.GetName();
+
+					meshNode.m_materialTable.insert(textureInfo);
+				}
+			}
+
+			if(textureCount > 1)
+			{
+				FBXSDK_printf("Material %s has more than one associated texture. Only the first texture has been loaded\n", materialProperty.GetName()); // May support more uv sets later
+			}
+		}
+		else
+		{
+			FBXSDK_printf("Face %d has no associated material.\n", triangleIndex); // May support more uv sets later
+		}
+	}
+}
+
+/**
+	@brief Loads the vertex indeces for the given triangle
+*/
+void FBXImport::LoadVertexIndeces(
+	FbxMesh &fbxMesh,			// FBX mesh to import data from
+	int triangleIndex,			// Index of the current triangle being loaded
+	mesh::Triangle &triangle	// The current triangle to store the imported data
+	)
+{
+	// Get the index into the vertex array for this vertex on this polygon
+	for (int triangleCornerId = 0; triangleCornerId < 3; triangleCornerId++)
+	{
+		int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
+		triangle.SetVertexIndex(triangleCornerId, vertexIndex);
+	}
+}
+
+/**
+	@brief Loads the colours at each corner of the given triangle
+*/
+void FBXImport::LoadColours(
+	FbxMesh &fbxMesh,			// FBX mesh to import data from
+	int triangleIndex,			// Index of the current triangle being loaded
+	mesh::Triangle &triangle	// The current triangle to store the imported data
+	)
+{
+	if(fbxMesh.GetElementVertexColorCount() > 1)
+	{
+		FBXSDK_printf("Only one set of vertex colours supported\n");
+	}
+
+	FbxGeometryElementVertexColor* vertexColourElement = fbxMesh.GetElementVertexColor();
+	if(vertexColourElement)
+	{
+		for (int triangleCornerId = 0; triangleCornerId < 3; triangleCornerId++)
+		{
+			int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
+			LoadColourVertexElement(*vertexColourElement, triangle.m_colours[triangleCornerId], triangleCornerId, vertexIndex);
+		}
+	}
+}
+
+/**
+	@brief Loads the uvs at each corner of the given triangle
+*/
+void FBXImport::LoadUVs(
+	FbxMesh &fbxMesh,			// FBX mesh to import data from
+	int triangleIndex,			// Index of the current triangle being loaded
+	mesh::Triangle &triangle	// The current triangle to store the imported data
+	)
+{
+	if(fbxMesh.GetElementUVCount() > 1)
+	{
+		FBXSDK_printf("Only one set of uvs currently supported\n"); // May support more uv sets later
+	}
+
+	FbxGeometryElementUV* uvElement = fbxMesh.GetElementUV(/*uvIndex*/);
+	if(uvElement)
+	{
+		for (int triangleCornerId = 0; triangleCornerId < 3; triangleCornerId++)
+		{
+			int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
+			LoadVector2VertexElement(*uvElement, triangle.m_uvs[triangleCornerId], triangleIndex, triangleCornerId, vertexIndex);
+		}
+	}
+}
+
+/**
+	@brief Loads the normals at each corner of the given triangle
+*/
+void FBXImport::LoadNormals(
+	FbxMesh &fbxMesh,			// FBX mesh to import data from
+	int triangleIndex,			// Index of the current triangle being loaded
+	mesh::Triangle &triangle	// The current triangle to store the imported data
+	)
+{
+	if(fbxMesh.GetElementNormalCount() > 1)
+	{
+		FBXSDK_printf("Only one set of normals currently supported\n");
+	}
+
+	FbxGeometryElementNormal* normalElement = fbxMesh.GetElementNormal();
+	if(normalElement)
+	{
+		for (int triangleCornerId = 0; triangleCornerId < 3; triangleCornerId++)
+		{
+			int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
+			LoadVector4VertexElement(*normalElement, triangle.m_normals[triangleCornerId], triangleCornerId, vertexIndex);
+		}
+	}
+}
+
+/**
+	@brief Loads the binormals at each corner of the given triangle
+*/
+void FBXImport::LoadBinormals(
+	FbxMesh &fbxMesh,			// FBX mesh to import data from
+	int triangleIndex,			// Index of the current triangle being loaded
+	mesh::Triangle &triangle	// The current triangle to store the imported data
+	)
+{
+	if(fbxMesh.GetElementBinormalCount() > 1)
+	{
+		FBXSDK_printf("Only one set of binormals currently supported\n");
+	}
+
+	FbxGeometryElementBinormal* binormalElement = fbxMesh.GetElementBinormal();
+	if(binormalElement)
+	{
+		for (int triangleCornerId = 0; triangleCornerId < 3; triangleCornerId++)
+		{
+			int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
+			LoadVector4VertexElement(*binormalElement, triangle.m_binormals[triangleCornerId], triangleCornerId, vertexIndex);
+		}
+	}	
+}
+
+/**
+	@brief Loads the tangents at each corner of the given triangle
+*/
+void FBXImport::LoadTangents(
+	FbxMesh &fbxMesh,			// FBX mesh to import data from
+	int triangleIndex,			// Index of the current triangle being loaded
+	mesh::Triangle &triangle	// The current triangle to store the imported data
+	)
+{
+	if(fbxMesh.GetElementTangentCount() > 1)
+	{
+		FBXSDK_printf("Only one set of tangents currently supported\n");
+	}
+
+	FbxGeometryElementTangent* tangentElement = fbxMesh.GetElementTangent();
+	if(tangentElement)
+	{
+		for (int triangleCornerId = 0; triangleCornerId < 3; triangleCornerId++)
+		{
+			int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
+			LoadVector4VertexElement(*tangentElement, triangle.m_tangents[triangleCornerId], triangleCornerId, vertexIndex);
+		}
+	}
+}
+
 
 void FBXImport::LoadVector4VertexElement(
 	FbxLayerElementTemplate<FbxVector4> &element,
