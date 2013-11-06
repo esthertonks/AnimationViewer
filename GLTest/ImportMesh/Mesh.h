@@ -1,6 +1,6 @@
-//Vertex array
-//Triangle Array
-//MeshNodeHierarchy
+/**
+	This class stores the root of the mesh node hierarchy. The mesh hierarchy a flat linked list of parent->child nodes.
+*/
 #pragma once
 
 #include <map>

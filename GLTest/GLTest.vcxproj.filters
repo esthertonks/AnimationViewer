@@ -5,93 +5,112 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Mesh">
-      <UniqueIdentifier>{adef16f5-2916-40ed-8fef-446a6d7383c5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Import">
       <UniqueIdentifier>{4d54d905-f8e4-47f1-bd1d-c0a8dcdbdbf9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Render">
       <UniqueIdentifier>{963d48bb-219d-4b8d-a960-59a9281ed1f6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ImportMesh">
+      <UniqueIdentifier>{adef16f5-2916-40ed-8fef-446a6d7383c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{2fa95ea1-dfaf-47aa-9581-cc708fed176a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BatchMesh">
+      <UniqueIdentifier>{e2287370-96ec-4a96-b7c9-e9a1a95e602b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Batch">
+      <UniqueIdentifier>{bb134ee9-2e1b-4a38-b244-7966a397090e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Triangle.cpp">
-      <Filter>Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="FBXImport.cpp">
+    <ClCompile Include="Import\FBXImport.cpp">
       <Filter>Import</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Mesh</Filter>
+    <ClCompile Include="ImportMesh\AnimatedMesh.cpp">
+      <Filter>ImportMesh</Filter>
     </ClCompile>
-    <ClCompile Include="MeshNode.cpp">
-      <Filter>Mesh</Filter>
+    <ClCompile Include="ImportMesh\BoneNode.cpp">
+      <Filter>ImportMesh</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
+    <ClCompile Include="ImportMesh\Mesh.cpp">
+      <Filter>ImportMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportMesh\MeshNode.cpp">
+      <Filter>ImportMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportMesh\SkinnedVertex.cpp">
+      <Filter>ImportMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportMesh\Triangle.cpp">
+      <Filter>ImportMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="ImportMesh\Vertex.cpp">
+      <Filter>ImportMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\GLCanvas.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderComponent.cpp">
+    <ClCompile Include="Render\Window.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="GLCanvas.cpp">
+    <ClCompile Include="AnimationApp.cpp" />
+    <ClCompile Include="Render\Renderer.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="BoneNode.cpp">
-      <Filter>Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="SkinnedVertex.cpp">
-      <Filter>Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatedMesh.cpp">
-      <Filter>Mesh</Filter>
+    <ClCompile Include="Batch\BatchProcessor.cpp">
+      <Filter>Batch</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Mesh.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshNode.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="BoneNode.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="FBXImport.h">
+    <ClInclude Include="Import\FBXImport.h">
       <Filter>Import</Filter>
     </ClInclude>
-    <ClInclude Include="GLCanvas.h">
+    <ClInclude Include="ImportMesh\AnimatedMesh.h">
+      <Filter>ImportMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportMesh\BoneNode.h">
+      <Filter>ImportMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportMesh\Mesh.h">
+      <Filter>ImportMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportMesh\MeshNode.h">
+      <Filter>ImportMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportMesh\SkinnedVertex.h">
+      <Filter>ImportMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportMesh\Triangle.h">
+      <Filter>ImportMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportMesh\Vertex.h">
+      <Filter>ImportMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\GLCanvas.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderComponent.h">
+    <ClInclude Include="Render\Window.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="Window.h">
+    <ClInclude Include="AnimationApp.h" />
+    <ClInclude Include="Render\Renderer.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="Triangle.h">
-      <Filter>Mesh</Filter>
+    <ClInclude Include="Batch\BatchProcessor.h">
+      <Filter>Batch</Filter>
     </ClInclude>
-    <ClInclude Include="SkinnedVertex.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatedMesh.h">
-      <Filter>Mesh</Filter>
+    <ClInclude Include="BatchMesh\RenderVertex.h">
+      <Filter>BatchMesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="basic.frag">
-      <Filter>Resource Files</Filter>
+    <None Include="Shaders\basic.frag">
+      <Filter>Shaders</Filter>
     </None>
-    <None Include="basic.vert">
-      <Filter>Resource Files</Filter>
+    <None Include="Shaders\basic.vert">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -12,7 +12,7 @@
 
 namespace Render
 {
-	class ShaderComponent;
+	class Renderer;
 
 class GLCanvas : public wxGLCanvas
 {
@@ -29,8 +29,11 @@ public:
 
 	~GLCanvas();
 
-	void Render(
+	void Paint(
 		wxPaintEvent& event
+		);
+
+	void RenderImmediate(
 		);
 
 	void OnSize(
@@ -59,8 +62,10 @@ protected:
 	DECLARE_EVENT_TABLE()
 
 private:
+	void Render();
+
 	wxGLContext* m_context;
-	ShaderComponent *m_shaderComponent;
+	Renderer *m_renderer;
 };
 
 }

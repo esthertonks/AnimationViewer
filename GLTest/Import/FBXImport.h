@@ -22,7 +22,11 @@ public:
 	FBXImport();
 	~FBXImport();
 
-	bool Import(
+	/**
+		@brief Imports an fbx mesh into an import mesh format
+		@return Returns an import mesh or NULL if import failed
+	*/
+	mesh::Mesh* Import(
 		std::string &fbxFilename		// The name of the FBX file to import
 	);
 

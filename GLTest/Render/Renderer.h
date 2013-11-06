@@ -14,13 +14,13 @@ struct Vert{
     glm::vec3 Colour;
 };
 
-class ShaderComponent
+class Renderer
 {
 
 public:
 
-	ShaderComponent();
-	~ShaderComponent();
+	Renderer();
+	~Renderer();
 
 	inline GLuint GetProgramHandle()
 	{

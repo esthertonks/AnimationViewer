@@ -1,4 +1,4 @@
-#include "ShaderComponent.h"
+#include "Renderer.h"
 
 #include <fstream>
 
@@ -7,7 +7,7 @@
 namespace Render
 {
 
-GLubyte ShaderComponent::m_indices[] = {
+GLubyte Renderer::m_indices[] = {
     0, 1, 2, //Front face
     0, 2, 3,
     5, 0, 3,
@@ -22,7 +22,7 @@ GLubyte ShaderComponent::m_indices[] = {
     7, 3, 2,
     };
 
-Vert ShaderComponent::verts[] = {
+Vert Renderer::verts[] = {
 	glm::vec3(0.5f,  0.5f,  0.5f),  //V0
 	glm::vec3(0.0f, 1.0f, 0.0f),    //C0
 
@@ -48,16 +48,16 @@ Vert ShaderComponent::verts[] = {
 	glm::vec3(0.0f, 1.0f, 0.0f),    //C7
 	};
 
-ShaderComponent::ShaderComponent()
+Renderer::Renderer()
 	: m_loaded(false)
 {
 
 }
 
-bool ShaderComponent::LoadShaders()
+bool Renderer::LoadShaders()
 {
-	GLuint vertexShaderId = LoadShader("basic.vert", GL_VERTEX_SHADER);
-	GLuint fragmentShaderId = LoadShader("basic.frag", GL_FRAGMENT_SHADER);
+	GLuint vertexShaderId = LoadShader("Shaders/basic.vert", GL_VERTEX_SHADER);
+	GLuint fragmentShaderId = LoadShader("Shaders/basic.frag", GL_FRAGMENT_SHADER);
 
 	if(!CompileShader("basic.vert", vertexShaderId))
 	{
@@ -92,7 +92,7 @@ bool ShaderComponent::LoadShaders()
 	@brief Loads a shader of the specified name and type
 	@return GL_FALSE if failed or GL_TRUE if successfully loaded
 */
-GLuint ShaderComponent::LoadShader(
+GLuint Renderer::LoadShader(
 	const std::string &shaderName, // The name of the shader to load
 	const GLenum shaderType	// The type of the shader ie GL_VERTEX_SHADER etc
 	)
@@ -120,7 +120,7 @@ GLuint ShaderComponent::LoadShader(
 	return shaderId;
 }
 
-const char* ShaderComponent::ReadShaderSourceFile(
+const char* Renderer::ReadShaderSourceFile(
 	const std::string &shaderName
 	)
 {
@@ -152,7 +152,7 @@ const char* ShaderComponent::ReadShaderSourceFile(
 	@brief Compiles the shader with this shaderHandle and name
 	@return GL_FALSE if failed or GL_TRUE if successfully loaded
 */
-GLenum ShaderComponent::CompileShader(
+GLenum Renderer::CompileShader(
 	const std::string &shaderName, // The name of the shader to load
 	const GLuint shaderId //GLuint id for the shader source
 	)
@@ -181,7 +181,7 @@ GLenum ShaderComponent::CompileShader(
 	return compiled;
 }
 
-GLenum ShaderComponent::LinkProgram(
+GLenum Renderer::LinkProgram(
 	const std::vector<GLuint> &shaders // List of shaders needed for this shader program
 	)
 {
@@ -239,7 +239,7 @@ GLenum ShaderComponent::LinkProgram(
 	return linked;
 }
 
-void ShaderComponent::OutputDebugShaderAttributeInfo()
+void Renderer::OutputDebugShaderAttributeInfo()
 {
 	GLint maxlength, noofAttributes;
 	glGetProgramiv(m_programHandle, GL_ACTIVE_ATTRIBUTES, &noofAttributes);
@@ -276,7 +276,7 @@ void ShaderComponent::OutputDebugShaderAttributeInfo()
 	}
 }
 
-void ShaderComponent::CreateVertexBuffers()
+void Renderer::CreateVertexBuffers()
 {
 	/////////////////// Create the VBO ////////////////////
 	// Create and set-up the vertex array object
@@ -301,7 +301,7 @@ void ShaderComponent::CreateVertexBuffers()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_indices), m_indices, GL_STATIC_DRAW);
 }
 
-ShaderComponent::~ShaderComponent()
+Renderer::~Renderer()
 {
 	if(!m_loaded)
 	{

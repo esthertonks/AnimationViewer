@@ -1,5 +1,5 @@
 #include "GLCanvas.h"
-#include "ShaderComponent.h"
+#include "Renderer.h"
 
 #include <wx/log.h>
 
@@ -9,7 +9,7 @@ namespace Render
 {
 
 BEGIN_EVENT_TABLE(GLCanvas, wxGLCanvas)
-	EVT_PAINT(GLCanvas::Render)
+	EVT_PAINT(GLCanvas::Paint)
 	EVT_SIZE(GLCanvas::OnSize)
 	EVT_SET_FOCUS(GLCanvas::OnSetFocus)
 END_EVENT_TABLE()
@@ -24,19 +24,19 @@ GLCanvas::GLCanvas(
 	)
 	: wxGLCanvas(parent, id, position, size, style|wxFULL_REPAINT_ON_RESIZE, name), 
 	m_context(NULL),
-	m_shaderComponent(NULL)
+	m_renderer(NULL)
 {
 }
 
 void GLCanvas::InitGL()
 {
-	if(m_context || m_shaderComponent)
+	if(m_context || m_renderer)
 	{
 		wxLogDebug("GL already initialised");
 		return;
 	}
 
-	m_shaderComponent = new ShaderComponent();
+	m_renderer = new Renderer();
 
 	m_context = new wxGLContext(this);
 
@@ -57,7 +57,7 @@ void GLCanvas::InitGL()
 
 	CheckOpenGLError(__FILE__,__LINE__);
 
-	m_shaderComponent->LoadShaders();
+	m_renderer->LoadShaders();
 
 	glClearColor(0.2f,0.2f,0.2f,1.0f);
 
@@ -122,12 +122,23 @@ void GLCanvas::DebugPrintGLInfo()
 	}
 }
 
-void GLCanvas::Render(
+void GLCanvas::Paint(
 	wxPaintEvent& WXUNUSED(event)
 	)
 {
 	wxPaintDC(this);
+	Render();
+}
 
+void GLCanvas::RenderImmediate()
+{
+	wxClientDC(this);
+	Render();
+}
+
+void GLCanvas::Render(
+	)
+{
 	// TODO wxwidgets has not init callback so this has to be done here. bleugh.
 	if(!m_context)
 	{
@@ -135,7 +146,7 @@ void GLCanvas::Render(
 		return;
 	}
 
-	if(!m_shaderComponent || !m_shaderComponent->Loaded())
+	if(!m_renderer || !m_renderer->Loaded())
 	{
 		//wxLogDebug("Error - no shaders loaded");
 		return;
@@ -151,13 +162,13 @@ void GLCanvas::Render(
 	float angle = 30.0f;
 	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
 
-	GLint location = glGetUniformLocation(m_shaderComponent->GetProgramHandle(), "RotationMatrix");
+	GLint location = glGetUniformLocation(m_renderer->GetProgramHandle(), "RotationMatrix");
 	if(location >= 0)
 	{
 		glUniformMatrix4fv(location, 1, GL_FALSE, &rotationMatrix[0][0]);
 	
 
-		glBindVertexArray(m_shaderComponent->GetVertexArrayHandle());
+		glBindVertexArray(m_renderer->GetVertexArrayHandle());
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, (GLvoid*)0);
 	}
 
@@ -170,7 +181,7 @@ GLCanvas::~GLCanvas()
 	delete m_context;
 	m_glContext = NULL;
 
-	delete m_shaderComponent;
-	m_shaderComponent = NULL;
+	delete m_renderer;
+	m_renderer = NULL;
 }
 }

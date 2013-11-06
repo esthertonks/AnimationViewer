@@ -1,7 +1,7 @@
 #include "FBXImport.h"
-#include "Mesh.h"
-#include "MeshNode.h"
-#include "Triangle.h"
+#include "../ImportMesh/Mesh.h"
+#include "../ImportMesh/MeshNode.h"
+#include "../ImportMesh/Triangle.h"
 
 #include <assert.h>
 
@@ -24,7 +24,7 @@ FBXImport::~FBXImport()
 
 }
 
-bool FBXImport::Import(
+mesh::Mesh* FBXImport::Import(
 	std::string &fbxFilename
 	)
 {

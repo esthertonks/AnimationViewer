@@ -2,7 +2,6 @@
 
 #include "wx/wx.h"
 #include <wx/log.h>
-#include "GLCanvas.h"
 
 namespace Render
 {
@@ -22,6 +21,10 @@ public:
 		wxCommandEvent& event
 		);
 
+	void OnOpen(
+		wxCommandEvent& event
+		);
+
     void OnAbout(
 		wxCommandEvent& event
 		);
@@ -29,11 +32,12 @@ public:
 	void OnShow(
 		wxShowEvent& event
 		);
+
+	void OnClose(
+		wxCloseEvent& event
+		);
  
 	DECLARE_EVENT_TABLE()
-
-private:
-	GLCanvas *m_canvas;
 
 };
 }

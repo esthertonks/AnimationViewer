@@ -82,35 +82,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AnimatedMesh.cpp" />
-    <ClCompile Include="BoneNode.cpp" />
-    <ClCompile Include="FBXImport.cpp" />
-    <ClCompile Include="GLCanvas.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="MeshNode.cpp" />
-    <ClCompile Include="ShaderComponent.cpp" />
-    <ClCompile Include="SkinnedVertex.cpp" />
-    <ClCompile Include="Triangle.cpp" />
-    <ClCompile Include="Vertex.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="Batch\BatchProcessor.cpp" />
+    <ClCompile Include="ImportMesh\AnimatedMesh.cpp" />
+    <ClCompile Include="ImportMesh\BoneNode.cpp" />
+    <ClCompile Include="ImportMesh\Mesh.cpp" />
+    <ClCompile Include="ImportMesh\MeshNode.cpp" />
+    <ClCompile Include="ImportMesh\SkinnedVertex.cpp" />
+    <ClCompile Include="ImportMesh\Triangle.cpp" />
+    <ClCompile Include="ImportMesh\Vertex.cpp" />
+    <ClCompile Include="Import\FBXImport.cpp" />
+    <ClCompile Include="AnimationApp.cpp" />
+    <ClCompile Include="Render\GLCanvas.cpp" />
+    <ClCompile Include="Render\Renderer.cpp" />
+    <ClCompile Include="Render\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AnimatedMesh.h" />
-    <ClInclude Include="BoneNode.h" />
-    <ClInclude Include="FBXImport.h" />
-    <ClInclude Include="GLCanvas.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="MeshNode.h" />
-    <ClInclude Include="ShaderComponent.h" />
-    <ClInclude Include="SkinnedVertex.h" />
-    <ClInclude Include="Triangle.h" />
-    <ClInclude Include="Vertex.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="AnimationApp.h" />
+    <ClInclude Include="BatchMesh\RenderVertex.h" />
+    <ClInclude Include="Batch\BatchProcessor.h" />
+    <ClInclude Include="ImportMesh\AnimatedMesh.h" />
+    <ClInclude Include="ImportMesh\BoneNode.h" />
+    <ClInclude Include="ImportMesh\Mesh.h" />
+    <ClInclude Include="ImportMesh\MeshNode.h" />
+    <ClInclude Include="ImportMesh\SkinnedVertex.h" />
+    <ClInclude Include="ImportMesh\Triangle.h" />
+    <ClInclude Include="ImportMesh\Vertex.h" />
+    <ClInclude Include="Import\FBXImport.h" />
+    <ClInclude Include="Render\GLCanvas.h" />
+    <ClInclude Include="Render\Renderer.h" />
+    <ClInclude Include="Render\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="basic.frag" />
-    <None Include="basic.vert" />
+    <None Include="Shaders\basic.frag" />
+    <None Include="Shaders\basic.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
