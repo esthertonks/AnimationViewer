@@ -3,6 +3,7 @@
 namespace mesh
 {
 	class Mesh;
+	class RenderMesh;
 }
 
 namespace batch
@@ -14,7 +15,7 @@ public:
 	BatchProcessor();
 	~BatchProcessor();
 
-	mesh::Mesh &ProcessImportMesh(
+	mesh::RenderMesh *CreateRenderMesh(
 		mesh::Mesh &importMesh
 		);
 

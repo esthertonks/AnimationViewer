@@ -13,7 +13,7 @@ namespace mesh
 	class Vertex;
 }
 
-namespace Import
+namespace import
 {
 
 class FBXImport
@@ -32,7 +32,7 @@ public:
 
 private:
 
-	void LoadMeshNodes(
+	bool LoadMeshNodes(
 		FbxNode &fbxNode,				// The FBX mesh to extract data from
 		mesh::MeshNode &node			// The node to hold the extracted data
 		);

@@ -2,7 +2,7 @@
 #include "../AnimationApp.h"
 #include "GLCanvas.h"
 
-namespace Render
+namespace render
 {
 
 BEGIN_EVENT_TABLE(Window, wxFrame)
@@ -53,6 +53,7 @@ void Window::OnClose(
 	)
 	{
 		wxGetApp().StopRendering();
+		wxGetApp().DeleteMesh();
 		event.Skip(); // Continue closing the window
 	}
 
@@ -63,7 +64,7 @@ void Window::OnOpen(
 {
 wxFileDialog* openDialog = new wxFileDialog(
 		this, _("Choose an FBX file to open"), wxEmptyString, wxEmptyString, 
-		_("FBX files (*.fbx)|*.fbx|"),
+		_("FBX files (*.fbx)|*.fbx"),
 		wxFD_OPEN, wxDefaultPosition);
  
 	// Creates a "open file" dialog with 4 file types

@@ -4,15 +4,15 @@
 #include <string>
 #include <map>
 #include <boost\shared_array.hpp>
-#include "Vertex.h"
-#include "Triangle.h"
+#include "../Container/LinkedList .h"
 #include "../Import/FBXImport.h"
-#include "../BatchMesh/RenderVertex.h" //TODO yeah - shouldn't really live here heh
 
 namespace mesh
 {
+	class Vertex;
+	class Triangle;
 
-class MeshNode
+class MeshNode : public container::LinkedListItem<MeshNode>
 {
 public:
 
@@ -41,16 +41,6 @@ public:
 		return m_numVertices;
 	}
 
-	int GetNumRenderIndeces()
-	{
-		return m_numRenderIndices;
-	}
-
-	int GetNumRenderVerteces()
-	{
-		return m_numRenderVertices;
-	}
-
 	boost::shared_array<Vertex> &GetVertices()
 	{
 		return m_vertexArray;
@@ -61,16 +51,6 @@ public:
 		return m_triangleArray;
 	}
 
-	boost::shared_array<RenderVertex> &GetRenderVertices()
-	{
-		return m_renderVertexArray;
-	}
-
-	boost::shared_array<unsigned int> &GetRenderIndices()
-	{
-		return m_renderIndexArray;
-	}
-
 	void							AllocateVertices(
 										const int numVertices
 										);
@@ -79,19 +59,8 @@ public:
 										const int numTriangles
 										);
 
-	void							AllocateRenderVertices(
-										const int numRenderVertices
-										);
-
-	void							AllocateRenderIndices(
-										const int numRenderIndices
-										);
-
-	MeshNode *child;
-	MeshNode *parent;
-
 private:
-	friend Import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
+	friend import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
 
 	std::string m_name;
 
@@ -104,11 +73,6 @@ private:
 	boost::shared_array<Triangle> m_triangleArray;
 	int m_numTriangles;
 	int m_numVertices;
-
-	boost::shared_array<RenderVertex> m_renderVertexArray;
-	boost::shared_array<unsigned int> m_renderIndexArray;
-	int m_numRenderIndices;
-	int m_numRenderVertices;
 	
 	// We store here a list of material names and a list of texture names. We only actually currently need
 	// the texture names however future work will expand this information to a material class storing shader parameters and multiple textures per material.

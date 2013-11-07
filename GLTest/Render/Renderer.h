@@ -1,18 +1,24 @@
 #pragma once
 
+#define GLEW_STATIC 1
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 
 #include <string>
 #include <vector>
 
-namespace Render
+namespace mesh
+{
+	class RenderMeshNode;
+}
+
+namespace render
 {
 
-struct Vert{
-    glm::vec3 Position;
-    glm::vec3 Colour;
-};
+//struct Vert{
+//    glm::vec3 Position;
+//    glm::vec3 Colour;
+//};
 
 class Renderer
 {
@@ -39,6 +45,11 @@ public:
 
 	bool LoadShaders();
 
+	void CreateVertexBuffers(
+		mesh::RenderMeshNode &renderMeshNode
+		);
+	void Render();
+
 private:
 	GLuint LoadShader(
 		const std::string &shaderName, // The name of the shader to load
@@ -60,12 +71,10 @@ private:
 
 	void OutputDebugShaderAttributeInfo();
 
-	void CreateVertexBuffers();
-
 	GLint m_programHandle;
-    GLuint m_vertexArrayHandle;
-    static GLubyte m_indices[];
-    static Vert verts[];
+	GLuint m_vertexArrayHandle;
+    //static GLubyte m_indices[];
+    //static Vert verts[];
 
 	GLuint m_indexBufferHandle;
 	GLuint m_positionBufferHandle;

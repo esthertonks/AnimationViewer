@@ -2,14 +2,20 @@
 
 #include "wx/wx.h"
 
-namespace Render
+namespace render
 {
 	class GLCanvas;
 }
 
-namespace Import
+namespace import
 {
 	class FBXImport;
+}
+
+namespace mesh
+{
+	class RenderMesh;
+	class RenderMeshNode;
 }
 
 
@@ -18,7 +24,7 @@ class AnimationApp: public wxApp
 	public:
 	void StartRendering();
 	void StopRendering();
-	Render::GLCanvas& GetCanvas()
+	render::GLCanvas& GetCanvas()
 	{
 		return *m_canvas;
 	};
@@ -27,15 +33,17 @@ class AnimationApp: public wxApp
 		std::string filePath
 	);
 
+	void DeleteMesh();
+
 	private:
 	virtual bool OnInit();
 	void OnIdle(
 		wxIdleEvent& evt
 		);
 
-	Render::GLCanvas *m_canvas;
-	Import::FBXImport *m_fbxImporter;
-	mesh::Mesh *m_renderMesh; // Only ever one mesh to render at once right now
+	render::GLCanvas *m_canvas;
+	import::FBXImport *m_fbxImporter;
+	mesh::RenderMesh *m_renderMesh; // Only ever one mesh to render at once right now
 };
 
 DECLARE_APP(AnimationApp)

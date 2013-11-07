@@ -23,6 +23,9 @@
     <Filter Include="Batch">
       <UniqueIdentifier>{bb134ee9-2e1b-4a38-b244-7966a397090e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Container">
+      <UniqueIdentifier>{06e421f6-1fb3-44d3-b505-a38b90259bde}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Import\FBXImport.cpp">
@@ -61,6 +64,12 @@
     </ClCompile>
     <ClCompile Include="Batch\BatchProcessor.cpp">
       <Filter>Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="BatchMesh\RenderMeshNode.cpp">
+      <Filter>BatchMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="BatchMesh\RenderMesh.cpp">
+      <Filter>BatchMesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +112,15 @@
     </ClInclude>
     <ClInclude Include="BatchMesh\RenderVertex.h">
       <Filter>BatchMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="BatchMesh\RenderMesh.h">
+      <Filter>BatchMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="BatchMesh\RenderMeshNode.h">
+      <Filter>BatchMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Container\LinkedList .h">
+      <Filter>Container</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,10 @@
 #include "BatchProcessor.h"
 #include "../ImportMesh/Mesh.h"
+#include "../ImportMesh/Triangle.h"
+#include "../ImportMesh/Vertex.h"
 #include "../BatchMesh/RenderVertex.h"
+#include "../BatchMesh/RenderMesh.h"
+#include "../BatchMesh/RenderMeshNode.h"
 
 namespace batch
 {
@@ -14,23 +18,27 @@ BatchProcessor::~BatchProcessor()
 {
 }
 
-mesh::Mesh &BatchProcessor::ProcessImportMesh(
+mesh::RenderMesh *BatchProcessor::CreateRenderMesh(
 	mesh::Mesh &importMesh
 	)
 {
+	mesh::RenderMesh* renderMesh = new mesh::RenderMesh();
+
 	// TODO For now just average everything, but this needs to create batches and split normals for textures, colours and normals.
-	for(mesh::MeshNode* meshNode = importMesh.m_meshHierarchyRoot; meshNode != NULL; meshNode = meshNode->child)
+	for(mesh::MeshNode* meshNode = importMesh.m_root; meshNode != NULL; meshNode = meshNode->m_next)
 	{
 		boost::shared_array<mesh::Triangle>& triangleArray = meshNode->GetTriangles();
 		int numTriangles = meshNode->GetNumTriangles();
 		boost::shared_array<mesh::Vertex>& vertexArray = meshNode->GetVertices();
 		int numVertices = meshNode->GetNumVertices();
 
-		meshNode->AllocateRenderIndices(numTriangles * 3);
-		boost::shared_array<unsigned int>& renderIndexArray = meshNode->GetRenderIndices();	
+		mesh::RenderMeshNode *renderMeshNode = new mesh::RenderMeshNode();
+		renderMesh->AddChildNode(*renderMeshNode);
+		renderMeshNode->AllocateIndices(numTriangles * 3);
+		boost::shared_array<unsigned int>& renderIndexArray = renderMeshNode->GetIndices();	
 
-		meshNode->AllocateRenderVertices(numVertices); // Currently this is the same. TODO need to consider that when batching we will not know this count in advance.
-		boost::shared_array<mesh::RenderVertex>& renderVertexArray = meshNode->GetRenderVertices();
+		renderMeshNode->AllocateVertices(numVertices); // Currently this is the same. TODO need to consider that when batching we will not know this count in advance.
+		boost::shared_array<mesh::RenderVertex>& renderVertexArray = renderMeshNode->GetVertices();
 
 
 		for(int triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
@@ -49,24 +57,21 @@ mesh::Mesh &BatchProcessor::ProcessImportMesh(
 				unsigned int vertexIndex = triangleArray[triangleIndex].m_vertexIndices[triangleCornerIndex];
 				mesh::RenderVertex &vertex = renderVertexArray[vertexIndex];
 
-				vertex.m_colour = triangleArray[triangleIndex].m_colours[triangleCornerIndex];
+				vertex.m_colour = glm::vec3(255.0f, 255.0f, 255.0f);//triangleArray[triangleIndex].m_colours[triangleCornerIndex];
 			}
 		}
 
 
 		for(int vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
 		{
-			renderVertexArray[vertexIndex].m_position = vertexArray[vertexIndex].m_position;
+			// Currently vec3 in rendering mesh
+			renderVertexArray[vertexIndex].m_position[0] = vertexArray[vertexIndex].m_position[0];
+			renderVertexArray[vertexIndex].m_position[1] = vertexArray[vertexIndex].m_position[1];
+			renderVertexArray[vertexIndex].m_position[2] = vertexArray[vertexIndex].m_position[2];
 		}
 	}
 
-
-
-
-
-
-
-	return importMesh;
+	return renderMesh;
 }
 
 }

@@ -10,7 +10,12 @@
 #include <wx/wx.h>
 #include <wx/glcanvas.h>
 
-namespace Render
+namespace mesh
+{
+	class RenderMeshNode;
+}
+
+namespace render
 {
 	class Renderer;
 
@@ -29,6 +34,10 @@ public:
 
 	~GLCanvas();
 
+	void GLCanvas::SetMeshNode(
+		mesh::RenderMeshNode &renderMeshNode
+		);
+
 	void Paint(
 		wxPaintEvent& event
 		);
@@ -45,11 +54,6 @@ public:
 		);
 
 	void InitGL();
-
-	void LinkShaders(
-		GLint vertShader, 
-		GLint fragShader
-		);
 
 	int CheckOpenGLError(
 		const char * file, 

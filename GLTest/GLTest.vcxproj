@@ -82,6 +82,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BatchMesh\RenderMesh.cpp" />
+    <ClCompile Include="BatchMesh\RenderMeshNode.cpp" />
     <ClCompile Include="Batch\BatchProcessor.cpp" />
     <ClCompile Include="ImportMesh\AnimatedMesh.cpp" />
     <ClCompile Include="ImportMesh\BoneNode.cpp" />
@@ -98,8 +100,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationApp.h" />
+    <ClInclude Include="BatchMesh\RenderMesh.h" />
+    <ClInclude Include="BatchMesh\RenderMeshNode.h" />
     <ClInclude Include="BatchMesh\RenderVertex.h" />
     <ClInclude Include="Batch\BatchProcessor.h" />
+    <ClInclude Include="Container\LinkedList .h" />
     <ClInclude Include="ImportMesh\AnimatedMesh.h" />
     <ClInclude Include="ImportMesh\BoneNode.h" />
     <ClInclude Include="ImportMesh\Mesh.h" />

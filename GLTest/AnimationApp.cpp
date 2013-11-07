@@ -4,6 +4,8 @@
 #include "Import/FBXImport.h"
 #include "ImportMesh/Mesh.h"
 #include "Batch/BatchProcessor.h"
+#include "BatchMesh/RenderMesh.h"
+#include "BatchMesh/RenderMeshNode.h"
 
 IMPLEMENT_APP(AnimationApp)
 
@@ -11,10 +13,10 @@ bool AnimationApp::OnInit()
 {
 	m_renderMesh = NULL;
 
-	wxFrame *frame = new Render::Window(NULL, wxT("Testing"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE);
+	wxFrame *frame = new render::Window(NULL, wxT("Testing"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE);
 	
-	m_canvas = new Render::GLCanvas(frame, wxID_ANY, wxDefaultPosition, wxSize(300, 300), wxSUNKEN_BORDER, "Animation App");
-	m_fbxImporter = new Import::FBXImport();
+	m_canvas = new render::GLCanvas(frame, wxID_ANY, wxDefaultPosition, wxSize(300, 300), wxSUNKEN_BORDER, "Animation App");
+	m_fbxImporter = new import::FBXImport();
 
 	frame->Show(TRUE);
 
@@ -31,9 +33,12 @@ void AnimationApp::OnIdle(
 	//Prepare Mesh - update animation
 
 	//RenderMesh
-	m_canvas->GetRenderer()->SetMesh(m_renderMesh);
-	m_canvas->RenderImmediate();
-	evt.RequestMore(); // render continuously, not only once on idle
+	if(m_renderMesh)
+	{
+		m_canvas->RenderImmediate();
+	}
+
+	evt.RequestMore(); // Request continuous rendering, rather than just once on idle
 }
 
 void AnimationApp::StartRendering()
@@ -55,8 +60,27 @@ void AnimationApp::ImportFBX(
 	mesh::Mesh* importMesh = m_fbxImporter->Import(filePath);
 	if(importMesh)
 	{
+		if(m_renderMesh)
+		{
+			delete m_renderMesh;
+			m_renderMesh = NULL;
+		}
 		batch::BatchProcessor meshBatchProcessor;
-		m_renderMesh = &meshBatchProcessor.ProcessImportMesh(*importMesh);
+		m_renderMesh = meshBatchProcessor.CreateRenderMesh(*importMesh);
+
+		for(mesh::RenderMeshNode *node = m_renderMesh->GetNodeHierarchy(); node != NULL; node = node->m_next)
+		{
+			m_canvas->SetMeshNode(*node);
+		}
 	}
 
+}
+
+void AnimationApp::DeleteMesh()
+{
+	if(m_renderMesh)
+	{
+		delete m_renderMesh;
+		m_renderMesh = NULL;
+	}
 }

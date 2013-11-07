@@ -2,10 +2,11 @@
 #include "../ImportMesh/Mesh.h"
 #include "../ImportMesh/MeshNode.h"
 #include "../ImportMesh/Triangle.h"
+#include "../ImportMesh/Vertex.h"
 
 #include <assert.h>
 
-namespace Import
+namespace import
 {
 
 FBXImport::FBXImport()
@@ -33,7 +34,7 @@ mesh::Mesh* FBXImport::Import(
 	if(!m_fbxManager)
 	{
 		FBXSDK_printf("Can't create fbx manager.\n");
-		return false;
+		return NULL;
 	}
 
 	// Set up the import settings
@@ -45,7 +46,7 @@ mesh::Mesh* FBXImport::Import(
 	if(!m_fbxScene)
 	{
 		FBXSDK_printf("Can't create fbx scene.\n");
-		return false;
+		return NULL;
 	}
 
 	FbxImporter* fbxImporter = FbxImporter::Create(m_fbxManager,"");
@@ -59,7 +60,7 @@ mesh::Mesh* FBXImport::Import(
 		if (fbxImporter->GetStatus().GetCode() == FbxStatus::eInvalidFileVersion)
 		{
 			FBXSDK_printf("FBX file format version for file '%s' is not valid for this SDK version\n", fbxFilename);
-			return false;
+			return NULL;
 		}
 
 		fbxImporter->Destroy();
@@ -75,7 +76,7 @@ mesh::Mesh* FBXImport::Import(
 		m_fbxScene->Destroy();
 		ioSettings->Destroy();
 		m_fbxManager->Destroy();
-		return false;
+		return NULL;
 	}
 
 	// Import the scene.
@@ -86,10 +87,11 @@ mesh::Mesh* FBXImport::Import(
 		m_fbxScene->Destroy();
 		ioSettings->Destroy();
 		m_fbxManager->Destroy();
-		return false;
+		return NULL;
 	}
 
 	// Fill the mesh with the imported data
+	m_mesh = new mesh::Mesh();
 	FbxNode &fbxRootNode = *m_fbxScene->GetRootNode();
 	mesh::MeshNode &meshNode = *new mesh::MeshNode;
 	LoadMeshNodes(fbxRootNode, meshNode);
@@ -99,66 +101,74 @@ mesh::Mesh* FBXImport::Import(
 	ioSettings->Destroy();
 	m_fbxManager->Destroy();
 
-	return false;
+	return m_mesh;
 }
 
-void FBXImport::LoadMeshNodes(
+bool FBXImport::LoadMeshNodes(
 	FbxNode& fbxNode,
 	mesh::MeshNode &meshNode
 	)
 {
-	m_mesh->AddNode(meshNode);
-
-	std::string name = fbxNode.GetName();
-	meshNode.SetName(name);
-
-	FbxNodeAttribute* nodeAttribute = fbxNode.GetNodeAttribute();
 	// Make sure the mesh is triangulated
 	FbxGeometryConverter fbxGeometryConverter(m_fbxManager);	
-	nodeAttribute = fbxGeometryConverter.Triangulate(nodeAttribute, true);
-
-	// The mesh belonging to this node
-	FbxMesh& fbxMesh = *(FbxMesh *)nodeAttribute;
-
-	// Extract and store vertices
-	const unsigned int numVertices = fbxMesh.GetControlPointsCount();
-	meshNode.AllocateVertices(numVertices);
-	boost::shared_array<mesh::Vertex> vertexArray = meshNode.GetVertices();
-
-	const FbxVector4* const fbxVertices = fbxMesh.GetControlPoints();
-	for(unsigned int vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
+	FbxMesh* fbxMesh = fbxNode.GetMesh();
+	if(fbxMesh)
 	{
-		fbxVertices[vertexIndex];
+		if(!fbxMesh->IsTriangleMesh())
+		{
+			FbxMesh* fbxMesh = (FbxMesh *)fbxGeometryConverter.Triangulate(fbxNode.GetMesh(), true);
+			if(!fbxMesh)
+			{
+				FBXSDK_printf("Mesh Triangulation failed. Import aborted.\n");
+				return false;
+			}
+		}
 
-		vertexArray[vertexIndex].m_position.x = static_cast<float>(fbxVertices[vertexIndex][0]);
-		vertexArray[vertexIndex].m_position.y = static_cast<float>(fbxVertices[vertexIndex][1]);
-		vertexArray[vertexIndex].m_position.z = static_cast<float>(fbxVertices[vertexIndex][2]);
+		m_mesh->AddChildNode(meshNode);
+
+		std::string name = fbxNode.GetName();
+		meshNode.SetName(name);
+
+		// Extract and store vertices
+		const unsigned int numVertices = fbxMesh->GetControlPointsCount();
+		meshNode.AllocateVertices(numVertices);
+		boost::shared_array<mesh::Vertex> vertexArray = meshNode.GetVertices();
+
+		const FbxVector4* const fbxVertices = fbxMesh->GetControlPoints();
+		for(unsigned int vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
+		{
+			fbxVertices[vertexIndex];
+
+			vertexArray[vertexIndex].m_position.x = static_cast<float>(fbxVertices[vertexIndex][0]);
+			vertexArray[vertexIndex].m_position.y = static_cast<float>(fbxVertices[vertexIndex][1]);
+			vertexArray[vertexIndex].m_position.z = static_cast<float>(fbxVertices[vertexIndex][2]);
+		}
+
+		// Extract and store triangles
+		int numTriangles = fbxMesh->GetPolygonCount();
+
+		meshNode.AllocateTriangles(numTriangles);
+		boost::shared_array<mesh::Triangle> triangleArray = meshNode.GetTriangles();
+
+		// Load per triangle data
+		for(int triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
+		{
+			int triangleSize = fbxMesh->GetPolygonSize(triangleIndex);
+			assert(triangleSize == 3); // The mesh was triangulated above.
+
+			mesh::Triangle &triangle = triangleArray[triangleIndex];
+			LoadMaterials(*fbxMesh, triangleIndex, meshNode);
+
+			LoadVertexIndeces(*fbxMesh, triangleIndex, triangle);
+
+			LoadColours(*fbxMesh, triangleIndex, triangle);
+			LoadUVs(*fbxMesh, triangleIndex, triangle);
+
+			LoadNormals(*fbxMesh, triangleIndex, triangle);
+			LoadBinormals(*fbxMesh, triangleIndex, triangle);		
+			LoadTangents(*fbxMesh, triangleIndex, triangle);
+		}
 	}
-
-	// Extract and store triangles
-	int numTriangles = fbxMesh.GetPolygonCount();
-
-	meshNode.AllocateTriangles(numTriangles);
-	boost::shared_array<mesh::Triangle> triangleArray = meshNode.GetTriangles();
-
-	// Load per triangle data
-	for(int triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
-	{
-		int triangleSize = fbxMesh.GetPolygonSize(triangleIndex);
-		assert(triangleSize == 3); // The mesh was triangulated above.
-
-		mesh::Triangle &triangle = triangleArray[triangleIndex];
-		LoadMaterials(fbxMesh, triangleIndex, meshNode);
-
-		LoadVertexIndeces(fbxMesh, triangleIndex, triangle);
-
-		LoadColours(fbxMesh, triangleIndex, triangle);
-		LoadUVs(fbxMesh, triangleIndex, triangle);
-
-		LoadNormals(fbxMesh, triangleIndex, triangle);
-		LoadBinormals(fbxMesh, triangleIndex, triangle);		
-		LoadTangents(fbxMesh, triangleIndex, triangle);
-	}	
 
 	for(int childIndex = 0; childIndex < fbxNode.GetChildCount(); childIndex++)
 	{
@@ -167,6 +177,7 @@ void FBXImport::LoadMeshNodes(
 		LoadMeshNodes(fbxChildNode, meshChildNode);
 	}
 
+	return true;
 }
 
 /**

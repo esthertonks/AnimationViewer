@@ -3,9 +3,7 @@
 
 #include <wx/log.h>
 
-#include <glm/gtc/matrix_transform.hpp>
-
-namespace Render
+namespace render
 {
 
 BEGIN_EVENT_TABLE(GLCanvas, wxGLCanvas)
@@ -59,7 +57,7 @@ void GLCanvas::InitGL()
 
 	m_renderer->LoadShaders();
 
-	glClearColor(0.2f,0.2f,0.2f,1.0f);
+	glClearColor(0.5f,0.5f,0.5f,1.0f);
 
 	DebugPrintGLInfo();
 }
@@ -122,6 +120,13 @@ void GLCanvas::DebugPrintGLInfo()
 	}
 }
 
+void GLCanvas::SetMeshNode(
+	mesh::RenderMeshNode &renderMeshNode
+	)
+{
+	m_renderer->CreateVertexBuffers(renderMeshNode);
+}
+
 void GLCanvas::Paint(
 	wxPaintEvent& WXUNUSED(event)
 	)
@@ -156,23 +161,8 @@ void GLCanvas::Render(
 
 	SetCurrent(*m_context);
 
-	glClear(GL_COLOR_BUFFER_BIT);
-	//glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
+	m_renderer->Render();
 
-	float angle = 30.0f;
-	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
-
-	GLint location = glGetUniformLocation(m_renderer->GetProgramHandle(), "RotationMatrix");
-	if(location >= 0)
-	{
-		glUniformMatrix4fv(location, 1, GL_FALSE, &rotationMatrix[0][0]);
-	
-
-		glBindVertexArray(m_renderer->GetVertexArrayHandle());
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, (GLvoid*)0);
-	}
-
-	glFlush();
 	SwapBuffers();
 }
 

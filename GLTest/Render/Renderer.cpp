@@ -3,50 +3,54 @@
 #include <fstream>
 
 #include <wx/log.h>
+#include <glm/gtc/matrix_transform.hpp>
 
-namespace Render
+#include "../BatchMesh/RenderVertex.h"
+#include "../BatchMesh/RenderMeshNode.h"
+
+namespace render
 {
 
-GLubyte Renderer::m_indices[] = {
-    0, 1, 2, //Front face
-    0, 2, 3,
-    5, 0, 3,
-    5, 3, 4, //Right face
-    5, 6, 7, //Back face
-    5, 7, 4,
-    5, 6, 1, //Upper face
-    5, 1, 0,
-    1, 6, 7, //Left face
-    1, 7, 2,
-    7, 4, 3, //Bottom face
-    7, 3, 2,
-    };
-
-Vert Renderer::verts[] = {
-	glm::vec3(0.5f,  0.5f,  0.5f),  //V0
-	glm::vec3(0.0f, 1.0f, 0.0f),    //C0
-
-	glm::vec3(-0.5f,  0.5f,  0.5f), //V1
-	glm::vec3(0.0f, 1.0f, 0.0f),    //C1
-
-	glm::vec3(-0.5f, -0.5f,  0.5f), //V2
-	glm::vec3(0.0f, 1.0f, 0.0f),    //C2
-
-	glm::vec3(0.5f, -0.5f,  0.5f),  //V3
-	glm::vec3(0.0f, 1.0f, 0.0f),    //C3
-
-	glm::vec3(0.5f, -0.5f, -0.5f),  //V4
-	glm::vec3(0.0f, 1.0f, 0.0f),    //C4
-
-	glm::vec3(0.5f,  0.5f, -0.5f),  //V5
-	glm::vec3(0.0f, 1.0f, 0.0f),    //C5
-
-	glm::vec3(-0.5f,  0.5f, -0.5f), //V6
-	glm::vec3(0.0f, 1.0f, 0.0f),    //C6
-
-	glm::vec3(-0.5f, -0.5f, -0.5f), //V7
-	glm::vec3(0.0f, 1.0f, 0.0f),    //C7
-	};
+//GLubyte Renderer::m_indices[] = {
+//    0, 1, 2, //Front face
+//    0, 2, 3,
+//    5, 0, 3,
+//    5, 3, 4, //Right face
+//    5, 6, 7, //Back face
+//    5, 7, 4,
+//    5, 6, 1, //Upper face
+//    5, 1, 0,
+//    1, 6, 7, //Left face
+//    1, 7, 2,
+//    7, 4, 3, //Bottom face
+//    7, 3, 2,
+//    };
+//
+//Vert Renderer::verts[] = {
+//	glm::vec3(0.5f,  0.5f,  0.5f),  //V0
+//	glm::vec3(0.0f, 1.0f, 0.0f),    //C0
+//
+//	glm::vec3(-0.5f,  0.5f,  0.5f), //V1
+//	glm::vec3(0.0f, 1.0f, 0.0f),    //C1
+//
+//	glm::vec3(-0.5f, -0.5f,  0.5f), //V2
+//	glm::vec3(0.0f, 1.0f, 0.0f),    //C2
+//
+//	glm::vec3(0.5f, -0.5f,  0.5f),  //V3
+//	glm::vec3(0.0f, 1.0f, 0.0f),    //C3
+//
+//	glm::vec3(0.5f, -0.5f, -0.5f),  //V4
+//	glm::vec3(0.0f, 1.0f, 0.0f),    //C4
+//
+//	glm::vec3(0.5f,  0.5f, -0.5f),  //V5
+//	glm::vec3(0.0f, 1.0f, 0.0f),    //C5
+//
+//	glm::vec3(-0.5f,  0.5f, -0.5f), //V6
+//	glm::vec3(0.0f, 1.0f, 0.0f),    //C6
+//
+//	glm::vec3(-0.5f, -0.5f, -0.5f), //V7
+//	glm::vec3(0.0f, 1.0f, 0.0f),    //C7
+//	};
 
 Renderer::Renderer()
 	: m_loaded(false)
@@ -80,8 +84,6 @@ bool Renderer::LoadShaders()
 	glUseProgram(m_programHandle);
 
 	OutputDebugShaderAttributeInfo();
-
-	CreateVertexBuffers();
 
 	m_loaded = true;
 
@@ -276,7 +278,9 @@ void Renderer::OutputDebugShaderAttributeInfo()
 	}
 }
 
-void Renderer::CreateVertexBuffers()
+void Renderer::CreateVertexBuffers(
+	mesh::RenderMeshNode &renderMeshNode
+	)
 {
 	/////////////////// Create the VBO ////////////////////
 	// Create and set-up the vertex array object
@@ -290,15 +294,77 @@ void Renderer::CreateVertexBuffers()
 	m_indexBufferHandle = vboHandles[1];
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_positionBufferHandle);
-	glBufferData(GL_ARRAY_BUFFER, 8 * sizeof(Vert), verts, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLubyte *)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLubyte *)sizeof(glm::vec3));
+	glBufferData(GL_ARRAY_BUFFER, sizeof(renderMeshNode.GetVertices().get()), renderMeshNode.GetVertices().get(), GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::RenderVertex), (GLubyte *)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::RenderVertex), (GLubyte *)sizeof(glm::vec3));
 
 	glEnableVertexAttribArray(0);  // Vertex position
 	glEnableVertexAttribArray(1);  // Vertex color
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferHandle);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_indices), m_indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(renderMeshNode.GetIndices().get()), renderMeshNode.GetIndices().get(), GL_STATIC_DRAW);
+
+	//boost::shared_array<mesh::RenderVertex>&vertices = renderMeshNode.GetVertices();
+	//for(int i = 0; i < renderMeshNode.GetNumVerteces(); i++)	
+	//{
+	//	wxLogDebug("vert %d pos %f\n", i, vertices[i].m_position[0]);
+	//	wxLogDebug("vert %d pos %f\n", i, vertices[i].m_position[1]);
+	//	wxLogDebug("vert %d pos %f\n", i, vertices[i].m_position[2]);
+	//}
+
+	//boost::shared_array<unsigned int>&indices = renderMeshNode.GetIndices();
+	//for(int i = 0; i < renderMeshNode.GetNumIndeces(); i++)	
+	//{
+	//	wxLogDebug("index %d is vert index %d \n", i, indices[i]);
+	//}
+}
+
+//void Renderer::CreateVertexBuffers(
+//	mesh::RenderMeshNode &renderMeshNode
+//	)
+//{
+//	/////////////////// Create the VBO ////////////////////
+//	// Create and set-up the vertex array object
+//	glGenVertexArrays( 1, &m_vertexArrayHandle);
+//	glBindVertexArray(m_vertexArrayHandle);
+//
+//	// Create and populate the buffer objects
+//	GLuint vboHandles[2];
+//	glGenBuffers(2, vboHandles);
+//	m_positionBufferHandle = vboHandles[0];
+//	m_indexBufferHandle = vboHandles[1];
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, m_positionBufferHandle);
+//	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
+//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLubyte *)0);
+//	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLubyte *)sizeof(glm::vec3));
+//
+//	glEnableVertexAttribArray(0);  // Vertex position
+//	glEnableVertexAttribArray(1);  // Vertex color
+//
+//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferHandle);
+//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_indices), m_indices, GL_STATIC_DRAW);
+//}
+
+void Renderer::Render()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	//glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
+
+	float angle = 30.0f;
+	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+
+	GLint location = glGetUniformLocation(GetProgramHandle(), "RotationMatrix");
+	if(location >= 0)
+	{
+		glUniformMatrix4fv(location, 1, GL_FALSE, &rotationMatrix[0][0]);
+	
+
+		glBindVertexArray(GetVertexArrayHandle());
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, (GLvoid*)0);
+	}
+
+	glFlush();
 }
 
 Renderer::~Renderer()
