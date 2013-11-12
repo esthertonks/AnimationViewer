@@ -35,7 +35,7 @@ mesh::RenderMesh *BatchProcessor::CreateRenderMesh(
 		mesh::RenderMeshNode *renderMeshNode = new mesh::RenderMeshNode();
 		renderMesh->AddChildNode(*renderMeshNode);
 		renderMeshNode->AllocateIndices(numTriangles * 3);
-		boost::shared_array<unsigned int>& renderIndexArray = renderMeshNode->GetIndices();	
+		boost::shared_array<unsigned short>& renderIndexArray = renderMeshNode->GetIndices();	
 
 		renderMeshNode->AllocateVertices(numVertices); // Currently this is the same. TODO need to consider that when batching we will not know this count in advance.
 		boost::shared_array<mesh::RenderVertex>& renderVertexArray = renderMeshNode->GetVertices();
@@ -57,7 +57,7 @@ mesh::RenderMesh *BatchProcessor::CreateRenderMesh(
 				unsigned int vertexIndex = triangleArray[triangleIndex].m_vertexIndices[triangleCornerIndex];
 				mesh::RenderVertex &vertex = renderVertexArray[vertexIndex];
 
-				vertex.m_colour = glm::vec3(255.0f, 255.0f, 255.0f);//triangleArray[triangleIndex].m_colours[triangleCornerIndex];
+				vertex.m_colour = triangleArray[triangleIndex].m_colours[triangleCornerIndex];
 			}
 		}
 

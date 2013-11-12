@@ -1,6 +1,6 @@
 #include "Window.h"
 #include "../AnimationApp.h"
-#include "GLCanvas.h"
+#include "GLRenderer.h"
 
 namespace render
 {
@@ -44,7 +44,7 @@ void Window::OnShow(
 	wxShowEvent& WXUNUSED(event)
 	)
 {
-	wxGetApp().GetCanvas().InitGL();
+	wxGetApp().GetRenderer().InitGL();
 	wxLogDebug("Frame shown");
 }
 

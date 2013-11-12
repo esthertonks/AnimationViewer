@@ -1,5 +1,5 @@
 #include "AnimationApp.h"
-#include "Render/GLCanvas.h"
+#include "Render/GLRenderer.h"
 #include "Render/Window.h"
 #include "Import/FBXImport.h"
 #include "ImportMesh/Mesh.h"
@@ -15,7 +15,7 @@ bool AnimationApp::OnInit()
 
 	wxFrame *frame = new render::Window(NULL, wxT("Testing"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE);
 	
-	m_canvas = new render::GLCanvas(frame, wxID_ANY, wxDefaultPosition, wxSize(300, 300), wxSUNKEN_BORDER, "Animation App");
+	m_renderer = new render::GLRenderer(frame, wxID_ANY, wxDefaultPosition, wxSize(800, 800), wxSUNKEN_BORDER, "Animation App");
 	m_fbxImporter = new import::FBXImport();
 
 	frame->Show(TRUE);
@@ -35,7 +35,7 @@ void AnimationApp::OnIdle(
 	//RenderMesh
 	if(m_renderMesh)
 	{
-		m_canvas->RenderImmediate();
+		m_renderer->RenderImmediate();
 	}
 
 	evt.RequestMore(); // Request continuous rendering, rather than just once on idle
@@ -70,7 +70,7 @@ void AnimationApp::ImportFBX(
 
 		for(mesh::RenderMeshNode *node = m_renderMesh->GetNodeHierarchy(); node != NULL; node = node->m_next)
 		{
-			m_canvas->SetMeshNode(*node);
+			m_renderer->Prepare(*node);
 		}
 	}
 

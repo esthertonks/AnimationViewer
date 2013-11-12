@@ -1,8 +1,8 @@
-#include "Renderer.h"
-
-#include <fstream>
+#include "GLRenderer.h"
 
 #include <wx/log.h>
+#include <fstream>
+
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../BatchMesh/RenderVertex.h"
@@ -11,54 +11,142 @@
 namespace render
 {
 
-//GLubyte Renderer::m_indices[] = {
-//    0, 1, 2, //Front face
-//    0, 2, 3,
-//    5, 0, 3,
-//    5, 3, 4, //Right face
-//    5, 6, 7, //Back face
-//    5, 7, 4,
-//    5, 6, 1, //Upper face
-//    5, 1, 0,
-//    1, 6, 7, //Left face
-//    1, 7, 2,
-//    7, 4, 3, //Bottom face
-//    7, 3, 2,
-//    };
-//
-//Vert Renderer::verts[] = {
-//	glm::vec3(0.5f,  0.5f,  0.5f),  //V0
-//	glm::vec3(0.0f, 1.0f, 0.0f),    //C0
-//
-//	glm::vec3(-0.5f,  0.5f,  0.5f), //V1
-//	glm::vec3(0.0f, 1.0f, 0.0f),    //C1
-//
-//	glm::vec3(-0.5f, -0.5f,  0.5f), //V2
-//	glm::vec3(0.0f, 1.0f, 0.0f),    //C2
-//
-//	glm::vec3(0.5f, -0.5f,  0.5f),  //V3
-//	glm::vec3(0.0f, 1.0f, 0.0f),    //C3
-//
-//	glm::vec3(0.5f, -0.5f, -0.5f),  //V4
-//	glm::vec3(0.0f, 1.0f, 0.0f),    //C4
-//
-//	glm::vec3(0.5f,  0.5f, -0.5f),  //V5
-//	glm::vec3(0.0f, 1.0f, 0.0f),    //C5
-//
-//	glm::vec3(-0.5f,  0.5f, -0.5f), //V6
-//	glm::vec3(0.0f, 1.0f, 0.0f),    //C6
-//
-//	glm::vec3(-0.5f, -0.5f, -0.5f), //V7
-//	glm::vec3(0.0f, 1.0f, 0.0f),    //C7
-//	};
+BEGIN_EVENT_TABLE(GLRenderer, wxGLCanvas)
+	EVT_PAINT(GLRenderer::Paint)
+	EVT_SIZE(GLRenderer::OnSize)
+	EVT_SET_FOCUS(GLRenderer::OnSetFocus)
+END_EVENT_TABLE()
 
-Renderer::Renderer()
-	: m_loaded(false)
+GLRenderer::GLRenderer(
+	wxWindow *parent,
+	wxWindowID id,
+	const wxPoint& position,
+	const wxSize& size,
+	long style, 
+	const wxString& name
+	)
+	: wxGLCanvas(parent, id, position, size, style|wxFULL_REPAINT_ON_RESIZE, name), 
+	m_context(NULL)
 {
-
 }
 
-bool Renderer::LoadShaders()
+void GLRenderer::InitGL()
+{
+	if(m_context)
+	{
+		wxLogDebug("GL already initialised");
+		return;
+	}
+
+	m_initialised = false;
+	m_meshLoaded = false;
+	currentNumIndices = -1;
+
+	m_context = new wxGLContext(this);
+
+	SetCurrent(*m_context);
+
+	//TODO calling this here causes a GL expection - why???
+	//DebugPrintGLInfo();
+
+	glewExperimental = GL_TRUE;
+	GLenum status = glewInit();
+	if(status != GLEW_OK) //TODO - quit here and it leaks like a sieve.
+	{
+		wxLogDebug("Error initializing GLEW: ");
+		char *errorText = (char*)glewGetErrorString(status);
+		wxLogDebug(errorText);
+		return;
+	}
+
+	CheckOpenGLError(__FILE__,__LINE__);
+
+	std::map<std::string, GLuint> defaultShaderList; //TODO load from file system
+	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/basic.vert", GL_VERTEX_SHADER));
+	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/basic.frag", GL_FRAGMENT_SHADER));
+
+	LoadShaders(defaultShaderList);
+	CheckOpenGLError(__FILE__,__LINE__);
+	glClearColor(0.5f,0.5f,0.5f,1.0f);
+
+	//DebugPrintGLInfo();
+}
+
+//void GLRenderer::OnSize(
+//	wxSizeEvent& event
+//	)
+//{
+//    // Necessary to update the context on some platforms
+//    wxGLCanvas::OnSize(event);
+//
+//    // Reset the OpenGL view aspect
+//    //ResetProjectionMode();
+//}
+
+void GLRenderer::OnSetFocus(
+	wxFocusEvent& WXUNUSED(event)
+	)
+{
+}
+
+int GLRenderer::CheckOpenGLError(const char * file, int line) {
+	//
+	// Returns 1 if an OpenGL error occurred, 0 otherwise.
+	//
+	GLenum glErr;
+	int retCode = 0;
+
+	glErr = glGetError();
+	while (glErr != GL_NO_ERROR)
+	{
+		wxLogDebug("glError in file %s @ line %d: %s\n", file, line, gluErrorString(glErr));
+		retCode = 1;
+		glErr = glGetError();
+	}
+	return retCode;
+}
+
+void GLRenderer::DebugPrintGLInfo()
+{
+	const char* vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+	const char* renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+	const char* version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+	const char* glslVersion = reinterpret_cast<const char*>(glGetString( GL_SHADING_LANGUAGE_VERSION));
+
+	GLint major, minor;
+	glGetIntegerv(GL_MAJOR_VERSION, &major);
+	glGetIntegerv(GL_MINOR_VERSION, &minor);
+
+	wxLogDebug("Renderer info: %s version %s from %s", renderer, version, vendor);
+	wxLogDebug("GL version major: %s minor: %s", major, minor);
+
+	wxLogDebug("GLSL version: %s", glslVersion);
+
+	GLint numExtensions;
+	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+	for(int extension = 0; extension < numExtensions; extension++)
+	{
+		wxLogDebug("Extension: %s\n", glGetStringi(GL_EXTENSIONS, extension));
+	}
+}
+
+void GLRenderer::Paint(
+	wxPaintEvent& WXUNUSED(event)
+	)
+{
+	wxPaintDC(this);
+	Render();
+}
+
+void GLRenderer::RenderImmediate()
+{
+	wxClientDC(this);
+	Render();
+}
+
+bool GLRenderer::LoadShaders(
+	const std::map<std::string, GLuint> &defaultShaderList
+	)
 {
 	GLuint vertexShaderId = LoadShader("Shaders/basic.vert", GL_VERTEX_SHADER);
 	GLuint fragmentShaderId = LoadShader("Shaders/basic.frag", GL_FRAGMENT_SHADER);
@@ -85,7 +173,7 @@ bool Renderer::LoadShaders()
 
 	OutputDebugShaderAttributeInfo();
 
-	m_loaded = true;
+	m_initialised = true;
 
 	return true;
 }
@@ -94,7 +182,7 @@ bool Renderer::LoadShaders()
 	@brief Loads a shader of the specified name and type
 	@return GL_FALSE if failed or GL_TRUE if successfully loaded
 */
-GLuint Renderer::LoadShader(
+GLuint GLRenderer::LoadShader(
 	const std::string &shaderName, // The name of the shader to load
 	const GLenum shaderType	// The type of the shader ie GL_VERTEX_SHADER etc
 	)
@@ -122,7 +210,7 @@ GLuint Renderer::LoadShader(
 	return shaderId;
 }
 
-const char* Renderer::ReadShaderSourceFile(
+const char* GLRenderer::ReadShaderSourceFile(
 	const std::string &shaderName
 	)
 {
@@ -154,7 +242,7 @@ const char* Renderer::ReadShaderSourceFile(
 	@brief Compiles the shader with this shaderHandle and name
 	@return GL_FALSE if failed or GL_TRUE if successfully loaded
 */
-GLenum Renderer::CompileShader(
+GLenum GLRenderer::CompileShader(
 	const std::string &shaderName, // The name of the shader to load
 	const GLuint shaderId //GLuint id for the shader source
 	)
@@ -183,7 +271,7 @@ GLenum Renderer::CompileShader(
 	return compiled;
 }
 
-GLenum Renderer::LinkProgram(
+GLenum GLRenderer::LinkProgram(
 	const std::vector<GLuint> &shaders // List of shaders needed for this shader program
 	)
 {
@@ -241,7 +329,7 @@ GLenum Renderer::LinkProgram(
 	return linked;
 }
 
-void Renderer::OutputDebugShaderAttributeInfo()
+void GLRenderer::OutputDebugShaderAttributeInfo()
 {
 	GLint maxlength, noofAttributes;
 	glGetProgramiv(m_programHandle, GL_ACTIVE_ATTRIBUTES, &noofAttributes);
@@ -278,10 +366,16 @@ void Renderer::OutputDebugShaderAttributeInfo()
 	}
 }
 
-void Renderer::CreateVertexBuffers(
+void GLRenderer::Prepare(
 	mesh::RenderMeshNode &renderMeshNode
+	/*BatchList renderBatchList*/
 	)
 {
+	//for each in batchlist
+	//create and bind vbo - store id's in batchlist
+	//load textures - store in batch list
+
+
 	/////////////////// Create the VBO ////////////////////
 	// Create and set-up the vertex array object
 	glGenVertexArrays( 1, &m_vertexArrayHandle);
@@ -294,7 +388,8 @@ void Renderer::CreateVertexBuffers(
 	m_indexBufferHandle = vboHandles[1];
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_positionBufferHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(renderMeshNode.GetVertices().get()), renderMeshNode.GetVertices().get(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(mesh::RenderVertex) * renderMeshNode.GetNumVertices(), renderMeshNode.GetVertices().get(), GL_STATIC_DRAW);
+
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::RenderVertex), (GLubyte *)0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::RenderVertex), (GLubyte *)sizeof(glm::vec3));
 
@@ -302,10 +397,13 @@ void Renderer::CreateVertexBuffers(
 	glEnableVertexAttribArray(1);  // Vertex color
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferHandle);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(renderMeshNode.GetIndices().get()), renderMeshNode.GetIndices().get(), GL_STATIC_DRAW);
 
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * renderMeshNode.GetNumIndices(), renderMeshNode.GetIndices().get(), GL_STATIC_DRAW);
+
+	m_meshLoaded = true;
+	currentNumIndices = renderMeshNode.GetNumIndices();
 	//boost::shared_array<mesh::RenderVertex>&vertices = renderMeshNode.GetVertices();
-	//for(int i = 0; i < renderMeshNode.GetNumVerteces(); i++)	
+	//for(int i = 0; i < renderMeshNode.GetNumVertices(); i++)	
 	//{
 	//	wxLogDebug("vert %d pos %f\n", i, vertices[i].m_position[0]);
 	//	wxLogDebug("vert %d pos %f\n", i, vertices[i].m_position[1]);
@@ -313,63 +411,83 @@ void Renderer::CreateVertexBuffers(
 	//}
 
 	//boost::shared_array<unsigned int>&indices = renderMeshNode.GetIndices();
-	//for(int i = 0; i < renderMeshNode.GetNumIndeces(); i++)	
+	//for(int i = 0; i < renderMeshNode.GetNumIndices(); i++)	
 	//{
 	//	wxLogDebug("index %d is vert index %d \n", i, indices[i]);
 	//}
 }
 
-//void Renderer::CreateVertexBuffers(
-//	mesh::RenderMeshNode &renderMeshNode
+//void GLRenderer::Update(
+//	glm::mat4x4 &projectionMatrix, 
+//	glm::mat4x4 &viewMatrix
 //	)
 //{
-//	/////////////////// Create the VBO ////////////////////
-//	// Create and set-up the vertex array object
-//	glGenVertexArrays( 1, &m_vertexArrayHandle);
-//	glBindVertexArray(m_vertexArrayHandle);
-//
-//	// Create and populate the buffer objects
-//	GLuint vboHandles[2];
-//	glGenBuffers(2, vboHandles);
-//	m_positionBufferHandle = vboHandles[0];
-//	m_indexBufferHandle = vboHandles[1];
-//
-//	glBindBuffer(GL_ARRAY_BUFFER, m_positionBufferHandle);
-//	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
-//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLubyte *)0);
-//	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vert), (GLubyte *)sizeof(glm::vec3));
-//
-//	glEnableVertexAttribArray(0);  // Vertex position
-//	glEnableVertexAttribArray(1);  // Vertex color
-//
-//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferHandle);
-//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_indices), m_indices, GL_STATIC_DRAW);
+//	m_cameraMatrix = cameraMatrix;
 //}
 
-void Renderer::Render()
+void GLRenderer::Render(
+	)
 {
+	// TODO wxwidgets has not init callback so this has to be done here. bleugh.
+	if(!m_context)
+	{
+		//wxLogDebug("Error - no gl canvas available for rendering");
+		return;
+	}
+
+	if(!Initialised())
+	{
+		//wxLogDebug("Error - no shaders loaded");
+		return;
+	}
+
+	CheckOpenGLError(__FILE__,__LINE__);
+
+	SetCurrent(*m_context);
+
+		// for each in batchlist
+	// set transform matrix
+	// if different shader bind shader
+	// if different shader params setup params
+	// if different mesh bind vertex array
+	// draw
+
+
 	glClear(GL_COLOR_BUFFER_BIT);
 	//glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
 
-	float angle = 30.0f;
-	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
-
-	GLint location = glGetUniformLocation(GetProgramHandle(), "RotationMatrix");
-	if(location >= 0)
+	if(m_meshLoaded)
 	{
-		glUniformMatrix4fv(location, 1, GL_FALSE, &rotationMatrix[0][0]);
-	
+		float angle = 30.0f;
+		glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0.0f, 1.0f));
+		glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -1.f));
+		glm::mat4 projectionMatrix = glm::perspective(60.0f, (float)(GLint)GetSize().x/*windowwidth*/ / (float) (GLint)GetSize().y/*windowheight*/, 0.1f, 100.f);  // Create our perspective projection matrix
 
-		glBindVertexArray(GetVertexArrayHandle());
-		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, (GLvoid*)0);
+		GLint modelMatrixLocation = glGetUniformLocation(GetProgramHandle(), "modelMatrix");
+		GLint viewMatrixLocation = glGetUniformLocation(GetProgramHandle(), "viewMatrix");
+		GLint projectionMatrixLocation = glGetUniformLocation(GetProgramHandle(), "projectionMatrix");
+		if(modelMatrixLocation >= 0 && viewMatrixLocation >= 0 && projectionMatrixLocation >= 0)
+		{
+			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &modelMatrix[0][0]);
+			glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
+			glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
+	
+			//wxLogDebug("%u\n", GetVertexArrayHandle());
+			glBindVertexArray(GetVertexArrayHandle());
+
+			//m_indexBufferHandle
+			glDrawElements(GL_TRIANGLES, currentNumIndices, GL_UNSIGNED_SHORT, (GLvoid*)0);
+		}
 	}
 
 	glFlush();
+
+	SwapBuffers();
 }
 
-Renderer::~Renderer()
+GLRenderer::~GLRenderer()
 {
-	if(!m_loaded)
+	if(!Initialised())
 	{
 		return;
 	}
@@ -400,5 +518,8 @@ Renderer::~Renderer()
 
 	// Delete the shader program.
 	glDeleteProgram(m_programHandle);
+
+	delete m_context;
+	m_glContext = NULL;
 }
 }

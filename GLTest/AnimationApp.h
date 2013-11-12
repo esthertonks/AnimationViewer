@@ -4,7 +4,7 @@
 
 namespace render
 {
-	class GLCanvas;
+	class GLRenderer;
 }
 
 namespace import
@@ -24,9 +24,9 @@ class AnimationApp: public wxApp
 	public:
 	void StartRendering();
 	void StopRendering();
-	render::GLCanvas& GetCanvas()
+	render::GLRenderer& GetRenderer()
 	{
-		return *m_canvas;
+		return *m_renderer;
 	};
 
 	void ImportFBX(
@@ -41,7 +41,7 @@ class AnimationApp: public wxApp
 		wxIdleEvent& evt
 		);
 
-	render::GLCanvas *m_canvas;
+	render::GLRenderer *m_renderer;
 	import::FBXImport *m_fbxImporter;
 	mesh::RenderMesh *m_renderMesh; // Only ever one mesh to render at once right now
 };

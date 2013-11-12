@@ -16,12 +16,12 @@ public:
 	RenderMeshNode();
 	~RenderMeshNode(){};
 
-	int GetNumIndeces()
+	int GetNumIndices()
 	{
 		return m_numIndices;
 	}
 
-	int GetNumVerteces()
+	int GetNumVertices()
 	{
 		return m_numVertices;
 	}
@@ -31,7 +31,7 @@ public:
 		return m_vertexArray;
 	}
 
-	boost::shared_array<unsigned int> &GetIndices()
+	boost::shared_array<unsigned short> &GetIndices()
 	{
 		return m_indexArray;
 	}
@@ -48,8 +48,8 @@ private:
 
 
 	boost::shared_array<RenderVertex> m_vertexArray;
-	boost::shared_array<unsigned int> m_indexArray;
-	int m_numIndices;
+	boost::shared_array<unsigned short> m_indexArray;
+	short m_numIndices;
 	int m_numVertices;
 
 };

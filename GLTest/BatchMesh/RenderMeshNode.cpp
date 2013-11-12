@@ -23,7 +23,7 @@ void RenderMeshNode::AllocateIndices(
 	const int numIndices
 	)		
 {
-	m_indexArray = boost::shared_array<unsigned int>(new unsigned int[numIndices]);
+	m_indexArray = boost::shared_array<unsigned short>(new unsigned short[numIndices]);
 	m_numIndices = numIndices;
 }
 }
