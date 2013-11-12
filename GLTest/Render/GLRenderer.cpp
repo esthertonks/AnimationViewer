@@ -1,12 +1,13 @@
 #include "GLRenderer.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <wx/log.h>
 #include <fstream>
 
-#include <glm/gtc/matrix_transform.hpp>
-
 #include "../BatchMesh/RenderVertex.h"
 #include "../BatchMesh/RenderMeshNode.h"
+#include "Camera.h"
 
 namespace render
 {
@@ -14,7 +15,15 @@ namespace render
 BEGIN_EVENT_TABLE(GLRenderer, wxGLCanvas)
 	EVT_PAINT(GLRenderer::Paint)
 	EVT_SIZE(GLRenderer::OnSize)
+	EVT_ERASE_BACKGROUND(GLRenderer::OnEraseBackground)
 	EVT_SET_FOCUS(GLRenderer::OnSetFocus)
+
+	EVT_LEFT_DOWN(GLRenderer::OnLeftDown)
+	EVT_RIGHT_DOWN(GLRenderer::OnRightDown)
+	EVT_MOTION(GLRenderer::OnMouseMove)
+	EVT_MOUSEWHEEL(GLRenderer::OnMouseWheel)
+
+	EVT_KEY_DOWN(GLRenderer::OnKeyDown)
 END_EVENT_TABLE()
 
 GLRenderer::GLRenderer(
@@ -26,7 +35,8 @@ GLRenderer::GLRenderer(
 	const wxString& name
 	)
 	: wxGLCanvas(parent, id, position, size, style|wxFULL_REPAINT_ON_RESIZE, name), 
-	m_context(NULL)
+	m_context(NULL),
+	m_camera(new Camera())
 {
 }
 
@@ -67,26 +77,120 @@ void GLRenderer::InitGL()
 
 	LoadShaders(defaultShaderList);
 	CheckOpenGLError(__FILE__,__LINE__);
-	glClearColor(0.5f,0.5f,0.5f,1.0f);
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
 	//DebugPrintGLInfo();
 }
 
-//void GLRenderer::OnSize(
-//	wxSizeEvent& event
-//	)
-//{
-//    // Necessary to update the context on some platforms
-//    wxGLCanvas::OnSize(event);
-//
-//    // Reset the OpenGL view aspect
-//    //ResetProjectionMode();
-//}
+void GLRenderer::OnSize(
+	wxSizeEvent& event
+	)
+{
+    // Necessary to update the context on some platforms
+    wxGLCanvas::OnSize(event);
+
+	if(m_context)
+	{
+		SetCurrent(*m_context);
+	}
+
+	int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
+	int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
+	glViewport(0, 0, (GLint)width, (GLint)height);
+
+	//Refresh();
+	Render();
+}
+
+void GLRenderer::OnEraseBackground(
+	wxEraseEvent& WXUNUSED(event)
+	)
+{
+	// Make sure this does nothing to prevent flickering on resize
+}
 
 void GLRenderer::OnSetFocus(
 	wxFocusEvent& WXUNUSED(event)
 	)
 {
+}
+
+void GLRenderer::OnKeyDown(
+	wxKeyEvent& event
+	)
+{
+	wxString key;
+	long keycode = event.GetKeyCode();
+	switch (keycode)
+	{
+		case WXK_NUMPAD_PAGEUP:
+
+			break;
+		case WXK_NUMPAD_PAGEDOWN:
+
+			break;
+
+		case 'W':
+			m_camera->MoveForward(0.1f);
+			break;
+
+		case 'S':
+			m_camera->MoveBack(0.1f);
+			break;
+		case 'A':
+			m_camera->MoveLeft(0.1f);
+			break;
+
+		case 'D':
+			m_camera->MoveRight(0.1f);
+			break;
+	}
+}
+
+static float lastPosX = wxSystemSettings::GetMetric (wxSYS_SCREEN_X) / 2.0f;
+static float lastPosY = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y) / 2.0f;
+
+void GLRenderer::OnLeftDown(
+	wxMouseEvent& event
+	)
+{	lastPosX = event.m_x;
+	lastPosY = event.m_y;
+
+	event.Skip();
+}
+
+void GLRenderer::OnRightDown(
+	wxMouseEvent& event
+	)
+{
+	lastPosX = event.m_x;
+	lastPosY = event.m_y;
+}
+
+void GLRenderer::OnMouseWheel(
+	wxMouseEvent& event
+	)
+{
+}
+
+void GLRenderer::OnMouseMove(
+	wxMouseEvent& event
+	)
+{
+	float posX = event.m_x;
+	float posY = event.m_y;
+
+	if(event.LeftIsDown())
+	{
+		//m_camera->RotateAroundY((posX - lastPosX) * 0.1f);
+		m_camera->RotateAroundY((posX - lastPosX) * 0.1f);
+		m_camera->RotateAroundX((posY - lastPosY) * 0.1f);
+	}
+
+	lastPosX = posX;
+	lastPosY = posY;
+
+
 }
 
 int GLRenderer::CheckOpenGLError(const char * file, int line) {
@@ -452,16 +556,22 @@ void GLRenderer::Render(
 	// if different mesh bind vertex array
 	// draw
 
-
+	//glClearColor(1.0f,0.5f,0.5f,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	//glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
 
 	if(m_meshLoaded)
 	{
 		float angle = 30.0f;
-		glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0.0f, 1.0f));
-		glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -1.f));
-		glm::mat4 projectionMatrix = glm::perspective(60.0f, (float)(GLint)GetSize().x/*windowwidth*/ / (float) (GLint)GetSize().y/*windowheight*/, 0.1f, 100.f);  // Create our perspective projection matrix
+		//glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		//glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -20.f));
+		glm::mat4x4 modelMatrix = glm::mat4x4(1.0f);
+		glm::mat4x4& viewMatrix = m_camera->GetViewMatrix();
+
+		int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
+		int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
+
+		glm::mat4x4& projectionMatrix = glm::perspective(60.0f, (float)width / (float) height, 0.1f, 1000.f); 
 
 		GLint modelMatrixLocation = glGetUniformLocation(GetProgramHandle(), "modelMatrix");
 		GLint viewMatrixLocation = glGetUniformLocation(GetProgramHandle(), "viewMatrix");

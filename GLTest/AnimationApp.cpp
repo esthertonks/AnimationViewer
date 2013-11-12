@@ -13,7 +13,7 @@ bool AnimationApp::OnInit()
 {
 	m_renderMesh = NULL;
 
-	wxFrame *frame = new render::Window(NULL, wxT("Testing"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE);
+	wxFrame *frame = new render::Window(NULL, wxT("Testing"), wxDefaultPosition, wxSize(800, 800), wxDEFAULT_FRAME_STYLE);
 	
 	m_renderer = new render::GLRenderer(frame, wxID_ANY, wxDefaultPosition, wxSize(800, 800), wxSUNKEN_BORDER, "Animation App");
 	m_fbxImporter = new import::FBXImport();
@@ -35,6 +35,8 @@ void AnimationApp::OnIdle(
 	//RenderMesh
 	if(m_renderMesh)
 	{
+		//m_input->Do SomethingWithCamera();
+		//m_camera->GetView();
 		m_renderer->RenderImmediate();
 	}
 

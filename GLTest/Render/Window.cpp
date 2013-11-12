@@ -1,6 +1,7 @@
 #include "Window.h"
 #include "../AnimationApp.h"
 #include "GLRenderer.h"
+#include "Camera.h"
 
 namespace render
 {
@@ -11,6 +12,7 @@ BEGIN_EVENT_TABLE(Window, wxFrame)
 	EVT_MENU(wxID_OPEN, Window::OnOpen)
 	EVT_MENU(wxID_EXIT, Window::OnQuit)
 	EVT_MENU(wxID_ABOUT, Window::OnAbout)
+
 END_EVENT_TABLE()
 
 Window::Window(
@@ -94,4 +96,5 @@ void Window::OnAbout(
 	wxMessageBox("This is a wxWindows Hello world sample",
 		"About Hello World", wxOK | wxICON_INFORMATION, this);
 }
+
 }

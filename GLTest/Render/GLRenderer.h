@@ -21,6 +21,7 @@ namespace mesh
 
 namespace render
 {
+	class Camera;
 
 class GLRenderer : public wxGLCanvas
 {
@@ -37,6 +38,11 @@ public:
 
 	~GLRenderer();
 
+	Camera& GetCamera()
+	{
+		return *m_camera;
+	}
+
 	void Paint(
 		wxPaintEvent& event
 		);
@@ -44,12 +50,36 @@ public:
 	void RenderImmediate(
 		);
 
-	//void OnSize(
-	//	wxSizeEvent& event
-	//	);
+	void OnSize(
+		wxSizeEvent& event
+		);
+
+	void OnEraseBackground(
+		wxEraseEvent& event
+		);
 
 	void OnSetFocus(
 		wxFocusEvent& event
+		);
+
+	void OnKeyDown(
+		wxKeyEvent& event
+		);
+
+	void OnLeftDown(
+		wxMouseEvent& event
+		);
+
+	void OnRightDown(
+		wxMouseEvent& event
+		);
+
+	void OnMouseMove(
+		wxMouseEvent& event
+		);
+
+	void OnMouseWheel(
+		wxMouseEvent& event
 		);
 
 	void InitGL();
@@ -126,7 +156,7 @@ private:
 
 	int currentNumIndices; //temp!!!!
 
-	glm::mat4x4 m_cameraMatrix;
+	Camera *m_camera;
 };
 
 }
