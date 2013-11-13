@@ -7,7 +7,7 @@
 
 #include "../BatchMesh/RenderVertex.h"
 #include "../BatchMesh/RenderMeshNode.h"
-#include "Camera.h"
+#include "OrbitCamera.h"
 
 namespace render
 {
@@ -36,7 +36,7 @@ GLRenderer::GLRenderer(
 	)
 	: wxGLCanvas(parent, id, position, size, style|wxFULL_REPAINT_ON_RESIZE, name), 
 	m_context(NULL),
-	m_camera(new Camera())
+	m_camera(new OrbitCamera())
 {
 }
 
@@ -77,7 +77,7 @@ void GLRenderer::InitGL()
 
 	LoadShaders(defaultShaderList);
 	CheckOpenGLError(__FILE__,__LINE__);
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
 	//DebugPrintGLInfo();
 }
@@ -131,24 +131,24 @@ void GLRenderer::OnKeyDown(
 			break;
 
 		case 'W':
-			m_camera->MoveForward(0.1f);
+			m_camera->Move(-10);
 			break;
 
 		case 'S':
-			m_camera->MoveBack(0.1f);
+			m_camera->Move(10);
 			break;
 		case 'A':
-			m_camera->MoveLeft(0.1f);
+			m_camera->MoveLeft(10);
 			break;
 
 		case 'D':
-			m_camera->MoveRight(0.1f);
+			m_camera->MoveRight(10);
 			break;
 	}
 }
 
-static float lastPosX = wxSystemSettings::GetMetric (wxSYS_SCREEN_X) / 2.0f;
-static float lastPosY = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y) / 2.0f;
+static float lastPosX = -1;
+static float lastPosY = -1;
 
 void GLRenderer::OnLeftDown(
 	wxMouseEvent& event
@@ -171,20 +171,28 @@ void GLRenderer::OnMouseWheel(
 	wxMouseEvent& event
 	)
 {
+	int wheelRotation = event.GetWheelRotation();
+	m_camera->Move((wheelRotation / event.GetWheelDelta()) * 10);
 }
 
 void GLRenderer::OnMouseMove(
 	wxMouseEvent& event
 	)
 {
+	//Check that a mouse button was actually pressed before mouse move
+	if(lastPosX == -1 || lastPosY == -1)
+	{
+		return;
+	}
+
 	float posX = event.m_x;
 	float posY = event.m_y;
 
 	if(event.LeftIsDown())
 	{
 		//m_camera->RotateAroundY((posX - lastPosX) * 0.1f);
-		m_camera->RotateAroundY((posX - lastPosX) * 0.1f);
-		m_camera->RotateAroundX((posY - lastPosY) * 0.1f);
+		m_camera->RotateAroundY(-((posX - lastPosX) / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 10);
+		m_camera->RotateAroundX(((posY - lastPosY) / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 10);
 	}
 
 	lastPosX = posX;

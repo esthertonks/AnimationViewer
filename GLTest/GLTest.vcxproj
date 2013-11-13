@@ -94,7 +94,8 @@
     <ClCompile Include="ImportMesh\Vertex.cpp" />
     <ClCompile Include="Import\FBXImport.cpp" />
     <ClCompile Include="AnimationApp.cpp" />
-    <ClCompile Include="Render\Camera.cpp" />
+    <ClCompile Include="Render\FirstPersonCamera.cpp" />
+    <ClCompile Include="Render\OrbitCamera.cpp" />
     <ClCompile Include="Render\GLRenderer.cpp" />
     <ClCompile Include="Render\Window.cpp" />
   </ItemGroup>
@@ -113,7 +114,8 @@
     <ClInclude Include="ImportMesh\Triangle.h" />
     <ClInclude Include="ImportMesh\Vertex.h" />
     <ClInclude Include="Import\FBXImport.h" />
-    <ClInclude Include="Render\Camera.h" />
+    <ClInclude Include="Render\FirstPersonCamera.h" />
+    <ClInclude Include="Render\OrbitCamera.h" />
     <ClInclude Include="Render\GLRenderer.h" />
     <ClInclude Include="Render\Window.h" />
   </ItemGroup>

@@ -21,7 +21,7 @@ namespace mesh
 
 namespace render
 {
-	class Camera;
+	class OrbitCamera;
 
 class GLRenderer : public wxGLCanvas
 {
@@ -38,7 +38,7 @@ public:
 
 	~GLRenderer();
 
-	Camera& GetCamera()
+	OrbitCamera& GetCamera()
 	{
 		return *m_camera;
 	}
@@ -156,7 +156,7 @@ private:
 
 	int currentNumIndices; //temp!!!!
 
-	Camera *m_camera;
+	OrbitCamera *m_camera;
 };
 
 }

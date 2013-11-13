@@ -1,7 +1,6 @@
 #include "Window.h"
 #include "../AnimationApp.h"
 #include "GLRenderer.h"
-#include "Camera.h"
 
 namespace render
 {

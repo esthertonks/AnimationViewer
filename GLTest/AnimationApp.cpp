@@ -12,7 +12,7 @@ IMPLEMENT_APP(AnimationApp)
 bool AnimationApp::OnInit()
 {
 	m_renderMesh = NULL;
-
+	
 	wxFrame *frame = new render::Window(NULL, wxT("Testing"), wxDefaultPosition, wxSize(800, 800), wxDEFAULT_FRAME_STYLE);
 	
 	m_renderer = new render::GLRenderer(frame, wxID_ANY, wxDefaultPosition, wxSize(800, 800), wxSUNKEN_BORDER, "Animation App");
@@ -31,14 +31,20 @@ void AnimationApp::OnIdle(
 	)
 {
 	//Prepare Mesh - update animation
-
+	DWORD timeNow = timeGetTime();
 	//RenderMesh
 	if(m_renderMesh)
 	{
+		float delta = 0.001f * timeNow - m_lastTime;
+
+		float fps = 1/delta;
+
 		//m_input->Do SomethingWithCamera();
 		//m_camera->GetView();
+		//animate(delta);
 		m_renderer->RenderImmediate();
 	}
+	m_lastTime = timeNow;
 
 	evt.RequestMore(); // Request continuous rendering, rather than just once on idle
 }

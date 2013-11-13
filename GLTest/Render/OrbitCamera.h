@@ -4,12 +4,12 @@
 
 namespace render
 {
-class Camera
+class OrbitCamera
 {
 
 public:
-	Camera();
-	Camera(
+	OrbitCamera();
+	OrbitCamera(
 		glm::vec3 position
 		);
 
@@ -22,7 +22,7 @@ public:
 		glm::vec3 &position
 		);
 
-	void MoveForward(
+	void Move(
 		float amount
 		);
 
@@ -31,10 +31,6 @@ public:
 		);
 
 	void MoveRight(
-		float amount
-		);
-
-    void MoveBack(
 		float amount
 		);
 
@@ -69,11 +65,16 @@ private:
 	glm::vec3 m_right;
 	glm::vec3 m_forward;
 
+	glm::vec3 m_pivot;
 	//float m_speed;
 	//float m_zoom;
 
 	float m_yaw;	//Rotation around y axis
 	float m_pitch; // Rotation around x axis;
+
+	float m_zoom;	//Amount the camera is currently moved from 0
+
+	static float TWOPI;
 };
 }
 

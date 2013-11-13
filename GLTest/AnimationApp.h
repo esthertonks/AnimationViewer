@@ -44,6 +44,7 @@ class AnimationApp: public wxApp
 	render::GLRenderer *m_renderer;
 	import::FBXImport *m_fbxImporter;
 	mesh::RenderMesh *m_renderMesh; // Only ever one mesh to render at once right now
+	DWORD m_lastTime;
 };
 
 DECLARE_APP(AnimationApp)
