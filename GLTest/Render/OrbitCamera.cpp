@@ -73,7 +73,7 @@ void OrbitCamera::PanX(
 	}
 	else
 	{
-		float zoomScalar = m_zoom / 20;
+		float zoomScalar = m_zoom / 100;
 		m_position += (m_right * amount) * zoomScalar;
 		m_pivot += (m_right * amount) * zoomScalar;
 	}
@@ -102,37 +102,26 @@ void OrbitCamera::PanY(
 
 void OrbitCamera::RotateCamera()
 {
-	//Apply yaw:
-
 	// Translate to the pivot point
 	m_position -= m_pivot;
-	// Rotate around y
+
+	// Yaw - rotate around y
 	glm::mat4x4 yawMatrix;
 	yawMatrix = glm::rotate(yawMatrix, m_yaw, m_up);
 
-	m_position = glm::vec3(glm::vec4(m_position, 1) * yawMatrix);
-
-	// Translate back
-	m_position += m_pivot;
-
-	// Recalculate camera axes from forward direction and y axis
-	m_forward = glm::normalize(m_pivot - m_position);
-	m_right = glm::normalize(glm::cross(m_forward, m_up));
-
-	// Apply pitch:
-
-	// Translate to the pivot point
-	m_position -= m_pivot;
 	//Pitch - rotate around the x (right) axis
 	glm::mat4x4 pitchMatrix;
-	pitchMatrix = glm::rotate(pitchMatrix, m_pitch, m_right);
+	pitchMatrix = glm::rotate(yawMatrix, m_pitch, m_right);
 
+	// Apply rotation to translated position
 	m_position = glm::vec3(glm::vec4(m_position, 1) * pitchMatrix);
+
 	// Translate back
 	m_position += m_pivot;
 
-	// Recalculate camera axes from forward direction and right
+	// Recalculate camera axes
 	m_forward = glm::normalize(m_pivot - m_position);
+	m_right = glm::normalize(glm::cross(m_forward, m_up));
 	m_up = glm::normalize(glm::cross(m_right, m_forward));
 
 }
