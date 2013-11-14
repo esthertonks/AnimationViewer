@@ -8,9 +8,8 @@ class OrbitCamera
 {
 
 public:
-	OrbitCamera();
 	OrbitCamera(
-		glm::vec3 position
+		glm::vec3 &position
 		);
 
 	glm::mat4x4 &GetViewMatrix()
@@ -23,11 +22,17 @@ public:
 		return m_pivot;
 	}
 
+	void Reset();
+
 	void Zoom(
 		float amount
 		);
 
-	void Pan(
+	void PanX(
+		float amount
+		);
+
+	void PanY(
 		float amount
 		);
 
@@ -43,20 +48,15 @@ public:
 		float radians
 		);
 
-	void CalculateViewMatrix();
-
 private:
-
+	void CalculateViewMatrix();
 	void RotateCamera();
-
-	float Clamp(
-		float angle
-		) const;
 
 	glm::mat4x4 m_viewMatrix;
 	glm::mat4x4 m_projectionMatrix;
 
 	glm::vec3 m_position;
+	glm::vec3 m_startPosition;
 
 	glm::vec3 m_up;
 	glm::vec3 m_right;
@@ -70,9 +70,9 @@ private:
 
 	float m_zoom;	//Amount the camera is currently moved from 0
 
-	static float TWOPI;
-	static int MAXZOOM;
-	static int MINZOOM;
+	//static float TWOPI;
+	float m_maxZoom;
+	float m_minZoom;
 };
 }
 

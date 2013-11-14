@@ -37,7 +37,7 @@ GLRenderer::GLRenderer(
 	)
 	: wxGLCanvas(parent, id, position, size, style|wxFULL_REPAINT_ON_RESIZE, name), 
 	m_context(NULL),
-	m_camera(new OrbitCamera())
+	m_camera(new OrbitCamera(glm::vec3(100.0f, 0.0f, 0.0f)))
 {
 }
 
@@ -130,6 +130,11 @@ void GLRenderer::OnKeyDown(
 		case WXK_NUMPAD_PAGEDOWN:
 
 			break;
+
+		case 'F':
+			//TODO focus on mesh if the mesh has moved from zero
+			m_camera->Reset();
+			break;
 	}
 }
 
@@ -159,7 +164,7 @@ void GLRenderer::OnMouseWheelScroll(
 	)
 {
 	int wheelRotation = event.GetWheelRotation();
-	m_camera->Zoom((wheelRotation / event.GetWheelDelta()) * 100);
+	m_camera->Zoom(-(wheelRotation / event.GetWheelDelta()) * 10);
 }
 
 void GLRenderer::OnMouseWheelDown(
@@ -185,19 +190,41 @@ void GLRenderer::OnMouseMove(
 
 	if(event.AltDown())
 	{
+		float diffX = posX - lastPosX;
+		float diffY = posY - lastPosY;
+
 		if(event.LeftIsDown()) // Rotate around pivot
 		{
 			//m_camera->RotateAroundY((posX - lastPosX) * 0.1f);
-			m_camera->RotateAroundY(-((posX - lastPosX) / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 10);
-			m_camera->RotateAroundX(((posY - lastPosY) / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 10);
+			if(diffX != 0)
+			{
+				m_camera->RotateAroundY((diffX / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 100);
+				//wxLogDebug("angle %f", (diffX / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 10);
+			}
+
+			if(diffY != 0)
+			{
+				m_camera->RotateAroundX((diffY / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 100);
+				//wxLogDebug("angle %f", (diffY / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 10);
+			}
 		}
 		else if(event.RightIsDown()) // Zoom
 		{
-			m_camera->Zoom((posX - lastPosX) * 10);
+			if(diffY != 0)
+			{
+				m_camera->Zoom(-diffY);
+			}
 		}
 		else if(event.MiddleIsDown())
 		{
-			m_camera->Pan(-(posX - lastPosX) * 10);
+			if(diffX != 0)
+			{
+				m_camera->PanX(-diffX);
+			}
+			if(diffY != 0)
+			{
+				m_camera->PanY(diffY);
+			}
 		}
 	}
 
@@ -585,7 +612,7 @@ void GLRenderer::Render(
 		int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
 		int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
 
-		glm::mat4x4& projectionMatrix = glm::perspective(60.0f, (float)width / (float) height, 0.1f, 1000.f); 
+		glm::mat4x4& projectionMatrix = glm::perspective(90.0f, (float)width / (float) height, 0.0f, 1000.f); 
 
 		GLint modelMatrixLocation = glGetUniformLocation(GetProgramHandle(), "modelMatrix");
 		GLint viewMatrixLocation = glGetUniformLocation(GetProgramHandle(), "viewMatrix");
