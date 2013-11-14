@@ -195,17 +195,14 @@ void GLRenderer::OnMouseMove(
 
 		if(event.LeftIsDown()) // Rotate around pivot
 		{
-			//m_camera->RotateAroundY((posX - lastPosX) * 0.1f);
 			if(diffX != 0)
 			{
 				m_camera->RotateAroundY((diffX / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 100);
-				//wxLogDebug("angle %f", (diffX / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 10);
 			}
 
 			if(diffY != 0)
 			{
 				m_camera->RotateAroundX((diffY / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 100);
-				//wxLogDebug("angle %f", (diffY / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 10);
 			}
 		}
 		else if(event.RightIsDown()) // Zoom

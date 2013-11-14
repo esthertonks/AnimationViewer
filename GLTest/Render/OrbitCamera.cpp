@@ -102,27 +102,33 @@ void OrbitCamera::PanY(
 
 void OrbitCamera::RotateCamera()
 {
+	//Apply yaw:
+
+	// Translate to the pivot point
 	m_position -= m_pivot;
-	// Yaw - Rotate forward and right vectors around the up vector
+	// Rotate around y
 	glm::mat4x4 yawMatrix;
 	yawMatrix = glm::rotate(yawMatrix, m_yaw, m_up);
 
 	m_position = glm::vec3(glm::vec4(m_position, 1) * yawMatrix);
 
+	// Translate back
 	m_position += m_pivot;
 
-	// Recalculate camera axes from forward direction and up (which hasn't changed)
+	// Recalculate camera axes from forward direction and y axis
 	m_forward = glm::normalize(m_pivot - m_position);
 	m_right = glm::normalize(glm::cross(m_forward, m_up));
 
+	// Apply pitch:
+
+	// Translate to the pivot point
 	m_position -= m_pivot;
-	//Pitch - Rotate forward and up vectors around the right vector
+	//Pitch - rotate around the x (right) axis
 	glm::mat4x4 pitchMatrix;
 	pitchMatrix = glm::rotate(pitchMatrix, m_pitch, m_right);
 
 	m_position = glm::vec3(glm::vec4(m_position, 1) * pitchMatrix);
-	wxLogDebug("position %f, %f, %f\n", m_position.x, m_position.y, m_position.z);
-
+	// Translate back
 	m_position += m_pivot;
 
 	// Recalculate camera axes from forward direction and right
