@@ -21,7 +21,8 @@ BEGIN_EVENT_TABLE(GLRenderer, wxGLCanvas)
 	EVT_LEFT_DOWN(GLRenderer::OnLeftDown)
 	EVT_RIGHT_DOWN(GLRenderer::OnRightDown)
 	EVT_MOTION(GLRenderer::OnMouseMove)
-	EVT_MOUSEWHEEL(GLRenderer::OnMouseWheel)
+	EVT_MOUSEWHEEL(GLRenderer::OnMouseWheelScroll)
+	EVT_MIDDLE_DOWN(GLRenderer::OnMouseWheelDown)
 
 	EVT_KEY_DOWN(GLRenderer::OnKeyDown)
 END_EVENT_TABLE()
@@ -129,21 +130,6 @@ void GLRenderer::OnKeyDown(
 		case WXK_NUMPAD_PAGEDOWN:
 
 			break;
-
-		case 'W':
-			m_camera->Move(-10);
-			break;
-
-		case 'S':
-			m_camera->Move(10);
-			break;
-		case 'A':
-			m_camera->MoveLeft(10);
-			break;
-
-		case 'D':
-			m_camera->MoveRight(10);
-			break;
 	}
 }
 
@@ -153,7 +139,8 @@ static float lastPosY = -1;
 void GLRenderer::OnLeftDown(
 	wxMouseEvent& event
 	)
-{	lastPosX = event.m_x;
+{
+	lastPosX = event.m_x;
 	lastPosY = event.m_y;
 
 	event.Skip();
@@ -167,12 +154,20 @@ void GLRenderer::OnRightDown(
 	lastPosY = event.m_y;
 }
 
-void GLRenderer::OnMouseWheel(
+void GLRenderer::OnMouseWheelScroll(
 	wxMouseEvent& event
 	)
 {
 	int wheelRotation = event.GetWheelRotation();
-	m_camera->Move((wheelRotation / event.GetWheelDelta()) * 10);
+	m_camera->Zoom((wheelRotation / event.GetWheelDelta()) * 100);
+}
+
+void GLRenderer::OnMouseWheelDown(
+	wxMouseEvent& event
+	)
+{
+	lastPosX = event.m_x;
+	lastPosY = event.m_y;
 }
 
 void GLRenderer::OnMouseMove(
@@ -188,11 +183,22 @@ void GLRenderer::OnMouseMove(
 	float posX = event.m_x;
 	float posY = event.m_y;
 
-	if(event.LeftIsDown())
+	if(event.AltDown())
 	{
-		//m_camera->RotateAroundY((posX - lastPosX) * 0.1f);
-		m_camera->RotateAroundY(-((posX - lastPosX) / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 10);
-		m_camera->RotateAroundX(((posY - lastPosY) / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 10);
+		if(event.LeftIsDown()) // Rotate around pivot
+		{
+			//m_camera->RotateAroundY((posX - lastPosX) * 0.1f);
+			m_camera->RotateAroundY(-((posX - lastPosX) / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 10);
+			m_camera->RotateAroundX(((posY - lastPosY) / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 10);
+		}
+		else if(event.RightIsDown()) // Zoom
+		{
+			m_camera->Zoom((posX - lastPosX) * 10);
+		}
+		else if(event.MiddleIsDown())
+		{
+			m_camera->Pan(-(posX - lastPosX) * 10);
+		}
 	}
 
 	lastPosX = posX;

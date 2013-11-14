@@ -9,6 +9,8 @@ namespace render
 {
 
 float OrbitCamera::TWOPI = glm::pi<float>() * 2;
+int OrbitCamera::MAXZOOM = 640;
+int OrbitCamera::MINZOOM = 10;//TODO Currently this is right by the camera - isn't this backwards?????
 
 OrbitCamera::OrbitCamera()
 	: m_up(0.0f,1.0f,0.0f),		// Y axis
@@ -20,7 +22,7 @@ OrbitCamera::OrbitCamera()
 	m_pitch(0.0f),
 	m_zoom(glm::length(m_position))
 {
-	RecalculateAxes();
+	RotateCamera();
 	CalculateViewMatrix();
 }
 
@@ -33,65 +35,55 @@ OrbitCamera::OrbitCamera(
 	m_pivot(0.0f, 0.0f, 0.0f),
 	m_position(position)
 {
-	RecalculateAxes();
+	RotateCamera();
 	CalculateViewMatrix();
 }
 
-void OrbitCamera::SetPosition(
-	glm::vec3 &position
-	)
-{
-	m_viewMatrix[3][0] = position[0];
-	m_viewMatrix[3][1] = position[1];
-	m_viewMatrix[3][2] = position[2];
-	m_viewMatrix[3][3] = 1;
-}
-
-void OrbitCamera::Move(
+void OrbitCamera::Zoom(
 	float amount
 	)
 {
-	m_position += (m_forward * amount) / (m_zoom / 2);
-	m_zoom = glm::length(m_pivot - m_position);
-	RecalculateAxes();
+	glm::vec3 position = m_position + ((m_forward * amount) / (m_zoom / 2));
+	float zoom = glm::length(m_pivot - m_position);
+
+	m_position = position;
+	m_zoom = zoom;
+
+	wxLogDebug("zoom %f", m_zoom);
+
+	RotateCamera();
 	CalculateViewMatrix();
 }
 
-void OrbitCamera::MoveLeft(
+void OrbitCamera::Pan(
 	float amount
 	)
 {
 	m_position += (m_right * amount) / (m_zoom / 2);
 	m_pivot += (m_right * amount) / (m_zoom / 2);
 	//m_zoom = glm::length(m_pivot - m_position);
-	RecalculateAxes();
+	RotateCamera();
 	CalculateViewMatrix();
 }
 
-void OrbitCamera::MoveRight(
-	float amount
-	)
-{
-	m_position -= (m_right * amount) / (m_zoom / 2);
-	m_pivot -= (m_right * amount) / (m_zoom / 2);
-	//m_zoom = glm::length(m_pivot - m_position);
-	RecalculateAxes();
-	CalculateViewMatrix();
-}
+//void OrbitCamera::MoveRight(
+//	float amount
+//	)
+//{
+//	m_position -= (m_right * amount) / (m_zoom / 2);
+//	m_pivot -= (m_right * amount) / (m_zoom / 2);
+//	//m_zoom = glm::length(m_pivot - m_position);
+//	RotateCamera();
+//	CalculateViewMatrix();
+//}
 
-void OrbitCamera::RecalculateAxes()
+void OrbitCamera::RotateCamera()
 {
-	// Convert to vec4 for glm::rotate's matrix 4x4
-	glm::vec4 tempForward(m_forward, 1);
-	glm::vec4 tempRight(m_right, 1);
-	glm::vec4 tempUp(m_up, 1);
-	glm::vec4 tempPosition(m_position, 1);
-
 	// Yaw - Rotate forward and right vectors around the up vector
 	glm::mat4x4 yawMatrix;
 	yawMatrix = glm::rotate(yawMatrix, m_yaw, m_up);
 
-	m_position = glm::vec3(tempPosition * yawMatrix);
+	m_position = glm::vec3(glm::vec4(m_position, 1) * yawMatrix);
 
 	// Recalculate camera axes from forward direction and up (which hasn't changed)
 	m_forward = glm::normalize(m_pivot - m_position);
@@ -101,8 +93,7 @@ void OrbitCamera::RecalculateAxes()
 	glm::mat4x4 pitchMatrix;
 	pitchMatrix = glm::rotate(pitchMatrix, m_pitch, m_right);
 
-	glm::vec4 newPosition(m_position, 1);
-	m_position = glm::vec3(newPosition * pitchMatrix);
+	m_position = glm::vec3(glm::vec4(m_position, 1) * pitchMatrix);
 
 	// Recalculate camera axes from forward direction and right
 	m_forward = glm::normalize(m_pivot - m_position);
@@ -130,8 +121,9 @@ void OrbitCamera::RotateAroundX(
 	)
 {
 	m_pitch = angle * (m_zoom / 2);
+	m_pitch = Clamp(m_pitch);
 	//m_pitch = ClampTo360(m_pitch);
-	RecalculateAxes();
+	RotateCamera();
 	CalculateViewMatrix();
 }
 
@@ -141,14 +133,15 @@ void OrbitCamera::RotateAroundY(
 {
 	//wxLogDebug("Rot around Yangle : %f\n", angle);
 	m_yaw = angle * (m_zoom / 2);
+	m_yaw = Clamp(m_yaw);
 	//wxLogDebug("Yaw1 : %f\n", m_yaw);
 	//m_yaw = ClampTo360(m_yaw);
 	//wxLogDebug("Yaw2 : %f\n", m_yaw);
-	RecalculateAxes();
+	RotateCamera();
 	CalculateViewMatrix();
 }
 
-float OrbitCamera::ClampTo360(
+float OrbitCamera::Clamp(
 	float angle
 	) const
 {

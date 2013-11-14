@@ -78,7 +78,11 @@ public:
 		wxMouseEvent& event
 		);
 
-	void OnMouseWheel(
+	void OnMouseWheelScroll(
+		wxMouseEvent& event
+		);
+
+	void OnMouseWheelDown(
 		wxMouseEvent& event
 		);
 

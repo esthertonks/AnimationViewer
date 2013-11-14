@@ -18,19 +18,16 @@ public:
 		return m_viewMatrix;
 	};
 
-	void SetPosition(
-		glm::vec3 &position
-		);
+	glm::vec3 &GetPivot()
+	{
+		return m_pivot;
+	}
 
-	void Move(
+	void Zoom(
 		float amount
 		);
 
-	void MoveLeft(
-		float amount
-		);
-
-	void MoveRight(
+	void Pan(
 		float amount
 		);
 
@@ -50,9 +47,9 @@ public:
 
 private:
 
-	void RecalculateAxes();
+	void RotateCamera();
 
-	float ClampTo360(
+	float Clamp(
 		float angle
 		) const;
 
@@ -67,7 +64,6 @@ private:
 
 	glm::vec3 m_pivot;
 	//float m_speed;
-	//float m_zoom;
 
 	float m_yaw;	//Rotation around y axis
 	float m_pitch; // Rotation around x axis;
@@ -75,6 +71,8 @@ private:
 	float m_zoom;	//Amount the camera is currently moved from 0
 
 	static float TWOPI;
+	static int MAXZOOM;
+	static int MINZOOM;
 };
 }
 
