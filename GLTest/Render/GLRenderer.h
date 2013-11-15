@@ -95,7 +95,7 @@ public:
 
 	void DebugPrintGLInfo();
 
-		inline GLuint GetProgramHandle()
+	inline GLuint GetProgramHandle()
 	{
 		return m_programHandle;
 	}

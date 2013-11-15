@@ -13,6 +13,8 @@ public:
 
 	//glm::vec2 m_uv[2];
 	glm::vec3 m_colour;
+
+	glm::vec3 m_normal;
 };
 
 }

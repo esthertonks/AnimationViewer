@@ -6,6 +6,8 @@
 
 #include <assert.h>
 
+#include <wx/log.h>
+
 namespace import
 {
 
@@ -330,7 +332,8 @@ void FBXImport::LoadNormals(
 		for (int triangleCornerId = 0; triangleCornerId < 3; triangleCornerId++)
 		{
 			int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
-			LoadVector4VertexElement(*normalElement, triangle.m_normals[triangleCornerId], triangleCornerId, vertexIndex);
+			LoadVector4VertexElement(*normalElement, triangle.m_normals[triangleCornerId], (triangleIndex * 3) + triangleCornerId, vertexIndex);
+			wxLogDebug("NormalA %f, %f, %f\n", triangle.m_normals[triangleCornerId].x, triangle.m_normals[triangleCornerId].y, triangle.m_normals[triangleCornerId].z);
 		}
 	}
 }

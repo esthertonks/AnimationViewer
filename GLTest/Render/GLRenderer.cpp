@@ -73,8 +73,8 @@ void GLRenderer::InitGL()
 	CheckOpenGLError(__FILE__,__LINE__);
 
 	std::map<std::string, GLuint> defaultShaderList; //TODO load from file system
-	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/basic.vert", GL_VERTEX_SHADER));
-	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/basic.frag", GL_FRAGMENT_SHADER));
+	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/default.vert", GL_VERTEX_SHADER));
+	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/default.frag", GL_FRAGMENT_SHADER));
 
 	LoadShaders(defaultShaderList);
 	CheckOpenGLError(__FILE__,__LINE__);
@@ -247,7 +247,11 @@ void GLRenderer::OnMouseMove(
 
 }
 
-int GLRenderer::CheckOpenGLError(const char * file, int line) {
+int GLRenderer::CheckOpenGLError(
+	const char * file, 
+	int line
+	)
+{
 	//
 	// Returns 1 if an OpenGL error occurred, 0 otherwise.
 	//
@@ -306,15 +310,15 @@ bool GLRenderer::LoadShaders(
 	const std::map<std::string, GLuint> &defaultShaderList
 	)
 {
-	GLuint vertexShaderId = LoadShader("Shaders/basic.vert", GL_VERTEX_SHADER);
-	GLuint fragmentShaderId = LoadShader("Shaders/basic.frag", GL_FRAGMENT_SHADER);
+	GLuint vertexShaderId = LoadShader("Shaders/default.vert", GL_VERTEX_SHADER);
+	GLuint fragmentShaderId = LoadShader("Shaders/default.frag", GL_FRAGMENT_SHADER);
 
-	if(!CompileShader("basic.vert", vertexShaderId))
+	if(!CompileShader("default.vert", vertexShaderId))
 	{
 		return false;
 	}
 
-	if(!CompileShader("basic.frag", fragmentShaderId))
+	if(!CompileShader("default.frag", fragmentShaderId))
 	{
 		return false;
 	}
@@ -413,7 +417,7 @@ GLenum GLRenderer::CompileShader(
 	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &compiled);
 	if(!compiled)
 	{
-		wxLogDebug("Shader compilation failed for shader %s\n", shaderName);
+		wxLogDebug("Shader compilation failed for shader %s\n", shaderName.c_str());
 
 		GLint errorTextLength;
 		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &errorTextLength);
@@ -423,7 +427,7 @@ GLenum GLRenderer::CompileShader(
 		GLsizei written;
 		glGetShaderInfoLog(shaderId, errorTextLength, &written, &errorText[0]);
 
-		wxLogDebug("Shader compilation errors: \n%s", errorText);
+		wxLogDebug("Shader compilation errors: \n%s", errorText.c_str());
 	}
 
 	return compiled;
@@ -550,9 +554,11 @@ void GLRenderer::Prepare(
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::RenderVertex), (GLubyte *)0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::RenderVertex), (GLubyte *)sizeof(glm::vec3));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::RenderVertex), (GLubyte *)(sizeof(glm::vec3) * 2));
 
 	glEnableVertexAttribArray(0);  // Vertex position
 	glEnableVertexAttribArray(1);  // Vertex color
+	glEnableVertexAttribArray(2);  // Vertex normal
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferHandle);
 
@@ -573,6 +579,11 @@ void GLRenderer::Prepare(
 	//{
 	//	wxLogDebug("index %d is vert index %d \n", i, indices[i]);
 	//}
+	GLint diffuseReflectLocation = glGetUniformLocation(GetProgramHandle(), "Kd");
+	glUniform3f(diffuseReflectLocation, 0.3f, 0.5f, 0.3f);
+
+	GLint lightIntensityLocation = glGetUniformLocation(GetProgramHandle(), "Ld");
+	glUniform3f(lightIntensityLocation, 1.0f, 1.0f, 1.0f);
 }
 
 //void GLRenderer::Update(
@@ -634,17 +645,28 @@ void GLRenderer::Render(
 		GLint modelMatrixLocation = glGetUniformLocation(GetProgramHandle(), "modelMatrix");
 		GLint viewMatrixLocation = glGetUniformLocation(GetProgramHandle(), "viewMatrix");
 		GLint projectionMatrixLocation = glGetUniformLocation(GetProgramHandle(), "projectionMatrix");
+		GLint normalMatrixLocation = glGetUniformLocation(GetProgramHandle(), "normalMatrix");
 		if(modelMatrixLocation >= 0 && viewMatrixLocation >= 0 && projectionMatrixLocation >= 0)
 		{
+			glm::mat4x4 modelViewMatrix = viewMatrix * modelMatrix;
+			glm::mat3x3 normalMatrix = glm::mat3x3(glm::vec3(modelViewMatrix[0]), glm::vec3(modelViewMatrix[1]), glm::vec3(modelViewMatrix[2]));
+
+			GLint lightPositionLocation = glGetUniformLocation(GetProgramHandle(), "lightPosition");
+
+			glm::vec4 lightPositionMatrix = viewMatrix * glm::vec4(100.0f, 5.0f, 2.0f, 1.0f);
+			glUniform4f(lightPositionLocation, lightPositionMatrix.x, lightPositionMatrix.y, lightPositionMatrix.z, lightPositionMatrix.w);
+
 			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &modelMatrix[0][0]);
 			glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
 			glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
-	
+			glUniformMatrix3fv(normalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
+
 			//wxLogDebug("%u\n", GetVertexArrayHandle());
 			glBindVertexArray(GetVertexArrayHandle());
 
 			//m_indexBufferHandle
 			glDrawElements(GL_TRIANGLES, currentNumIndices, GL_UNSIGNED_SHORT, (GLvoid*)0);
+
 		}
 	}
 

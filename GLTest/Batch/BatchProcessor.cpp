@@ -6,6 +6,8 @@
 #include "../BatchMesh/RenderMesh.h"
 #include "../BatchMesh/RenderMeshNode.h"
 
+#include <wx\log.h>
+
 namespace batch
 {
 
@@ -17,6 +19,9 @@ BatchProcessor::BatchProcessor()
 BatchProcessor::~BatchProcessor()
 {
 }
+
+//TODO traingle strips
+//https://developer.apple.com/library/ios/documentation/3ddrawing/conceptual/opengles_programmingguide/TechniquesforWorkingwithVertexData/TechniquesforWorkingwithVertexData.html
 
 mesh::RenderMesh *BatchProcessor::CreateRenderMesh(
 	mesh::Mesh &importMesh
@@ -57,7 +62,9 @@ mesh::RenderMesh *BatchProcessor::CreateRenderMesh(
 				unsigned int vertexIndex = triangleArray[triangleIndex].m_vertexIndices[triangleCornerIndex];
 				mesh::RenderVertex &vertex = renderVertexArray[vertexIndex];
 
-				vertex.m_colour = triangleArray[triangleIndex].m_colours[triangleCornerIndex];
+				vertex.m_colour = triangleArray[triangleIndex].m_colours[triangleCornerIndex]; //TODO currently this is just getting overriden by the next
+				vertex.m_normal = glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]); //TODO these need splitting
+				//wxLogDebug("NormalA %f, %f, %f\n", triangleArray[triangleIndex].m_normals[triangleCornerIndex].x, triangleArray[triangleIndex].m_normals[triangleCornerIndex].y, triangleArray[triangleIndex].m_normals[triangleCornerIndex].z);
 			}
 		}
 
@@ -68,6 +75,9 @@ mesh::RenderMesh *BatchProcessor::CreateRenderMesh(
 			renderVertexArray[vertexIndex].m_position[0] = vertexArray[vertexIndex].m_position[0];
 			renderVertexArray[vertexIndex].m_position[1] = vertexArray[vertexIndex].m_position[1];
 			renderVertexArray[vertexIndex].m_position[2] = vertexArray[vertexIndex].m_position[2];
+
+			renderVertexArray[vertexIndex].m_normal = glm::normalize(renderVertexArray[vertexIndex].m_normal);
+			wxLogDebug("NormalB %f, %f, %f\n", renderVertexArray[vertexIndex].m_normal.x, renderVertexArray[vertexIndex].m_normal.y, renderVertexArray[vertexIndex].m_normal.z);
 		}
 	}
 
