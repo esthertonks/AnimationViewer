@@ -80,6 +80,13 @@ void GLRenderer::InitGL()
 	CheckOpenGLError(__FILE__,__LINE__);
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
+	int width = GetSize().GetWidth();
+	int height = GetSize().GetHeight();
+
+//	int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
+//	int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
+	glViewport(0, 0, (GLint)width, (GLint)height);
+
 	//DebugPrintGLInfo();
 }
 
@@ -95,8 +102,11 @@ void GLRenderer::OnSize(
 		SetCurrent(*m_context);
 	}
 
-	int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
-	int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
+	int width = event.GetSize().GetWidth();
+	int height = event.GetSize().GetHeight();
+
+//	int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
+//	int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
 	glViewport(0, 0, (GLint)width, (GLint)height);
 
 	//Refresh();
@@ -606,10 +616,14 @@ void GLRenderer::Render(
 		glm::mat4x4 modelMatrix = glm::mat4x4(1.0f);
 		glm::mat4x4& viewMatrix = m_camera->GetViewMatrix();
 
-		int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
-		int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
+		//int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
+		//int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
 
-		glm::mat4x4& projectionMatrix = glm::perspective(90.0f, (float)width / (float) height, 0.0f, 1000.f); 
+			
+		int width = GetSize().GetWidth();
+		int height = GetSize().GetHeight();
+
+		glm::mat4x4& projectionMatrix = glm::perspective(40.0f, (float)width / (float) height, 1.0f, 600.f); 
 
 		GLint modelMatrixLocation = glGetUniformLocation(GetProgramHandle(), "modelMatrix");
 		GLint viewMatrixLocation = glGetUniformLocation(GetProgramHandle(), "viewMatrix");
