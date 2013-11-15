@@ -226,11 +226,17 @@ void GLRenderer::OnMouseMove(
 		{
 			if(diffX != 0)
 			{
-				m_camera->PanX(-diffX);
+				int width = GetSize().GetWidth();
+				int height = GetSize().GetHeight();
+
+				m_camera->PanX(-diffX, (float)width / (float)height);
 			}
 			if(diffY != 0)
 			{
-				m_camera->PanY(diffY);
+				int width = GetSize().GetWidth();
+				int height = GetSize().GetHeight();
+
+				m_camera->PanY(diffY, (float)width / (float)height);
 			}
 		}
 	}

@@ -29,11 +29,13 @@ public:
 		);
 
 	void PanX(
-		float amount
+		float amount,
+		float aspectRatio
 		);
 
 	void PanY(
-		float amount
+		float amount,
+		float aspectRatio
 		);
 
 	void LookAt(
@@ -51,6 +53,10 @@ public:
 private:
 	void CalculateViewMatrix();
 	void RotateCamera();
+
+	float CalculateZoomCorrection(
+		float aspectRatio
+		);
 
 	glm::mat4x4 m_viewMatrix;
 	glm::mat4x4 m_projectionMatrix;

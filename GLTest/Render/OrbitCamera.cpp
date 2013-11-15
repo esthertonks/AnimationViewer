@@ -63,41 +63,38 @@ void OrbitCamera::Zoom(
 }
 
 void OrbitCamera::PanX(
-	float amount
+	float amount,
+	float aspectRatio
 	)
 {
-	if(m_zoom == 0)
-	{
-		m_position += m_right * amount;
-		m_pivot += m_right * amount;
-	}
-	else
-	{
-		float zoomScalar = m_zoom / 100;
-		m_position += (m_right * amount) * zoomScalar;
-		m_pivot += (m_right * amount) * zoomScalar;
-	}
+	float zoomCorrection = CalculateZoomCorrection(aspectRatio);
+
+	m_position += (m_right * amount) / zoomCorrection;
+	m_pivot += (m_right * amount) / zoomCorrection;
 
 	CalculateViewMatrix();
 }
 
 void OrbitCamera::PanY(
-	float amount
+	float amount,
+	float aspectRatio
 	)
 {
-	if(m_zoom == 0)
-	{
-		m_position += m_up * amount;
-		m_pivot += m_up * amount;
-	}
-	else
-	{
-		float zoomScalar = m_zoom / 20;
-		m_position += (m_up * amount) * zoomScalar;
-		m_pivot += (m_up * amount) * zoomScalar;
-	}
+	float zoomCorrection = CalculateZoomCorrection(aspectRatio);
+
+	m_position += (m_up * amount)/ zoomCorrection;
+	m_pivot += (m_up * amount) / zoomCorrection;
 
 	CalculateViewMatrix();
+}
+
+float OrbitCamera::CalculateZoomCorrection(
+	float aspectRatio
+	)
+{
+	glm::vec3 actualPosition = m_position + (m_forward * -m_zoom);
+	float distance = glm::length(actualPosition);
+	return (aspectRatio * 1000)/distance;
 }
 
 void OrbitCamera::RotateCamera()
