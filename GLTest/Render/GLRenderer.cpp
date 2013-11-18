@@ -86,7 +86,11 @@ void GLRenderer::InitGL()
 //	int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
 //	int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
 	glViewport(0, 0, (GLint)width, (GLint)height);
+	glCullFace(GL_BACK);
 
+	glClearDepth(1.0f);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_DEPTH_TEST);
 	//DebugPrintGLInfo();
 }
 
@@ -622,21 +626,20 @@ void GLRenderer::Render(
 	// draw
 
 	//glClearColor(1.0f,0.5f,0.5f,1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
 
 	if(m_meshLoaded)
 	{
 		float angle = 30.0f;
-		//glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0.0f, 0.0f));
 		//glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -20.f));
-		glm::mat4x4 modelMatrix = glm::mat4x4(1.0f);
+		//glm::mat4x4 modelMatrix = glm::mat4x4(1.0f);
 		glm::mat4x4& viewMatrix = m_camera->GetViewMatrix();
 
 		//int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
 		//int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
 
-			
 		int width = GetSize().GetWidth();
 		int height = GetSize().GetHeight();
 
@@ -644,7 +647,7 @@ void GLRenderer::Render(
 
 		GLint modelMatrixLocation = glGetUniformLocation(GetProgramHandle(), "modelMatrix");
 		GLint viewMatrixLocation = glGetUniformLocation(GetProgramHandle(), "viewMatrix");
-		GLint projectionMatrixLocation = glGetUniformLocation(GetProgramHandle(), "projectionMatrix");
+		GLint projectionMatrixLocation = glGetUniformLocation(GetProgramHandle(), "projectionMatrix"); //TODO only needs setting on resize
 		GLint normalMatrixLocation = glGetUniformLocation(GetProgramHandle(), "normalMatrix");
 		if(modelMatrixLocation >= 0 && viewMatrixLocation >= 0 && projectionMatrixLocation >= 0)
 		{
@@ -653,7 +656,7 @@ void GLRenderer::Render(
 
 			GLint lightPositionLocation = glGetUniformLocation(GetProgramHandle(), "lightPosition");
 
-			glm::vec4 lightPositionMatrix = viewMatrix * glm::vec4(100.0f, 5.0f, 2.0f, 1.0f);
+			glm::vec4 lightPositionMatrix = viewMatrix * glm::vec4(50.0f,5.0f,2.0f,1.0f);
 			glUniform4f(lightPositionLocation, lightPositionMatrix.x, lightPositionMatrix.y, lightPositionMatrix.z, lightPositionMatrix.w);
 
 			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &modelMatrix[0][0]);

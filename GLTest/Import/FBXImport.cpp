@@ -113,17 +113,32 @@ bool FBXImport::LoadMeshNodes(
 {
 	// Make sure the mesh is triangulated
 	FbxGeometryConverter fbxGeometryConverter(m_fbxManager);	
+
+	// Check that this is a mesh
+	FbxNodeAttribute* const fbxNodeAttribute = fbxNode.GetNodeAttribute();
+	if(fbxNodeAttribute)
+	{
+		const FbxNodeAttribute::EType fbxAttributeType = fbxNodeAttribute->GetAttributeType();
+
+		if(!fbxAttributeType == FbxNodeAttribute::eMesh)
+		{
+			FBXSDK_printf("Node %s type is %d. Only node of type eMesh (4) can be loaded\n", fbxNode.GetName(), fbxAttributeType);
+			return false;
+		}
+	}
+
 	FbxMesh* fbxMesh = fbxNode.GetMesh();
 	if(fbxMesh)
 	{
 		if(!fbxMesh->IsTriangleMesh())
 		{
-			FbxMesh* fbxMesh = (FbxMesh *)fbxGeometryConverter.Triangulate(fbxNode.GetMesh(), true);
-			if(!fbxMesh)
+			FbxNodeAttribute* fbxNodeAttribute = fbxGeometryConverter.Triangulate(fbxNode.GetMesh(), true);
+			if(!fbxNodeAttribute)
 			{
 				FBXSDK_printf("Mesh Triangulation failed. Import aborted.\n");
 				return false;
 			}
+			fbxMesh = (FbxMesh *)fbxNodeAttribute;
 		}
 
 		m_mesh->AddChildNode(meshNode);
@@ -211,7 +226,7 @@ void FBXImport::LoadMaterials(
 			unsigned int textureCount = materialProperty.GetSrcObjectCount<FbxTexture>();
 			if(textureCount == 0)
 			{
-				FBXSDK_printf("Material %s has no associated texture. Mesh will not be textured.\n"); // May support more uv sets later
+				FBXSDK_printf("Material %s has no associated texture. Mesh will not be textured.\n", materialProperty.GetName()); // May support more uv sets later
 			}
 			else // If there is a texture associated with this material
 			{

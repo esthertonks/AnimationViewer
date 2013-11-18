@@ -63,7 +63,7 @@ mesh::RenderMesh *BatchProcessor::CreateRenderMesh(
 				mesh::RenderVertex &vertex = renderVertexArray[vertexIndex];
 
 				vertex.m_colour = triangleArray[triangleIndex].m_colours[triangleCornerIndex]; //TODO currently this is just getting overriden by the next
-				vertex.m_normal = glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]); //TODO these need splitting
+				vertex.m_normal += glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]); //TODO these need splitting
 				//wxLogDebug("NormalA %f, %f, %f\n", triangleArray[triangleIndex].m_normals[triangleCornerIndex].x, triangleArray[triangleIndex].m_normals[triangleCornerIndex].y, triangleArray[triangleIndex].m_normals[triangleCornerIndex].z);
 			}
 		}
