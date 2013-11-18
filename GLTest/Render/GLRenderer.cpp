@@ -73,10 +73,10 @@ void GLRenderer::InitGL()
 	CheckOpenGLError(__FILE__,__LINE__);
 
 	std::map<std::string, GLuint> defaultShaderList; //TODO load from file system
-	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/phong.vert", GL_VERTEX_SHADER));
-	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/phong.frag", GL_FRAGMENT_SHADER));
+	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/flat.vert", GL_VERTEX_SHADER));
+	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/flat.frag", GL_FRAGMENT_SHADER));
 
-	LoadShaders(defaultShaderList);
+	LoadShaders(defaultShaderList); //TODO failure message when failed?
 	CheckOpenGLError(__FILE__,__LINE__);
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
@@ -314,21 +314,19 @@ bool GLRenderer::LoadShaders(
 	const std::map<std::string, GLuint> &defaultShaderList
 	)
 {
-	GLuint vertexShaderId = LoadShader("Shaders/phong.vert", GL_VERTEX_SHADER);
-	GLuint fragmentShaderId = LoadShader("Shaders/phong.frag", GL_FRAGMENT_SHADER);
-
-	if(!CompileShader("phong.vert", vertexShaderId))
+	for(std::map<std::string, GLuint>::const_iterator shaderIterator = defaultShaderList.begin(); shaderIterator != defaultShaderList.end(); shaderIterator++)
 	{
-		return false;
-	}
+		// Pass the name and type to the shader loading //TODO a map with a better name than first?!
+		GLuint shaderId = LoadShader(shaderIterator->first, shaderIterator->second);
 
-	if(!CompileShader("phong.frag", fragmentShaderId))
-	{
-		return false;
-	}
+		// Compile the shader of this name and id
+		if(!CompileShader(shaderIterator->first, shaderId))
+		{
+			return false;
+		}
 
-	shaders.push_back(vertexShaderId);
-	shaders.push_back(fragmentShaderId);
+		shaders.push_back(shaderId);
+	}
 
 	if(!LinkProgram(shaders))
 	{
@@ -484,12 +482,13 @@ GLenum GLRenderer::LinkProgram(
 		GLint errorTextLength;
 		glGetProgramiv(m_programHandle, GL_INFO_LOG_LENGTH, &errorTextLength);
 
-		std::string errorText(errorTextLength, ' ');
+		std::vector<char> errorText(errorTextLength);
 
-		GLsizei written;
-		glGetShaderInfoLog(m_programHandle, errorTextLength, &written, &errorText[0]);
+		glGetShaderInfoLog(m_programHandle, errorTextLength, &errorTextLength, &errorText[0]);
 
-		wxLogDebug("Link shader errors: \n%s", errorText);
+		wxLogDebug("Link shader errors: \n%s", &errorText[0]);
+
+		glDeleteShader(m_programHandle);
 	}
 
 	return linked;

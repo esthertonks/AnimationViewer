@@ -122,6 +122,8 @@
   <ItemGroup>
     <None Include="Shaders\diffuse.frag" />
     <None Include="Shaders\diffuse.vert" />
+    <None Include="Shaders\flat.frag" />
+    <None Include="Shaders\flat.vert" />
     <None Include="Shaders\phong.frag" />
     <None Include="Shaders\phong.vert" />
   </ItemGroup>
