@@ -73,8 +73,8 @@ void GLRenderer::InitGL()
 	CheckOpenGLError(__FILE__,__LINE__);
 
 	std::map<std::string, GLuint> defaultShaderList; //TODO load from file system
-	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/default.vert", GL_VERTEX_SHADER));
-	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/default.frag", GL_FRAGMENT_SHADER));
+	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/phong.vert", GL_VERTEX_SHADER));
+	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/phong.frag", GL_FRAGMENT_SHADER));
 
 	LoadShaders(defaultShaderList);
 	CheckOpenGLError(__FILE__,__LINE__);
@@ -314,15 +314,15 @@ bool GLRenderer::LoadShaders(
 	const std::map<std::string, GLuint> &defaultShaderList
 	)
 {
-	GLuint vertexShaderId = LoadShader("Shaders/default.vert", GL_VERTEX_SHADER);
-	GLuint fragmentShaderId = LoadShader("Shaders/default.frag", GL_FRAGMENT_SHADER);
+	GLuint vertexShaderId = LoadShader("Shaders/phong.vert", GL_VERTEX_SHADER);
+	GLuint fragmentShaderId = LoadShader("Shaders/phong.frag", GL_FRAGMENT_SHADER);
 
-	if(!CompileShader("default.vert", vertexShaderId))
+	if(!CompileShader("phong.vert", vertexShaderId))
 	{
 		return false;
 	}
 
-	if(!CompileShader("default.frag", fragmentShaderId))
+	if(!CompileShader("phong.frag", fragmentShaderId))
 	{
 		return false;
 	}
@@ -583,11 +583,30 @@ void GLRenderer::Prepare(
 	//{
 	//	wxLogDebug("index %d is vert index %d \n", i, indices[i]);
 	//}
-	GLint diffuseReflectLocation = glGetUniformLocation(GetProgramHandle(), "Kd");
-	glUniform3f(diffuseReflectLocation, 0.3f, 0.5f, 0.3f);
 
-	GLint lightIntensityLocation = glGetUniformLocation(GetProgramHandle(), "Ld");
-	glUniform3f(lightIntensityLocation, 1.0f, 1.0f, 1.0f);
+	//TODO load from mesh
+	GLint materialAmbientLocation = glGetUniformLocation(GetProgramHandle(), "material.ambient");
+	glUniform3f(materialAmbientLocation, 0.3f, 0.5f, 0.3f);
+
+	GLint materialDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuse");
+	glUniform3f(materialDiffuseLocation, 0.3f, 0.5f, 0.3f);
+
+	GLint materialSpecularLocation = glGetUniformLocation(GetProgramHandle(), "material.specular");
+	glUniform3f(materialSpecularLocation, 0.8f, 0.8f, 0.8f);
+
+	GLint materialShininessLocation = glGetUniformLocation(GetProgramHandle(), "material.shininess");
+	glUniform1f(materialShininessLocation, 100.3f);
+
+	// TODO need to be able to add more than one light
+	GLint lightAmbientLocation = glGetUniformLocation(GetProgramHandle(), "light.ambient");
+	glUniform3f(lightAmbientLocation, 0.4f, 0.4f, 0.4f);
+
+	GLint lightDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "light.diffuse");
+	glUniform3f(lightDiffuseLocation, 1.0f, 1.0f, 1.0f);
+
+	GLint lightSpecularLocation = glGetUniformLocation(GetProgramHandle(), "light.specular");
+	glUniform3f(lightSpecularLocation, 0.3f, 0.5f, 0.3f);
+
 }
 
 //void GLRenderer::Update(
@@ -654,7 +673,7 @@ void GLRenderer::Render(
 			glm::mat4x4 modelViewMatrix = viewMatrix * modelMatrix;
 			glm::mat3x3 normalMatrix = glm::mat3x3(glm::vec3(modelViewMatrix[0]), glm::vec3(modelViewMatrix[1]), glm::vec3(modelViewMatrix[2]));
 
-			GLint lightPositionLocation = glGetUniformLocation(GetProgramHandle(), "lightPosition");
+			GLint lightPositionLocation = glGetUniformLocation(GetProgramHandle(), "light.position");
 
 			glm::vec4 lightPositionMatrix = viewMatrix * glm::vec4(50.0f,5.0f,2.0f,1.0f);
 			glUniform4f(lightPositionLocation, lightPositionMatrix.x, lightPositionMatrix.y, lightPositionMatrix.z, lightPositionMatrix.w);

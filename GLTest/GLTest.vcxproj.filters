@@ -130,10 +130,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\default.vert">
+    <None Include="Shaders\diffuse.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\default.frag">
+    <None Include="Shaders\diffuse.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\phong.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\phong.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

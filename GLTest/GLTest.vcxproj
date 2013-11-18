@@ -120,8 +120,10 @@
     <ClInclude Include="Render\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\default.frag" />
-    <None Include="Shaders\default.vert" />
+    <None Include="Shaders\diffuse.frag" />
+    <None Include="Shaders\diffuse.vert" />
+    <None Include="Shaders\phong.frag" />
+    <None Include="Shaders\phong.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
