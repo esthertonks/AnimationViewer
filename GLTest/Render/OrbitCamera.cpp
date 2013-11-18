@@ -14,7 +14,7 @@ OrbitCamera::OrbitCamera(
 	glm::vec3 &position
 	)
 	: m_up(0.0f,1.0f,0.0f),		// Y axis
-	m_forward(0.0f,0.0f,1.0f),	//Z axis
+	m_forward(0.0f,0.0f,-1.0f),	//Z axis
 	m_right(1.0f,0.0f,0.0f)	,	//X axis
 	m_position(position),
 	m_startPosition(position),
@@ -92,7 +92,7 @@ float OrbitCamera::CalculateZoomCorrection(
 	float aspectRatio
 	)
 {
-	glm::vec3 actualPosition = m_position + (m_forward * -m_zoom);
+	glm::vec3 actualPosition = m_position + (m_forward * m_zoom);
 	float distance = glm::length(actualPosition);
 	return (aspectRatio * 1000)/distance;
 }
@@ -131,9 +131,9 @@ void OrbitCamera::CalculateViewMatrix()
 	m_viewMatrix[1][0] = m_right[1]; m_viewMatrix[1][1] = m_up[1]; m_viewMatrix[1][2] = -m_forward[1];
 	m_viewMatrix[2][0] = m_right[2]; m_viewMatrix[2][1] = m_up[2]; m_viewMatrix[2][2] = -m_forward[2];
 
-	m_viewMatrix[3][0] = -glm::dot(m_position + (m_forward * -m_zoom), m_right); 
-	m_viewMatrix[3][1] = -glm::dot(m_position + (m_forward * -m_zoom), m_up);
-	m_viewMatrix[3][2] = glm::dot(m_position + (m_forward * -m_zoom), m_forward);
+	m_viewMatrix[3][0] = -glm::dot(m_position + (m_forward * m_zoom), m_right); 
+	m_viewMatrix[3][1] = -glm::dot(m_position + (m_forward * m_zoom), m_up);
+	m_viewMatrix[3][2] = glm::dot(m_position + (m_forward * m_zoom), m_forward);
 
 }
 
