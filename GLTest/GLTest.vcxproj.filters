@@ -130,28 +130,34 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\diffuse.vert">
+    <None Include="Shaders\Diffuse.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\diffuse.frag">
+    <None Include="Shaders\Diffuse.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\phong.frag">
+    <None Include="Shaders\Flat.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\phong.vert">
+    <None Include="Shaders\Flat.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\flat.frag">
+    <None Include="Shaders\PerVertexPhong.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\flat.vert">
+    <None Include="Shaders\PerVertexPhong.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\phongLights.frag">
+    <None Include="Shaders\PerVertexPhongLights.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\phongLights.vert">
+    <None Include="Shaders\PerVertexPhongLights.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PerFragmentPhong.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PerFragmentPhong.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

@@ -57,8 +57,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\glew-1.10.0\lib\Debug\Win32;$(WXWIN)\lib\vc_lib;C:\Program Files\Autodesk\FBX\FBX SDK\2014.1\lib\vs2010\x86\debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32sd.lib;opengl32.lib;glu32.lib;wxmsw28d_core.lib;wxbase28d.lib;comctl32.lib;rpcrt4.lib;winmm.lib;advapi32.lib;wsock32.lib;libfbxsdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\..\glew-1.10.0\lib\Debug\Win32;$(WXWIN)\lib\vc_lib;C:\Program Files\Autodesk\FBX\FBX SDK\2014.1\lib\vs2010\x86\debug;C:\Users\ET\Documents\Visual Studio 2010\Projects\Simple OpenGL Image Library\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32sd.lib;opengl32.lib;glu32.lib;wxmsw28d_core.lib;wxbase28d.lib;comctl32.lib;rpcrt4.lib;winmm.lib;advapi32.lib;wsock32.lib;libfbxsdk.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -120,14 +120,16 @@
     <ClInclude Include="Render\Window.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\diffuse.frag" />
-    <None Include="Shaders\diffuse.vert" />
-    <None Include="Shaders\flat.frag" />
-    <None Include="Shaders\flat.vert" />
-    <None Include="Shaders\phong.frag" />
-    <None Include="Shaders\phong.vert" />
-    <None Include="Shaders\phongLights.frag" />
-    <None Include="Shaders\phongLights.vert" />
+    <None Include="Shaders\Diffuse.frag" />
+    <None Include="Shaders\Diffuse.vert" />
+    <None Include="Shaders\Flat.frag" />
+    <None Include="Shaders\Flat.vert" />
+    <None Include="Shaders\PerFragmentPhong.frag" />
+    <None Include="Shaders\PerFragmentPhong.vert" />
+    <None Include="Shaders\PerVertexPhong.frag" />
+    <None Include="Shaders\PerVertexPhong.vert" />
+    <None Include="Shaders\PerVertexPhongLights.frag" />
+    <None Include="Shaders\PerVertexPhongLights.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

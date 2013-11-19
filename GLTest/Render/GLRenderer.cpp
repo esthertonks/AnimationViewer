@@ -73,8 +73,8 @@ void GLRenderer::InitGL()
 	CheckOpenGLError(__FILE__,__LINE__);
 
 	std::map<std::string, GLuint> defaultShaderList; //TODO load from file system
-	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/phongLights.vert", GL_VERTEX_SHADER));
-	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/phongLights.frag", GL_FRAGMENT_SHADER));
+	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/PerFragmentPhong.vert", GL_VERTEX_SHADER));
+	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/PerFragmentPhong.frag", GL_FRAGMENT_SHADER));
 
 	LoadShaders(defaultShaderList); //TODO failure message when failed?
 	CheckOpenGLError(__FILE__,__LINE__);
@@ -350,53 +350,17 @@ bool GLRenderer::LoadShaders(
 	glUniform3f(materialSpecularLocation, 0.8f, 0.8f, 0.8f);
 
 	GLint materialShininessLocation = glGetUniformLocation(GetProgramHandle(), "material.shininess");
-	glUniform1f(materialShininessLocation, 100.3f);
+	glUniform1f(materialShininessLocation, 100.0f);
 
 	// TODO need to be able to add more than one light
-	GLint lightAmbientLocation = glGetUniformLocation(GetProgramHandle(), "lights[0].ambient");
-	glUniform3f(lightAmbientLocation, 0.4f, 0.4f, 0.8f);
+	GLint lightAmbientLocation = glGetUniformLocation(GetProgramHandle(), "light.ambient");
+	glUniform3f(lightAmbientLocation, 0.4f, 0.4f, 0.4f);
 
-	GLint lightDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "lights[0].diffuse");
+	GLint lightDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "light.diffuse");
 	glUniform3f(lightDiffuseLocation, 1.0f, 1.0f, 1.0f);
 
-	GLint lightSpecularLocation = glGetUniformLocation(GetProgramHandle(), "lights[0].specular");
+	GLint lightSpecularLocation = glGetUniformLocation(GetProgramHandle(), "light.specular");
 	glUniform3f(lightSpecularLocation, 1.0f, 0.5f, 0.3f);
-
-	GLint light1AmbientLocation = glGetUniformLocation(GetProgramHandle(), "lights[1].ambient");
-	glUniform3f(light1AmbientLocation, 0.8f, 0.4f, 0.4f);
-
-	GLint light1DiffuseLocation = glGetUniformLocation(GetProgramHandle(), "lights[1].diffuse");
-	glUniform3f(light1DiffuseLocation, 1.0f, 1.0f, 1.0f);
-
-	GLint light1SpecularLocation = glGetUniformLocation(GetProgramHandle(), "lights[1].specular");
-	glUniform3f(light1SpecularLocation, 0.3f, 0.5f, 0.3f);
-
-	GLint light2AmbientLocation = glGetUniformLocation(GetProgramHandle(), "lights[2].ambient");
-	glUniform3f(light2AmbientLocation, 0.4f, 0.8f, 0.4f);
-
-	GLint light2DiffuseLocation = glGetUniformLocation(GetProgramHandle(), "lights[2].diffuse");
-	glUniform3f(light2DiffuseLocation, 1.0f, 1.0f, 1.0f);
-
-	GLint light2SpecularLocation = glGetUniformLocation(GetProgramHandle(), "lights[2].specular");
-	glUniform3f(light2SpecularLocation, 0.3f, 0.5f, 1.0f);
-
-	GLint light3AmbientLocation = glGetUniformLocation(GetProgramHandle(), "lights[3].ambient");
-	glUniform3f(light3AmbientLocation, 0.4f, 0.4f, 0.4f);
-
-	GLint light3DiffuseLocation = glGetUniformLocation(GetProgramHandle(), "lights[3].diffuse");
-	glUniform3f(light3DiffuseLocation, 1.0f, 1.0f, 1.0f);
-
-	GLint light3SpecularLocation = glGetUniformLocation(GetProgramHandle(), "lights[3].specular");
-	glUniform3f(light3SpecularLocation, 0.3f, 1.0f, 0.3f);
-
-	GLint light4AmbientLocation = glGetUniformLocation(GetProgramHandle(), "lights[4].ambient");
-	glUniform3f(light4AmbientLocation, 0.0f, 0.4f, 0.4f);
-
-	GLint light4DiffuseLocation = glGetUniformLocation(GetProgramHandle(), "lights[4].diffuse");
-	glUniform3f(light4DiffuseLocation, 1.0f, 1.0f, 1.0f);
-
-	GLint light4SpecularLocation = glGetUniformLocation(GetProgramHandle(), "lights[4].specular");
-	glUniform3f(light4SpecularLocation, 1.0f, 1.0f, 1.0f);
 
 	return true;
 }
@@ -439,7 +403,7 @@ const char* GLRenderer::ReadShaderSourceFile(
 {
 	std::ifstream shaderStream(shaderName, std::ifstream::in);
 	if(!shaderStream) {
-		wxLogDebug("Error opening file: %s\n", shaderName);
+		wxLogDebug("Error opening file: %s\n", shaderName.c_str());
 		return NULL;
 	}
 
@@ -619,7 +583,7 @@ void GLRenderer::Prepare(
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::RenderVertex), (GLubyte *)(sizeof(glm::vec3) * 2));
 
 	glEnableVertexAttribArray(0);  // Vertex position
-	glEnableVertexAttribArray(1);  // Vertex color
+	glEnableVertexAttribArray(1);  // Vertex colour
 	glEnableVertexAttribArray(2);  // Vertex normal
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferHandle);
@@ -628,29 +592,8 @@ void GLRenderer::Prepare(
 
 	m_meshLoaded = true;
 	currentNumIndices = renderMeshNode.GetNumIndices();
-	//boost::shared_array<mesh::RenderVertex>&vertices = renderMeshNode.GetVertices();
-	//for(int i = 0; i < renderMeshNode.GetNumVertices(); i++)	
-	//{
-	//	wxLogDebug("vert %d pos %f\n", i, vertices[i].m_position[0]);
-	//	wxLogDebug("vert %d pos %f\n", i, vertices[i].m_position[1]);
-	//	wxLogDebug("vert %d pos %f\n", i, vertices[i].m_position[2]);
-	//}
-
-	//boost::shared_array<unsigned int>&indices = renderMeshNode.GetIndices();
-	//for(int i = 0; i < renderMeshNode.GetNumIndices(); i++)	
-	//{
-	//	wxLogDebug("index %d is vert index %d \n", i, indices[i]);
-	//}
 
 }
-
-//void GLRenderer::Update(
-//	glm::mat4x4 &projectionMatrix, 
-//	glm::mat4x4 &viewMatrix
-//	)
-//{
-//	m_cameraMatrix = cameraMatrix;
-//}
 
 void GLRenderer::Render(
 	)
@@ -708,25 +651,9 @@ void GLRenderer::Render(
 			glm::mat4x4 modelViewMatrix = viewMatrix * modelMatrix;
 			glm::mat3x3 normalMatrix = glm::mat3x3(glm::vec3(modelViewMatrix[0]), glm::vec3(modelViewMatrix[1]), glm::vec3(modelViewMatrix[2]));
 
-			GLint light0PositionLocation = glGetUniformLocation(GetProgramHandle(), "lights[0].position");
-			glm::vec4 light0PositionMatrix = viewMatrix * glm::vec4(50.0f,5.0f,2.0f,1.0f);
-			glUniform4f(light0PositionLocation, light0PositionMatrix.x, light0PositionMatrix.y, light0PositionMatrix.z, light0PositionMatrix.w);
-
-			GLint light1PositionLocation = glGetUniformLocation(GetProgramHandle(), "lights[1].position");
-			glm::vec4 light1PositionMatrix = viewMatrix * glm::vec4(5.0f,50.0f,2.0f,1.0f);
-			glUniform4f(light1PositionLocation, light1PositionMatrix.x, light1PositionMatrix.y, light1PositionMatrix.z, light1PositionMatrix.w);
-
-			GLint light2PositionLocation = glGetUniformLocation(GetProgramHandle(), "lights[2].position");
-			glm::vec4 light2PositionMatrix = viewMatrix * glm::vec4(50.0f,5.0f,20.0f,1.0f);
-			glUniform4f(light2PositionLocation, light2PositionMatrix.x, light2PositionMatrix.y, light2PositionMatrix.z, light2PositionMatrix.w);
-
-			GLint light3PositionLocation = glGetUniformLocation(GetProgramHandle(), "lights[3].position");
-			glm::vec4 light3PositionMatrix = viewMatrix * glm::vec4(5.0f,5.0f,20.0f,1.0f);
-			glUniform4f(light3PositionLocation, light3PositionMatrix.x, light3PositionMatrix.y, light3PositionMatrix.z, light3PositionMatrix.w);
-
-			GLint light4PositionLocation = glGetUniformLocation(GetProgramHandle(), "lights[4].position");
-			glm::vec4 light4PositionMatrix = viewMatrix * glm::vec4(50.0f,50.0f,20.0f,1.0f);
-			glUniform4f(light4PositionLocation, light4PositionMatrix.x, light4PositionMatrix.y, light4PositionMatrix.z, light4PositionMatrix.w);
+			GLint lightPositionLocation = glGetUniformLocation(GetProgramHandle(), "light.position");
+			glm::vec4 lightPositionMatrix = viewMatrix * glm::vec4(50.0f,5.0f,2.0f,1.0f);
+			glUniform4f(lightPositionLocation, lightPositionMatrix.x, lightPositionMatrix.y, lightPositionMatrix.z, lightPositionMatrix.w);
 
 			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &modelMatrix[0][0]);
 			glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
