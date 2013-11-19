@@ -77,7 +77,7 @@ mesh::RenderMesh *BatchProcessor::CreateRenderMesh(
 			renderVertexArray[vertexIndex].m_position[2] = vertexArray[vertexIndex].m_position[2];
 
 			renderVertexArray[vertexIndex].m_normal = glm::normalize(renderVertexArray[vertexIndex].m_normal);
-			wxLogDebug("NormalB %f, %f, %f\n", renderVertexArray[vertexIndex].m_normal.x, renderVertexArray[vertexIndex].m_normal.y, renderVertexArray[vertexIndex].m_normal.z);
+			//wxLogDebug("NormalB %f, %f, %f\n", renderVertexArray[vertexIndex].m_normal.x, renderVertexArray[vertexIndex].m_normal.y, renderVertexArray[vertexIndex].m_normal.z);
 		}
 	}
 

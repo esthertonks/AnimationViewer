@@ -73,8 +73,8 @@ void GLRenderer::InitGL()
 	CheckOpenGLError(__FILE__,__LINE__);
 
 	std::map<std::string, GLuint> defaultShaderList; //TODO load from file system
-	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/flat.vert", GL_VERTEX_SHADER));
-	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/flat.frag", GL_FRAGMENT_SHADER));
+	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/phongLights.vert", GL_VERTEX_SHADER));
+	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/phongLights.frag", GL_FRAGMENT_SHADER));
 
 	LoadShaders(defaultShaderList); //TODO failure message when failed?
 	CheckOpenGLError(__FILE__,__LINE__);
@@ -339,6 +339,65 @@ bool GLRenderer::LoadShaders(
 
 	m_initialised = true;
 
+	//TODO load from mesh. Move to prepare?
+	GLint materialAmbientLocation = glGetUniformLocation(GetProgramHandle(), "material.ambient");
+	glUniform3f(materialAmbientLocation, 0.3f, 0.5f, 0.3f);
+
+	GLint materialDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuse");
+	glUniform3f(materialDiffuseLocation, 0.3f, 0.5f, 0.3f);
+
+	GLint materialSpecularLocation = glGetUniformLocation(GetProgramHandle(), "material.specular");
+	glUniform3f(materialSpecularLocation, 0.8f, 0.8f, 0.8f);
+
+	GLint materialShininessLocation = glGetUniformLocation(GetProgramHandle(), "material.shininess");
+	glUniform1f(materialShininessLocation, 100.3f);
+
+	// TODO need to be able to add more than one light
+	GLint lightAmbientLocation = glGetUniformLocation(GetProgramHandle(), "lights[0].ambient");
+	glUniform3f(lightAmbientLocation, 0.4f, 0.4f, 0.8f);
+
+	GLint lightDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "lights[0].diffuse");
+	glUniform3f(lightDiffuseLocation, 1.0f, 1.0f, 1.0f);
+
+	GLint lightSpecularLocation = glGetUniformLocation(GetProgramHandle(), "lights[0].specular");
+	glUniform3f(lightSpecularLocation, 1.0f, 0.5f, 0.3f);
+
+	GLint light1AmbientLocation = glGetUniformLocation(GetProgramHandle(), "lights[1].ambient");
+	glUniform3f(light1AmbientLocation, 0.8f, 0.4f, 0.4f);
+
+	GLint light1DiffuseLocation = glGetUniformLocation(GetProgramHandle(), "lights[1].diffuse");
+	glUniform3f(light1DiffuseLocation, 1.0f, 1.0f, 1.0f);
+
+	GLint light1SpecularLocation = glGetUniformLocation(GetProgramHandle(), "lights[1].specular");
+	glUniform3f(light1SpecularLocation, 0.3f, 0.5f, 0.3f);
+
+	GLint light2AmbientLocation = glGetUniformLocation(GetProgramHandle(), "lights[2].ambient");
+	glUniform3f(light2AmbientLocation, 0.4f, 0.8f, 0.4f);
+
+	GLint light2DiffuseLocation = glGetUniformLocation(GetProgramHandle(), "lights[2].diffuse");
+	glUniform3f(light2DiffuseLocation, 1.0f, 1.0f, 1.0f);
+
+	GLint light2SpecularLocation = glGetUniformLocation(GetProgramHandle(), "lights[2].specular");
+	glUniform3f(light2SpecularLocation, 0.3f, 0.5f, 1.0f);
+
+	GLint light3AmbientLocation = glGetUniformLocation(GetProgramHandle(), "lights[3].ambient");
+	glUniform3f(light3AmbientLocation, 0.4f, 0.4f, 0.4f);
+
+	GLint light3DiffuseLocation = glGetUniformLocation(GetProgramHandle(), "lights[3].diffuse");
+	glUniform3f(light3DiffuseLocation, 1.0f, 1.0f, 1.0f);
+
+	GLint light3SpecularLocation = glGetUniformLocation(GetProgramHandle(), "lights[3].specular");
+	glUniform3f(light3SpecularLocation, 0.3f, 1.0f, 0.3f);
+
+	GLint light4AmbientLocation = glGetUniformLocation(GetProgramHandle(), "lights[4].ambient");
+	glUniform3f(light4AmbientLocation, 0.0f, 0.4f, 0.4f);
+
+	GLint light4DiffuseLocation = glGetUniformLocation(GetProgramHandle(), "lights[4].diffuse");
+	glUniform3f(light4DiffuseLocation, 1.0f, 1.0f, 1.0f);
+
+	GLint light4SpecularLocation = glGetUniformLocation(GetProgramHandle(), "lights[4].specular");
+	glUniform3f(light4SpecularLocation, 1.0f, 1.0f, 1.0f);
+
 	return true;
 }
 
@@ -583,29 +642,6 @@ void GLRenderer::Prepare(
 	//	wxLogDebug("index %d is vert index %d \n", i, indices[i]);
 	//}
 
-	//TODO load from mesh
-	GLint materialAmbientLocation = glGetUniformLocation(GetProgramHandle(), "material.ambient");
-	glUniform3f(materialAmbientLocation, 0.3f, 0.5f, 0.3f);
-
-	GLint materialDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuse");
-	glUniform3f(materialDiffuseLocation, 0.3f, 0.5f, 0.3f);
-
-	GLint materialSpecularLocation = glGetUniformLocation(GetProgramHandle(), "material.specular");
-	glUniform3f(materialSpecularLocation, 0.8f, 0.8f, 0.8f);
-
-	GLint materialShininessLocation = glGetUniformLocation(GetProgramHandle(), "material.shininess");
-	glUniform1f(materialShininessLocation, 100.3f);
-
-	// TODO need to be able to add more than one light
-	GLint lightAmbientLocation = glGetUniformLocation(GetProgramHandle(), "light.ambient");
-	glUniform3f(lightAmbientLocation, 0.4f, 0.4f, 0.4f);
-
-	GLint lightDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "light.diffuse");
-	glUniform3f(lightDiffuseLocation, 1.0f, 1.0f, 1.0f);
-
-	GLint lightSpecularLocation = glGetUniformLocation(GetProgramHandle(), "light.specular");
-	glUniform3f(lightSpecularLocation, 0.3f, 0.5f, 0.3f);
-
 }
 
 //void GLRenderer::Update(
@@ -672,10 +708,25 @@ void GLRenderer::Render(
 			glm::mat4x4 modelViewMatrix = viewMatrix * modelMatrix;
 			glm::mat3x3 normalMatrix = glm::mat3x3(glm::vec3(modelViewMatrix[0]), glm::vec3(modelViewMatrix[1]), glm::vec3(modelViewMatrix[2]));
 
-			GLint lightPositionLocation = glGetUniformLocation(GetProgramHandle(), "light.position");
+			GLint light0PositionLocation = glGetUniformLocation(GetProgramHandle(), "lights[0].position");
+			glm::vec4 light0PositionMatrix = viewMatrix * glm::vec4(50.0f,5.0f,2.0f,1.0f);
+			glUniform4f(light0PositionLocation, light0PositionMatrix.x, light0PositionMatrix.y, light0PositionMatrix.z, light0PositionMatrix.w);
 
-			glm::vec4 lightPositionMatrix = viewMatrix * glm::vec4(50.0f,5.0f,2.0f,1.0f);
-			glUniform4f(lightPositionLocation, lightPositionMatrix.x, lightPositionMatrix.y, lightPositionMatrix.z, lightPositionMatrix.w);
+			GLint light1PositionLocation = glGetUniformLocation(GetProgramHandle(), "lights[1].position");
+			glm::vec4 light1PositionMatrix = viewMatrix * glm::vec4(5.0f,50.0f,2.0f,1.0f);
+			glUniform4f(light1PositionLocation, light1PositionMatrix.x, light1PositionMatrix.y, light1PositionMatrix.z, light1PositionMatrix.w);
+
+			GLint light2PositionLocation = glGetUniformLocation(GetProgramHandle(), "lights[2].position");
+			glm::vec4 light2PositionMatrix = viewMatrix * glm::vec4(50.0f,5.0f,20.0f,1.0f);
+			glUniform4f(light2PositionLocation, light2PositionMatrix.x, light2PositionMatrix.y, light2PositionMatrix.z, light2PositionMatrix.w);
+
+			GLint light3PositionLocation = glGetUniformLocation(GetProgramHandle(), "lights[3].position");
+			glm::vec4 light3PositionMatrix = viewMatrix * glm::vec4(5.0f,5.0f,20.0f,1.0f);
+			glUniform4f(light3PositionLocation, light3PositionMatrix.x, light3PositionMatrix.y, light3PositionMatrix.z, light3PositionMatrix.w);
+
+			GLint light4PositionLocation = glGetUniformLocation(GetProgramHandle(), "lights[4].position");
+			glm::vec4 light4PositionMatrix = viewMatrix * glm::vec4(50.0f,50.0f,20.0f,1.0f);
+			glUniform4f(light4PositionLocation, light4PositionMatrix.x, light4PositionMatrix.y, light4PositionMatrix.z, light4PositionMatrix.w);
 
 			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &modelMatrix[0][0]);
 			glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);

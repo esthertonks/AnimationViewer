@@ -348,7 +348,7 @@ void FBXImport::LoadNormals(
 		{
 			int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
 			LoadVector4VertexElement(*normalElement, triangle.m_normals[triangleCornerId], (triangleIndex * 3) + triangleCornerId, vertexIndex);
-			wxLogDebug("NormalA %f, %f, %f\n", triangle.m_normals[triangleCornerId].x, triangle.m_normals[triangleCornerId].y, triangle.m_normals[triangleCornerId].z);
+			//wxLogDebug("NormalA %f, %f, %f\n", triangle.m_normals[triangleCornerId].x, triangle.m_normals[triangleCornerId].y, triangle.m_normals[triangleCornerId].z);
 		}
 	}
 }
