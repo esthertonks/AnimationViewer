@@ -12,10 +12,10 @@ namespace import
 	class FBXImport;
 }
 
-namespace mesh
+namespace render
 {
-	class RenderMesh;
-	class RenderMeshNode;
+	class BatchList;
+	class Batch;
 }
 
 
@@ -43,7 +43,7 @@ class AnimationApp: public wxApp
 
 	render::GLRenderer *m_renderer;
 	import::FBXImport *m_fbxImporter;
-	mesh::RenderMesh *m_renderMesh; // Only ever one mesh to render at once right now
+	render::BatchList *m_batchList; // List of batches to render sorts by material
 	DWORD m_lastTime;
 };
 

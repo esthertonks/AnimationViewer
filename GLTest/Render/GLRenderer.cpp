@@ -5,8 +5,8 @@
 #include <wx/log.h>
 #include <fstream>
 
-#include "../BatchMesh/RenderVertex.h"
-#include "../BatchMesh/RenderMeshNode.h"
+#include "../Batch/VertexFormat.h"
+#include "../Batch/Batch.h"
 #include "OrbitCamera.h"
 
 namespace render
@@ -555,7 +555,7 @@ void GLRenderer::OutputDebugShaderAttributeInfo()
 }
 
 void GLRenderer::Prepare(
-	mesh::RenderMeshNode &renderMeshNode
+	render::Batch &batch
 	/*BatchList renderBatchList*/
 	)
 {
@@ -576,11 +576,11 @@ void GLRenderer::Prepare(
 	m_indexBufferHandle = vboHandles[1];
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_positionBufferHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(mesh::RenderVertex) * renderMeshNode.GetNumVertices(), renderMeshNode.GetVertices().get(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(render::ColourVertexFormat) * batch.GetNumVertices(), batch.GetVertices().get(), GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::RenderVertex), (GLubyte *)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::RenderVertex), (GLubyte *)sizeof(glm::vec3));
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(mesh::RenderVertex), (GLubyte *)(sizeof(glm::vec3) * 2));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertexFormat), (GLubyte *)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertexFormat), (GLubyte *)sizeof(glm::vec3));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertexFormat), (GLubyte *)(sizeof(glm::vec3) * 2));
 
 	glEnableVertexAttribArray(0);  // Vertex position
 	glEnableVertexAttribArray(1);  // Vertex colour
@@ -588,11 +588,10 @@ void GLRenderer::Prepare(
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferHandle);
 
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * renderMeshNode.GetNumIndices(), renderMeshNode.GetIndices().get(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * batch.GetNumIndices(), batch.GetIndices().get(), GL_STATIC_DRAW);
 
 	m_meshLoaded = true;
-	currentNumIndices = renderMeshNode.GetNumIndices();
-
+	currentNumIndices = batch.GetNumIndices();
 }
 
 void GLRenderer::Render(

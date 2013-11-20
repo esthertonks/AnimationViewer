@@ -6,11 +6,17 @@
 #include <boost\shared_array.hpp>
 #include "../Container/LinkedList .h"
 #include "../Import/FBXImport.h"
+#include "../Batch/BatchFwdDecl.h"
 
 namespace mesh
 {
 	class Vertex;
 	class Triangle;
+
+	typedef std::map<unsigned int, render::AppearancePtr> AppearanceTable;
+	typedef std::pair<unsigned int, render::AppearancePtr> AppearanceTableEntry;
+	typedef boost::shared_array<Vertex> MeshVertexArray;
+	typedef boost::shared_array<Triangle> MeshTriangleArray;
 
 class MeshNode : public container::LinkedListItem<MeshNode>
 {
@@ -41,14 +47,19 @@ public:
 		return m_numVertices;
 	}
 
-	boost::shared_array<Vertex> &GetVertices()
+	MeshVertexArray GetVertices()
 	{
 		return m_vertexArray;
 	}
 
-	boost::shared_array<Triangle> &GetTriangles()
+	MeshTriangleArray GetTriangles()
 	{
 		return m_triangleArray;
+	}
+
+	AppearanceTable &GetAppearances()
+	{
+		return m_appearanceTable;
 	}
 
 	void							AllocateVertices(
@@ -69,15 +80,14 @@ private:
 
 	// uvsets?
 
-	boost::shared_array<Vertex> m_vertexArray;
-	boost::shared_array<Triangle> m_triangleArray;
+	MeshVertexArray m_vertexArray;
+	MeshTriangleArray m_triangleArray;
 	int m_numTriangles;
 	int m_numVertices;
 	
 	// We store here a list of material names and a list of texture names. We only actually currently need
 	// the texture names however future work will expand this information to a material class storing shader parameters and multiple textures per material.
-	std::map<unsigned int, std::string> m_materialTable; // Mapping of material id's to material names
-	std::map<unsigned int, std::string> m_textureTable; //Mapping of material id's to texture names
+	AppearanceTable m_appearanceTable; // Mapping of material id's to material names
 };
 
 

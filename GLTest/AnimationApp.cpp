@@ -4,14 +4,14 @@
 #include "Import/FBXImport.h"
 #include "ImportMesh/Mesh.h"
 #include "Batch/BatchProcessor.h"
-#include "BatchMesh/RenderMesh.h"
-#include "BatchMesh/RenderMeshNode.h"
+#include "Batch/BatchList.h"
+#include "Batch/Batch.h"
 
 IMPLEMENT_APP(AnimationApp)
 
 bool AnimationApp::OnInit()
 {
-	m_renderMesh = NULL;
+	m_batchList = NULL;
 	
 	wxFrame *frame = new render::Window(NULL, wxT("Testing"), wxDefaultPosition, wxSize(800, 800), wxDEFAULT_FRAME_STYLE);
 	
@@ -32,8 +32,8 @@ void AnimationApp::OnIdle(
 {
 	//Prepare Mesh - update animation
 	DWORD timeNow = timeGetTime();
-	//RenderMesh
-	if(m_renderMesh)
+	//BatchList
+	if(m_batchList)
 	{
 		float delta = 0.001f * timeNow - m_lastTime;
 
@@ -68,15 +68,15 @@ void AnimationApp::ImportFBX(
 	mesh::Mesh* importMesh = m_fbxImporter->Import(filePath);
 	if(importMesh)
 	{
-		if(m_renderMesh)
+		if(m_batchList)
 		{
-			delete m_renderMesh;
-			m_renderMesh = NULL;
+			delete m_batchList;
+			m_batchList = NULL;
 		}
 		batch::BatchProcessor meshBatchProcessor;
-		m_renderMesh = meshBatchProcessor.CreateRenderMesh(*importMesh);
+		m_batchList = meshBatchProcessor.CreateBatches(*importMesh);
 
-		for(mesh::RenderMeshNode *node = m_renderMesh->GetNodeHierarchy(); node != NULL; node = node->m_next)
+		for(render::Batch *node = m_batchList->GetNodeHierarchy(); node != NULL; node = node->m_next)
 		{
 			m_renderer->Prepare(*node);
 		}
@@ -86,9 +86,9 @@ void AnimationApp::ImportFBX(
 
 void AnimationApp::DeleteMesh()
 {
-	if(m_renderMesh)
+	if(m_batchList)
 	{
-		delete m_renderMesh;
-		m_renderMesh = NULL;
+		delete m_batchList;
+		m_batchList = NULL;
 	}
 }

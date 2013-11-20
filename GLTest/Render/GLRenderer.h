@@ -14,13 +14,9 @@
 #include <string>
 #include <vector>
 
-namespace mesh
-{
-	class RenderMeshNode;
-}
-
 namespace render
 {
+	class Batch;
 	class OrbitCamera;
 
 class GLRenderer : public wxGLCanvas
@@ -115,7 +111,7 @@ public:
 		);
 
 	void Prepare(
-		mesh::RenderMeshNode &renderMeshNode
+		render::Batch &batch
 		/*BatchList renderBatchList*/
 		);
 

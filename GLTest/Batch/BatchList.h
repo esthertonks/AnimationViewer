@@ -6,27 +6,27 @@
 #pragma once
 
 #include "../Container/LinkedList .h"
-#include "RenderMeshNode.h"
+#include "Batch.h"
 
-namespace mesh
+namespace render
 {
 
-class RenderMeshNode;
+class Batch;
 
-class RenderMesh : public container::LinkedList<RenderMeshNode>
+class BatchList : public container::LinkedList<Batch>
 {
 public:
 
-	RenderMesh::RenderMesh(){};
-	RenderMesh::~RenderMesh();
+	BatchList::BatchList(){};
+	BatchList::~BatchList();
 
-	RenderMeshNode* GetNodeHierarchy()
+	Batch* GetNodeHierarchy()
 	{
 		return m_root;
 	}
 
-	void AddChildNode(
-		RenderMeshNode &node
+	void Add(
+		Batch &node
 		)
 	{
 		Add(node);

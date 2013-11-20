@@ -3,7 +3,11 @@
 namespace mesh
 {
 	class Mesh;
-	class RenderMesh;
+}
+
+namespace render //TODO render or batch namespace?
+{
+	class BatchList;
 }
 
 namespace batch
@@ -15,9 +19,11 @@ public:
 	BatchProcessor();
 	~BatchProcessor();
 
-	mesh::RenderMesh *CreateRenderMesh(
+	render::BatchList *CreateBatches(
 		mesh::Mesh &importMesh
 		);
+
+	void SortBatches();//TODO
 
 };
 

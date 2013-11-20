@@ -17,9 +17,6 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{2fa95ea1-dfaf-47aa-9581-cc708fed176a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="BatchMesh">
-      <UniqueIdentifier>{e2287370-96ec-4a96-b7c9-e9a1a95e602b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Batch">
       <UniqueIdentifier>{bb134ee9-2e1b-4a38-b244-7966a397090e}</UniqueIdentifier>
     </Filter>
@@ -56,15 +53,6 @@
       <Filter>Render</Filter>
     </ClCompile>
     <ClCompile Include="AnimationApp.cpp" />
-    <ClCompile Include="Batch\BatchProcessor.cpp">
-      <Filter>Batch</Filter>
-    </ClCompile>
-    <ClCompile Include="BatchMesh\RenderMeshNode.cpp">
-      <Filter>BatchMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="BatchMesh\RenderMesh.cpp">
-      <Filter>BatchMesh</Filter>
-    </ClCompile>
     <ClCompile Include="Render\GLRenderer.cpp">
       <Filter>Render</Filter>
     </ClCompile>
@@ -73,6 +61,24 @@
     </ClCompile>
     <ClCompile Include="Render\FirstPersonCamera.cpp">
       <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Batch\Appearance.cpp">
+      <Filter>Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="Batch\Batch.cpp">
+      <Filter>Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="Batch\BatchList.cpp">
+      <Filter>Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="Batch\BatchProcessor.cpp">
+      <Filter>Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="Batch\LambertAppearance.cpp">
+      <Filter>Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="Batch\PhongAppearance.cpp">
+      <Filter>Batch</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,18 +110,6 @@
       <Filter>Render</Filter>
     </ClInclude>
     <ClInclude Include="AnimationApp.h" />
-    <ClInclude Include="Batch\BatchProcessor.h">
-      <Filter>Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="BatchMesh\RenderVertex.h">
-      <Filter>BatchMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="BatchMesh\RenderMesh.h">
-      <Filter>BatchMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="BatchMesh\RenderMeshNode.h">
-      <Filter>BatchMesh</Filter>
-    </ClInclude>
     <ClInclude Include="Container\LinkedList .h">
       <Filter>Container</Filter>
     </ClInclude>
@@ -127,6 +121,30 @@
     </ClInclude>
     <ClInclude Include="Render\FirstPersonCamera.h">
       <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\Appearance.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\Batch.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\BatchList.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\BatchProcessor.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\VertexFormat.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\BatchFwdDecl.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\LambertAppearance.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\PhongAppearance.h">
+      <Filter>Batch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,9 @@
 #include "../ImportMesh/MeshNode.h"
 #include "../ImportMesh/Triangle.h"
 #include "../ImportMesh/Vertex.h"
+#include "../Batch/LambertAppearance.h"
+#include "../Batch/PhongAppearance.h"
+#include "../Batch/Batch.h"
 
 #include <assert.h>
 
@@ -120,7 +123,7 @@ bool FBXImport::LoadMeshNodes(
 	{
 		const FbxNodeAttribute::EType fbxAttributeType = fbxNodeAttribute->GetAttributeType();
 
-		if(!fbxAttributeType == FbxNodeAttribute::eMesh)
+		if(fbxAttributeType != FbxNodeAttribute::eMesh)
 		{
 			FBXSDK_printf("Node %s type is %d. Only node of type eMesh (4) can be loaded\n", fbxNode.GetName(), fbxAttributeType);
 			return false;
@@ -217,45 +220,63 @@ void FBXImport::LoadMaterials(
 			const FbxSurfaceMaterial& surfaceMaterial = *fbxMesh.GetNode()->GetMaterial(materialId);
 			meshNode.m_triangleArray[triangleIndex].m_materialId = materialId;
 
-			FbxProperty materialProperty;
 			// Just get the diffuse for now. Will load normal/bump and other textures here in future.
-			materialProperty = surfaceMaterial.FindProperty(FbxSurfaceMaterial::sDiffuse);
+			FbxProperty materialProperty = surfaceMaterial.FindProperty(FbxSurfaceMaterial::sDiffuse);
 
-			int lNbTextures = materialProperty.GetSrcObjectCount<FbxTexture>();
-
-			unsigned int textureCount = materialProperty.GetSrcObjectCount<FbxTexture>();
-			if(textureCount == 0)
+			if(!meshNode.m_appearanceTable.count(materialId))
 			{
-				FBXSDK_printf("Material %s has no associated texture. Mesh will not be textured.\n", materialProperty.GetName()); // May support more uv sets later
-			}
-			else // If there is a texture associated with this material
-			{
-				FbxFileTexture* fbxFileTexture = materialProperty.GetSrcObject<FbxFileTexture>(0); // Get the first texture
+				render::AppearancePtr appearance;
 
-				std::string textureFilename = fbxFileTexture->GetFileName();
-				if(!meshNode.m_materialTable.count(materialId))
+				if (surfaceMaterial.GetClassId().Is(FbxSurfacePhong::ClassId))
 				{
-					std::pair<unsigned int, std::string> materialInfo;
-					materialInfo.first = materialId;
-					materialInfo.second = materialProperty.GetName();
-					meshNode.m_materialTable.insert(materialInfo);
+					appearance = render::AppearancePtr(new render::LambertAppearance());
 
-					std::pair<unsigned int, std::string> textureInfo;
-					textureInfo.first = materialId;
-					textureInfo.second = materialProperty.GetName();
+					const FbxSurfacePhong& phongMaterial = (const FbxSurfacePhong &)surfaceMaterial;
+					glm::vec3 ambientColour(phongMaterial.Ambient.Get()[0], phongMaterial.Ambient.Get()[1], phongMaterial.Ambient.Get()[3]);
+					glm::vec3 diffuseColour(phongMaterial.Diffuse.Get()[0], phongMaterial.Diffuse.Get()[1], phongMaterial.Diffuse.Get()[3]);
+					glm::vec3 specularColour(phongMaterial.Specular.Get()[0], phongMaterial.Specular.Get()[1], phongMaterial.Specular.Get()[3]);
+					glm::vec3 emmissiveColour(phongMaterial.Emissive.Get()[0], phongMaterial.Emissive.Get()[1], phongMaterial.Emissive.Get()[3]);
 
-					meshNode.m_materialTable.insert(textureInfo);
+					double transparency = phongMaterial.TransparencyFactor.Get();
+					double shininess = phongMaterial.Shininess.Get();
+					double reflectivity = phongMaterial.ReflectionFactor.Get();
+
 				}
-			}
+				else if(surfaceMaterial.GetClassId().Is(FbxSurfaceLambert::ClassId))
+				{
+					appearance = render::AppearancePtr(new render::PhongAppearance());
 
-			if(textureCount > 1)
-			{
-				FBXSDK_printf("Material %s has more than one associated texture. Only the first texture has been loaded\n", materialProperty.GetName()); // May support more uv sets later
+					const FbxSurfaceLambert& lambertMaterial = (const FbxSurfaceLambert &)surfaceMaterial;
+
+					glm::vec3 ambientColour(lambertMaterial.Ambient.Get()[0], lambertMaterial.Ambient.Get()[1], lambertMaterial.Ambient.Get()[3]);
+					glm::vec3 diffuseColour(lambertMaterial.Diffuse.Get()[0], lambertMaterial.Diffuse.Get()[1], lambertMaterial.Diffuse.Get()[3]);
+					glm::vec3 emmissiveColour(lambertMaterial.Emissive.Get()[0], lambertMaterial.Emissive.Get()[1], lambertMaterial.Emissive.Get()[3]);
+
+					double transparency = lambertMaterial.TransparencyFactor.Get();
+				}
+				else
+				{
+					FBXSDK_printf("Material Id %d, name &s is not supported", materialId, surfaceMaterial.GetName());
+				}
+
+				unsigned int textureCount = materialProperty.GetSrcObjectCount<FbxTexture>();
+				for(int textureIndex = 0; textureIndex < textureCount; textureIndex++)
+				{
+					FbxFileTexture* fbxFileTexture = materialProperty.GetSrcObject<FbxFileTexture>(textureIndex);
+
+					std::string textureFilename = fbxFileTexture->GetFileName();//TODO cant currently support multiple materials!
+					appearance->AddTexture(textureFilename);
+				}
+
+				mesh::AppearanceTableEntry materialInfo;
+				materialInfo.first = materialId;
+				materialInfo.second = appearance;
+				meshNode.m_appearanceTable.insert(materialInfo);
 			}
 		}
 		else
 		{
-			FBXSDK_printf("Face %d has no associated material.\n", triangleIndex); // May support more uv sets later
+			FBXSDK_printf("Face %d has no associated material.\n", triangleIndex);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 #include "MeshNode.h"
 #include "Vertex.h"
 #include "Triangle.h"
+#include "../Batch/Appearance.h"
 
 namespace mesh
 {
@@ -17,7 +18,7 @@ void MeshNode::AllocateVertices(
 	const int numVertices
 	)		
 {
-	m_vertexArray = boost::shared_array<Vertex>(new Vertex[numVertices]);
+	m_vertexArray = MeshVertexArray(new Vertex[numVertices]);
 	m_numVertices = numVertices;
 }
 
@@ -25,13 +26,12 @@ void MeshNode::AllocateTriangles(
 	const int numTriangles
 	)		
 {
-	m_triangleArray = boost::shared_array<Triangle>(new Triangle[numTriangles]);
+	m_triangleArray = MeshTriangleArray(new Triangle[numTriangles]);
 	m_numTriangles = numTriangles;
 }
 
 MeshNode::~MeshNode()
 {
-
 };
 
 
