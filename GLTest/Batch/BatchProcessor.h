@@ -1,5 +1,8 @@
 #pragma once
 
+#include "BatchFwdDecl.h"
+#include <vector>
+
 namespace mesh
 {
 	class Mesh;
@@ -7,7 +10,7 @@ namespace mesh
 
 namespace render //TODO render or batch namespace?
 {
-	class BatchList;
+	class Batch;
 }
 
 namespace batch
@@ -19,8 +22,9 @@ public:
 	BatchProcessor();
 	~BatchProcessor();
 
-	render::BatchList *CreateBatches(
-		mesh::Mesh &importMesh
+	void CreateBatches(
+		mesh::Mesh &importMesh,
+		render::BatchList &renderBatches // Batch vector to fill in
 		);
 
 	void SortBatches();//TODO

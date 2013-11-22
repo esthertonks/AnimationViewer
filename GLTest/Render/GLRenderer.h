@@ -13,6 +13,8 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <boost/shared_ptr.hpp>
+#include "../Batch/BatchFwdDecl.h"
 
 namespace render
 {
@@ -96,11 +98,6 @@ public:
 		return m_programHandle;
 	}
 
-	inline GLuint GetVertexArrayHandle()
-	{
-		return m_vertexArrayHandle;
-	}
-
 	bool Initialised()
 	{
 		return m_initialised;
@@ -110,10 +107,12 @@ public:
 		const std::map<std::string, GLuint> &defaultShaderList
 		);
 
-	void Prepare(
-		render::Batch &batch
-		/*BatchList renderBatchList*/
-		);
+	void SetBatches(
+		const render::BatchList *batches
+		)
+	{
+		m_batches = batches;
+	}
 
 protected:
 	DECLARE_EVENT_TABLE()
@@ -144,19 +143,14 @@ private:
 	wxGLContext* m_context;
 
 	GLint m_programHandle;
-	GLuint m_vertexArrayHandle;
-
-	GLuint m_indexBufferHandle;
-	GLuint m_positionBufferHandle;
 
 	std::vector<GLuint> shaders;
 
 	bool m_initialised;
-	bool m_meshLoaded;
-
-	int currentNumIndices; //temp!!!!
 
 	OrbitCamera *m_camera;
+
+	const render::BatchList *m_batches;
 };
 
 }

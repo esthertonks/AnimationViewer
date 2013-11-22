@@ -47,6 +47,13 @@ public:
 		return m_numVertices;
 	}
 
+	int GetNumVerticesWithMaterialId(
+		int materialId
+	)
+	{
+		return m_numVerticesPerMaterial[materialId];
+	}
+
 	MeshVertexArray GetVertices()
 	{
 		return m_vertexArray;
@@ -88,6 +95,7 @@ private:
 	// We store here a list of material names and a list of texture names. We only actually currently need
 	// the texture names however future work will expand this information to a material class storing shader parameters and multiple textures per material.
 	AppearanceTable m_appearanceTable; // Mapping of material id's to material names
+	std::vector<unsigned int> m_numVerticesPerMaterial; // A count of the number of vertex indices per material batch. Necessary for creating batches later
 };
 
 

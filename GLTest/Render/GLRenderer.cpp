@@ -37,7 +37,8 @@ GLRenderer::GLRenderer(
 	)
 	: wxGLCanvas(parent, id, position, size, style|wxFULL_REPAINT_ON_RESIZE, name), 
 	m_context(NULL),
-	m_camera(new OrbitCamera(glm::vec3(100.0f, 0.0f, 0.0f)))
+	m_camera(new OrbitCamera(glm::vec3(100.0f, 0.0f, 0.0f))),
+	m_batches(NULL)
 {
 }
 
@@ -50,8 +51,6 @@ void GLRenderer::InitGL()
 	}
 
 	m_initialised = false;
-	m_meshLoaded = false;
-	currentNumIndices = -1;
 
 	m_context = new wxGLContext(this);
 
@@ -554,46 +553,6 @@ void GLRenderer::OutputDebugShaderAttributeInfo()
 	}
 }
 
-void GLRenderer::Prepare(
-	render::Batch &batch
-	/*BatchList renderBatchList*/
-	)
-{
-	//for each in batchlist
-	//create and bind vbo - store id's in batchlist
-	//load textures - store in batch list
-
-
-	/////////////////// Create the VBO ////////////////////
-	// Create and set-up the vertex array object
-	glGenVertexArrays( 1, &m_vertexArrayHandle);
-	glBindVertexArray(m_vertexArrayHandle);
-
-	// Create and populate the buffer objects
-	GLuint vboHandles[2];
-	glGenBuffers(2, vboHandles);
-	m_positionBufferHandle = vboHandles[0];
-	m_indexBufferHandle = vboHandles[1];
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_positionBufferHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(render::ColourVertexFormat) * batch.GetNumVertices(), batch.GetVertices().get(), GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertexFormat), (GLubyte *)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertexFormat), (GLubyte *)sizeof(glm::vec3));
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertexFormat), (GLubyte *)(sizeof(glm::vec3) * 2));
-
-	glEnableVertexAttribArray(0);  // Vertex position
-	glEnableVertexAttribArray(1);  // Vertex colour
-	glEnableVertexAttribArray(2);  // Vertex normal
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferHandle);
-
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * batch.GetNumIndices(), batch.GetIndices().get(), GL_STATIC_DRAW);
-
-	m_meshLoaded = true;
-	currentNumIndices = batch.GetNumIndices();
-}
-
 void GLRenderer::Render(
 	)
 {
@@ -625,7 +584,16 @@ void GLRenderer::Render(
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
 
-	if(m_meshLoaded)
+	if(!m_batches)
+	{
+		glFlush();
+		SwapBuffers();
+		return;
+	}
+
+	render::BatchList::const_iterator batchIterator;
+
+	for(batchIterator = m_batches->begin(); batchIterator != m_batches->end(); batchIterator++)
 	{
 		float angle = 30.0f;
 		glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0.0f, 0.0f));
@@ -660,10 +628,10 @@ void GLRenderer::Render(
 			glUniformMatrix3fv(normalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
 
 			//wxLogDebug("%u\n", GetVertexArrayHandle());
-			glBindVertexArray(GetVertexArrayHandle());
+			glBindVertexArray((*batchIterator)->GetVertexArrayHandle());
 
 			//m_indexBufferHandle
-			glDrawElements(GL_TRIANGLES, currentNumIndices, GL_UNSIGNED_SHORT, (GLvoid*)0);
+			glDrawElements(GL_TRIANGLES, (*batchIterator)->GetNumIndices(), GL_UNSIGNED_SHORT, (GLvoid*)0);
 
 		}
 	}
@@ -680,21 +648,7 @@ GLRenderer::~GLRenderer()
 		return;
 	}
 
-	// Disable the two vertex array attributes.
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
-	
-	// Release the vertex buffer.
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glDeleteBuffers(0, &m_indexBufferHandle);
-
-	// Release the index buffer.
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glDeleteBuffers(1, &m_positionBufferHandle);
-
-	// Release the vertex array object.
-	glBindVertexArray(0);
-	glDeleteVertexArrays(1, &m_vertexArrayHandle);
+	// TODO Release batch gl memory allocated in prepare?
 
 	std::vector<GLuint>::iterator iter;
 	for(iter = shaders.begin(); iter != shaders.end(); iter++)

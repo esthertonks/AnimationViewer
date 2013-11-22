@@ -10,9 +10,7 @@
 IMPLEMENT_APP(AnimationApp)
 
 bool AnimationApp::OnInit()
-{
-	m_batchList = NULL;
-	
+{	
 	wxFrame *frame = new render::Window(NULL, wxT("Testing"), wxDefaultPosition, wxSize(800, 800), wxDEFAULT_FRAME_STYLE);
 	
 	m_renderer = new render::GLRenderer(frame, wxID_ANY, wxDefaultPosition, wxSize(800, 800), wxSUNKEN_BORDER, "Animation App");
@@ -33,7 +31,7 @@ void AnimationApp::OnIdle(
 	//Prepare Mesh - update animation
 	DWORD timeNow = timeGetTime();
 	//BatchList
-	if(m_batchList)
+	if(m_renderBatches.size() != 0)
 	{
 		float delta = 0.001f * timeNow - m_lastTime;
 
@@ -68,27 +66,28 @@ void AnimationApp::ImportFBX(
 	mesh::Mesh* importMesh = m_fbxImporter->Import(filePath);
 	if(importMesh)
 	{
-		if(m_batchList)
+		if(m_renderBatches.size() != 0)
 		{
-			delete m_batchList;
-			m_batchList = NULL;
+			m_renderBatches.clear();
+			m_renderBatches.resize(0); //TODO does this need to be a pointer???
 		}
 		batch::BatchProcessor meshBatchProcessor;
-		m_batchList = meshBatchProcessor.CreateBatches(*importMesh);
+		meshBatchProcessor.CreateBatches(*importMesh, m_renderBatches);
 
-		for(render::Batch *node = m_batchList->GetNodeHierarchy(); node != NULL; node = node->m_next)
+		render::BatchList::const_iterator batchIterator;
+		for(batchIterator = m_renderBatches.begin(); batchIterator != m_renderBatches.end(); batchIterator++)
 		{
-			m_renderer->Prepare(*node);
+			(*batchIterator)->Prepare();
 		}
+		m_renderer->SetBatches(&m_renderBatches);
+	}
+	else
+	{
+		m_renderer->SetBatches(NULL);
 	}
 
 }
 
 void AnimationApp::DeleteMesh()
 {
-	if(m_batchList)
-	{
-		delete m_batchList;
-		m_batchList = NULL;
-	}
 }

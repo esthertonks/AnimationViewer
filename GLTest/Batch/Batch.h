@@ -4,6 +4,11 @@
 #include "../Container/LinkedList .h"
 #include "BatchFwdDecl.h"
 
+// TODO general includes in its own header?
+#define GLEW_STATIC 1
+
+#include <GL/glew.h>
+
 namespace render
 {
 
@@ -15,20 +20,24 @@ class Batch : public container::LinkedListItem<Batch>
 public:
 
 	Batch(
-		AppearancePtr appearance,
 		VertexFormatType vertexFormatType
 		);
 
-	~Batch(){};
+	~Batch();
+
+	inline GLuint GetVertexArrayHandle()
+	{
+		return m_vertexArrayHandle;
+	}
 
 	int GetNumIndices()
 	{
-		return m_numIndices;
+		return m_indexArray.size();
 	}
 
 	int GetNumVertices()
 	{
-		return m_numVertices;
+		return m_vertexArray.size();
 	}
 
 	BatchVertexArrayPtr GetVertices()
@@ -46,12 +55,22 @@ public:
 		return m_indexArray;
 	}
 
+	AppearancePtr GetAppearance()
+	{
+		return m_appearance;
+	}
+
+	void SetAppearance(
+	AppearancePtr appearance
+	)
+	{
+		m_appearance = appearance;
+	};
+
 	void AddVertex(
-		const VertexFormat &vertex,
+		const Vertex &vertex,
 		const short vertexIndex
 		);
-
-	void CorrectIndeces();
 
 	void							AllocateVertices(
 										const int numVertices
@@ -69,9 +88,14 @@ private:
 
 	BatchVertexArrayPtr m_vertexArray;
 	IndexArrayPtr m_indexArray;
-	short m_numIndices;
-	int m_numVertices;
 	AppearancePtr m_appearance; // Several batches could have the same appearance
 	VertexFormatType m_vertexFormatType;
+
+	GLuint m_vertexArrayHandle;
+
+	GLuint m_indexBufferHandle;
+	GLuint m_positionBufferHandle;
+
+	bool m_meshLoaded;
 };
 }

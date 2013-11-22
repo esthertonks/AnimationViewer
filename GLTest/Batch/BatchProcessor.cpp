@@ -24,76 +24,76 @@ BatchProcessor::~BatchProcessor()
 //TODO traingle strips
 //https://developer.apple.com/library/ios/documentation/3ddrawing/conceptual/opengles_programmingguide/TechniquesforWorkingwithVertexData/TechniquesforWorkingwithVertexData.html
 
-render::BatchList *BatchProcessor::CreateBatches(
-	mesh::Mesh &importMesh
+void BatchProcessor::CreateBatches(
+	mesh::Mesh &importMesh,
+	render::BatchList &renderBatches // Batch vector to fill in
 	)
 {
-	render::BatchList* renderBatch = new render::BatchList();
-
 	// TODO For now just average everything, but this needs to create batches and split normals for textures, colours and normals.
 	for(mesh::MeshNode* meshNode = importMesh.m_root; meshNode != NULL; meshNode = meshNode->m_next)
 	{
-		boost::shared_array<mesh::Triangle>& triangleArray = meshNode->GetTriangles();
+		mesh::MeshTriangleArray triangleArray = meshNode->GetTriangles();
 		int numTriangles = meshNode->GetNumTriangles();
-		boost::shared_array<mesh::Vertex>& vertexArray = meshNode->GetVertices();
+		mesh::MeshVertexArray vertexArray = meshNode->GetVertices();
 		int numVertices = meshNode->GetNumVertices();
 
 		// TODO for testing atm assume only one - rewrite for many shortly
 		mesh::AppearanceTable& appearances = meshNode->GetAppearances();
 		int numBatches = appearances.size();
-		std::vector<render::Batch> renderBatches;
-		
-		// For each triangle
-		// Get the material id
-		// Get the associated batch.
-		// Add the verts and indeces for that triangle to the batch
+		renderBatches.resize(renderBatches.size() + numBatches);
 
+		// TODO need to split verts along uv seams first
+		// TODO need to split verts along hard edge normals first
+		// TODO need to split by vertex format first?
 
-		(appearances.begin()->second, render::VertexFormatType::ColourFormat)[numBatches];
-		renderBatch->Add(*batch);
-		batch->AllocateIndices(numTriangles * 3);
-		render::IndexArrayPtr renderIndexArray = batch->GetIndices();	
-
-		batch->AllocateVertices(numVertices); // Currently this is the same. TODO need to consider that when batching we will not know this count in advance.
-		render::BatchVertexArrayPtr renderVertexArray = batch->GetVertices();
+		// Map containing the material id and a vector array containing the new index for vector[oldindex] in the array
+		std::vector<int>oldToNewVertexIndexMap(numVertices, -1);
+		std::vector<std::vector<int>> perMaterialOldToNewVertexIndexMap(numBatches, oldToNewVertexIndexMap);
 
 		for(int triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
 		{
+			unsigned int materialId = triangleArray[triangleIndex].m_materialId;
+			//std::vector<int> oldToNewVertexIndexMap = perMaterialOldToNewVertexIndexMap[materialId];
+
+			if(!renderBatches[materialId]) // If a batch for this material does not already exist then create it
+			{
+				renderBatches[materialId] = render::BatchPtr(new render::Batch(render::VertexFormatType::ColourFormat));
+				int numVertices = meshNode->GetNumVerticesWithMaterialId(materialId);
+				renderBatches[materialId]->AllocateVertices(numVertices);
+				renderBatches[materialId]->AllocateIndices(numVertices);
+				renderBatches[materialId]->SetAppearance(appearances[materialId]);
+			}
+
+			// Assign the mesh information to batches. Reassigning the indices as the data is processed.
 			for(int triangleCornerIndex = 0; triangleCornerIndex < 3; triangleCornerIndex++)
 			{
-				renderIndexArray[triangleIndex * 3 + triangleCornerIndex] = triangleArray[triangleIndex].m_vertexIndices[triangleCornerIndex];
+				unsigned int currentVertexIndex = triangleArray[triangleIndex].m_vertexIndices[triangleCornerIndex];
+				render::Vertex vertex;
+
+				int newIndex = perMaterialOldToNewVertexIndexMap[materialId][currentVertexIndex];
+				if(newIndex == -1) // If this is the first time we have seen this index in this batch create a new vertex for the batch
+				{
+					vertex.m_position = glm::vec3(vertexArray[currentVertexIndex].m_position);
+					vertex.m_colour = triangleArray[triangleIndex].m_colours[triangleCornerIndex]; //TODO currently this is just getting overriden by the next
+					vertex.m_normal += glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]); //TODO these need splitting
+					vertex.m_normal = glm::normalize(vertex.m_normal); // TODO Not ideal as we're normalizing more than we need to - split into another loop?
+
+					newIndex = renderBatches[materialId]->GetNumVertices();
+					perMaterialOldToNewVertexIndexMap[materialId][currentVertexIndex] = newIndex;
+					renderBatches[materialId]->AddVertex(vertex, newIndex);
+				}
+				else // Otherwise get the existing vertex at this index and average the information with the new vertex information
+				{
+					vertex = renderBatches[materialId]->GetVertices()[newIndex];
+					vertex.m_colour += triangleArray[triangleIndex].m_colours[triangleCornerIndex];// TODO This doesnt really work. These verts needs splitting first. They also need averaging properly.
+					vertex.m_normal += glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]);
+					vertex.m_normal = glm::normalize(vertex.m_normal); // TODO Not ideal as we're normalizing more than we need to - split into another loop?
+				}
 			}
-		}
-
-		// TODO this will change but for now we'll just copy across the vertex position and the last colour
-		for(int triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
-		{
-			for(int triangleCornerIndex = 0; triangleCornerIndex < 3; triangleCornerIndex++)
-			{
-				unsigned int vertexIndex = triangleArray[triangleIndex].m_vertexIndices[triangleCornerIndex];
-				render::ColourVertexFormat &vertex = (render::ColourVertexFormat &) renderVertexArray[vertexIndex];
-
-				vertex.m_colour = triangleArray[triangleIndex].m_colours[triangleCornerIndex]; //TODO currently this is just getting overriden by the next
-				vertex.m_normal += glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]); //TODO these need splitting
-				//wxLogDebug("NormalA %f, %f, %f\n", triangleArray[triangleIndex].m_normals[triangleCornerIndex].x, triangleArray[triangleIndex].m_normals[triangleCornerIndex].y, triangleArray[triangleIndex].m_normals[triangleCornerIndex].z);
-			}
-		}
-
-		for(int vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
-		{
-			render::ColourVertexFormat &vertex = (render::ColourVertexFormat &) renderVertexArray[vertexIndex];
-
-			// Currently vec3 in rendering mesh
-			vertex.m_position[0] = vertexArray[vertexIndex].m_position[0];
-			vertex.m_position[1] = vertexArray[vertexIndex].m_position[1];
-			vertex.m_position[2] = vertexArray[vertexIndex].m_position[2];
-
-			vertex.m_normal = glm::normalize(vertex.m_normal);
-			//wxLogDebug("NormalB %f, %f, %f\n", renderVertexArray[vertexIndex].m_normal.x, renderVertexArray[vertexIndex].m_normal.y, renderVertexArray[vertexIndex].m_normal.z);
 		}
 	}
 
-	return renderBatch;
+	return;
 }
 
 void BatchProcessor::SortBatches()

@@ -52,9 +52,9 @@ private:
 		);
 
 	/**
-		@brief Loads the vertex indeces for the given triangle
+		@brief Loads the vertex Indices for the given triangle
 	*/
-	void LoadVertexIndeces(
+	void LoadVertexIndices(
 		FbxMesh &fbxMesh,			// FBX mesh to import data from
 		int triangleIndex,			// Index of the current triangle being loaded
 		mesh::Triangle &triangle	// The current triangle to store the imported data

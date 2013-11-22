@@ -1,6 +1,9 @@
 #pragma once
 
 #include "wx/wx.h"
+#include <vector>
+#include <boost\shared_ptr.hpp>
+#include "Batch\BatchFwdDecl.h"
 
 namespace render
 {
@@ -14,7 +17,6 @@ namespace import
 
 namespace render
 {
-	class BatchList;
 	class Batch;
 }
 
@@ -43,7 +45,7 @@ class AnimationApp: public wxApp
 
 	render::GLRenderer *m_renderer;
 	import::FBXImport *m_fbxImporter;
-	render::BatchList *m_batchList; // List of batches to render sorts by material
+	render::BatchList m_renderBatches;
 	DWORD m_lastTime;
 };
 

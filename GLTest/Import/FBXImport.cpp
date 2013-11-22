@@ -152,7 +152,7 @@ bool FBXImport::LoadMeshNodes(
 		// Extract and store vertices
 		const unsigned int numVertices = fbxMesh->GetControlPointsCount();
 		meshNode.AllocateVertices(numVertices);
-		boost::shared_array<mesh::Vertex> vertexArray = meshNode.GetVertices();
+		mesh::MeshVertexArray vertexArray = meshNode.GetVertices();
 
 		const FbxVector4* const fbxVertices = fbxMesh->GetControlPoints();
 		for(unsigned int vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
@@ -168,7 +168,14 @@ bool FBXImport::LoadMeshNodes(
 		int numTriangles = fbxMesh->GetPolygonCount();
 
 		meshNode.AllocateTriangles(numTriangles);
-		boost::shared_array<mesh::Triangle> triangleArray = meshNode.GetTriangles();
+		mesh::MeshTriangleArray triangleArray = meshNode.GetTriangles();
+
+			// Get the per triangle material index
+		const int materialLayerCount = fbxMesh->GetElementMaterialCount();
+		if(materialLayerCount != 1)
+		{
+			FBXSDK_printf("Only one material layer is supported. Only the first layer will be loaded.\n");
+		}
 
 		// Load per triangle data
 		for(int triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
@@ -179,7 +186,7 @@ bool FBXImport::LoadMeshNodes(
 			mesh::Triangle &triangle = triangleArray[triangleIndex];
 			LoadMaterials(*fbxMesh, triangleIndex, meshNode);
 
-			LoadVertexIndeces(*fbxMesh, triangleIndex, triangle);
+			LoadVertexIndices(*fbxMesh, triangleIndex, triangle);
 
 			LoadColours(*fbxMesh, triangleIndex, triangle);
 			LoadUVs(*fbxMesh, triangleIndex, triangle);
@@ -209,82 +216,97 @@ void FBXImport::LoadMaterials(
 	mesh::MeshNode &meshNode	// The mesh node which will store the imported material and texture data
 	)
 {
-	// Get the per triangle material index
-	const int materialCount = fbxMesh.GetElementMaterialCount();
-	for(int materialIndex = 0; materialIndex < materialCount; materialIndex++)
+	const FbxGeometryElementMaterial &materialElement = *fbxMesh.GetElementMaterial(0); // Get the first material layer element. Only one is supported.
+	const int materialId = materialElement.GetIndexArray().GetAt(triangleIndex);
+	if (materialId >= 0)
 	{
-		const FbxGeometryElementMaterial &materialElement = *fbxMesh.GetElementMaterial(materialIndex);
-		const int materialId = materialElement.GetIndexArray().GetAt(triangleIndex);
-		if (materialId >= 0)
+		const FbxSurfaceMaterial& surfaceMaterial = *fbxMesh.GetNode()->GetMaterial(materialId);
+		meshNode.m_triangleArray[triangleIndex].m_materialId = materialId;
+
+		// Just get the diffuse for now. Will load normal/bump and other textures here in future.
+		FbxProperty materialProperty = surfaceMaterial.FindProperty(FbxSurfaceMaterial::sDiffuse);
+
+		if(meshNode.m_appearanceTable.count(materialId) == 0)
 		{
-			const FbxSurfaceMaterial& surfaceMaterial = *fbxMesh.GetNode()->GetMaterial(materialId);
-			meshNode.m_triangleArray[triangleIndex].m_materialId = materialId;
+			meshNode.m_numVerticesPerMaterial.push_back(0);// Add another int initialised at 0 for this material
+			render::AppearancePtr appearance;
 
-			// Just get the diffuse for now. Will load normal/bump and other textures here in future.
-			FbxProperty materialProperty = surfaceMaterial.FindProperty(FbxSurfaceMaterial::sDiffuse);
-
-			if(!meshNode.m_appearanceTable.count(materialId))
+			if (surfaceMaterial.GetClassId().Is(FbxSurfacePhong::ClassId))
 			{
-				render::AppearancePtr appearance;
+				appearance = render::AppearancePtr(new render::PhongAppearance());
+					
+				const FbxSurfacePhong& phongMaterial = (const FbxSurfacePhong &)surfaceMaterial;
+				glm::vec3 ambientColour(phongMaterial.Ambient.Get()[0], phongMaterial.Ambient.Get()[1], phongMaterial.Ambient.Get()[3]);
+				glm::vec3 diffuseColour(phongMaterial.Diffuse.Get()[0], phongMaterial.Diffuse.Get()[1], phongMaterial.Diffuse.Get()[3]);
+				glm::vec3 specularColour(phongMaterial.Specular.Get()[0], phongMaterial.Specular.Get()[1], phongMaterial.Specular.Get()[3]);
+				glm::vec3 emmissiveColour(phongMaterial.Emissive.Get()[0], phongMaterial.Emissive.Get()[1], phongMaterial.Emissive.Get()[3]);
 
-				if (surfaceMaterial.GetClassId().Is(FbxSurfacePhong::ClassId))
-				{
-					appearance = render::AppearancePtr(new render::LambertAppearance());
+				double transparency = phongMaterial.TransparencyFactor.Get();
+				double shininess = phongMaterial.Shininess.Get();
+				double reflectivity = phongMaterial.ReflectionFactor.Get();
 
-					const FbxSurfacePhong& phongMaterial = (const FbxSurfacePhong &)surfaceMaterial;
-					glm::vec3 ambientColour(phongMaterial.Ambient.Get()[0], phongMaterial.Ambient.Get()[1], phongMaterial.Ambient.Get()[3]);
-					glm::vec3 diffuseColour(phongMaterial.Diffuse.Get()[0], phongMaterial.Diffuse.Get()[1], phongMaterial.Diffuse.Get()[3]);
-					glm::vec3 specularColour(phongMaterial.Specular.Get()[0], phongMaterial.Specular.Get()[1], phongMaterial.Specular.Get()[3]);
-					glm::vec3 emmissiveColour(phongMaterial.Emissive.Get()[0], phongMaterial.Emissive.Get()[1], phongMaterial.Emissive.Get()[3]);
+				boost::shared_ptr<render::PhongAppearance> phongAppearancePtr = boost::static_pointer_cast<render::PhongAppearance>(appearance);
 
-					double transparency = phongMaterial.TransparencyFactor.Get();
-					double shininess = phongMaterial.Shininess.Get();
-					double reflectivity = phongMaterial.ReflectionFactor.Get();
+				phongAppearancePtr->SetAmbient(ambientColour);
+				phongAppearancePtr->SetDiffuse(diffuseColour);
+				phongAppearancePtr->SetSpecular(specularColour);
+				phongAppearancePtr->SetEmissive(emmissiveColour);
 
-				}
-				else if(surfaceMaterial.GetClassId().Is(FbxSurfaceLambert::ClassId))
-				{
-					appearance = render::AppearancePtr(new render::PhongAppearance());
-
-					const FbxSurfaceLambert& lambertMaterial = (const FbxSurfaceLambert &)surfaceMaterial;
-
-					glm::vec3 ambientColour(lambertMaterial.Ambient.Get()[0], lambertMaterial.Ambient.Get()[1], lambertMaterial.Ambient.Get()[3]);
-					glm::vec3 diffuseColour(lambertMaterial.Diffuse.Get()[0], lambertMaterial.Diffuse.Get()[1], lambertMaterial.Diffuse.Get()[3]);
-					glm::vec3 emmissiveColour(lambertMaterial.Emissive.Get()[0], lambertMaterial.Emissive.Get()[1], lambertMaterial.Emissive.Get()[3]);
-
-					double transparency = lambertMaterial.TransparencyFactor.Get();
-				}
-				else
-				{
-					FBXSDK_printf("Material Id %d, name &s is not supported", materialId, surfaceMaterial.GetName());
-				}
-
-				unsigned int textureCount = materialProperty.GetSrcObjectCount<FbxTexture>();
-				for(int textureIndex = 0; textureIndex < textureCount; textureIndex++)
-				{
-					FbxFileTexture* fbxFileTexture = materialProperty.GetSrcObject<FbxFileTexture>(textureIndex);
-
-					std::string textureFilename = fbxFileTexture->GetFileName();//TODO cant currently support multiple materials!
-					appearance->AddTexture(textureFilename);
-				}
-
-				mesh::AppearanceTableEntry materialInfo;
-				materialInfo.first = materialId;
-				materialInfo.second = appearance;
-				meshNode.m_appearanceTable.insert(materialInfo);
+				phongAppearancePtr->SetTransparency(transparency);
+				phongAppearancePtr->SetShininess(shininess);
+				phongAppearancePtr->SetReflectivity(reflectivity);
 			}
+			else if(surfaceMaterial.GetClassId().Is(FbxSurfaceLambert::ClassId))
+			{
+				appearance = render::AppearancePtr(new render::LambertAppearance());
+
+				const FbxSurfaceLambert& lambertMaterial = (const FbxSurfaceLambert &)surfaceMaterial;
+
+				glm::vec3 ambientColour(lambertMaterial.Ambient.Get()[0], lambertMaterial.Ambient.Get()[1], lambertMaterial.Ambient.Get()[3]);
+				glm::vec3 diffuseColour(lambertMaterial.Diffuse.Get()[0], lambertMaterial.Diffuse.Get()[1], lambertMaterial.Diffuse.Get()[3]);
+				glm::vec3 emmissiveColour(lambertMaterial.Emissive.Get()[0], lambertMaterial.Emissive.Get()[1], lambertMaterial.Emissive.Get()[3]);
+
+				double transparency = lambertMaterial.TransparencyFactor.Get();
+
+				boost::shared_ptr<render::LambertAppearance> lambertAppearancePtr = boost::static_pointer_cast<render::LambertAppearance>(appearance);
+
+				lambertAppearancePtr->SetAmbient(ambientColour);
+				lambertAppearancePtr->SetDiffuse(diffuseColour);
+				lambertAppearancePtr->SetEmissive(emmissiveColour);
+
+				lambertAppearancePtr->SetTransparency(transparency);
+			}
+			else
+			{
+				FBXSDK_printf("Material Id %d, name &s is not supported", materialId, surfaceMaterial.GetName());
+			}
+
+			unsigned int textureCount = materialProperty.GetSrcObjectCount<FbxTexture>();
+			for(int textureIndex = 0; textureIndex < textureCount; textureIndex++)
+			{
+				FbxFileTexture* fbxFileTexture = materialProperty.GetSrcObject<FbxFileTexture>(textureIndex);
+
+				std::string textureFilename = fbxFileTexture->GetFileName();//TODO cant currently support multiple materials!
+				appearance->AddTexture(textureFilename);
+			}
+
+			mesh::AppearanceTableEntry materialInfo;
+			materialInfo.first = materialId;
+			materialInfo.second = appearance;
+			meshNode.m_appearanceTable.insert(materialInfo);
 		}
-		else
-		{
-			FBXSDK_printf("Face %d has no associated material.\n", triangleIndex);
-		}
+		meshNode.m_numVerticesPerMaterial[materialId]++;
+	}
+	else
+	{
+		FBXSDK_printf("Face %d has no associated material.\n", triangleIndex);
 	}
 }
 
 /**
-	@brief Loads the vertex indeces for the given triangle
+	@brief Loads the vertex Indices for the given triangle
 */
-void FBXImport::LoadVertexIndeces(
+void FBXImport::LoadVertexIndices(
 	FbxMesh &fbxMesh,			// FBX mesh to import data from
 	int triangleIndex,			// Index of the current triangle being loaded
 	mesh::Triangle &triangle	// The current triangle to store the imported data

@@ -19,7 +19,7 @@ public :
 		m_vertexIndices[triangleCornerId] = vertexIndex;
 	};
 
-	void SetVertexIndeces(
+	void SetVertexIndices(
 		unsigned int vertexIndices[3]
 		)
 	{
@@ -53,7 +53,7 @@ public :
 		m_colours[3] = colours[3];
 	};
 
-	unsigned int m_vertexIndices[3];	// Vertex indeces for the 3 triangle corners
+	unsigned int m_vertexIndices[3];	// Vertex Indices for the 3 triangle corners
 	glm::vec4 m_normals[3];				// Normals for the 3 triangle corners (thus multiple normals per vertex)
 	glm::vec4 m_binormals[3];			// Binormals for the 3 triangle corners (thus multiple normals per vertex)
 	glm::vec4 m_tangents[3];			// Tangents for the 3 triangle corners (thus multiple normals per vertex)

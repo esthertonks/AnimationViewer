@@ -1,10 +1,10 @@
-#include "BatchList.h"
-
-namespace render
-{
-
-BatchList::~BatchList()
-{
-}
-
-}
+//#include "BatchList.h"
+//
+//namespace render
+//{
+//
+//BatchList::~BatchList()
+//{
+//}
+//
+//}
