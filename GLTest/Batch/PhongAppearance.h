@@ -13,6 +13,11 @@ public:
 	PhongAppearance(){};
 	~PhongAppearance(){};
 
+virtual MaterialType GetType()
+{
+	return MaterialType::Phong;
+}
+
 inline void SetAmbient(
 	 const glm::vec3 &ambient // Ambient colour
 	)

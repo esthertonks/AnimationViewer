@@ -13,6 +13,11 @@ public:
 	LambertAppearance(){};
 	~LambertAppearance(){};
 
+virtual MaterialType GetType()
+{
+	return MaterialType::Lambert;
+}
+
 inline void SetAmbient(
 	const glm::vec3 &ambient // Ambient colour
 	)

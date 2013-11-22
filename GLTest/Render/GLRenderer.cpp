@@ -8,6 +8,9 @@
 #include "../Batch/VertexFormat.h"
 #include "../Batch/Batch.h"
 #include "OrbitCamera.h"
+#include "../Batch/Appearance.h"
+#include "../Batch/PhongAppearance.h"
+#include "../Batch/LambertAppearance.h"
 
 namespace render
 {
@@ -338,29 +341,6 @@ bool GLRenderer::LoadShaders(
 
 	m_initialised = true;
 
-	//TODO load from mesh. Move to prepare?
-	GLint materialAmbientLocation = glGetUniformLocation(GetProgramHandle(), "material.ambient");
-	glUniform3f(materialAmbientLocation, 0.3f, 0.5f, 0.3f);
-
-	GLint materialDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuse");
-	glUniform3f(materialDiffuseLocation, 0.3f, 0.5f, 0.3f);
-
-	GLint materialSpecularLocation = glGetUniformLocation(GetProgramHandle(), "material.specular");
-	glUniform3f(materialSpecularLocation, 0.8f, 0.8f, 0.8f);
-
-	GLint materialShininessLocation = glGetUniformLocation(GetProgramHandle(), "material.shininess");
-	glUniform1f(materialShininessLocation, 100.0f);
-
-	// TODO need to be able to add more than one light
-	GLint lightAmbientLocation = glGetUniformLocation(GetProgramHandle(), "light.ambient");
-	glUniform3f(lightAmbientLocation, 0.4f, 0.4f, 0.4f);
-
-	GLint lightDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "light.diffuse");
-	glUniform3f(lightDiffuseLocation, 1.0f, 1.0f, 1.0f);
-
-	GLint lightSpecularLocation = glGetUniformLocation(GetProgramHandle(), "light.specular");
-	glUniform3f(lightSpecularLocation, 1.0f, 0.5f, 0.3f);
-
 	return true;
 }
 
@@ -595,6 +575,61 @@ void GLRenderer::Render(
 
 	for(batchIterator = m_batches->begin(); batchIterator != m_batches->end(); batchIterator++)
 	{
+		// TODO if batches->shader != currentShader
+		// LoadShader(batch->shader)
+
+
+		// TODO most liekly wants moving elsewhere...maybe appearance->SetUniforms(program)
+		if((*batchIterator)->GetAppearance()->GetType() == render::MaterialType::Phong)
+		{
+			boost::shared_ptr<render::PhongAppearance> phongAppearancePtr = boost::static_pointer_cast<render::PhongAppearance>((*batchIterator)->GetAppearance());
+			GLint materialAmbientLocation = glGetUniformLocation(GetProgramHandle(), "material.ambient");
+			glm::vec3 materialAmbient = phongAppearancePtr->GetAmbient();
+			glUniform3f(materialAmbientLocation, materialAmbient.r, materialAmbient.g, materialAmbient.b);
+
+			glm::vec3 materialDiffuse = phongAppearancePtr->GetDiffuse();
+			GLint materialDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuse");
+			glUniform3f(materialDiffuseLocation, materialDiffuse.r, materialDiffuse.g, materialDiffuse.b);
+
+			glm::vec3 materialSpecular = phongAppearancePtr->GetSpecular();
+			GLint materialSpecularLocation = glGetUniformLocation(GetProgramHandle(), "material.specular");
+			glUniform3f(materialSpecularLocation, materialSpecular.r, materialSpecular.g, materialSpecular.b);
+
+			double materialShiniess = phongAppearancePtr->GetShininess();
+			GLint materialShininessLocation = glGetUniformLocation(GetProgramHandle(), "material.shininess");
+			glUniform1f(materialShininessLocation, materialShiniess);
+		}
+		else if((*batchIterator)->GetAppearance()->GetType() == render::MaterialType::Lambert)
+		{
+			boost::shared_ptr<render::LambertAppearance> lambertAppearancePtr = boost::static_pointer_cast<render::LambertAppearance>((*batchIterator)->GetAppearance());
+			GLint materialAmbientLocation = glGetUniformLocation(GetProgramHandle(), "material.ambient");
+			glm::vec3 materialAmbient = lambertAppearancePtr->GetAmbient();
+			glUniform3f(materialAmbientLocation, materialAmbient.r, materialAmbient.g, materialAmbient.b);
+
+			glm::vec3 materialDiffuse = lambertAppearancePtr->GetDiffuse();
+			GLint materialDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuse");
+			glUniform3f(materialDiffuseLocation, materialDiffuse.r, materialDiffuse.g, materialDiffuse.b);
+
+			glm::vec3 materialSpecular;//TEMP AS NOT APPLICABLE
+			GLint materialSpecularLocation = glGetUniformLocation(GetProgramHandle(), "material.specular");
+			glUniform3f(materialSpecularLocation, materialSpecular.r, materialSpecular.g, materialSpecular.b);
+
+			double materialShiniess = 0.0f;//TEMP AS NOT APPLICABLE
+			GLint materialShininessLocation = glGetUniformLocation(GetProgramHandle(), "material.shininess");
+			glUniform1f(materialShininessLocation, materialShiniess);
+		}
+
+		// TODO need to be able to add more than one light
+		GLint lightAmbientLocation = glGetUniformLocation(GetProgramHandle(), "light.ambient");
+		glUniform3f(lightAmbientLocation, 0.4f, 0.4f, 0.4f);
+
+		GLint lightDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "light.diffuse");
+		glUniform3f(lightDiffuseLocation, 1.0f, 1.0f, 1.0f);
+
+		GLint lightSpecularLocation = glGetUniformLocation(GetProgramHandle(), "light.specular");
+		glUniform3f(lightSpecularLocation, 1.0f, 0.5f, 0.3f);
+
+
 		float angle = 30.0f;
 		glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0.0f, 0.0f));
 		//glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -20.f));

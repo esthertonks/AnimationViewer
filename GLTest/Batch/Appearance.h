@@ -7,6 +7,12 @@
 namespace render
 {
 
+enum MaterialType
+{
+	Phong,
+	Lambert
+};
+
 class Appearance abstract
 {
 
@@ -34,6 +40,8 @@ void AddTexture(
 	m_texturePaths.push_back(texturePath);
 };
 
+virtual MaterialType GetType() = 0;
+
 private:
 	// The shader associated with this appearance
 	std::string m_shaderPath;
@@ -41,6 +49,8 @@ private:
 	// opengl states
 
 	std::vector<std::string>m_texturePaths;
+
+	MaterialType m_type;
 
 };
 }
