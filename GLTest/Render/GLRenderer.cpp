@@ -1,16 +1,17 @@
 #include "GLRenderer.h"
 
-#include <glm/gtc/matrix_transform.hpp>
-
 #include <wx/log.h>
 #include <fstream>
+#include <glm/gtc/matrix_transform.hpp>
 
+#include "RenderEntity.h"
 #include "../Batch/VertexFormat.h"
 #include "../Batch/Batch.h"
 #include "OrbitCamera.h"
 #include "../Batch/Appearance.h"
 #include "../Batch/PhongAppearance.h"
 #include "../Batch/LambertAppearance.h"
+#include "RenderEntity.h"
 
 namespace render
 {
@@ -41,7 +42,7 @@ GLRenderer::GLRenderer(
 	: wxGLCanvas(parent, id, position, size, style|wxFULL_REPAINT_ON_RESIZE, name), 
 	m_context(NULL),
 	m_camera(new OrbitCamera(glm::vec3(100.0f, 0.0f, 0.0f))),
-	m_batches(NULL)
+	m_renderEntity(NULL)
 {
 }
 
@@ -204,7 +205,7 @@ void GLRenderer::OnMouseMove(
 	float posX = event.m_x;
 	float posY = event.m_y;
 
-	if(event.AltDown())
+	if(event.AltDown()) // Manipulate the camera
 	{
 		float diffX = posX - lastPosX;
 		float diffY = posY - lastPosY;
@@ -244,6 +245,16 @@ void GLRenderer::OnMouseMove(
 
 				m_camera->PanY(diffY, (float)width / (float)height);
 			}
+		}
+	}
+	else if(event.LeftIsDown()) // Rotate around pivot
+	{
+		float diffX = posX - lastPosX;
+		float diffY = posY - lastPosY;
+
+		if(diffX != 0 || diffY != 0)
+		{
+			m_renderEntity->Rotate((diffY / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 100, (diffX / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 100);
 		}
 	}
 
@@ -564,7 +575,7 @@ void GLRenderer::Render(
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
 
-	if(!m_batches)
+	if(!m_renderEntity)
 	{
 		glFlush();
 		SwapBuffers();
@@ -572,14 +583,16 @@ void GLRenderer::Render(
 	}
 
 	render::BatchList::const_iterator batchIterator;
+	const render::BatchList &batches = m_renderEntity->GetBatches();
 
-	for(batchIterator = m_batches->begin(); batchIterator != m_batches->end(); batchIterator++)
+	for(batchIterator = batches.begin(); batchIterator != batches.end(); batchIterator++)
 	{
 		// TODO if batches->shader != currentShader
 		// LoadShader(batch->shader)
 
 
-		// TODO most liekly wants moving elsewhere...maybe appearance->SetUniforms(program)
+		// TODO most liekly wants moving elsewhere...maybe appearance->SetUniforms(program) or maybe render entity?
+		// TODO these do not change!!! therefore should not be in the render loop!!!
 		if((*batchIterator)->GetAppearance()->GetType() == render::MaterialType::Phong)
 		{
 			boost::shared_ptr<render::PhongAppearance> phongAppearancePtr = boost::static_pointer_cast<render::PhongAppearance>((*batchIterator)->GetAppearance());
@@ -621,7 +634,7 @@ void GLRenderer::Render(
 
 		// TODO need to be able to add more than one light
 		GLint lightAmbientLocation = glGetUniformLocation(GetProgramHandle(), "light.ambient");
-		glUniform3f(lightAmbientLocation, 0.4f, 0.4f, 0.4f);
+		glUniform3f(lightAmbientLocation, 0.8f, 0.8f, 0.8f);
 
 		GLint lightDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "light.diffuse");
 		glUniform3f(lightDiffuseLocation, 1.0f, 1.0f, 1.0f);
@@ -629,9 +642,6 @@ void GLRenderer::Render(
 		GLint lightSpecularLocation = glGetUniformLocation(GetProgramHandle(), "light.specular");
 		glUniform3f(lightSpecularLocation, 1.0f, 0.5f, 0.3f);
 
-
-		float angle = 30.0f;
-		glm::mat4 modelMatrix = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0.0f, 0.0f));
 		//glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -20.f));
 		//glm::mat4x4 modelMatrix = glm::mat4x4(1.0f);
 		glm::mat4x4& viewMatrix = m_camera->GetViewMatrix();
@@ -650,14 +660,14 @@ void GLRenderer::Render(
 		GLint normalMatrixLocation = glGetUniformLocation(GetProgramHandle(), "normalMatrix");
 		if(modelMatrixLocation >= 0 && viewMatrixLocation >= 0 && projectionMatrixLocation >= 0)
 		{
-			glm::mat4x4 modelViewMatrix = viewMatrix * modelMatrix;
+			glm::mat4x4 modelViewMatrix = viewMatrix * m_renderEntity->GetModelMatrix();
 			glm::mat3x3 normalMatrix = glm::mat3x3(glm::vec3(modelViewMatrix[0]), glm::vec3(modelViewMatrix[1]), glm::vec3(modelViewMatrix[2]));
 
 			GLint lightPositionLocation = glGetUniformLocation(GetProgramHandle(), "light.position");
-			glm::vec4 lightPositionMatrix = viewMatrix * glm::vec4(50.0f,5.0f,2.0f,1.0f);
+			glm::vec4 lightPositionMatrix = viewMatrix * glm::vec4(100.0f, 0.0f, 0.0f, 1.0f);
 			glUniform4f(lightPositionLocation, lightPositionMatrix.x, lightPositionMatrix.y, lightPositionMatrix.z, lightPositionMatrix.w);
 
-			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &modelMatrix[0][0]);
+			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &m_renderEntity->GetModelMatrix()[0][0]);//TODO pass fewer matrices through!!!
 			glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
 			glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
 			glUniformMatrix3fv(normalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);

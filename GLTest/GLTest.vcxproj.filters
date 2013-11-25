@@ -80,6 +80,9 @@
     <ClCompile Include="Batch\PhongAppearance.cpp">
       <Filter>Batch</Filter>
     </ClCompile>
+    <ClCompile Include="Render\RenderEntity.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
@@ -145,6 +148,9 @@
     </ClInclude>
     <ClInclude Include="Batch\PhongAppearance.h">
       <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderEntity.h">
+      <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

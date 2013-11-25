@@ -8,6 +8,7 @@
 namespace render
 {
 	class GLRenderer;
+	class RenderEntity;
 }
 
 namespace import
@@ -18,6 +19,7 @@ namespace import
 namespace render
 {
 	class Batch;
+	class RenderEntitiy;
 }
 
 
@@ -45,8 +47,8 @@ class AnimationApp: public wxApp
 
 	render::GLRenderer *m_renderer;
 	import::FBXImport *m_fbxImporter;
-	render::BatchList m_renderBatches;
 	DWORD m_lastTime;
+	render::RenderEntity *m_renderEntity;
 };
 
 DECLARE_APP(AnimationApp)

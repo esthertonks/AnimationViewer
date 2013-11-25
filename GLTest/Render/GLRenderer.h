@@ -20,6 +20,7 @@ namespace render
 {
 	class Batch;
 	class OrbitCamera;
+	class RenderEntity;
 
 class GLRenderer : public wxGLCanvas
 {
@@ -107,11 +108,22 @@ public:
 		const std::map<std::string, GLuint> &defaultShaderList
 		);
 
-	void SetBatches(
-		const render::BatchList *batches
+	void AddEntity(
+		RenderEntity *entity
 		)
 	{
-		m_batches = batches;
+		m_renderEntity = entity;
+	}
+
+	void RemoveEntity(
+		RenderEntity *entity
+		)
+	{
+		if(entity == m_renderEntity)
+		{
+			delete m_renderEntity;
+			m_renderEntity = NULL;
+		}
 	}
 
 protected:
@@ -150,7 +162,7 @@ private:
 
 	OrbitCamera *m_camera;
 
-	const render::BatchList *m_batches;
+	RenderEntity *m_renderEntity;
 };
 
 }

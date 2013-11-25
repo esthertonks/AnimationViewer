@@ -3,9 +3,7 @@
 #include "Render/Window.h"
 #include "Import/FBXImport.h"
 #include "ImportMesh/Mesh.h"
-#include "Batch/BatchProcessor.h"
-#include "Batch/BatchList.h"
-#include "Batch/Batch.h"
+#include "Render\RenderEntity.h"
 
 IMPLEMENT_APP(AnimationApp)
 
@@ -15,6 +13,8 @@ bool AnimationApp::OnInit()
 	
 	m_renderer = new render::GLRenderer(frame, wxID_ANY, wxDefaultPosition, wxSize(800, 800), wxSUNKEN_BORDER, "Animation App");
 	m_fbxImporter = new import::FBXImport();
+
+	m_renderEntity = NULL;
 
 	frame->Show(TRUE);
 
@@ -31,7 +31,7 @@ void AnimationApp::OnIdle(
 	//Prepare Mesh - update animation
 	DWORD timeNow = timeGetTime();
 	//BatchList
-	if(m_renderBatches.size() != 0)
+	if(m_renderEntity)
 	{
 		float delta = 0.001f * timeNow - m_lastTime;
 
@@ -66,24 +66,21 @@ void AnimationApp::ImportFBX(
 	mesh::Mesh* importMesh = m_fbxImporter->Import(filePath);
 	if(importMesh)
 	{
-		if(m_renderBatches.size() != 0)
+		if(m_renderEntity != NULL)
 		{
-			m_renderBatches.clear();
-			m_renderBatches.resize(0); //TODO does this need to be a pointer???
+			delete m_renderEntity;
 		}
-		batch::BatchProcessor meshBatchProcessor;
-		meshBatchProcessor.CreateBatches(*importMesh, m_renderBatches);
 
-		render::BatchList::const_iterator batchIterator;
-		for(batchIterator = m_renderBatches.begin(); batchIterator != m_renderBatches.end(); batchIterator++)
+		m_renderEntity = new render::RenderEntity();
+		if(m_renderEntity->Create(*importMesh))
 		{
-			(*batchIterator)->Prepare();
+			m_renderer->AddEntity(m_renderEntity);
 		}
-		m_renderer->SetBatches(&m_renderBatches);
 	}
 	else
 	{
-		m_renderer->SetBatches(NULL);
+		m_renderer->RemoveEntity(m_renderEntity);
+		m_renderEntity = NULL;
 	}
 
 }

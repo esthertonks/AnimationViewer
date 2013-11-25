@@ -100,6 +100,7 @@
     <ClCompile Include="Render\FirstPersonCamera.cpp" />
     <ClCompile Include="Render\OrbitCamera.cpp" />
     <ClCompile Include="Render\GLRenderer.cpp" />
+    <ClCompile Include="Render\RenderEntity.cpp" />
     <ClCompile Include="Render\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +125,7 @@
     <ClInclude Include="Render\FirstPersonCamera.h" />
     <ClInclude Include="Render\OrbitCamera.h" />
     <ClInclude Include="Render\GLRenderer.h" />
+    <ClInclude Include="Render\RenderEntity.h" />
     <ClInclude Include="Render\Window.h" />
   </ItemGroup>
   <ItemGroup>

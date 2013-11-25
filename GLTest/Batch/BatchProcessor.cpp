@@ -12,6 +12,8 @@
 namespace batch
 {
 
+#define DOT_THESHOLD         0.9999f        /* Closeness to a dot product of 1 at which two normals are considered the same */
+
 BatchProcessor::BatchProcessor()
 {
 }
@@ -32,7 +34,7 @@ void BatchProcessor::CreateBatches(
 		// TODO for testing atm assume only one - rewrite for many shortly
 		render::AppearanceTable& appearances = importMesh.GetAppearances();
 		int numBatches = appearances.size();
-		renderBatches.resize(renderBatches.size() + numBatches);
+		renderBatches.resize(numBatches);
 
 		// TODO need to split verts along uv seams first
 		// TODO need to split verts along hard edge normals first
@@ -47,13 +49,13 @@ void BatchProcessor::CreateBatches(
 		int numVertices = meshNode->GetNumVertices();
 
 				// Map containing the material id and a vector array containing the new index for vector[oldindex] in the array
-		std::vector<int>oldToNewVertexIndexMap(numVertices, -1);
-		std::vector<std::vector<int>> perMaterialOldToNewVertexIndexMap(numBatches, oldToNewVertexIndexMap);
+		std::vector<int>previouslyAssignedVertexIndexMap(numVertices, -1);
+		std::vector<std::vector<int>> perMaterialPreviouslyAssignedVertexIndexMap(numBatches, previouslyAssignedVertexIndexMap);
 
 		for(int triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
 		{
 			unsigned int materialId = triangleArray[triangleIndex].m_materialId;
-			//std::vector<int> oldToNewVertexIndexMap = perMaterialOldToNewVertexIndexMap[materialId];
+			std::vector<int> previouslyAssignedVertexIndexMap = perMaterialPreviouslyAssignedVertexIndexMap[materialId];
 
 			if(!renderBatches[materialId]) // If a batch for this material does not already exist then create it
 			{
@@ -67,29 +69,39 @@ void BatchProcessor::CreateBatches(
 			// Assign the mesh information to batches. Reassigning the indices as the data is processed.
 			for(int triangleCornerIndex = 0; triangleCornerIndex < 3; triangleCornerIndex++)
 			{
-				unsigned int currentVertexIndex = triangleArray[triangleIndex].m_vertexIndices[triangleCornerIndex];
-				render::Vertex vertex;
+				unsigned int testVertexIndex = triangleArray[triangleIndex].m_vertexIndices[triangleCornerIndex];
+				render::Vertex testVertex;
+				testVertex.m_position = glm::vec3(vertexArray[testVertexIndex].m_position);
+				testVertex.m_colour = triangleArray[triangleIndex].m_colours[triangleCornerIndex];
+				testVertex.m_normal = glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]);
 
-				int newIndex = perMaterialOldToNewVertexIndexMap[materialId][currentVertexIndex];
-				if(newIndex == -1) // If this is the first time we have seen this index in this batch create a new vertex for the batch
+				int previouslyCreatedIndex = previouslyAssignedVertexIndexMap[testVertexIndex];
+				if(previouslyCreatedIndex == -1) // If this is the first time we have seen this index in this batch create a new vertex for the batch
 				{
-					vertex.m_position = glm::vec3(vertexArray[currentVertexIndex].m_position);
-					vertex.m_colour = triangleArray[triangleIndex].m_colours[triangleCornerIndex]; //TODO currently this is just getting overriden by the next
-					vertex.m_normal += glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]); //TODO these need splitting
-					vertex.m_normal = glm::normalize(vertex.m_normal); // TODO Not ideal as we're normalizing more than we need to - split into another loop?
-
-					newIndex = renderBatches[materialId]->GetNumVertices();
-					perMaterialOldToNewVertexIndexMap[materialId][currentVertexIndex] = newIndex;
-					renderBatches[materialId]->AddVertex(vertex);
-					renderBatches[materialId]->AddIndex(newIndex);
+					AddDuplicateVertex(testVertexIndex, testVertex, materialId, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
+					continue;
 				}
-				else // Otherwise get the existing vertex at this index and average the information with the new vertex information
+
+				render::Vertex previouslyCreatedVertex = renderBatches[materialId]->GetVertices()[previouslyCreatedIndex];
+				
+				// If we have seen this vertex before, but this triangle corner has a different colour, uv coord or normal 
+				// then still create a new vertex for it (this will increase the vertex count in the mesh but will allow for
+				// hard edges and texture seams which will otherwise have to be averaged for opengl).
+				if(testVertex.m_colour != previouslyCreatedVertex.m_colour)
 				{
-					vertex = renderBatches[materialId]->GetVertices()[newIndex];
-					vertex.m_colour += triangleArray[triangleIndex].m_colours[triangleCornerIndex];// TODO This doesnt really work. These verts needs splitting first. They also need averaging properly.
-					vertex.m_normal += glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]);
-					vertex.m_normal = glm::normalize(vertex.m_normal); // TODO Not ideal as we're normalizing more than we need to - split into another loop?
-					renderBatches[materialId]->AddIndex(newIndex);
+					AddDuplicateVertex(testVertexIndex, testVertex, materialId, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
+				}
+				else if(glm::dot(testVertex.m_normal, previouslyCreatedVertex.m_normal) < DOT_THESHOLD) // The two normals are not the same - add a duplicate vertex
+				{
+					AddDuplicateVertex(testVertexIndex, testVertex, materialId, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
+				}
+				//else if() // TODO texture coordinates
+				//{
+
+			//	}
+				else // Any identical vertex was already added - just add the index to refer to the existing vert when rendering
+				{
+					renderBatches[materialId]->AddIndex(previouslyCreatedIndex);
 				}
 			}
 		}
@@ -98,10 +110,40 @@ void BatchProcessor::CreateBatches(
 	return;
 }
 
+void BatchProcessor::AddDuplicateVertex(
+	const int oldVertexIndex,
+	const render::Vertex &currentVertex,
+	const unsigned int materialId,
+	render::Batch &batch,
+	std::vector<int> &perMaterialPreviouslyAssignedVertexIndexMap
+	)
+{
+	render::Vertex vertex;
+	vertex.m_position = currentVertex.m_position;
+	vertex.m_colour = currentVertex.m_colour;
+	vertex.m_normal += currentVertex.m_normal;
+	vertex.m_normal = glm::normalize(vertex.m_normal); // Make sure these are normalised
+
+	int newIndex = batch.GetNumVertices();
+	perMaterialPreviouslyAssignedVertexIndexMap[oldVertexIndex] = newIndex;
+	batch.AddVertex(vertex);
+	batch.AddIndex(newIndex);
+
+}
+
+void BatchProcessor::PrepareBatches(
+	render::BatchList &renderBatches
+	)
+{
+	render::BatchList::const_iterator batchIterator;
+	for(batchIterator = renderBatches.begin(); batchIterator != renderBatches.end(); batchIterator++)
+	{
+		(*batchIterator)->Prepare();
+	}
+}
+
 void BatchProcessor::SortBatches()
 {
-
-
 
 }
 
