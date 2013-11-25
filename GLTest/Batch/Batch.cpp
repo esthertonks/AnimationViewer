@@ -30,11 +30,16 @@ void Batch::AllocateIndices(
 }
 
 void Batch::AddVertex(
-	const Vertex &vertex,
-	const short vertexIndex
+	const Vertex &vertex
 	)
 {
 	m_vertexArray.push_back(vertex);
+}
+
+void Batch::AddIndex(
+	const short vertexIndex
+	)
+{
 	m_indexArray.push_back(vertexIndex);
 }
 

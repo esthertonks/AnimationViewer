@@ -29,6 +29,15 @@ void BatchProcessor::CreateBatches(
 	render::BatchList &renderBatches // Batch vector to fill in
 	)
 {
+		// TODO for testing atm assume only one - rewrite for many shortly
+		render::AppearanceTable& appearances = importMesh.GetAppearances();
+		int numBatches = appearances.size();
+		renderBatches.resize(renderBatches.size() + numBatches);
+
+		// TODO need to split verts along uv seams first
+		// TODO need to split verts along hard edge normals first
+		// TODO need to split by vertex format first?
+
 	// TODO For now just average everything, but this needs to create batches and split normals for textures, colours and normals.
 	for(mesh::MeshNode* meshNode = importMesh.m_root; meshNode != NULL; meshNode = meshNode->m_next)
 	{
@@ -37,16 +46,7 @@ void BatchProcessor::CreateBatches(
 		mesh::MeshVertexArray vertexArray = meshNode->GetVertices();
 		int numVertices = meshNode->GetNumVertices();
 
-		// TODO for testing atm assume only one - rewrite for many shortly
-		mesh::AppearanceTable& appearances = meshNode->GetAppearances();
-		int numBatches = appearances.size();
-		renderBatches.resize(renderBatches.size() + numBatches);
-
-		// TODO need to split verts along uv seams first
-		// TODO need to split verts along hard edge normals first
-		// TODO need to split by vertex format first?
-
-		// Map containing the material id and a vector array containing the new index for vector[oldindex] in the array
+				// Map containing the material id and a vector array containing the new index for vector[oldindex] in the array
 		std::vector<int>oldToNewVertexIndexMap(numVertices, -1);
 		std::vector<std::vector<int>> perMaterialOldToNewVertexIndexMap(numBatches, oldToNewVertexIndexMap);
 
@@ -58,7 +58,7 @@ void BatchProcessor::CreateBatches(
 			if(!renderBatches[materialId]) // If a batch for this material does not already exist then create it
 			{
 				renderBatches[materialId] = render::BatchPtr(new render::Batch(render::VertexFormatType::ColourFormat));
-				int numVertices = meshNode->GetNumVerticesWithMaterialId(materialId);
+				int numVertices = importMesh.GetNumVerticesWithMaterialId(materialId);
 				renderBatches[materialId]->AllocateVertices(numVertices);
 				renderBatches[materialId]->AllocateIndices(numVertices);
 				renderBatches[materialId]->SetAppearance(appearances[materialId]);
@@ -80,7 +80,8 @@ void BatchProcessor::CreateBatches(
 
 					newIndex = renderBatches[materialId]->GetNumVertices();
 					perMaterialOldToNewVertexIndexMap[materialId][currentVertexIndex] = newIndex;
-					renderBatches[materialId]->AddVertex(vertex, newIndex);
+					renderBatches[materialId]->AddVertex(vertex);
+					renderBatches[materialId]->AddIndex(newIndex);
 				}
 				else // Otherwise get the existing vertex at this index and average the information with the new vertex information
 				{
@@ -88,6 +89,7 @@ void BatchProcessor::CreateBatches(
 					vertex.m_colour += triangleArray[triangleIndex].m_colours[triangleCornerIndex];// TODO This doesnt really work. These verts needs splitting first. They also need averaging properly.
 					vertex.m_normal += glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]);
 					vertex.m_normal = glm::normalize(vertex.m_normal); // TODO Not ideal as we're normalizing more than we need to - split into another loop?
+					renderBatches[materialId]->AddIndex(newIndex);
 				}
 			}
 		}

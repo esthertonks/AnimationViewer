@@ -68,7 +68,10 @@ public:
 	};
 
 	void AddVertex(
-		const Vertex &vertex,
+		const Vertex &vertex
+		);
+
+	void AddIndex(
 		const short vertexIndex
 		);
 

@@ -172,7 +172,7 @@ bool FBXImport::LoadMeshNodes(
 
 			// Get the per triangle material index
 		const int materialLayerCount = fbxMesh->GetElementMaterialCount();
-		if(materialLayerCount != 1)
+		if(materialLayerCount > 1)
 		{
 			FBXSDK_printf("Only one material layer is supported. Only the first layer will be loaded.\n");
 		}
@@ -184,7 +184,15 @@ bool FBXImport::LoadMeshNodes(
 			assert(triangleSize == 3); // The mesh was triangulated above.
 
 			mesh::Triangle &triangle = triangleArray[triangleIndex];
-			LoadMaterials(*fbxMesh, triangleIndex, meshNode);
+
+			if(materialLayerCount != 0)
+			{
+				LoadMaterials(*fbxMesh, triangleIndex, meshNode, m_mesh->m_appearanceTable, m_mesh->m_numVerticesPerMaterial);
+			}
+			else
+			{
+				//TODO assign default material
+			}
 
 			LoadVertexIndices(*fbxMesh, triangleIndex, triangle);
 
@@ -213,7 +221,10 @@ bool FBXImport::LoadMeshNodes(
 void FBXImport::LoadMaterials(
 	FbxMesh &fbxMesh,			// FBX mesh to import data from
 	int triangleIndex,			// Index of the current triangle being loaded
-	mesh::MeshNode &meshNode	// The mesh node which will store the imported material and texture data
+	mesh::MeshNode &meshNode,	// The mesh node which will store the imported material and texture data
+	render::AppearanceTable &appearanceTable,
+	std::vector<unsigned int> &numVerticesPerMaterial
+
 	)
 {
 	const FbxGeometryElementMaterial &materialElement = *fbxMesh.GetElementMaterial(0); // Get the first material layer element. Only one is supported.
@@ -226,9 +237,9 @@ void FBXImport::LoadMaterials(
 		// Just get the diffuse for now. Will load normal/bump and other textures here in future.
 		FbxProperty materialProperty = surfaceMaterial.FindProperty(FbxSurfaceMaterial::sDiffuse);
 
-		if(meshNode.m_appearanceTable.count(materialId) == 0)
+		if(appearanceTable.count(materialId) == 0)
 		{
-			meshNode.m_numVerticesPerMaterial.push_back(0);// Add another int initialised at 0 for this material
+			numVerticesPerMaterial.push_back(0);// Add another int initialised at 0 for this material
 			render::AppearancePtr appearance;
 
 			if (surfaceMaterial.GetClassId().Is(FbxSurfacePhong::ClassId))
@@ -279,6 +290,7 @@ void FBXImport::LoadMaterials(
 			else
 			{
 				FBXSDK_printf("Material Id %d, name &s is not supported", materialId, surfaceMaterial.GetName());
+				//TODO assign default material
 			}
 
 			unsigned int textureCount = materialProperty.GetSrcObjectCount<FbxTexture>();
@@ -290,12 +302,12 @@ void FBXImport::LoadMaterials(
 				appearance->AddTexture(textureFilename);
 			}
 
-			mesh::AppearanceTableEntry materialInfo;
+			render::AppearanceTableEntry materialInfo;
 			materialInfo.first = materialId;
 			materialInfo.second = appearance;
-			meshNode.m_appearanceTable.insert(materialInfo);
+			appearanceTable.insert(materialInfo);
 		}
-		meshNode.m_numVerticesPerMaterial[materialId]++;
+		numVerticesPerMaterial[materialId]+=3;
 	}
 	else
 	{

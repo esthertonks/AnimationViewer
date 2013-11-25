@@ -4,6 +4,7 @@
 #include <string>
 #include <boost/shared_array.hpp>
 #include <glm/glm.hpp>
+#include "../Batch/BatchFwdDecl.h"
 
 namespace mesh
 {
@@ -48,7 +49,9 @@ private:
 	void LoadMaterials(
 	FbxMesh &fbxMesh,			// FBX mesh to import data from
 	int triangleIndex,			// Index of the current triangle being loaded
-	mesh::MeshNode &meshNode	// The mesh node which will store the imported material and texture data
+	mesh::MeshNode &meshNode,	// The mesh node which will store the imported material and texture data
+	render::AppearanceTable &appearanceTable,
+	std::vector<unsigned int> &numVerticesPerMaterial
 		);
 
 	/**

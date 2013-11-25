@@ -6,6 +6,7 @@
 
 #include "../Container/LinkedList .h"
 #include "MeshNode.h"
+#include "../Batch/BatchFwdDecl.h"
 
 namespace mesh
 {
@@ -31,5 +32,23 @@ public:
 	{
 		Add(node);
 	}
+
+	int GetNumVerticesWithMaterialId(
+		int materialId
+	)
+	{
+		return m_numVerticesPerMaterial[materialId];
+	}
+
+	render::AppearanceTable &GetAppearances()
+	{
+		return m_appearanceTable;
+	}
+
+
+private:
+	friend import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
+	render::AppearanceTable m_appearanceTable; // Mapping of material id's to material names
+	std::vector<unsigned int> m_numVerticesPerMaterial; // A count of the number of vertex indices per material batch. Necessary for creating batches later
 };
 }

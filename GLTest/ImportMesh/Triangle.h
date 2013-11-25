@@ -59,7 +59,7 @@ public :
 	glm::vec4 m_tangents[3];			// Tangents for the 3 triangle corners (thus multiple normals per vertex)
 	glm::vec2 m_uvs[3];					// UVs for the 3 triangle corners (thus multiple uvs per vertex)
 	glm::vec3 m_colours[3];				// Colours for the 3 triangle corners (thus multiple colours per vertex)
-	unsigned int m_materialId;
+	unsigned int m_materialId;			// Material Id. The mesh must have a material - a default one will be assigned if it does not
 };
 
 }
