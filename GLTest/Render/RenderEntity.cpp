@@ -9,8 +9,9 @@ namespace render
 {
 
 RenderEntity::RenderEntity()
-	: m_rotateX(0),
-	m_rotateZ(0)
+	: m_rotAroundY(0),
+	m_rotAroundX(0),
+	m_modelMatrix(1.0f)
 {
 }
 
@@ -28,19 +29,20 @@ bool RenderEntity::Create(
 }
 
 void RenderEntity::Rotate(
-	float rotX,
-	float rotZ
+	float rotAroundY,
+	float rotAroundX
 	)
 {
-	m_rotateX = rotX;
-	m_rotateZ = rotZ;
+	m_rotAroundY += rotAroundY;
+	m_rotAroundX += rotAroundX;
+
+	m_modelMatrix = glm::rotate(glm::mat4(1.0f), m_rotAroundY, glm::vec3(0.0f, 1.0f, 0.0f));
+	m_modelMatrix = glm::rotate(m_modelMatrix, m_rotAroundX, glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
 const glm::mat4x4 &RenderEntity::GetModelMatrix()
 {
-	glm::mat4x4 modelMatrix = glm::rotate(glm::mat4(1.0f), m_rotateX, glm::vec3(0.0f, 1.0f, 0.0f));
-	modelMatrix = glm::rotate(modelMatrix, m_rotateZ, glm::vec3(0.0f, 0.0f, 1.0f));
-	return modelMatrix;
+	return m_modelMatrix;
 }
 
 RenderEntity::~RenderEntity()

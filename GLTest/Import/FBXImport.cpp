@@ -234,9 +234,6 @@ void FBXImport::LoadMaterials(
 		const FbxSurfaceMaterial& surfaceMaterial = *fbxMesh.GetNode()->GetMaterial(materialId);
 		meshNode.m_triangleArray[triangleIndex].m_materialId = materialId;
 
-		// Just get the diffuse for now. Will load normal/bump and other textures here in future.
-		FbxProperty materialProperty = surfaceMaterial.FindProperty(FbxSurfaceMaterial::sDiffuse);
-
 		if(appearanceTable.count(materialId) == 0)
 		{
 			numVerticesPerMaterial.push_back(0);// Add another int initialised at 0 for this material
@@ -255,6 +252,7 @@ void FBXImport::LoadMaterials(
 				double transparency = phongMaterial.TransparencyFactor.Get();
 				double shininess = phongMaterial.Shininess.Get();
 				double reflectivity = phongMaterial.ReflectionFactor.Get();
+				double diffuseFactor = phongMaterial.DiffuseFactor.Get();
 
 				boost::shared_ptr<render::PhongAppearance> phongAppearancePtr = boost::static_pointer_cast<render::PhongAppearance>(appearance);
 
@@ -266,6 +264,7 @@ void FBXImport::LoadMaterials(
 				phongAppearancePtr->SetTransparency(transparency);
 				phongAppearancePtr->SetShininess(shininess);
 				phongAppearancePtr->SetReflectivity(reflectivity);
+				phongAppearancePtr->SetDiffuseFactor(diffuseFactor);
 			}
 			else if(surfaceMaterial.GetClassId().Is(FbxSurfaceLambert::ClassId))
 			{
@@ -278,7 +277,7 @@ void FBXImport::LoadMaterials(
 				glm::vec3 emmissiveColour(lambertMaterial.Emissive.Get()[0], lambertMaterial.Emissive.Get()[1], lambertMaterial.Emissive.Get()[3]);
 
 				double transparency = lambertMaterial.TransparencyFactor.Get();
-
+				double diffuseFactor = lambertMaterial.DiffuseFactor.Get();
 				boost::shared_ptr<render::LambertAppearance> lambertAppearancePtr = boost::static_pointer_cast<render::LambertAppearance>(appearance);
 
 				lambertAppearancePtr->SetAmbient(ambientColour);
@@ -286,6 +285,7 @@ void FBXImport::LoadMaterials(
 				lambertAppearancePtr->SetEmissive(emmissiveColour);
 
 				lambertAppearancePtr->SetTransparency(transparency);
+				lambertAppearancePtr->SetDiffuseFactor(diffuseFactor);
 			}
 			else
 			{
@@ -293,13 +293,19 @@ void FBXImport::LoadMaterials(
 				//TODO assign default material
 			}
 
+			// Just get the diffuse for now. Will load normal/bump and other textures here in future.
+			FbxProperty materialProperty = surfaceMaterial.FindProperty(FbxSurfaceMaterial::sDiffuse);
 			unsigned int textureCount = materialProperty.GetSrcObjectCount<FbxTexture>();
-			for(int textureIndex = 0; textureIndex < textureCount; textureIndex++)
+			if(textureCount > 1)
+			{
+				FBXSDK_printf("Currently only 1 diffuse texture is supported. Others have not been loaded", materialId, surfaceMaterial.GetName());
+			}
+			for(int textureIndex = 0; textureIndex < 1; textureIndex++)
 			{
 				FbxFileTexture* fbxFileTexture = materialProperty.GetSrcObject<FbxFileTexture>(textureIndex);
 
 				std::string textureFilename = fbxFileTexture->GetFileName();//TODO cant currently support multiple materials!
-				appearance->AddTexture(textureFilename);
+				appearance->SetDiffuseTexturePath(textureFilename);
 			}
 
 			render::AppearanceTableEntry materialInfo;
@@ -558,16 +564,16 @@ void FBXImport::LoadVector2VertexElement(
 				case FbxGeometryElement::eDirect:
 				{
 					FbxVector2 fbxData = element.GetDirectArray().GetAt(vertexIndex);
-					data[0] = static_cast<float>(fbxData[0]);
-					data[1] = static_cast<float>(fbxData[1]);
+					data.x = static_cast<float>(fbxData[0]);
+					data.y = static_cast<float>(fbxData[1]);
 				}
 				break;
 				case FbxGeometryElement::eIndexToDirect:
 				{
 					int id = element.GetIndexArray().GetAt(vertexIndex);
 					FbxVector2 fbxUvs = element.GetDirectArray().GetAt(id);
-					data[0] = static_cast<float>(fbxUvs[0]);
-					data[1] = static_cast<float>(fbxUvs[1]);
+					data.x = static_cast<float>(fbxUvs[0]);
+					data.y = static_cast<float>(fbxUvs[1]);
 				}
 				break;
 				default:
@@ -585,8 +591,8 @@ void FBXImport::LoadVector2VertexElement(
 				{
 					unsigned int uvIndex = element.GetIndexArray().GetAt(GetUVVertexIndex(triangleIndex, triangleCornerId));
 					FbxVector2 fbxData = element.GetDirectArray().GetAt(uvIndex);
-					data[0] = static_cast<float>(fbxData[0]);
-					data[1] = static_cast<float>(fbxData[1]);
+					data.x = static_cast<float>(fbxData[0]);
+					data.y = static_cast<float>(fbxData[1]);
 				}
 				break;
 				default:

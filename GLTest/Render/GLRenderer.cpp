@@ -94,6 +94,7 @@ void GLRenderer::InitGL()
 	glClearDepth(1.0f);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
+
 	//DebugPrintGLInfo();
 }
 
@@ -196,6 +197,11 @@ void GLRenderer::OnMouseMove(
 	wxMouseEvent& event
 	)
 {
+	if(!m_renderEntity)
+	{
+		return;
+	}
+
 	//Check that a mouse button was actually pressed before mouse move
 	if(lastPosX == -1 || lastPosY == -1)
 	{
@@ -254,7 +260,7 @@ void GLRenderer::OnMouseMove(
 
 		if(diffX != 0 || diffY != 0)
 		{
-			m_renderEntity->Rotate((diffY / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 100, (diffX / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 100);
+			m_renderEntity->Rotate((diffX / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 400, (diffY / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 400);
 		}
 	}
 
@@ -582,6 +588,9 @@ void GLRenderer::Render(
 		return;
 	}
 
+	int textureLocation = glGetUniformLocation(GetProgramHandle(), "texture1");
+	glUniform1i(textureLocation, 0);
+
 	render::BatchList::const_iterator batchIterator;
 	const render::BatchList &batches = m_renderEntity->GetBatches();
 
@@ -604,6 +613,10 @@ void GLRenderer::Render(
 			GLint materialDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuse");
 			glUniform3f(materialDiffuseLocation, materialDiffuse.r, materialDiffuse.g, materialDiffuse.b);
 
+			double materialDiffuseFactor = phongAppearancePtr->GetDiffuseFactor();
+			GLint materialDiffuseFactorLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuseFactor");
+			glUniform1f(materialDiffuseFactorLocation, materialDiffuseFactor);
+
 			glm::vec3 materialSpecular = phongAppearancePtr->GetSpecular();
 			GLint materialSpecularLocation = glGetUniformLocation(GetProgramHandle(), "material.specular");
 			glUniform3f(materialSpecularLocation, materialSpecular.r, materialSpecular.g, materialSpecular.b);
@@ -622,6 +635,10 @@ void GLRenderer::Render(
 			glm::vec3 materialDiffuse = lambertAppearancePtr->GetDiffuse();
 			GLint materialDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuse");
 			glUniform3f(materialDiffuseLocation, materialDiffuse.r, materialDiffuse.g, materialDiffuse.b);
+
+			double materialDiffuseFactor = lambertAppearancePtr->GetDiffuseFactor();
+			GLint materialDiffuseFactorLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuseFactor");
+			glUniform1f(materialDiffuseFactorLocation, materialDiffuseFactor);
 
 			glm::vec3 materialSpecular;//TEMP AS NOT APPLICABLE
 			GLint materialSpecularLocation = glGetUniformLocation(GetProgramHandle(), "material.specular");

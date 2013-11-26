@@ -50,7 +50,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;WINVER=0x0400;__WXMSW__;wxUSE_GUI=1;_DEBUG;__WXDEBUG__;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\glew-1.10.0\include;$(SolutionDir)\..\glm;$(WXWIN)\include;$(WXWIN)\lib\vc_dll\mswd;$(WXWIN)\include\msvc;C:\Program Files\Autodesk\FBX\FBX SDK\2014.1\include;C:\boost_1_54_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\glew-1.10.0\include;$(SolutionDir)\..\glm;$(WXWIN)\include;$(WXWIN)\lib\vc_dll\mswd;$(WXWIN)\include\msvc;C:\Program Files\Autodesk\FBX\FBX SDK\2014.1\include;C:\boost_1_54_0;C:\Users\ET\Documents\Visual Studio 2010\Projects\Simple OpenGL Image Library\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
     </ClCompile>
@@ -58,7 +58,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\glew-1.10.0\lib\Debug\Win32;$(WXWIN)\lib\vc_lib;C:\Program Files\Autodesk\FBX\FBX SDK\2014.1\lib\vs2010\x86\debug;C:\Users\ET\Documents\Visual Studio 2010\Projects\Simple OpenGL Image Library\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32sd.lib;opengl32.lib;glu32.lib;wxmsw28d_core.lib;wxbase28d.lib;comctl32.lib;rpcrt4.lib;winmm.lib;advapi32.lib;wsock32.lib;libfbxsdk.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32sd.lib;opengl32.lib;glu32.lib;wxmsw28d_core.lib;wxbase28d.lib;comctl32.lib;rpcrt4.lib;winmm.lib;advapi32.lib;wsock32.lib;libfbxsdk.lib;SOILd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

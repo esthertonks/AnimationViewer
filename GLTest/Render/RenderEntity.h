@@ -34,14 +34,15 @@ public:
 		);
 
 	void Rotate(
-		float rotX,
-		float rotZ
+		float rotY,
+		float rotX
 		);
 
 private:
 	render::BatchList m_renderBatches;
 	//glm::mat4x4 m_modelMatrix; // Must be identity
-	float m_rotateX;
-	float m_rotateZ;
+	float m_rotAroundY;
+	float m_rotAroundX;
+	glm::mat4x4 m_modelMatrix;
 };
 }

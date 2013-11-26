@@ -26,6 +26,7 @@ BatchProcessor::~BatchProcessor()
 //TODO traingle strips
 //https://developer.apple.com/library/ios/documentation/3ddrawing/conceptual/opengles_programmingguide/TechniquesforWorkingwithVertexData/TechniquesforWorkingwithVertexData.html
 
+// Create per vertex data in per material batches. Extra vertices are created to accommodate per triangle corner information.
 void BatchProcessor::CreateBatches(
 	mesh::Mesh &importMesh,
 	render::BatchList &renderBatches // Batch vector to fill in
@@ -70,10 +71,13 @@ void BatchProcessor::CreateBatches(
 			for(int triangleCornerIndex = 0; triangleCornerIndex < 3; triangleCornerIndex++)
 			{
 				unsigned int testVertexIndex = triangleArray[triangleIndex].m_vertexIndices[triangleCornerIndex];
+
+				// Compile the per vertex data from the mesh triangles
 				render::Vertex testVertex;
-				testVertex.m_position = glm::vec3(vertexArray[testVertexIndex].m_position);
+				testVertex.m_position = glm::vec3(vertexArray[testVertexIndex].m_position); //TODO method called CreatePerVertexVertex
 				testVertex.m_colour = triangleArray[triangleIndex].m_colours[triangleCornerIndex];
 				testVertex.m_normal = glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]);
+				testVertex.m_uv = triangleArray[triangleIndex].m_uvs[triangleCornerIndex];
 
 				int previouslyCreatedIndex = previouslyAssignedVertexIndexMap[testVertexIndex];
 				if(previouslyCreatedIndex == -1) // If this is the first time we have seen this index in this batch create a new vertex for the batch
@@ -95,10 +99,10 @@ void BatchProcessor::CreateBatches(
 				{
 					AddDuplicateVertex(testVertexIndex, testVertex, materialId, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
 				}
-				//else if() // TODO texture coordinates
-				//{
-
-			//	}
+				else if(testVertex.m_uv != previouslyCreatedVertex.m_uv) // dupicate verts for texture coordinates on texture seams
+				{
+					AddDuplicateVertex(testVertexIndex, testVertex, materialId, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
+				}
 				else // Any identical vertex was already added - just add the index to refer to the existing vert when rendering
 				{
 					renderBatches[materialId]->AddIndex(previouslyCreatedIndex);
@@ -119,8 +123,9 @@ void BatchProcessor::AddDuplicateVertex(
 	)
 {
 	render::Vertex vertex;
-	vertex.m_position = currentVertex.m_position;
+	vertex.m_position = currentVertex.m_position; //TODO override equals?
 	vertex.m_colour = currentVertex.m_colour;
+	vertex.m_uv = currentVertex.m_uv;
 	vertex.m_normal += currentVertex.m_normal;
 	vertex.m_normal = glm::normalize(vertex.m_normal); // Make sure these are normalised
 

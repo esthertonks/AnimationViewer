@@ -14,9 +14,9 @@ enum VertexFormatType //TODO may not need this?
 struct Vertex
 {
 	glm::vec3 m_position;
-	//glm::vec2 m_uv[2];
 	glm::vec3 m_colour;
 	glm::vec3 m_normal;
+	glm::vec2 m_uv;
 };
 
 }
