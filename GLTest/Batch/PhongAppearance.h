@@ -13,9 +13,9 @@ public:
 	PhongAppearance();
 	~PhongAppearance(){};
 
-virtual MaterialType GetType()
+virtual ShaderProgramType GetType()
 {
-	return MaterialType::Phong;
+	return ShaderProgramType::Phong;
 }
 
 inline void SetSpecular(

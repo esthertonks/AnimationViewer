@@ -21,6 +21,7 @@ namespace render
 	class Batch;
 	class OrbitCamera;
 	class RenderEntity;
+	class ShaderManager;
 
 class GLRenderer : public wxGLCanvas
 {
@@ -87,27 +88,6 @@ public:
 
 	void InitGL();
 
-	int CheckOpenGLError(
-		const char * file, 
-		int line
-		);
-
-	void DebugPrintGLInfo();
-
-	inline GLuint GetProgramHandle()
-	{
-		return m_programHandle;
-	}
-
-	bool Initialised()
-	{
-		return m_initialised;
-	}
-
-	bool LoadShaders(
-		const std::map<std::string, GLuint> &defaultShaderList
-		);
-
 	void AddEntity(
 		RenderEntity *entity
 		)
@@ -131,38 +111,16 @@ protected:
 
 private:
 	void Render();
-		
-	GLuint LoadShader(
-		const std::string &shaderName, // The name of the shader to load
-		const GLenum shaderType	// The type of the shader ie GL_VERTEX_SHADER etc
-	);
-
-	const char* ReadShaderSourceFile(
-		const std::string &shaderName
-	);
-
-	GLenum CompileShader(
-		const std::string &shaderName, // The name of the shader to load
-		const GLuint shaderId //GLuint id for the shader source
-	);
-
-	GLenum LinkProgram(
-		const std::vector<GLuint> &shaders
-		);
-
-	void OutputDebugShaderAttributeInfo();
 
 	wxGLContext* m_context;
-
-	GLint m_programHandle;
-
-	std::vector<GLuint> shaders;
-
-	bool m_initialised;
 
 	OrbitCamera *m_camera;
 
 	RenderEntity *m_renderEntity;
+
+	ShaderManager *m_shaderManager;
+
+	bool m_initialised;
 };
 
 }

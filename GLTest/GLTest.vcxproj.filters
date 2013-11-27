@@ -83,6 +83,12 @@
     <ClCompile Include="Render\RenderEntity.cpp">
       <Filter>Render</Filter>
     </ClCompile>
+    <ClCompile Include="Render\ShaderManager.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\GLUtils.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
@@ -150,6 +156,15 @@
       <Filter>Batch</Filter>
     </ClInclude>
     <ClInclude Include="Render\RenderEntity.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\ShaderManager.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\GLUtils.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderFwdDecl.h">
       <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>

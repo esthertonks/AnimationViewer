@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Render/RenderFwdDecl.h"
 #include <vector>
 #include <string>
 #include <glm\glm.hpp>
@@ -13,12 +14,6 @@
 namespace render
 {
 
-enum MaterialType
-{
-	Phong,
-	Lambert
-};
-
 class Appearance abstract
 {
 
@@ -26,18 +21,6 @@ public:
 
 	Appearance();
 	virtual ~Appearance(){};
-
-inline void SetShaderPath(
-	std::string &shaderPath
-	)
-{
-	m_shaderPath = shaderPath;
-}
-
-inline std::string &GetShaderPath()
-{
-	return m_shaderPath;
-}
 
 void SetDiffuseTexturePath(
 	std::string &texturePath
@@ -51,7 +34,11 @@ std::string &GetDiffuseTexturePath()
 	return m_diffuseTexturePath;
 }
 
-virtual MaterialType GetType() = 0;
+virtual ShaderProgramType GetType() = 0;
+
+virtual void ConvertToShaderParams(
+	const GLuint programHandle
+	) const = 0;
 
 inline void SetAmbient(
 	const glm::vec3 &ambient // Ambient colour
@@ -113,19 +100,13 @@ inline const double GetDiffuseFactor() const
 	return m_diffuseFactor;
 }
 
-virtual void ConvertToShaderParams(
-	const GLuint programHandle
-	) = 0;
-
 protected:
-	// The shader associated with this appearance
-	std::string m_shaderPath;
 
 	// opengl states
 
 	std::string m_diffuseTexturePath;
 
-	MaterialType m_type;
+	ShaderProgramType m_type;
 
 	glm::vec3 m_ambient;
 	glm::vec3 m_diffuse;

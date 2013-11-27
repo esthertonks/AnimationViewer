@@ -5,7 +5,7 @@ in vec3 normal;
 in vec3 colour;
 in vec2 textureCoord;
 
-uniform sampler2D texture1;
+uniform sampler2D diffuseTexture;
 
 layout (location = 0) out vec4 fragmentColour;
 

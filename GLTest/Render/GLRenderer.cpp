@@ -12,6 +12,8 @@
 #include "../Batch/PhongAppearance.h"
 #include "../Batch/LambertAppearance.h"
 #include "RenderEntity.h"
+#include "ShaderManager.h"
+#include "GLUtils.h"
 
 namespace render
 {
@@ -42,60 +44,10 @@ GLRenderer::GLRenderer(
 	: wxGLCanvas(parent, id, position, size, style|wxFULL_REPAINT_ON_RESIZE, name), 
 	m_context(NULL),
 	m_camera(new OrbitCamera(glm::vec3(100.0f, 0.0f, 0.0f))),
-	m_renderEntity(NULL)
+	m_renderEntity(NULL),
+	m_shaderManager(new ShaderManager()),
+	m_initialised(false)
 {
-}
-
-void GLRenderer::InitGL()
-{
-	if(m_context)
-	{
-		wxLogDebug("GL already initialised");
-		return;
-	}
-
-	m_initialised = false;
-
-	m_context = new wxGLContext(this);
-
-	SetCurrent(*m_context);
-
-	//TODO calling this here causes a GL expection - why???
-	//DebugPrintGLInfo();
-
-	glewExperimental = GL_TRUE;
-	GLenum status = glewInit();
-	if(status != GLEW_OK) //TODO - quit here and it leaks like a sieve.
-	{
-		wxLogDebug("Error initializing GLEW: ");
-		char *errorText = (char*)glewGetErrorString(status);
-		wxLogDebug(errorText);
-		return;
-	}
-
-	CheckOpenGLError(__FILE__,__LINE__);
-
-	std::map<std::string, GLuint> defaultShaderList; //TODO load from file system
-	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/PerFragmentPhong.vert", GL_VERTEX_SHADER));
-	defaultShaderList.insert(std::pair<std::string, GLuint>("Shaders/PerFragmentPhong.frag", GL_FRAGMENT_SHADER));
-
-	LoadShaders(defaultShaderList); //TODO failure message when failed?
-	CheckOpenGLError(__FILE__,__LINE__);
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-
-	int width = GetSize().GetWidth();
-	int height = GetSize().GetHeight();
-
-//	int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
-//	int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
-	glViewport(0, 0, (GLint)width, (GLint)height);
-	glCullFace(GL_BACK);
-
-	glClearDepth(1.0f);
-	glDepthFunc(GL_LESS);
-	glEnable(GL_DEPTH_TEST);
-
-	//DebugPrintGLInfo();
 }
 
 void GLRenderer::OnSize(
@@ -270,49 +222,54 @@ void GLRenderer::OnMouseMove(
 
 }
 
-int GLRenderer::CheckOpenGLError(
-	const char * file, 
-	int line
-	)
+void GLRenderer::InitGL()
 {
-	//
-	// Returns 1 if an OpenGL error occurred, 0 otherwise.
-	//
-	GLenum glErr;
-	int retCode = 0;
-
-	glErr = glGetError();
-	while (glErr != GL_NO_ERROR)
+	if(m_context)
 	{
-		wxLogDebug("glError in file %s @ line %d: %s\n", file, line, gluErrorString(glErr));
-		retCode = 1;
-		glErr = glGetError();
+		wxLogDebug("GL already initialised");
+		return;
 	}
-	return retCode;
-}
 
-void GLRenderer::DebugPrintGLInfo()
-{
-	const char* vendor = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-	const char* renderer = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
-	const char* version = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-	const char* glslVersion = reinterpret_cast<const char*>(glGetString( GL_SHADING_LANGUAGE_VERSION));
+	m_context = new wxGLContext(this);
 
-	GLint major, minor;
-	glGetIntegerv(GL_MAJOR_VERSION, &major);
-	glGetIntegerv(GL_MINOR_VERSION, &minor);
+	SetCurrent(*m_context);
 
-	wxLogDebug("Renderer info: %s version %s from %s", renderer, version, vendor);
-	wxLogDebug("GL version major: %s minor: %s", major, minor);
+	//TODO calling this here causes a GL expection - why???
+	//DebugPrintGLInfo();
 
-	wxLogDebug("GLSL version: %s", glslVersion);
-
-	GLint numExtensions;
-	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
-	for(int extension = 0; extension < numExtensions; extension++)
+	glewExperimental = GL_TRUE;
+	GLenum status = glewInit();
+	if(status != GLEW_OK) //TODO - quit here and it leaks like a sieve.
 	{
-		wxLogDebug("Extension: %s\n", glGetStringi(GL_EXTENSIONS, extension));
+		wxLogDebug("Error initializing GLEW: ");
+		char *errorText = (char*)glewGetErrorString(status);
+		wxLogDebug(errorText);
+		return;
 	}
+
+	GLUtils::CheckOpenGLError(__FILE__,__LINE__);
+
+	m_shaderManager->InitialiseShaders(); //TODO failure message when failed?
+
+	GLUtils::CheckOpenGLError(__FILE__,__LINE__);
+
+	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+
+	int width = GetSize().GetWidth();
+	int height = GetSize().GetHeight();
+
+//	int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
+//	int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
+	glViewport(0, 0, (GLint)width, (GLint)height);
+	glCullFace(GL_BACK);
+
+	glClearDepth(1.0f);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_DEPTH_TEST);
+
+	m_initialised = true;
+
+	//DebugPrintGLInfo();
 }
 
 void GLRenderer::Paint(
@@ -329,244 +286,23 @@ void GLRenderer::RenderImmediate()
 	Render();
 }
 
-bool GLRenderer::LoadShaders(
-	const std::map<std::string, GLuint> &defaultShaderList
-	)
-{
-	for(std::map<std::string, GLuint>::const_iterator shaderIterator = defaultShaderList.begin(); shaderIterator != defaultShaderList.end(); shaderIterator++)
-	{
-		// Pass the name and type to the shader loading //TODO a map with a better name than first?!
-		GLuint shaderId = LoadShader(shaderIterator->first, shaderIterator->second);
-
-		// Compile the shader of this name and id
-		if(!CompileShader(shaderIterator->first, shaderId))
-		{
-			return false;
-		}
-
-		shaders.push_back(shaderId);
-	}
-
-	if(!LinkProgram(shaders))
-	{
-		return false;
-	}
-
-	glUseProgram(m_programHandle);
-
-	OutputDebugShaderAttributeInfo();
-
-	m_initialised = true;
-
-	return true;
-}
-
-/**
-	@brief Loads a shader of the specified name and type
-	@return GL_FALSE if failed or GL_TRUE if successfully loaded
-*/
-GLuint GLRenderer::LoadShader(
-	const std::string &shaderName, // The name of the shader to load
-	const GLenum shaderType	// The type of the shader ie GL_VERTEX_SHADER etc
-	)
-{
-	const char *shaderTextBuffer = ReadShaderSourceFile(shaderName);
-	if(!shaderTextBuffer)
-	{
-		return GL_FALSE;
-	}
-
-	// Create the shader object
-	GLuint shaderId = glCreateShader(shaderType);
-	if(shaderId)
-	{
-		// Pass the shader source to GL
-		glShaderSource(shaderId, 1, &shaderTextBuffer, NULL);
-	}
-	else
-	{
-		wxLogDebug("Error creating vertex shader.\n");
-	}
-
-	delete[] shaderTextBuffer;
-
-	return shaderId;
-}
-
-const char* GLRenderer::ReadShaderSourceFile(
-	const std::string &shaderName
-	)
-{
-	std::ifstream shaderStream(shaderName, std::ifstream::in);
-	if(!shaderStream) {
-		wxLogDebug("Error opening file: %s\n", shaderName.c_str());
-		return NULL;
-	}
-
-	// TODO something better than a text buffer?
-   char *shaderTextBuffer = new GLchar[10000];
-	int i = 0;
-	while(shaderStream.good()) 
-	{
-		int c = shaderStream.get();
-		if(c > 0)
-		{
-			shaderTextBuffer[i++] = c;
-		}
-	}
-	shaderStream.close();
-	shaderTextBuffer[i++] = '\0';
-
-	//wxLogDebug(buffer);
-	return shaderTextBuffer;
-}
-
-/**
-	@brief Compiles the shader with this shaderHandle and name
-	@return GL_FALSE if failed or GL_TRUE if successfully loaded
-*/
-GLenum GLRenderer::CompileShader(
-	const std::string &shaderName, // The name of the shader to load
-	const GLuint shaderId //GLuint id for the shader source
-	)
-{
-	// Compile the shader
-	glCompileShader(shaderId);
-
-	// Check whether the shader compiled successfully
-	GLint compiled;
-	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &compiled);
-	if(!compiled)
-	{
-		wxLogDebug("Shader compilation failed for shader %s\n", shaderName.c_str());
-
-		GLint errorTextLength;
-		glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &errorTextLength);
-
-		std::string errorText(errorTextLength, ' ');
-
-		GLsizei written;
-		glGetShaderInfoLog(shaderId, errorTextLength, &written, &errorText[0]);
-
-		wxLogDebug("Shader compilation errors: \n%s", errorText.c_str());
-	}
-
-	return compiled;
-}
-
-GLenum GLRenderer::LinkProgram(
-	const std::vector<GLuint> &shaders // List of shaders needed for this shader program
-	)
-{
-	// Create the program object
-	m_programHandle = glCreateProgram();
-	if(!m_programHandle)
-	{
-		wxLogDebug("Error creating program object.\n");
-		return false;
-    }
-
-//    // Bind index 0 to the shader input variable "VertexPosition"
-//    glBindAttribLocation(programHandle, 0, "VertexPosition");
-//    // Bind index 1 to the shader input variable "VertexColor"
-//    glBindAttribLocation(programHandle, 1, "VertexColor");
-
-	// Attach the shaders to the program object
-	std::vector<GLuint>::const_iterator iter;
-
-	for(iter = shaders.begin(); iter != shaders.end(); iter++)
-	{
-		glAttachShader(m_programHandle, *iter);
-	}
-
-	// Link the program
-	glLinkProgram(m_programHandle);
-
-	//// Detach the vertex and fragment shaders from the program.
-	//glDetachShader(m_programHandle, m_vertexShader);
-	//glDetachShader(m_programHandle, m_fragmentShader);
-
-	//// Delete the vertex and fragment shaders.
-	//glDeleteShader(m_vertexShader);
-	//glDeleteShader(m_fragmentShader);
-
-	// Check for successful linking
-	GLint linked;
-	glGetProgramiv(m_programHandle, GL_LINK_STATUS, &linked);
-
-	if(!linked)
-	{
-		wxLogDebug("Failed to link shader program\n" );
-
-		GLint errorTextLength;
-		glGetProgramiv(m_programHandle, GL_INFO_LOG_LENGTH, &errorTextLength);
-
-		std::vector<char> errorText(errorTextLength);
-
-		glGetShaderInfoLog(m_programHandle, errorTextLength, &errorTextLength, &errorText[0]);
-
-		wxLogDebug("Link shader errors: \n%s", &errorText[0]);
-
-		glDeleteShader(m_programHandle);
-	}
-
-	return linked;
-}
-
-void GLRenderer::OutputDebugShaderAttributeInfo()
-{
-	GLint maxlength, noofAttributes;
-	glGetProgramiv(m_programHandle, GL_ACTIVE_ATTRIBUTES, &noofAttributes);
-	glGetProgramiv(m_programHandle, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxlength);
- 
-	GLchar *name = (GLchar *)malloc(maxlength);
- 
-	GLint written, size, location;
-	GLenum type;
-	wxLogDebug("Index | Name\n");
-	wxLogDebug("---------------------------------");
-	for(int i = 0; i < noofAttributes; i++)
-	{
-		glGetActiveAttrib(m_programHandle, i, maxlength, &written, &size, &type, name);
- 
-		location = glGetAttribLocation(m_programHandle, name);
-		wxLogDebug("Location %d name %s\n", location, name);
-	}
- 
-	GLint noofUniforms;
-	glGetProgramiv(m_programHandle, GL_ACTIVE_UNIFORMS, &noofUniforms);
-	glGetProgramiv(m_programHandle, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxlength);
- 
-	GLchar *uniformName = (GLchar *)malloc(maxlength);
- 
-	wxLogDebug("Location | Name\n");
-	wxLogDebug("---------------------------------");
-	for(int i = 0; i < noofUniforms; i++)
-	{
-		glGetActiveUniform(m_programHandle, i, maxlength, &written, &size, &type, uniformName);
- 
-		location = glGetUniformLocation(m_programHandle, uniformName);
-		wxLogDebug("Location %d, uniformName %s\n", location, uniformName);
-	}
-}
-
 void GLRenderer::Render(
 	)
 {
 	// TODO wxwidgets has not init callback so this has to be done here. bleugh.
 	if(!m_context)
 	{
-		//wxLogDebug("Error - no gl canvas available for rendering");
+		wxLogDebug("Error - no gl canvas available for rendering");
 		return;
 	}
 
-	if(!Initialised())
+	if(!m_initialised)
 	{
-		//wxLogDebug("Error - no shaders loaded");
+		wxLogDebug("openGL not initialised");
 		return;
 	}
 
-	CheckOpenGLError(__FILE__,__LINE__);
+	GLUtils::CheckOpenGLError(__FILE__,__LINE__);
 
 	SetCurrent(*m_context);
 
@@ -588,53 +324,39 @@ void GLRenderer::Render(
 		return;
 	}
 
-	int textureLocation = glGetUniformLocation(GetProgramHandle(), "texture1");
-	glUniform1i(textureLocation, 0);
+	glm::mat4x4& viewMatrix = m_camera->GetViewMatrix();
 
-	render::BatchList::const_iterator batchIterator;
-	const render::BatchList &batches = m_renderEntity->GetBatches();
+	int width = GetSize().GetWidth();
+	int height = GetSize().GetHeight();
 
-	for(batchIterator = batches.begin(); batchIterator != batches.end(); batchIterator++)
+	glm::mat4x4& projectionMatrix = glm::perspective(40.0f, (float)width / (float) height, 1.0f, 600.f);
+
+	
+	// Update inputs for current shader
+	if(m_shaderManager->GetCurrentProgramType() != ShaderProgramType::None)
 	{
-		// TODO if batches->shader != currentShader
-		// LoadShader(batch->shader)
+		GLuint programId = m_shaderManager->GetCurrentProgramId();
 
-		(*batchIterator)->PrepareShaderParams(GetProgramHandle());
-		// TODO most liekly wants moving elsewhere...maybe appearance->SetUniforms(program) or maybe render entity?
-		// TODO these do not change!!! therefore should not be in the render loop!!!
-
-		// TODO need to be able to add more than one light
-		GLint lightAmbientLocation = glGetUniformLocation(GetProgramHandle(), "light.ambient");
+			// TODO need to be able to add more than one light
+		GLint lightAmbientLocation = glGetUniformLocation(programId, "light.ambient");
 		glUniform3f(lightAmbientLocation, 0.8f, 0.8f, 0.8f);
 
-		GLint lightDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "light.diffuse");
+		GLint lightDiffuseLocation = glGetUniformLocation(programId, "light.diffuse");
 		glUniform3f(lightDiffuseLocation, 1.0f, 1.0f, 1.0f);
 
-		GLint lightSpecularLocation = glGetUniformLocation(GetProgramHandle(), "light.specular");
+		GLint lightSpecularLocation = glGetUniformLocation(programId, "light.specular");
 		glUniform3f(lightSpecularLocation, 1.0f, 0.5f, 0.3f);
 
-		//glm::mat4 viewMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, -20.f));
-		//glm::mat4x4 modelMatrix = glm::mat4x4(1.0f);
-		glm::mat4x4& viewMatrix = m_camera->GetViewMatrix();
-
-		//int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
-		//int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
-
-		int width = GetSize().GetWidth();
-		int height = GetSize().GetHeight();
-
-		glm::mat4x4& projectionMatrix = glm::perspective(40.0f, (float)width / (float) height, 1.0f, 600.f); 
-
-		GLint modelMatrixLocation = glGetUniformLocation(GetProgramHandle(), "modelMatrix");
-		GLint viewMatrixLocation = glGetUniformLocation(GetProgramHandle(), "viewMatrix");
-		GLint projectionMatrixLocation = glGetUniformLocation(GetProgramHandle(), "projectionMatrix"); //TODO only needs setting on resize
-		GLint normalMatrixLocation = glGetUniformLocation(GetProgramHandle(), "normalMatrix");
+		GLint modelMatrixLocation = glGetUniformLocation(programId, "modelMatrix");
+		GLint viewMatrixLocation = glGetUniformLocation(programId, "viewMatrix");
+		GLint projectionMatrixLocation = glGetUniformLocation(programId, "projectionMatrix"); //TODO only needs setting on resize
+		GLint normalMatrixLocation = glGetUniformLocation(programId, "normalMatrix");
 		if(modelMatrixLocation >= 0 && viewMatrixLocation >= 0 && projectionMatrixLocation >= 0)
 		{
 			glm::mat4x4 modelViewMatrix = viewMatrix * m_renderEntity->GetModelMatrix();
 			glm::mat3x3 normalMatrix = glm::mat3x3(glm::vec3(modelViewMatrix[0]), glm::vec3(modelViewMatrix[1]), glm::vec3(modelViewMatrix[2]));
 
-			GLint lightPositionLocation = glGetUniformLocation(GetProgramHandle(), "light.position");
+			GLint lightPositionLocation = glGetUniformLocation(programId, "light.position");
 			glm::vec4 lightPositionMatrix = viewMatrix * glm::vec4(100.0f, 0.0f, 0.0f, 1.0f);
 			glUniform4f(lightPositionLocation, lightPositionMatrix.x, lightPositionMatrix.y, lightPositionMatrix.z, lightPositionMatrix.w);
 
@@ -642,14 +364,9 @@ void GLRenderer::Render(
 			glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
 			glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
 			glUniformMatrix3fv(normalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
-
-			//wxLogDebug("%u\n", GetVertexArrayHandle());
-			glBindVertexArray((*batchIterator)->GetVertexArrayHandle());
-
-			//m_indexBufferHandle
-			glDrawElements(GL_TRIANGLES, (*batchIterator)->GetNumIndices(), GL_UNSIGNED_SHORT, (GLvoid*)0);
-
 		}
+
+		m_renderEntity->Render(*m_shaderManager);
 	}
 
 	glFlush();
@@ -659,25 +376,13 @@ void GLRenderer::Render(
 
 GLRenderer::~GLRenderer()
 {
-	if(!Initialised())
-	{
-		return;
-	}
-
-	// TODO Release batch gl memory allocated in prepare?
-
-	std::vector<GLuint>::iterator iter;
-	for(iter = shaders.begin(); iter != shaders.end(); iter++)
-	{
-		// Detach and delete any shaders
-		glDetachShader(m_programHandle, *iter);
-		glDeleteShader(*iter);
-	}
-
-	// Delete the shader program.
-	glDeleteProgram(m_programHandle);
-
 	delete m_context;
 	m_glContext = NULL;
+
+	delete m_camera;
+	m_camera = NULL;
+
+	delete m_shaderManager;
+	m_shaderManager = NULL;
 }
 }

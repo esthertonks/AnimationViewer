@@ -20,6 +20,12 @@ void LambertAppearance::ConvertToShaderParams(
 
 	GLint diffuseFactorLocation = glGetUniformLocation(programHandle, "material.diffuseFactor");
 	glUniform1f(diffuseFactorLocation, m_diffuseFactor);
+
+	if(!m_diffuseTexturePath.empty())
+	{
+		int textureLocation = glGetUniformLocation(programHandle, "diffuseTexture");
+		glUniform1i(textureLocation, 0);
+	}
 }
 
 }

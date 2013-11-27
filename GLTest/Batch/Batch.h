@@ -3,6 +3,7 @@
 #include <boost\shared_array.hpp>
 #include "../Container/LinkedList .h"
 #include "BatchFwdDecl.h"
+#include "../Render/RenderFwdDecl.h"
 
 // TODO general includes in its own header?
 #define GLEW_STATIC 1
@@ -66,6 +67,8 @@ public:
 	{
 		m_appearance = appearance;
 	};
+
+	ShaderProgramType GetShaderProgramType();
 
 	void AddVertex(
 		const Vertex &vertex

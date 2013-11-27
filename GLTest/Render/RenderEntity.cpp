@@ -1,4 +1,5 @@
 #include "RenderEntity.h"
+#include "ShaderManager.h"
 #include "../Batch/BatchProcessor.h"
 #include "../Batch/BatchList.h"
 #include "../Batch/Batch.h"
@@ -29,8 +30,8 @@ bool RenderEntity::Create(
 }
 
 void RenderEntity::Rotate(
-	float rotAroundY,
-	float rotAroundX
+	const float rotAroundY,
+	const float rotAroundX
 	)
 {
 	m_rotAroundY += rotAroundY;
@@ -43,6 +44,32 @@ void RenderEntity::Rotate(
 const glm::mat4x4 &RenderEntity::GetModelMatrix()
 {
 	return m_modelMatrix;
+}
+
+void RenderEntity::Render(
+	ShaderManager &shaderManager
+	)
+{
+
+	render::BatchList::const_iterator batchIterator;
+
+	for(batchIterator = m_renderBatches.begin(); batchIterator != m_renderBatches.end(); batchIterator++)
+	{
+		ShaderProgramType batchShaderProgramType = (*batchIterator)->GetShaderProgramType();
+		if(batchShaderProgramType != shaderManager.GetCurrentProgramType())
+		{
+			shaderManager.SetProgramCurrent(batchShaderProgramType);
+			GLuint programId = shaderManager.GetProgramId(batchShaderProgramType);
+
+			(*batchIterator)->PrepareShaderParams(programId);
+		}
+
+			//wxLogDebug("%u\n", GetVertexArrayHandle());
+		glBindVertexArray((*batchIterator)->GetVertexArrayHandle());
+
+		//m_indexBufferHandle
+		glDrawElements(GL_TRIANGLES, (*batchIterator)->GetNumIndices(), GL_UNSIGNED_SHORT, (GLvoid*)0);
+	}
 }
 
 RenderEntity::~RenderEntity()

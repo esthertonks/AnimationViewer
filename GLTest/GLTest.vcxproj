@@ -100,9 +100,11 @@
     <ClCompile Include="Import\FBXImport.cpp" />
     <ClCompile Include="AnimationApp.cpp" />
     <ClCompile Include="Render\FirstPersonCamera.cpp" />
+    <ClCompile Include="Render\GLUtils.cpp" />
     <ClCompile Include="Render\OrbitCamera.cpp" />
     <ClCompile Include="Render\GLRenderer.cpp" />
     <ClCompile Include="Render\RenderEntity.cpp" />
+    <ClCompile Include="Render\ShaderManager.cpp" />
     <ClCompile Include="Render\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -125,9 +127,12 @@
     <ClInclude Include="ImportMesh\Vertex.h" />
     <ClInclude Include="Import\FBXImport.h" />
     <ClInclude Include="Render\FirstPersonCamera.h" />
+    <ClInclude Include="Render\GLUtils.h" />
     <ClInclude Include="Render\OrbitCamera.h" />
     <ClInclude Include="Render\GLRenderer.h" />
     <ClInclude Include="Render\RenderEntity.h" />
+    <ClInclude Include="Render\RenderFwdDecl.h" />
+    <ClInclude Include="Render\ShaderManager.h" />
     <ClInclude Include="Render\Window.h" />
   </ItemGroup>
   <ItemGroup>

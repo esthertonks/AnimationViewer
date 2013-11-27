@@ -13,9 +13,9 @@ public:
 	LambertAppearance();
 	~LambertAppearance(){};
 
-virtual MaterialType GetType()
+virtual ShaderProgramType GetType()
 {
-	return MaterialType::Lambert;
+	return ShaderProgramType::Lambert;
 }
 
 virtual void ConvertToShaderParams(

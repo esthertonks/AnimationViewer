@@ -44,6 +44,11 @@ void Batch::AddIndex(
 	m_indexArray.push_back(vertexIndex);
 }
 
+ShaderProgramType Batch::GetShaderProgramType()
+{
+	return m_appearance->GetType();
+};
+
 void Batch::Prepare()
 {
 	//for each in batchlist

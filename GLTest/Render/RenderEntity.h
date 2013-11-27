@@ -12,6 +12,7 @@ namespace render
 {
 
 enum VertexFormatType;
+class ShaderManager;
 
 class RenderEntity //TODO renerable?
 {
@@ -34,8 +35,12 @@ public:
 		);
 
 	void Rotate(
-		float rotY,
-		float rotX
+		const float rotY,
+		const float rotX
+		);
+
+	void Render(
+		ShaderManager &shaderManager
 		);
 
 private:
