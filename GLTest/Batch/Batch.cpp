@@ -98,6 +98,13 @@ void Batch::Prepare()
 	m_meshLoaded = true;
 }
 
+void Batch::PrepareShaderParams(
+	GLuint programHandle
+	)
+{
+	m_appearance->ConvertToShaderParams(programHandle);
+}
+
 Batch::~Batch()
 {
 	// Disable the two vertex array attributes.

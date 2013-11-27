@@ -4,6 +4,12 @@
 #include <string>
 #include <glm\glm.hpp>
 
+//TODO sort out common header includes all over the place!
+// TODO general includes in its own header?
+#define GLEW_STATIC 1
+
+#include <GL/glew.h>
+
 namespace render
 {
 
@@ -106,6 +112,10 @@ inline const double GetDiffuseFactor() const
 {
 	return m_diffuseFactor;
 }
+
+virtual void ConvertToShaderParams(
+	const GLuint programHandle
+	) = 0;
 
 protected:
 	// The shader associated with this appearance

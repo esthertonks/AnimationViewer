@@ -54,6 +54,10 @@ inline const double GetReflectivity() const
 	return m_reflectivity;
 }
 
+virtual void ConvertToShaderParams(
+	const GLuint programHandle
+	) const;
+
 
 private:
 	// Shader Inputs

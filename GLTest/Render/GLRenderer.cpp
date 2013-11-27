@@ -599,55 +599,9 @@ void GLRenderer::Render(
 		// TODO if batches->shader != currentShader
 		// LoadShader(batch->shader)
 
-
+		(*batchIterator)->PrepareShaderParams(GetProgramHandle());
 		// TODO most liekly wants moving elsewhere...maybe appearance->SetUniforms(program) or maybe render entity?
 		// TODO these do not change!!! therefore should not be in the render loop!!!
-		if((*batchIterator)->GetAppearance()->GetType() == render::MaterialType::Phong)
-		{
-			boost::shared_ptr<render::PhongAppearance> phongAppearancePtr = boost::static_pointer_cast<render::PhongAppearance>((*batchIterator)->GetAppearance());
-			GLint materialAmbientLocation = glGetUniformLocation(GetProgramHandle(), "material.ambient");
-			glm::vec3 materialAmbient = phongAppearancePtr->GetAmbient();
-			glUniform3f(materialAmbientLocation, materialAmbient.r, materialAmbient.g, materialAmbient.b);
-
-			glm::vec3 materialDiffuse = phongAppearancePtr->GetDiffuse();
-			GLint materialDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuse");
-			glUniform3f(materialDiffuseLocation, materialDiffuse.r, materialDiffuse.g, materialDiffuse.b);
-
-			double materialDiffuseFactor = phongAppearancePtr->GetDiffuseFactor();
-			GLint materialDiffuseFactorLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuseFactor");
-			glUniform1f(materialDiffuseFactorLocation, materialDiffuseFactor);
-
-			glm::vec3 materialSpecular = phongAppearancePtr->GetSpecular();
-			GLint materialSpecularLocation = glGetUniformLocation(GetProgramHandle(), "material.specular");
-			glUniform3f(materialSpecularLocation, materialSpecular.r, materialSpecular.g, materialSpecular.b);
-
-			double materialShiniess = phongAppearancePtr->GetShininess();
-			GLint materialShininessLocation = glGetUniformLocation(GetProgramHandle(), "material.shininess");
-			glUniform1f(materialShininessLocation, materialShiniess);
-		}
-		else if((*batchIterator)->GetAppearance()->GetType() == render::MaterialType::Lambert)
-		{
-			boost::shared_ptr<render::LambertAppearance> lambertAppearancePtr = boost::static_pointer_cast<render::LambertAppearance>((*batchIterator)->GetAppearance());
-			GLint materialAmbientLocation = glGetUniformLocation(GetProgramHandle(), "material.ambient");
-			glm::vec3 materialAmbient = lambertAppearancePtr->GetAmbient();
-			glUniform3f(materialAmbientLocation, materialAmbient.r, materialAmbient.g, materialAmbient.b);
-
-			glm::vec3 materialDiffuse = lambertAppearancePtr->GetDiffuse();
-			GLint materialDiffuseLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuse");
-			glUniform3f(materialDiffuseLocation, materialDiffuse.r, materialDiffuse.g, materialDiffuse.b);
-
-			double materialDiffuseFactor = lambertAppearancePtr->GetDiffuseFactor();
-			GLint materialDiffuseFactorLocation = glGetUniformLocation(GetProgramHandle(), "material.diffuseFactor");
-			glUniform1f(materialDiffuseFactorLocation, materialDiffuseFactor);
-
-			glm::vec3 materialSpecular;//TEMP AS NOT APPLICABLE
-			GLint materialSpecularLocation = glGetUniformLocation(GetProgramHandle(), "material.specular");
-			glUniform3f(materialSpecularLocation, materialSpecular.r, materialSpecular.g, materialSpecular.b);
-
-			double materialShiniess = 0.0f;//TEMP AS NOT APPLICABLE
-			GLint materialShininessLocation = glGetUniformLocation(GetProgramHandle(), "material.shininess");
-			glUniform1f(materialShininessLocation, materialShiniess);
-		}
 
 		// TODO need to be able to add more than one light
 		GLint lightAmbientLocation = glGetUniformLocation(GetProgramHandle(), "light.ambient");
