@@ -89,7 +89,7 @@ public:
 	void Prepare();
 
 	void Batch::PrepareShaderParams(
-		GLuint programHandle
+		GLuint programId
 		);
 
 

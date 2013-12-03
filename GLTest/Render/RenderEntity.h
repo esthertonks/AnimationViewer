@@ -40,7 +40,9 @@ public:
 		);
 
 	void Render(
-		ShaderManager &shaderManager
+		ShaderManager &shaderManager,
+		glm::mat4x4 &viewMatrix,
+		glm::mat4x4 &projectionMatrix
 		);
 
 private:

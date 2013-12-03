@@ -9,21 +9,28 @@ LambertAppearance::LambertAppearance()
 }
 
 void LambertAppearance::ConvertToShaderParams(
-	GLuint programHandle
+	GLuint programId
 	) const
 {
-	GLint ambientLocation = glGetUniformLocation(programHandle, "material.ambient");
+	// TODO need to be able to add more than one light
+	GLint lightAmbientLocation = glGetUniformLocation(programId, "light.ambient");
+	glUniform3f(lightAmbientLocation, 0.1f, 0.1f, 0.1f);
+
+	GLint lightDiffuseLocation = glGetUniformLocation(programId, "light.diffuse");
+	glUniform3f(lightDiffuseLocation, 0.5f, 0.5f, 0.5f);
+
+	GLint ambientLocation = glGetUniformLocation(programId, "material.ambient");
 	glUniform3f(ambientLocation, m_ambient.r, m_ambient.g, m_ambient.b);
 
-	GLint diffuseLocation = glGetUniformLocation(programHandle, "material.diffuse");
+	GLint diffuseLocation = glGetUniformLocation(programId, "material.diffuse");
 	glUniform3f(diffuseLocation, m_diffuse.r, m_diffuse.g, m_diffuse.b);
 
-	GLint diffuseFactorLocation = glGetUniformLocation(programHandle, "material.diffuseFactor");
+	GLint diffuseFactorLocation = glGetUniformLocation(programId, "material.diffuseFactor");
 	glUniform1f(diffuseFactorLocation, m_diffuseFactor);
 
 	if(!m_diffuseTexturePath.empty())
 	{
-		int textureLocation = glGetUniformLocation(programHandle, "diffuseTexture");
+		int textureLocation = glGetUniformLocation(programId, "diffuseTexture");
 		glUniform1i(textureLocation, 0);
 	}
 }

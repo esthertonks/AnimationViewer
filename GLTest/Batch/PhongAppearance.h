@@ -55,7 +55,7 @@ inline const double GetReflectivity() const
 }
 
 virtual void ConvertToShaderParams(
-	const GLuint programHandle
+	const GLuint programId
 	) const;
 
 

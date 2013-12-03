@@ -15,7 +15,9 @@
 
 namespace render
 {
-
+	// TODO redo this with a phong shader program and lambert shader program class which keep track of their own types etc. So one class per type in use.
+	//Can thenget rid of m_shaderProgramByProgramType
+	//TODO only really current need one set of shaders - discuss...
 ShaderManager::ShaderManager()
 	: m_currentProgramType(ShaderProgramType::None)
 {
@@ -28,8 +30,8 @@ ShaderManager::ShaderManager()
 
 	Program lambert;
 	lambert.m_programId = -1;//TODO umm constructor?!
-	lambert.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_VERTEX_SHADER, "Diffuse.vert"));
-	lambert.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_FRAGMENT_SHADER, "Diffuse.frag"));
+	lambert.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_VERTEX_SHADER, "Shaders/PerFragmentLambert.vert"));
+	lambert.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_FRAGMENT_SHADER, "Shaders/PerFragmentLambert.frag"));
 
 	m_shaderProgramByProgramType.insert(std::pair<ShaderProgramType, Program>(ShaderProgramType::Lambert, lambert));
 }
@@ -41,7 +43,7 @@ Program& ShaderManager::GetProgram(
 	return m_shaderProgramByProgramType.find(programType)->second;
 }
 
-GLuint ShaderManager::GetProgramId(
+int ShaderManager::GetProgramId(
 	ShaderProgramType programType
 	)
 {
@@ -53,7 +55,7 @@ void ShaderManager::SetProgramCurrent(
 	ShaderProgramType programType
 	)
 {
-	GLuint programId = GetProgramId(programType);
+	int programId = GetProgramId(programType);
 
 	glUseProgram(programId);
 
@@ -69,9 +71,8 @@ void ShaderManager::SetProgramCurrent(
 */
 bool ShaderManager::InitialiseShaders()
 {
-	InitialiseShaders(ShaderProgramType::Phong);
-
 	// Setup the phong shaders
+	InitialiseShaders(ShaderProgramType::Phong);
 	LinkPrograms(ShaderProgramType::Phong);
 
 	// Setup the lambert shaders
@@ -85,7 +86,7 @@ bool ShaderManager::InitialiseShaders(
 	ShaderProgramType programType
 	)
 {
-	Program program = GetProgram(programType);
+	Program& program = GetProgram(programType);
 
 	for(std::map<GLuint, std::string>::const_iterator shaderIterator = program.m_pathByShaderType.begin(); shaderIterator != program.m_pathByShaderType.end(); shaderIterator++)
 	{
@@ -117,6 +118,7 @@ GLuint ShaderManager::LoadShader(
 	const char *shaderTextBuffer = ReadShaderSourceFile(shaderName);
 	if(!shaderTextBuffer)
 	{
+		wxLogDebug("Error reading shader.\n");
 		return GL_FALSE;
 	}
 
@@ -129,7 +131,7 @@ GLuint ShaderManager::LoadShader(
 	}
 	else
 	{
-		wxLogDebug("Error creating vertex shader.\n");
+		wxLogDebug("Error creating shader.\n");
 	}
 
 	delete[] shaderTextBuffer;
@@ -206,8 +208,8 @@ GLenum ShaderManager::LinkPrograms(
 	Program& program = GetProgram(programType);
 
 	// Create the program object
-	GLuint programId = glCreateProgram();
-	if(!programId)
+	int programId = glCreateProgram();
+	if(programId == -1)
 	{
 		wxLogDebug("Error creating program object.\n");
 		return false;
@@ -237,7 +239,7 @@ GLenum ShaderManager::LinkPrograms(
 
 		glGetShaderInfoLog(programId, errorTextLength, &errorTextLength, &errorText[0]);
 
-		wxLogDebug("Link shader errors: \n%s", &errorText[0]);
+		wxLogDebug("Shader linking errors are: \n%s", &errorText[0]);
 
 		glDeleteShader(programId);
 
@@ -254,6 +256,11 @@ void ShaderManager::OutputDebugShaderAttributeInfo(
 	)
 {
 	Program& program = GetProgram(programType);
+	if(program.m_programId == -1)
+	{
+		wxLogDebug("Shader program not initialised\n");
+		return;
+	}
 
 	GLint maxlength, noofAttributes;
 	glGetProgramiv(program.m_programId, GL_ACTIVE_ATTRIBUTES, &noofAttributes);

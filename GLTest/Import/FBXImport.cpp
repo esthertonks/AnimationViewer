@@ -303,9 +303,15 @@ void FBXImport::LoadMaterials(
 			for(int textureIndex = 0; textureIndex < 1; textureIndex++)
 			{
 				FbxFileTexture* fbxFileTexture = materialProperty.GetSrcObject<FbxFileTexture>(textureIndex);
-
-				std::string textureFilename = fbxFileTexture->GetFileName();//TODO cant currently support multiple materials!
-				appearance->SetDiffuseTexturePath(textureFilename);
+				if(fbxFileTexture != NULL)
+				{
+					std::string textureFilename = fbxFileTexture->GetFileName();//TODO cant currently support multiple materials!
+					appearance->SetDiffuseTexturePath(textureFilename);
+				}
+				else
+				{
+					appearance->SetDiffuseTexturePath(std::string("Blank.tga"));
+				}
 			}
 
 			render::AppearanceTableEntry materialInfo;
@@ -372,9 +378,9 @@ void FBXImport::LoadUVs(
 	mesh::Triangle &triangle	// The current triangle to store the imported data
 	)
 {
-	if(fbxMesh.GetElementUVCount() > 1)
+	if(fbxMesh.GetElementUVCount() != 1)
 	{
-		FBXSDK_printf("Only one set of uvs currently supported\n"); // May support more uv sets later
+		FBXSDK_printf("Mesh must have one sest of uvs. This mesh has %d uv sets.\n", fbxMesh.GetElementUVCount()); // May support more uv sets later
 	}
 
 	FbxGeometryElementUV* uvElement = fbxMesh.GetElementUV(/*uvIndex*/);

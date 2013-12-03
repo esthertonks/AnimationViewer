@@ -19,7 +19,7 @@ virtual ShaderProgramType GetType()
 }
 
 virtual void ConvertToShaderParams(
-	const GLuint programHandle
+	const GLuint programId
 	) const;
 
 private:

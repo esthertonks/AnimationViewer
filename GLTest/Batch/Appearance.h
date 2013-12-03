@@ -37,7 +37,7 @@ std::string &GetDiffuseTexturePath()
 virtual ShaderProgramType GetType() = 0;
 
 virtual void ConvertToShaderParams(
-	const GLuint programHandle
+	const GLuint programId
 	) const = 0;
 
 inline void SetAmbient(

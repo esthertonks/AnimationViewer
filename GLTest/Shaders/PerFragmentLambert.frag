@@ -14,15 +14,12 @@ struct Light // Light Intensity
 	vec4 position;
 	vec3 ambient;
 	vec3 diffuse;
-	vec3 specular;
 };
 
 struct Material // Reflectivity and shininess
 {
 	vec3 ambient;	// Ambient reflectivity
 	vec3 diffuse;	// Diffuse reflectivity
-	vec3 specular;	// Specular reflectivity
-	float shininess;
 	float diffuseFactor; // Interpolation amount with ambient. Must be 0-1
 };
 
@@ -34,7 +31,7 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix; //TODO precalc some of these multiplications
 uniform mat3 normalMatrix;
 
-void PhongShading(out vec3 ambient, out vec3 diffuse, out vec3 specular)
+void PhongShading(out vec3 ambient, out vec3 diffuse)
 {
 	vec3 lightDirection = normalize(vec3(light.position) - position);
 	vec3 viewDirection = normalize(-position.xyz);
@@ -46,13 +43,6 @@ void PhongShading(out vec3 ambient, out vec3 diffuse, out vec3 specular)
 	float diffuseLightIntensity = max(dot(lightDirection, normal), 0.0);
 
 	diffuse = light.diffuse * material.diffuse * diffuseLightIntensity;
-
-	specular = vec3(0.0);
-
-	if(diffuseLightIntensity > 0)
-	{
-		specular = light.specular * material.specular * pow(max(dot(reflection, viewDirection), 0.0), material.shininess);
-	}
 }
 
 //http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl
@@ -92,24 +82,6 @@ vec3 InterpolateColour(vec3 colourA, vec3 colourB, float amount) // Amount must 
 	return HSVtoRGB(hsvResult);
 }
 
-//vec3 Hue(float hue)
-//{
-//	float red = abs(hue * 6 - 3) - 1;
-//	float green = 2 - abs(hue * 6 - 2);
-//	float blue = 2 - abs(hue * 6 - 4);
-
-//	vec3 rgb;
-//	rgb.r = clamp(red, 0.0, 1.0);
-//	rgb.g = clamp(green, 0.0, 1.0);
-//	rgb.b = clamp(blue, 0.0, 1.0);
-//	return rgb;
-//}
-
-//vec3 HSVtoRGB(in vec3 hsv)
-//{
-//	return vec3(((Hue(hsv.x) - 1) * hsv.y + 1) * hsv.z);
-//}
-
 vec3 InterpolateVector(vec3 start, vec3 end, float value)
 {
 	return start * (1.0 - value) + end * value;
@@ -120,16 +92,10 @@ void main()
 	vec4 textureColour = texture(diffuseTexture, textureCoord);
 	vec3 ambient;
 	vec3 diffuse;
-	vec3 specular;
 
 	// when a diffuse texture is attached in maya it overrides any diffuse parameter (which will be loads in as zero anyway)
 	diffuse = vec3(textureColour);
-
-	PhongShading(ambient, diffuse, specular);
-
-	//vec3 ambientAndDiffuse = InterpolateColour(ambient, diffuse, material.diffuseFactor);
-	//fragmentColour = (vec4(ambientAndDiffuse, 1.0) * textureColour) + vec4(specular, 1.0);
-
+	PhongShading(ambient, diffuse);
 	vec3 ambientAndDiffuse = InterpolateVector(ambient, diffuse, material.diffuseFactor);
-	fragmentColour = vec4(ambientAndDiffuse, 1.0) + vec4(specular, 1.0);
+	fragmentColour = vec4(ambientAndDiffuse, 1.0);
 }

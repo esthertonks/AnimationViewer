@@ -19,9 +19,9 @@ namespace render
 
 	struct Program
 	{
-		GLuint m_programId;
+		int m_programId;
 		std::map<GLuint, std::string> m_pathByShaderType; // The type of shader ie vertex, fragment, tessellation and the path to load the physical shader
-		std::map<GLuint, GLuint> m_idByShaderType; // The type of this shader and the allocated gl id for this shader
+		std::map<GLuint, GLuint> m_idByShaderType; // The type of this shader ie vertex, fragment, tessellation and the allocated gl id for this shader
 	};
 
 class ShaderManager
@@ -41,7 +41,7 @@ public:
 
 	bool InitialiseShaders();
 
-	GLuint ShaderManager::GetProgramId(
+	int ShaderManager::GetProgramId(
 		ShaderProgramType programType
 	);
 

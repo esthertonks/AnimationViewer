@@ -199,5 +199,11 @@
     <None Include="Shaders\PerFragmentPhong.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\PerFragmentLambert.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PerFragmentLambert.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

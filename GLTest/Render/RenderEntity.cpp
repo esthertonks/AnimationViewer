@@ -47,7 +47,9 @@ const glm::mat4x4 &RenderEntity::GetModelMatrix()
 }
 
 void RenderEntity::Render(
-	ShaderManager &shaderManager
+	ShaderManager &shaderManager,
+	glm::mat4x4& viewMatrix,
+	glm::mat4x4& projectionMatrix
 	)
 {
 
@@ -64,11 +66,36 @@ void RenderEntity::Render(
 			(*batchIterator)->PrepareShaderParams(programId);
 		}
 
-			//wxLogDebug("%u\n", GetVertexArrayHandle());
-		glBindVertexArray((*batchIterator)->GetVertexArrayHandle());
+		if((*batchIterator)->GetShaderProgramType() != ShaderProgramType::None)
+		{
+			assert(shaderManager.GetCurrentProgramId() != -1);
 
-		//m_indexBufferHandle
-		glDrawElements(GL_TRIANGLES, (*batchIterator)->GetNumIndices(), GL_UNSIGNED_SHORT, (GLvoid*)0);
+			GLint modelMatrixLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "modelMatrix");
+			GLint viewMatrixLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "viewMatrix");
+			GLint projectionMatrixLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "projectionMatrix"); //TODO only needs setting on resize
+			GLint normalMatrixLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "normalMatrix");
+			if(modelMatrixLocation >= 0 && viewMatrixLocation >= 0 && projectionMatrixLocation >= 0)
+			{
+				glm::mat4x4 modelViewMatrix = viewMatrix * GetModelMatrix();
+				glm::mat3x3 normalMatrix = glm::mat3x3(glm::vec3(modelViewMatrix[0]), glm::vec3(modelViewMatrix[1]), glm::vec3(modelViewMatrix[2]));
+
+				//TODO this should not be here - light class please. Also the other light params currently in the appearances should be in the same place as this...
+				GLint lightPositionLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "light.position");
+				glm::vec4 lightPositionMatrix = viewMatrix * glm::vec4(100.0f, 0.0f, 0.0f, 1.0f); //TODO this is the same position as the camera - could do with being enforced...
+				glUniform4f(lightPositionLocation, lightPositionMatrix.x, lightPositionMatrix.y, lightPositionMatrix.z, lightPositionMatrix.w);
+
+				glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &GetModelMatrix()[0][0]);//TODO pass fewer matrices through!!!
+				glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
+				glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
+				glUniformMatrix3fv(normalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
+			}
+
+				//wxLogDebug("%u\n", GetVertexArrayHandle());
+			glBindVertexArray((*batchIterator)->GetVertexArrayHandle());
+
+			//m_indexBufferHandle
+			glDrawElements(GL_TRIANGLES, (*batchIterator)->GetNumIndices(), GL_UNSIGNED_SHORT, (GLvoid*)0);
+		}
 	}
 }
 

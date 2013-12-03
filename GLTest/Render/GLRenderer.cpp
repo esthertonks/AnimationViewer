@@ -115,6 +115,11 @@ void GLRenderer::OnLeftDown(
 	wxMouseEvent& event
 	)
 {
+	if(!m_renderEntity)
+	{
+		return;
+	}
+
 	lastPosX = event.m_x;
 	lastPosY = event.m_y;
 
@@ -125,6 +130,11 @@ void GLRenderer::OnRightDown(
 	wxMouseEvent& event
 	)
 {
+	if(!m_renderEntity)
+	{
+		return;
+	}
+
 	lastPosX = event.m_x;
 	lastPosY = event.m_y;
 }
@@ -133,6 +143,10 @@ void GLRenderer::OnMouseWheelScroll(
 	wxMouseEvent& event
 	)
 {
+	if(!m_renderEntity)
+	{
+		return;
+	}
 	int wheelRotation = event.GetWheelRotation();
 	m_camera->Zoom(-(wheelRotation / event.GetWheelDelta()) * 10);
 }
@@ -141,6 +155,11 @@ void GLRenderer::OnMouseWheelDown(
 	wxMouseEvent& event
 	)
 {
+	if(!m_renderEntity)
+	{
+		return;
+	}
+
 	lastPosX = event.m_x;
 	lastPosY = event.m_y;
 }
@@ -333,41 +352,7 @@ void GLRenderer::Render(
 
 	
 	// Update inputs for current shader
-	if(m_shaderManager->GetCurrentProgramType() != ShaderProgramType::None)
-	{
-		GLuint programId = m_shaderManager->GetCurrentProgramId();
-
-			// TODO need to be able to add more than one light
-		GLint lightAmbientLocation = glGetUniformLocation(programId, "light.ambient");
-		glUniform3f(lightAmbientLocation, 0.8f, 0.8f, 0.8f);
-
-		GLint lightDiffuseLocation = glGetUniformLocation(programId, "light.diffuse");
-		glUniform3f(lightDiffuseLocation, 1.0f, 1.0f, 1.0f);
-
-		GLint lightSpecularLocation = glGetUniformLocation(programId, "light.specular");
-		glUniform3f(lightSpecularLocation, 1.0f, 0.5f, 0.3f);
-
-		GLint modelMatrixLocation = glGetUniformLocation(programId, "modelMatrix");
-		GLint viewMatrixLocation = glGetUniformLocation(programId, "viewMatrix");
-		GLint projectionMatrixLocation = glGetUniformLocation(programId, "projectionMatrix"); //TODO only needs setting on resize
-		GLint normalMatrixLocation = glGetUniformLocation(programId, "normalMatrix");
-		if(modelMatrixLocation >= 0 && viewMatrixLocation >= 0 && projectionMatrixLocation >= 0)
-		{
-			glm::mat4x4 modelViewMatrix = viewMatrix * m_renderEntity->GetModelMatrix();
-			glm::mat3x3 normalMatrix = glm::mat3x3(glm::vec3(modelViewMatrix[0]), glm::vec3(modelViewMatrix[1]), glm::vec3(modelViewMatrix[2]));
-
-			GLint lightPositionLocation = glGetUniformLocation(programId, "light.position");
-			glm::vec4 lightPositionMatrix = viewMatrix * glm::vec4(100.0f, 0.0f, 0.0f, 1.0f);
-			glUniform4f(lightPositionLocation, lightPositionMatrix.x, lightPositionMatrix.y, lightPositionMatrix.z, lightPositionMatrix.w);
-
-			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &m_renderEntity->GetModelMatrix()[0][0]);//TODO pass fewer matrices through!!!
-			glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
-			glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
-			glUniformMatrix3fv(normalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
-		}
-
-		m_renderEntity->Render(*m_shaderManager);
-	}
+	m_renderEntity->Render(*m_shaderManager, viewMatrix, projectionMatrix);
 
 	glFlush();
 
