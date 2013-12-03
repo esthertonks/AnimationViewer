@@ -84,6 +84,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation\AnimationTrack.cpp" />
+    <ClCompile Include="Animation\PositionTrack.cpp" />
+    <ClCompile Include="Animation\RotationTrack.cpp" />
+    <ClCompile Include="Animation\ScaleTrack.cpp" />
     <ClCompile Include="Batch\Appearance.cpp" />
     <ClCompile Include="Batch\Batch.cpp" />
     <ClCompile Include="Batch\BatchList.cpp" />
@@ -109,6 +113,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationApp.h" />
+    <ClInclude Include="Animation\AnimationTrack.h" />
+    <ClInclude Include="Animation\PositionTrack.h" />
+    <ClInclude Include="Animation\RotationTrack.h" />
+    <ClInclude Include="Animation\ScaleTrack .h" />
     <ClInclude Include="Batch\Appearance.h" />
     <ClInclude Include="Batch\Batch.h" />
     <ClInclude Include="Batch\BatchFwdDecl.h" />

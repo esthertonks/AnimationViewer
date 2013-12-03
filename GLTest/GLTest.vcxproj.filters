@@ -23,6 +23,9 @@
     <Filter Include="Container">
       <UniqueIdentifier>{06e421f6-1fb3-44d3-b505-a38b90259bde}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Animation">
+      <UniqueIdentifier>{a64912b7-24f7-48e2-8290-d1483fee2010}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Import\FBXImport.cpp">
@@ -88,6 +91,18 @@
     </ClCompile>
     <ClCompile Include="Render\GLUtils.cpp">
       <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\AnimationTrack.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\PositionTrack.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\RotationTrack.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\ScaleTrack.cpp">
+      <Filter>Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +181,18 @@
     </ClInclude>
     <ClInclude Include="Render\RenderFwdDecl.h">
       <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimationTrack.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\PositionTrack.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\RotationTrack.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\ScaleTrack .h">
+      <Filter>Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

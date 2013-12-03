@@ -68,8 +68,8 @@ private:
 
 	std::string m_name;
 
-	glm::mat4x4 localTransform;			//Transform from this node to the parent node
-	glm::mat4x4 globalTransform;		// Transform from this node to the world //TODO to the world or to the mesh?
+	//glm::mat4x4 m_localTransform;			//Transform from this node to the parent node
+	//glm::mat4x4 m_globalTransform;		// Transform from this node to the global model transform
 
 	// uvsets?
 
