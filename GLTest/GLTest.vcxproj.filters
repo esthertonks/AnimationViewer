@@ -26,6 +26,9 @@
     <Filter Include="Animation">
       <UniqueIdentifier>{a64912b7-24f7-48e2-8290-d1483fee2010}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{a0a5dc1b-3f5b-4dde-9696-61abfc354208}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Import\FBXImport.cpp">
@@ -106,6 +109,9 @@
     </ClCompile>
     <ClCompile Include="Render\GLRenderCanvas.cpp">
       <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\ControlsPanel.cpp">
+      <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -199,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="Render\GLRenderCanvas.h">
       <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\ControlsPanel.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

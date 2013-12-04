@@ -37,6 +37,15 @@ class AnimationApp: public wxApp
 		std::string filePath
 	);
 
+	// GUI controls
+	void ShowBones(
+		bool show
+		);
+
+	void ShowNormals(
+		bool show
+		);
+
 	private:
 	virtual bool OnInit();
 	void OnIdle(

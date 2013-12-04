@@ -92,8 +92,8 @@ void Window::OnAbout(
 	)
 {
 
-	wxMessageBox("This is a wxWindows Hello world sample",
-		"About Hello World", wxOK | wxICON_INFORMATION, this);
+	wxMessageBox("Animation Viewer By Esther Tonks",
+		"Animation Viewer", wxOK | wxICON_INFORMATION, this);
 }
 
 }

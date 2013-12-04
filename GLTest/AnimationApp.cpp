@@ -5,14 +5,34 @@
 #include "ImportMesh/Mesh.h"
 #include "Render\Renderable.h"
 #include "Render\RenderableMesh.h"
+#include "GUI\ControlsPanel.h"
+
+const int ID_BONES_CHECKBOX = 100;
+const int ID_NORMALS_CHECKBOX = 101;
 
 IMPLEMENT_APP(AnimationApp)
 
 bool AnimationApp::OnInit()
 {	
-	wxFrame *frame = new render::Window(NULL, wxT("Testing"), wxDefaultPosition, wxSize(800, 800), wxDEFAULT_FRAME_STYLE);
-	
-	m_renderCanvas = new render::GLRenderCanvas(frame, wxID_ANY, wxDefaultPosition, wxSize(800, 800), wxSUNKEN_BORDER, "Animation App");
+	int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
+	int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
+	wxFrame *frame = new render::Window(NULL, wxT("Animation App"), wxDefaultPosition, wxSize(width, height), wxDEFAULT_FRAME_STYLE);
+	frame->SetBackgroundColour(wxColour(25.0f, 25.0f, 25.0f));
+	//m_renderCanvas = new render::GLRenderCanvas(frame, wxID_ANY, wxDefaultPosition, wxSize(800, 800), wxSUNKEN_BORDER, "Animation App");
+	m_renderCanvas = new render::GLRenderCanvas(frame);
+	wxBoxSizer *horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *leftVerticalSizer = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer *rightVerticalSizer = new wxBoxSizer(wxVERTICAL);
+
+	gui::ControlsPanel *leftPanel = new gui::ControlsPanel(frame, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER);//TODO create class
+
+	leftVerticalSizer->Add(leftPanel, 1, wxALIGN_LEFT | wxEXPAND, 0);
+	rightVerticalSizer->Add(m_renderCanvas, 1, wxALIGN_RIGHT | wxEXPAND, 0);
+	horizontalSizer->Add(leftVerticalSizer, 25, wxEXPAND);
+	horizontalSizer->Add(rightVerticalSizer, 75, wxEXPAND);
+	frame->SetSizer(horizontalSizer);
+	//frame->SetAutoLayout(true);
+
 	m_fbxImporter = boost::shared_ptr<import::FBXImport>(new import::FBXImport());
 
 	m_currentMesh = NULL;
@@ -82,6 +102,21 @@ void AnimationApp::ImportFBX(
 		m_renderCanvas->RemoveRenderable(m_currentMesh);
 		m_currentMesh = NULL;
 	}
+
+}
+
+void AnimationApp::ShowBones(
+	bool show
+	)
+{
+
+
+}
+
+void AnimationApp::ShowNormals(
+	bool show
+	)
+{
 
 }
 

@@ -33,14 +33,9 @@ BEGIN_EVENT_TABLE(GLRenderCanvas, wxGLCanvas)
 END_EVENT_TABLE()
 
 GLRenderCanvas::GLRenderCanvas(
-	wxWindow *parent,
-	wxWindowID id,
-	const wxPoint& position,
-	const wxSize& size,
-	long style, 
-	const wxString& name
+	wxWindow *parent
 	)
-	: wxGLCanvas(parent, id, position, size, style|wxFULL_REPAINT_ON_RESIZE, name), 
+	: wxGLCanvas(parent, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER), 
 	m_context(NULL),
 	m_camera(new OrbitCamera(glm::vec3(100.0f, 0.0f, 0.0f))),
 	m_shaderManager(new ShaderManager()),

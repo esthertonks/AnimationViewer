@@ -30,12 +30,7 @@ class GLRenderCanvas : public wxGLCanvas
 public:
 
 	GLRenderCanvas(
-		wxWindow *parent, 
-		wxWindowID id, 
-		const wxPoint& position,
-		const wxSize& size, 
-		long style, 
-		const wxString& name
+		wxWindow *parent
 	);
 
 	~GLRenderCanvas();

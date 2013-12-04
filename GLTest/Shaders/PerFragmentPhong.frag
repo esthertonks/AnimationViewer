@@ -34,7 +34,7 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix; //TODO precalc some of these multiplications
 uniform mat3 normalMatrix;
 
-void PhongShading(out vec3 ambient, out vec3 diffuse, out vec3 specular)
+void PhongShading(in vec3 materialDiffuse, out vec3 ambient, out vec3 diffuse, out vec3 specular)
 {
 	vec3 lightDirection = normalize(vec3(light.position) - position);
 	vec3 viewDirection = normalize(-position.xyz);
@@ -45,7 +45,7 @@ void PhongShading(out vec3 ambient, out vec3 diffuse, out vec3 specular)
 
 	float diffuseLightIntensity = max(dot(lightDirection, normal), 0.0);
 
-	diffuse = light.diffuse * material.diffuse * diffuseLightIntensity;
+	diffuse = light.diffuse * materialDiffuse * diffuseLightIntensity;
 
 	specular = vec3(0.0);
 
@@ -123,9 +123,8 @@ void main()
 	vec3 specular;
 
 	// when a diffuse texture is attached in maya it overrides any diffuse parameter (which will be loads in as zero anyway)
-	diffuse = vec3(textureColour);
-
-	PhongShading(ambient, diffuse, specular);
+	// There is ALWAYS a texture added on import, so assume that there is one
+	PhongShading(vec3(textureColour), ambient, diffuse, specular);
 
 	//vec3 ambientAndDiffuse = InterpolateColour(ambient, diffuse, material.diffuseFactor);
 	//fragmentColour = (vec4(ambientAndDiffuse, 1.0) * textureColour) + vec4(specular, 1.0);
