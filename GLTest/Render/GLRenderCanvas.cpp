@@ -1,4 +1,4 @@
-#include "GLRenderer.h"
+#include "GLRenderCanvas.h"
 
 #include <wx/log.h>
 #include <fstream>
@@ -17,22 +17,22 @@
 namespace render
 {
 
-BEGIN_EVENT_TABLE(GLRenderer, wxGLCanvas)
-	EVT_PAINT(GLRenderer::Paint)
-	EVT_SIZE(GLRenderer::OnSize)
-	EVT_ERASE_BACKGROUND(GLRenderer::OnEraseBackground)
-	EVT_SET_FOCUS(GLRenderer::OnSetFocus)
+BEGIN_EVENT_TABLE(GLRenderCanvas, wxGLCanvas)
+	EVT_PAINT(GLRenderCanvas::Paint)
+	EVT_SIZE(GLRenderCanvas::OnSize)
+	EVT_ERASE_BACKGROUND(GLRenderCanvas::OnEraseBackground)
+	EVT_SET_FOCUS(GLRenderCanvas::OnSetFocus)
 
-	EVT_LEFT_DOWN(GLRenderer::OnLeftDown)
-	EVT_RIGHT_DOWN(GLRenderer::OnRightDown)
-	EVT_MOTION(GLRenderer::OnMouseMove)
-	EVT_MOUSEWHEEL(GLRenderer::OnMouseWheelScroll)
-	EVT_MIDDLE_DOWN(GLRenderer::OnMouseWheelDown)
+	EVT_LEFT_DOWN(GLRenderCanvas::OnLeftDown)
+	EVT_RIGHT_DOWN(GLRenderCanvas::OnRightDown)
+	EVT_MOTION(GLRenderCanvas::OnMouseMove)
+	EVT_MOUSEWHEEL(GLRenderCanvas::OnMouseWheelScroll)
+	EVT_MIDDLE_DOWN(GLRenderCanvas::OnMouseWheelDown)
 
-	EVT_KEY_DOWN(GLRenderer::OnKeyDown)
+	EVT_KEY_DOWN(GLRenderCanvas::OnKeyDown)
 END_EVENT_TABLE()
 
-GLRenderer::GLRenderer(
+GLRenderCanvas::GLRenderCanvas(
 	wxWindow *parent,
 	wxWindowID id,
 	const wxPoint& position,
@@ -48,7 +48,7 @@ GLRenderer::GLRenderer(
 {
 }
 
-void GLRenderer::OnSize(
+void GLRenderCanvas::OnSize(
 	wxSizeEvent& event
 	)
 {
@@ -71,20 +71,20 @@ void GLRenderer::OnSize(
 	Render();
 }
 
-void GLRenderer::OnEraseBackground(
+void GLRenderCanvas::OnEraseBackground(
 	wxEraseEvent& WXUNUSED(event)
 	)
 {
 	// Make sure this does nothing to prevent flickering on resize
 }
 
-void GLRenderer::OnSetFocus(
+void GLRenderCanvas::OnSetFocus(
 	wxFocusEvent& WXUNUSED(event)
 	)
 {
 }
 
-void GLRenderer::OnKeyDown(
+void GLRenderCanvas::OnKeyDown(
 	wxKeyEvent& event
 	)
 {
@@ -109,7 +109,7 @@ void GLRenderer::OnKeyDown(
 static float lastPosX = -1;
 static float lastPosY = -1;
 
-void GLRenderer::OnLeftDown(
+void GLRenderCanvas::OnLeftDown(
 	wxMouseEvent& event
 	)
 {
@@ -124,7 +124,7 @@ void GLRenderer::OnLeftDown(
 	event.Skip();
 }
 
-void GLRenderer::OnRightDown(
+void GLRenderCanvas::OnRightDown(
 	wxMouseEvent& event
 	)
 {
@@ -137,7 +137,7 @@ void GLRenderer::OnRightDown(
 	lastPosY = event.m_y;
 }
 
-void GLRenderer::OnMouseWheelScroll(
+void GLRenderCanvas::OnMouseWheelScroll(
 	wxMouseEvent& event
 	)
 {
@@ -149,7 +149,7 @@ void GLRenderer::OnMouseWheelScroll(
 	m_camera->Zoom(-(wheelRotation / event.GetWheelDelta()) * 10);
 }
 
-void GLRenderer::OnMouseWheelDown(
+void GLRenderCanvas::OnMouseWheelDown(
 	wxMouseEvent& event
 	)
 {
@@ -162,7 +162,7 @@ void GLRenderer::OnMouseWheelDown(
 	lastPosY = event.m_y;
 }
 
-void GLRenderer::OnMouseMove(
+void GLRenderCanvas::OnMouseMove(
 	wxMouseEvent& event
 	)
 {
@@ -243,7 +243,7 @@ void GLRenderer::OnMouseMove(
 
 }
 
-void GLRenderer::InitGL()
+void GLRenderCanvas::InitGL()
 {
 	if(m_context)
 	{
@@ -293,7 +293,7 @@ void GLRenderer::InitGL()
 	//DebugPrintGLInfo();
 }
 
-void GLRenderer::Paint(
+void GLRenderCanvas::Paint(
 	wxPaintEvent& WXUNUSED(event)
 	)
 {
@@ -301,13 +301,13 @@ void GLRenderer::Paint(
 	Render();
 }
 
-void GLRenderer::RenderImmediate()
+void GLRenderCanvas::RenderImmediate()
 {
 	wxClientDC(this);
 	Render();
 }
 
-void GLRenderer::Render(
+void GLRenderCanvas::Render(
 	)
 {
 	// TODO wxwidgets has not init callback so this has to be done here. bleugh.
@@ -364,7 +364,7 @@ void GLRenderer::Render(
 	SwapBuffers();
 }
 
-GLRenderer::~GLRenderer()
+GLRenderCanvas::~GLRenderCanvas()
 {
 	delete m_context;
 	m_context = NULL;

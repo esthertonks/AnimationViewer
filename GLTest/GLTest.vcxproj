@@ -106,7 +106,7 @@
     <ClCompile Include="Render\FirstPersonCamera.cpp" />
     <ClCompile Include="Render\GLUtils.cpp" />
     <ClCompile Include="Render\OrbitCamera.cpp" />
-    <ClCompile Include="Render\GLRenderer.cpp" />
+    <ClCompile Include="Render\GLRenderCanvas.cpp" />
     <ClCompile Include="Render\Renderable.cpp" />
     <ClCompile Include="Render\RenderableMesh.cpp" />
     <ClCompile Include="Render\ShaderManager.cpp" />
@@ -138,7 +138,7 @@
     <ClInclude Include="Render\FirstPersonCamera.h" />
     <ClInclude Include="Render\GLUtils.h" />
     <ClInclude Include="Render\OrbitCamera.h" />
-    <ClInclude Include="Render\GLRenderer.h" />
+    <ClInclude Include="Render\GLRenderCanvas.h" />
     <ClInclude Include="Render\Renderable.h" />
     <ClInclude Include="Render\RenderableMesh.h" />
     <ClInclude Include="Render\RenderFwdDecl.h" />

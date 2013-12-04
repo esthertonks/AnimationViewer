@@ -1,5 +1,5 @@
 #include "AnimationApp.h"
-#include "Render/GLRenderer.h"
+#include "Render/GLRenderCanvas.h"
 #include "Render/Window.h"
 #include "Import/FBXImport.h"
 #include "ImportMesh/Mesh.h"
@@ -12,7 +12,7 @@ bool AnimationApp::OnInit()
 {	
 	wxFrame *frame = new render::Window(NULL, wxT("Testing"), wxDefaultPosition, wxSize(800, 800), wxDEFAULT_FRAME_STYLE);
 	
-	m_renderer = new render::GLRenderer(frame, wxID_ANY, wxDefaultPosition, wxSize(800, 800), wxSUNKEN_BORDER, "Animation App");
+	m_renderCanvas = new render::GLRenderCanvas(frame, wxID_ANY, wxDefaultPosition, wxSize(800, 800), wxSUNKEN_BORDER, "Animation App");
 	m_fbxImporter = boost::shared_ptr<import::FBXImport>(new import::FBXImport());
 
 	m_currentMesh = NULL;
@@ -32,7 +32,7 @@ void AnimationApp::OnIdle(
 	//Prepare Mesh - update animation
 	DWORD timeNow = timeGetTime();
 	//BatchList
-	//if(m_renderer->hasEntities())
+	//if(m_renderCanvas->hasEntities())
 	//{
 		float delta = 0.001f * timeNow - m_lastTime;
 
@@ -41,7 +41,7 @@ void AnimationApp::OnIdle(
 		//m_input->Do SomethingWithCamera();
 		//m_camera->GetView();
 		//animate(delta);
-		m_renderer->RenderImmediate();
+		m_renderCanvas->RenderImmediate();
 	//}
 	m_lastTime = timeNow;
 
@@ -72,14 +72,14 @@ void AnimationApp::ImportFBX(
 		if(renderableMesh->Create(*importMesh))
 		{
 			render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(renderableMesh);
-			m_renderer->AddRenderable(renderable);
+			m_renderCanvas->AddRenderable(renderable);
 			m_currentMesh = renderable;
 		}
 		delete importMesh;
 	}
 	else
 	{
-		m_renderer->RemoveRenderable(m_currentMesh);
+		m_renderCanvas->RemoveRenderable(m_currentMesh);
 		m_currentMesh = NULL;
 	}
 
@@ -87,6 +87,6 @@ void AnimationApp::ImportFBX(
 
 void AnimationApp::Destroy()
 {
-	delete m_renderer;
+	delete m_renderCanvas;//TODO putting this in a shared ptr doesnt work but may have been unrelated memory issue - try again?
 }
 

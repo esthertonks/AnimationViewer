@@ -56,9 +56,6 @@
       <Filter>Render</Filter>
     </ClCompile>
     <ClCompile Include="AnimationApp.cpp" />
-    <ClCompile Include="Render\GLRenderer.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
     <ClCompile Include="Render\OrbitCamera.cpp">
       <Filter>Render</Filter>
     </ClCompile>
@@ -107,6 +104,9 @@
     <ClCompile Include="Render\Renderable.cpp">
       <Filter>Render</Filter>
     </ClCompile>
+    <ClCompile Include="Render\GLRenderCanvas.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
@@ -139,9 +139,6 @@
     <ClInclude Include="AnimationApp.h" />
     <ClInclude Include="Container\LinkedList .h">
       <Filter>Container</Filter>
-    </ClInclude>
-    <ClInclude Include="Render\GLRenderer.h">
-      <Filter>Render</Filter>
     </ClInclude>
     <ClInclude Include="Render\OrbitCamera.h">
       <Filter>Render</Filter>
@@ -198,6 +195,9 @@
       <Filter>Render</Filter>
     </ClInclude>
     <ClInclude Include="Render\Renderable.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\GLRenderCanvas.h">
       <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>

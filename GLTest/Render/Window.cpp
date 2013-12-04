@@ -1,6 +1,6 @@
 #include "Window.h"
 #include "../AnimationApp.h"
-#include "GLRenderer.h"
+#include "GLRenderCanvas.h"
 
 namespace render
 {

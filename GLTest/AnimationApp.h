@@ -7,7 +7,7 @@
 
 namespace render
 {
-	class GLRenderer;
+	class GLRenderCanvas;
 }
 
 namespace import
@@ -28,9 +28,9 @@ class AnimationApp: public wxApp
 	void Destroy();
 	void StartRendering();
 	void StopRendering();
-	render::GLRenderer& GetRenderer()
+	render::GLRenderCanvas& GetRenderer()
 	{
-		return *m_renderer;
+		return *m_renderCanvas;
 	};
 
 	void ImportFBX(
@@ -43,7 +43,7 @@ class AnimationApp: public wxApp
 		wxIdleEvent& evt
 		);
 
-	render::GLRenderer *m_renderer;
+	render::GLRenderCanvas *m_renderCanvas;
 	boost::shared_ptr<import::FBXImport> m_fbxImporter;
 	DWORD m_lastTime;
 	render::RenderablePtr m_currentMesh;

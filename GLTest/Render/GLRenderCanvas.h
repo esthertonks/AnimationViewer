@@ -25,11 +25,11 @@ namespace render
 	class RenderableMesh;
 	class ShaderManager;
 
-class GLRenderer : public wxGLCanvas
+class GLRenderCanvas : public wxGLCanvas
 {
 public:
 
-	GLRenderer(
+	GLRenderCanvas(
 		wxWindow *parent, 
 		wxWindowID id, 
 		const wxPoint& position,
@@ -38,7 +38,7 @@ public:
 		const wxString& name
 	);
 
-	~GLRenderer();
+	~GLRenderCanvas();
 
 	OrbitCamera& GetCamera()
 	{
