@@ -54,7 +54,7 @@ void Window::OnClose(
 	)
 	{
 		wxGetApp().StopRendering();
-		wxGetApp().DeleteMesh();
+		wxGetApp().Destroy();
 		event.Skip(); // Continue closing the window
 	}
 

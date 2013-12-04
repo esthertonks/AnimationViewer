@@ -1,14 +1,13 @@
 #pragma once
 
+#include <wchar.h>
+#include "vld.h"
 #include "wx/wx.h"
-#include <vector>
-#include <boost\shared_ptr.hpp>
 #include "Batch\BatchFwdDecl.h"
 
 namespace render
 {
 	class GLRenderer;
-	class RenderEntity;
 }
 
 namespace import
@@ -19,13 +18,14 @@ namespace import
 namespace render
 {
 	class Batch;
-	class RenderEntitiy;
 }
 
 
 class AnimationApp: public wxApp
 {
 	public:
+
+	void Destroy();
 	void StartRendering();
 	void StopRendering();
 	render::GLRenderer& GetRenderer()
@@ -37,8 +37,6 @@ class AnimationApp: public wxApp
 		std::string filePath
 	);
 
-	void DeleteMesh();
-
 	private:
 	virtual bool OnInit();
 	void OnIdle(
@@ -46,9 +44,9 @@ class AnimationApp: public wxApp
 		);
 
 	render::GLRenderer *m_renderer;
-	import::FBXImport *m_fbxImporter;
+	boost::shared_ptr<import::FBXImport> m_fbxImporter;
 	DWORD m_lastTime;
-	render::RenderEntity *m_renderEntity;
+	render::RenderablePtr m_currentMesh;
 };
 
 DECLARE_APP(AnimationApp)

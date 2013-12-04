@@ -4,14 +4,13 @@
 #include <fstream>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "RenderEntity.h"
+#include "RenderableMesh.h"
 #include "../Batch/VertexFormat.h"
 #include "../Batch/Batch.h"
 #include "OrbitCamera.h"
 #include "../Batch/Appearance.h"
 #include "../Batch/PhongAppearance.h"
 #include "../Batch/LambertAppearance.h"
-#include "RenderEntity.h"
 
 namespace render
 {
@@ -262,38 +261,38 @@ void ShaderManager::OutputDebugShaderAttributeInfo(
 		return;
 	}
 
-	GLint maxlength, noofAttributes;
+	GLint textlength, noofAttributes;
 	glGetProgramiv(program.m_programId, GL_ACTIVE_ATTRIBUTES, &noofAttributes);
-	glGetProgramiv(program.m_programId, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxlength);
+	glGetProgramiv(program.m_programId, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &textlength);
  
-	GLchar *name = (GLchar *)malloc(maxlength);
- 
+	std::string attributeName(textlength, ' ');
+
 	GLint written, size, location;
 	GLenum type;
 	wxLogDebug("Index | Name\n");
 	wxLogDebug("---------------------------------");
 	for(int i = 0; i < noofAttributes; i++)
 	{
-		glGetActiveAttrib(program.m_programId, i, maxlength, &written, &size, &type, name);
+		glGetActiveAttrib(program.m_programId, i, textlength, &written, &size, &type, &attributeName[0]);
  
-		location = glGetAttribLocation(program.m_programId, name);
-		wxLogDebug("Location %d name %s\n", location, name);
+		location = glGetAttribLocation(program.m_programId, &attributeName[0]);
+		wxLogDebug("Location %d name %s\n", location, attributeName.c_str());
 	}
  
 	GLint noofUniforms;
 	glGetProgramiv(program.m_programId, GL_ACTIVE_UNIFORMS, &noofUniforms);
-	glGetProgramiv(program.m_programId, GL_ACTIVE_UNIFORM_MAX_LENGTH, &maxlength);
+	glGetProgramiv(program.m_programId, GL_ACTIVE_UNIFORM_MAX_LENGTH, &textlength);
  
-	GLchar *uniformName = (GLchar *)malloc(maxlength);
+	std::string uniformName(textlength, ' ');
  
 	wxLogDebug("Location | Name\n");
 	wxLogDebug("---------------------------------");
 	for(int i = 0; i < noofUniforms; i++)
 	{
-		glGetActiveUniform(program.m_programId, i, maxlength, &written, &size, &type, uniformName);
+		glGetActiveUniform(program.m_programId, i, textlength, &written, &size, &type, &uniformName[0]);
  
-		location = glGetUniformLocation(program.m_programId, uniformName);
-		wxLogDebug("Location %d, uniformName %s\n", location, uniformName);
+		location = glGetUniformLocation(program.m_programId, &uniformName[0]);
+		wxLogDebug("Location %d, uniformName %s\n", location, uniformName.c_str());
 	}
 }
 
@@ -311,7 +310,10 @@ ShaderManager::~ShaderManager()
 		}
 
 		// Delete the shader program.
-		glDeleteProgram(program.m_programId);
+		if(program.m_programId != -1)
+		{
+			glDeleteProgram(program.m_programId);
+		}
 	}
 }
 }

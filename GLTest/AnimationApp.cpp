@@ -3,7 +3,8 @@
 #include "Render/Window.h"
 #include "Import/FBXImport.h"
 #include "ImportMesh/Mesh.h"
-#include "Render\RenderEntity.h"
+#include "Render\Renderable.h"
+#include "Render\RenderableMesh.h"
 
 IMPLEMENT_APP(AnimationApp)
 
@@ -12,9 +13,9 @@ bool AnimationApp::OnInit()
 	wxFrame *frame = new render::Window(NULL, wxT("Testing"), wxDefaultPosition, wxSize(800, 800), wxDEFAULT_FRAME_STYLE);
 	
 	m_renderer = new render::GLRenderer(frame, wxID_ANY, wxDefaultPosition, wxSize(800, 800), wxSUNKEN_BORDER, "Animation App");
-	m_fbxImporter = new import::FBXImport();
+	m_fbxImporter = boost::shared_ptr<import::FBXImport>(new import::FBXImport());
 
-	m_renderEntity = NULL;
+	m_currentMesh = NULL;
 
 	frame->Show(TRUE);
 
@@ -31,8 +32,8 @@ void AnimationApp::OnIdle(
 	//Prepare Mesh - update animation
 	DWORD timeNow = timeGetTime();
 	//BatchList
-	if(m_renderEntity)
-	{
+	//if(m_renderer->hasEntities())
+	//{
 		float delta = 0.001f * timeNow - m_lastTime;
 
 		float fps = 1/delta;
@@ -41,7 +42,7 @@ void AnimationApp::OnIdle(
 		//m_camera->GetView();
 		//animate(delta);
 		m_renderer->RenderImmediate();
-	}
+	//}
 	m_lastTime = timeNow;
 
 	evt.RequestMore(); // Request continuous rendering, rather than just once on idle
@@ -66,25 +67,26 @@ void AnimationApp::ImportFBX(
 	mesh::Mesh* importMesh = m_fbxImporter->Import(filePath);
 	if(importMesh)
 	{
-		if(m_renderEntity != NULL)
-		{
-			delete m_renderEntity;
-		}
+		render::RenderableMeshPtr renderableMesh = render::RenderableMeshPtr(new render::RenderableMesh());
 
-		m_renderEntity = new render::RenderEntity();
-		if(m_renderEntity->Create(*importMesh))
+		if(renderableMesh->Create(*importMesh))
 		{
-			m_renderer->AddEntity(m_renderEntity);
+			render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(renderableMesh);
+			m_renderer->AddRenderable(renderable);
+			m_currentMesh = renderable;
 		}
+		delete importMesh;
 	}
 	else
 	{
-		m_renderer->RemoveEntity(m_renderEntity);
-		m_renderEntity = NULL;
+		m_renderer->RemoveRenderable(m_currentMesh);
+		m_currentMesh = NULL;
 	}
 
 }
 
-void AnimationApp::DeleteMesh()
+void AnimationApp::Destroy()
 {
+	delete m_renderer;
 }
+

@@ -4,14 +4,13 @@
 #include <fstream>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "RenderEntity.h"
+#include "RenderableMesh.h"
 #include "../Batch/VertexFormat.h"
 #include "../Batch/Batch.h"
 #include "OrbitCamera.h"
 #include "../Batch/Appearance.h"
 #include "../Batch/PhongAppearance.h"
 #include "../Batch/LambertAppearance.h"
-#include "RenderEntity.h"
 #include "ShaderManager.h"
 #include "GLUtils.h"
 
@@ -44,7 +43,6 @@ GLRenderer::GLRenderer(
 	: wxGLCanvas(parent, id, position, size, style|wxFULL_REPAINT_ON_RESIZE, name), 
 	m_context(NULL),
 	m_camera(new OrbitCamera(glm::vec3(100.0f, 0.0f, 0.0f))),
-	m_renderEntity(NULL),
 	m_shaderManager(new ShaderManager()),
 	m_initialised(false)
 {
@@ -115,7 +113,7 @@ void GLRenderer::OnLeftDown(
 	wxMouseEvent& event
 	)
 {
-	if(!m_renderEntity)
+	if(m_renderables.size() == 0)
 	{
 		return;
 	}
@@ -130,7 +128,7 @@ void GLRenderer::OnRightDown(
 	wxMouseEvent& event
 	)
 {
-	if(!m_renderEntity)
+	if(m_renderables.size() == 0)
 	{
 		return;
 	}
@@ -143,7 +141,7 @@ void GLRenderer::OnMouseWheelScroll(
 	wxMouseEvent& event
 	)
 {
-	if(!m_renderEntity)
+	if(m_renderables.size() == 0)
 	{
 		return;
 	}
@@ -155,7 +153,7 @@ void GLRenderer::OnMouseWheelDown(
 	wxMouseEvent& event
 	)
 {
-	if(!m_renderEntity)
+	if(m_renderables.size() == 0)
 	{
 		return;
 	}
@@ -168,7 +166,7 @@ void GLRenderer::OnMouseMove(
 	wxMouseEvent& event
 	)
 {
-	if(!m_renderEntity)
+	if(m_renderables.size() == 0)
 	{
 		return;
 	}
@@ -231,13 +229,17 @@ void GLRenderer::OnMouseMove(
 
 		if(diffX != 0 || diffY != 0)
 		{
-			m_renderEntity->Rotate((diffX / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 400, (diffY / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 400);
+			// For now rotate everything
+			Renderables::const_iterator renderableIterator;
+			for(renderableIterator = m_renderables.begin(); renderableIterator != m_renderables.end(); renderableIterator++)
+			{
+				(*renderableIterator)->Rotate((diffX / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 400, (diffY / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 400);
+			}
 		}
 	}
 
 	lastPosX = posX;
 	lastPosY = posY;
-
 
 }
 
@@ -336,7 +338,7 @@ void GLRenderer::Render(
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
 
-	if(!m_renderEntity)
+	if(m_renderables.size() == 0)
 	{
 		glFlush();
 		SwapBuffers();
@@ -351,8 +353,11 @@ void GLRenderer::Render(
 	glm::mat4x4& projectionMatrix = glm::perspective(40.0f, (float)width / (float) height, 1.0f, 600.f);
 
 	
-	// Update inputs for current shader
-	m_renderEntity->Render(*m_shaderManager, viewMatrix, projectionMatrix);
+	Renderables::const_iterator renderableIterator;
+	for(renderableIterator = m_renderables.begin(); renderableIterator != m_renderables.end(); renderableIterator++)
+	{
+		(*renderableIterator)->Render(*m_shaderManager, viewMatrix, projectionMatrix);
+	}
 
 	glFlush();
 
@@ -362,7 +367,7 @@ void GLRenderer::Render(
 GLRenderer::~GLRenderer()
 {
 	delete m_context;
-	m_glContext = NULL;
+	m_context = NULL;
 
 	delete m_camera;
 	m_camera = NULL;

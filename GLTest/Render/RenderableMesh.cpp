@@ -1,4 +1,4 @@
-#include "RenderEntity.h"
+#include "RenderableMesh.h"
 #include "ShaderManager.h"
 #include "../Batch/BatchProcessor.h"
 #include "../Batch/BatchList.h"
@@ -9,14 +9,12 @@
 namespace render
 {
 
-RenderEntity::RenderEntity()
-	: m_rotAroundY(0),
-	m_rotAroundX(0),
-	m_modelMatrix(1.0f)
+RenderableMesh::RenderableMesh()
+	: Renderable()
 {
 }
 
-bool RenderEntity::Create(
+bool RenderableMesh::Create(
 	mesh::Mesh &importMesh
 	)
 {			
@@ -29,7 +27,7 @@ bool RenderEntity::Create(
 	return true;
 }
 
-void RenderEntity::Rotate(
+void RenderableMesh::Rotate(
 	const float rotAroundY,
 	const float rotAroundX
 	)
@@ -41,12 +39,12 @@ void RenderEntity::Rotate(
 	m_modelMatrix = glm::rotate(m_modelMatrix, m_rotAroundX, glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
-const glm::mat4x4 &RenderEntity::GetModelMatrix()
+const glm::mat4x4 &RenderableMesh::GetModelMatrix()
 {
 	return m_modelMatrix;
 }
 
-void RenderEntity::Render(
+void RenderableMesh::Render(
 	ShaderManager &shaderManager,
 	glm::mat4x4& viewMatrix,
 	glm::mat4x4& projectionMatrix
@@ -99,7 +97,7 @@ void RenderEntity::Render(
 	}
 }
 
-RenderEntity::~RenderEntity()
+RenderableMesh::~RenderableMesh()
 {
 	if(m_renderBatches.size() != 0)
 	{

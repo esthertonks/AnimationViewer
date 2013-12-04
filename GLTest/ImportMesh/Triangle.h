@@ -1,5 +1,6 @@
 #pragma once
 
+#include "glm\glm.hpp"
 /*
 	Triangle class storing per triangle corner information so as not to lose data importing the mesh.
 	This info can be averaged later if required to reduce it to per vertex information.

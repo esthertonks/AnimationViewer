@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm\glm.hpp>
+#include "Renderable.h"
 #include "../Batch/BatchFwdDecl.h"
 
 namespace mesh
@@ -12,16 +12,15 @@ namespace render
 {
 
 enum VertexFormatType;
-class ShaderManager;
 
-class RenderEntity //TODO renerable?
+class RenderableMesh : public Renderable
 {
 
 public:
 
-	RenderEntity();
+	RenderableMesh();
 
-	~RenderEntity();
+	~RenderableMesh();
 
 	const glm::mat4x4 &GetModelMatrix();
 
@@ -30,16 +29,16 @@ public:
 		return m_renderBatches;
 	}
 
-	bool Create(
+	bool Create( //TODO generisise and make virtual?
 		mesh::Mesh &importMesh
 		);
 
-	void Rotate(
+	virtual void Rotate(
 		const float rotY,
 		const float rotX
 		);
 
-	void Render(
+	virtual void Render(
 		ShaderManager &shaderManager,
 		glm::mat4x4 &viewMatrix,
 		glm::mat4x4 &projectionMatrix
@@ -47,9 +46,5 @@ public:
 
 private:
 	render::BatchList m_renderBatches;
-	//glm::mat4x4 m_modelMatrix; // Must be identity
-	float m_rotAroundY;
-	float m_rotAroundX;
-	glm::mat4x4 m_modelMatrix;
 };
 }

@@ -107,7 +107,8 @@
     <ClCompile Include="Render\GLUtils.cpp" />
     <ClCompile Include="Render\OrbitCamera.cpp" />
     <ClCompile Include="Render\GLRenderer.cpp" />
-    <ClCompile Include="Render\RenderEntity.cpp" />
+    <ClCompile Include="Render\Renderable.cpp" />
+    <ClCompile Include="Render\RenderableMesh.cpp" />
     <ClCompile Include="Render\ShaderManager.cpp" />
     <ClCompile Include="Render\Window.cpp" />
   </ItemGroup>
@@ -138,7 +139,8 @@
     <ClInclude Include="Render\GLUtils.h" />
     <ClInclude Include="Render\OrbitCamera.h" />
     <ClInclude Include="Render\GLRenderer.h" />
-    <ClInclude Include="Render\RenderEntity.h" />
+    <ClInclude Include="Render\Renderable.h" />
+    <ClInclude Include="Render\RenderableMesh.h" />
     <ClInclude Include="Render\RenderFwdDecl.h" />
     <ClInclude Include="Render\ShaderManager.h" />
     <ClInclude Include="Render\Window.h" />

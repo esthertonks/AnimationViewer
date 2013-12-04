@@ -13,10 +13,6 @@
 
 namespace render
 {
-	class Batch;
-	class OrbitCamera;
-	class RenderEntity;
-
 	struct Program
 	{
 		int m_programId;

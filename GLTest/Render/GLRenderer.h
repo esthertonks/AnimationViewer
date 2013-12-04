@@ -13,6 +13,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <list>
 #include <boost/shared_ptr.hpp>
 #include "../Batch/BatchFwdDecl.h"
 
@@ -20,7 +21,8 @@ namespace render
 {
 	class Batch;
 	class OrbitCamera;
-	class RenderEntity;
+	class Renderable;
+	class RenderableMesh;
 	class ShaderManager;
 
 class GLRenderer : public wxGLCanvas
@@ -88,22 +90,18 @@ public:
 
 	void InitGL();
 
-	void AddEntity(
-		RenderEntity *entity
+	void AddRenderable(
+		RenderablePtr &renderable
 		)
 	{
-		m_renderEntity = entity;
+		m_renderables.push_back(renderable);
 	}
 
-	void RemoveEntity(
-		RenderEntity *entity
+	void RemoveRenderable(
+		RenderablePtr &renderable
 		)
 	{
-		if(entity == m_renderEntity)
-		{
-			delete m_renderEntity;
-			m_renderEntity = NULL;
-		}
+		m_renderables.remove(renderable);
 	}
 
 protected:
@@ -116,7 +114,8 @@ private:
 
 	OrbitCamera *m_camera;
 
-	RenderEntity *m_renderEntity;
+	typedef std::list<RenderablePtr> Renderables;
+	Renderables m_renderables;
 
 	ShaderManager *m_shaderManager;
 

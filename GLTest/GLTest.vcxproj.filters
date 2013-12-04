@@ -83,9 +83,6 @@
     <ClCompile Include="Batch\PhongAppearance.cpp">
       <Filter>Batch</Filter>
     </ClCompile>
-    <ClCompile Include="Render\RenderEntity.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
     <ClCompile Include="Render\ShaderManager.cpp">
       <Filter>Render</Filter>
     </ClCompile>
@@ -103,6 +100,12 @@
     </ClCompile>
     <ClCompile Include="Animation\ScaleTrack.cpp">
       <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\RenderableMesh.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Renderable.cpp">
+      <Filter>Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -170,9 +173,6 @@
     <ClInclude Include="Batch\PhongAppearance.h">
       <Filter>Batch</Filter>
     </ClInclude>
-    <ClInclude Include="Render\RenderEntity.h">
-      <Filter>Render</Filter>
-    </ClInclude>
     <ClInclude Include="Render\ShaderManager.h">
       <Filter>Render</Filter>
     </ClInclude>
@@ -193,6 +193,12 @@
     </ClInclude>
     <ClInclude Include="Animation\ScaleTrack .h">
       <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderableMesh.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Renderable.h">
+      <Filter>Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
