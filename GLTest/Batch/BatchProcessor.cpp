@@ -28,12 +28,12 @@ BatchProcessor::~BatchProcessor()
 
 // Create per vertex data in per material batches. Extra vertices are created to accommodate per triangle corner information.
 void BatchProcessor::CreateBatches(
-	mesh::Mesh &importMesh,
+	mesh::MeshPtr &importMesh,
 	render::BatchList &renderBatches // Batch vector to fill in
 	)
 {
 		// TODO for testing atm assume only one - rewrite for many shortly
-		render::AppearanceTable& appearances = importMesh.GetAppearances();
+		render::AppearanceTable& appearances = importMesh->GetAppearances();
 		int numBatches = appearances.size();
 		renderBatches.resize(numBatches);
 
@@ -42,7 +42,8 @@ void BatchProcessor::CreateBatches(
 		// TODO need to split by vertex format first?
 
 	// TODO For now just average everything, but this needs to create batches and split normals for textures, colours and normals.
-	for(mesh::MeshNode* meshNode = importMesh.m_root; meshNode != NULL; meshNode = meshNode->m_next)
+		mesh::MeshNode* meshNode = importMesh->GetMeshNodeHierarchy();
+		for(meshNode; meshNode != NULL; meshNode = meshNode->m_next)
 	{
 		mesh::MeshTriangleArray triangleArray = meshNode->GetTriangles();
 		int numTriangles = meshNode->GetNumTriangles();
@@ -60,8 +61,8 @@ void BatchProcessor::CreateBatches(
 
 			if(!renderBatches[materialId]) // If a batch for this material does not already exist then create it
 			{
-				renderBatches[materialId] = render::BatchPtr(new render::Batch(render::VertexFormatType::ColourFormat));
-				int numVertices = importMesh.GetNumVerticesWithMaterialId(materialId);
+				renderBatches[materialId] = render::BatchPtr(new render::Batch(render::ColourFormat));
+				int numVertices = importMesh->GetNumVerticesWithMaterialId(materialId);
 				renderBatches[materialId]->AllocateVertices(numVertices);
 				renderBatches[materialId]->AllocateIndices(numVertices);
 				renderBatches[materialId]->SetAppearance(appearances[materialId]);

@@ -3,8 +3,9 @@
 #include <fbxsdk.h> //TODO global header file?
 #include <string>
 #include <boost/shared_array.hpp>
-#include <glm/glm.hpp>
+#include "../Render/RenderFwdDecl.h"
 #include "../Batch/BatchFwdDecl.h"
+#include "../ImportMesh/ImportFwdDecl.h"
 
 namespace mesh
 {
@@ -27,16 +28,23 @@ public:
 		@brief Imports an fbx mesh into an import mesh format
 		@return Returns an import mesh or NULL if import failed
 	*/
-	mesh::Mesh* Import(
-		std::string &fbxFilename		// The name of the FBX file to import
+	mesh::MeshPtr Import(
+		const std::string &fbxFilename		// The name of the FBX file to import
 	);
 
 private:
 
-	bool LoadMeshNodes(
-		FbxNode &fbxNode,				// The FBX mesh to extract data from
-		mesh::MeshNode &node			// The node to hold the extracted data
+	bool LoadNodes(
+		FbxNode& fbxNode	// The FBX mesh to extract data from and add to m_mesh
+	);
+
+	bool LoadMeshNode(
+		FbxNode &fbxNode				// The FBX mesh to extract data from and add to m_mesh mesh node list
 		);
+
+	bool LoadBoneNode(
+		FbxNode& fbxNode	// The FBX mesh to extract data from and add to m_mesh bone node list
+	);
 
 	const unsigned int GetUVVertexIndex(
 		const unsigned int triangleIndex, 
@@ -133,7 +141,9 @@ private:
 	FbxManager *m_fbxManager;			// FBX SDK manager
 	FbxScene *m_fbxScene;				// FBX SDK scene which data will be extracted from
 
-	mesh::Mesh *m_mesh;					// The mesh to hold the imported data
+	mesh::MeshPtr m_mesh;					// The mesh to hold the imported data
+
+	static const std::string m_dummyTexture;
 };
 
 }

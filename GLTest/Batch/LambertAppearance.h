@@ -15,7 +15,7 @@ public:
 
 virtual ShaderProgramType GetType()
 {
-	return ShaderProgramType::Lambert;
+	return Lambert;
 }
 
 virtual void ConvertToShaderParams(

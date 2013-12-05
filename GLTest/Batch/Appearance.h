@@ -5,12 +5,6 @@
 #include <string>
 #include <glm\glm.hpp>
 
-//TODO sort out common header includes all over the place!
-// TODO general includes in its own header?
-#define GLEW_STATIC 1
-
-#include <GL/glew.h>
-
 namespace render
 {
 
@@ -23,7 +17,7 @@ public:
 	virtual ~Appearance(){};
 
 void SetDiffuseTexturePath(
-	std::string &texturePath
+	const std::string &texturePath
 	)
 {
 	m_diffuseTexturePath = texturePath;

@@ -113,6 +113,9 @@
     <ClCompile Include="GUI\ControlsPanel.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="Render\RenderableBoneList.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
@@ -208,6 +211,12 @@
     </ClInclude>
     <ClInclude Include="GUI\ControlsPanel.h">
       <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderableBoneList.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportMesh\ImportFwdDecl.h">
+      <Filter>ImportMesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@
 
 #include "../Container/LinkedList .h"
 #include "MeshNode.h"
+#include "BoneNode.h"
 #include "../Batch/BatchFwdDecl.h"
 
 namespace mesh
@@ -14,23 +15,35 @@ namespace mesh
 class MeshNode;
 class BoneNode;
 
-class Mesh : public container::LinkedList<MeshNode>
+class Mesh
 {
 public:
 
 	Mesh::Mesh();
 	Mesh::~Mesh();
 
-	MeshNode* GetNodeHierarchy()
+	MeshNode* GetMeshNodeHierarchy()
 	{
-		return m_root;
+		return m_meshNodes.m_root;
 	}
 
-	void AddChildNode(
+	BoneNode* GetBoneNodeHierarchy()
+	{
+		return m_boneNodes.m_root;
+	}
+
+	void AddChildMeshNode(
 		MeshNode &node
 		)
 	{
-		Add(node);
+		m_meshNodes.Add(node);
+	}
+
+	void AddChildBoneNode(
+		BoneNode &node
+		)
+	{
+		m_boneNodes.Add(node);
 	}
 
 	int GetNumVerticesWithMaterialId(
@@ -50,5 +63,8 @@ private:
 	friend import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
 	render::AppearanceTable m_appearanceTable; // Mapping of material id's to material names
 	std::vector<unsigned int> m_numVerticesPerMaterial; // A count of the number of vertex indices per material batch. Necessary for creating batches later
+	container::LinkedList<MeshNode> m_meshNodes;
+	container::LinkedList<BoneNode> m_boneNodes;
+
 };
 }

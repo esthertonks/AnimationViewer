@@ -15,7 +15,7 @@ public:
 
 virtual ShaderProgramType GetType()
 {
-	return ShaderProgramType::Phong;
+	return Phong;
 }
 
 inline void SetSpecular(

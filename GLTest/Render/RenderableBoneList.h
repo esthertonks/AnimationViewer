@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Render/RenderFwdDecl.h"
 #include "Renderable.h"
 #include "../Batch/BatchFwdDecl.h"
 
@@ -13,23 +14,18 @@ namespace render
 
 enum VertexFormatType;
 
-class RenderableMesh : public Renderable
+class RenderableBoneList : public Renderable
 {
 
 public:
 
-	RenderableMesh();
+	RenderableBoneList();
 
-	~RenderableMesh();
+	~RenderableBoneList();
 
 	const glm::mat4x4 &GetModelMatrix();
 
-	const render::BatchList &GetBatches()
-	{
-		return m_renderBatches;
-	}
-
-	bool Create(
+	virtual bool Create(
 		mesh::MeshPtr &importMesh
 		);
 
@@ -45,6 +41,10 @@ public:
 		);
 
 private:
-	render::BatchList m_renderBatches;
+	void Prepare();
+
+	RenderVertexArrayPtr m_vertexArray;
+	GLuint m_vertexArrayHandle;
+	GLuint m_positionBufferHandle;
 };
 }

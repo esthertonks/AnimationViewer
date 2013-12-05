@@ -15,7 +15,7 @@ RenderableMesh::RenderableMesh()
 }
 
 bool RenderableMesh::Create(
-	mesh::Mesh &importMesh
+	mesh::MeshPtr &importMesh
 	)
 {			
 	batch::BatchProcessor meshBatchProcessor;
@@ -64,7 +64,7 @@ void RenderableMesh::Render(
 			(*batchIterator)->PrepareShaderParams(programId);
 		}
 
-		if((*batchIterator)->GetShaderProgramType() != ShaderProgramType::None)
+		if((*batchIterator)->GetShaderProgramType() != None)
 		{
 			assert(shaderManager.GetCurrentProgramId() != -1);
 

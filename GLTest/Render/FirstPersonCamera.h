@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include "../Render/RenderFwdDecl.h"
 
 namespace render
 {

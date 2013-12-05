@@ -1,9 +1,10 @@
 #pragma once
 
-#include <wchar.h>
-#include "vld.h"
+//#include <wchar.h>
+//#include "vld.h"
 #include "wx/wx.h"
 #include "Batch\BatchFwdDecl.h"
+#include "ImportMesh\ImportFwdDecl.h"
 
 namespace render
 {
@@ -19,7 +20,6 @@ namespace render
 {
 	class Batch;
 }
-
 
 class AnimationApp: public wxApp
 {
@@ -55,7 +55,17 @@ class AnimationApp: public wxApp
 	render::GLRenderCanvas *m_renderCanvas;
 	boost::shared_ptr<import::FBXImport> m_fbxImporter;
 	DWORD m_lastTime;
-	render::RenderablePtr m_currentMesh;
+
+	// Grouping of the original import mesh and the converted renderable mesh
+	struct CurrentMeshInfo
+	{
+		render::RenderablePtr m_renderMesh;
+		mesh::MeshPtr m_importMesh;
+	};
+
+	CurrentMeshInfo m_currentMeshInfo;
+
+	render::RenderablePtr m_boneOverlay;//TODO so....where does this live? Needs storing so we can remove it from the renderer when we check bones off
 };
 
 DECLARE_APP(AnimationApp)

@@ -5,6 +5,7 @@
 #include "ImportMesh/Mesh.h"
 #include "Render\Renderable.h"
 #include "Render\RenderableMesh.h"
+#include "Render\RenderableBoneList.h"
 #include "GUI\ControlsPanel.h"
 
 const int ID_BONES_CHECKBOX = 100;
@@ -35,7 +36,8 @@ bool AnimationApp::OnInit()
 
 	m_fbxImporter = boost::shared_ptr<import::FBXImport>(new import::FBXImport());
 
-	m_currentMesh = NULL;
+	m_currentMeshInfo.m_renderMesh = NULL;
+	m_currentMeshInfo.m_importMesh = NULL;
 
 	frame->Show(TRUE);
 
@@ -84,23 +86,27 @@ void AnimationApp::ImportFBX(
 {
 	//TODO should the render mesh be a different type of mesh?
 	//TODO should the processing be done right away by the importer and the rest of the app only knows about the render compatible mesh?
-	mesh::Mesh* importMesh = m_fbxImporter->Import(filePath);
-	if(importMesh)
+	m_currentMeshInfo.m_importMesh = m_fbxImporter->Import(filePath);
+	if(m_currentMeshInfo.m_importMesh)
 	{
 		render::RenderableMeshPtr renderableMesh = render::RenderableMeshPtr(new render::RenderableMesh());
 
-		if(renderableMesh->Create(*importMesh))
+		if(renderableMesh->Create(m_currentMeshInfo.m_importMesh))
 		{
 			render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(renderableMesh);
 			m_renderCanvas->AddRenderable(renderable);
-			m_currentMesh = renderable;
+			m_currentMeshInfo.m_renderMesh = renderable;
 		}
-		delete importMesh;
+		else
+		{
+			m_currentMeshInfo.m_renderMesh = NULL;
+			m_currentMeshInfo.m_importMesh = NULL;
+		}
 	}
 	else
 	{
-		m_renderCanvas->RemoveRenderable(m_currentMesh);
-		m_currentMesh = NULL;
+		m_renderCanvas->RemoveRenderable(m_currentMeshInfo.m_renderMesh);
+		m_currentMeshInfo.m_renderMesh = NULL;
 	}
 
 }
@@ -109,7 +115,27 @@ void AnimationApp::ShowBones(
 	bool show
 	)
 {
+	//TODO actually better to create this on mesh load maybe???
 
+	if(show && m_currentMeshInfo.m_importMesh) // If there is no mesh do nothing
+	{
+		render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(render::RenderableBoneListPtr(new render::RenderableBoneList()));
+
+		if(renderable->Create(m_currentMeshInfo.m_importMesh))
+		{
+			m_renderCanvas->AddRenderable(renderable);
+			m_boneOverlay = renderable;
+		}
+		else
+		{
+			m_boneOverlay = NULL;
+		}
+	}
+	else
+	{
+		m_renderCanvas->RemoveRenderable(m_boneOverlay);
+		m_boneOverlay = NULL;
+	}
 
 }
 

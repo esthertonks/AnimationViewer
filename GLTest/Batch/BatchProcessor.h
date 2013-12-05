@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BatchFwdDecl.h"
+#include "../ImportMesh/ImportFwdDecl.h"
 #include <vector>
 
 namespace mesh
@@ -23,7 +24,7 @@ public:
 	~BatchProcessor();
 
 	void CreateBatches(
-		mesh::Mesh &importMesh,
+		mesh::MeshPtr &importMesh,
 		render::BatchList &renderBatches // Batch vector to fill in
 		);
 

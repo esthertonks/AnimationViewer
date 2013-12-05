@@ -1,6 +1,7 @@
 #include "FBXImport.h"
 #include "../ImportMesh/Mesh.h"
 #include "../ImportMesh/MeshNode.h"
+#include "../ImportMesh/BoneNode.h"
 #include "../ImportMesh/Triangle.h"
 #include "../ImportMesh/Vertex.h"
 #include "../Batch/LambertAppearance.h"
@@ -13,6 +14,7 @@
 
 namespace import
 {
+	const std::string FBXImport::m_dummyTexture("Blank.tga");
 
 FBXImport::FBXImport()
 : m_fbxManager(NULL),
@@ -30,8 +32,8 @@ FBXImport::~FBXImport()
 
 }
 
-mesh::Mesh* FBXImport::Import(
-	std::string &fbxFilename
+mesh::MeshPtr FBXImport::Import(
+	const std::string &fbxFilename
 	)
 {
 
@@ -96,10 +98,9 @@ mesh::Mesh* FBXImport::Import(
 	}
 
 	// Fill the mesh with the imported data
-	m_mesh = new mesh::Mesh();
+	m_mesh = mesh::MeshPtr(new mesh::Mesh());
 	FbxNode &fbxRootNode = *m_fbxScene->GetRootNode();
-	mesh::MeshNode &meshNode = *new mesh::MeshNode;
-	LoadMeshNodes(fbxRootNode, meshNode);
+	LoadNodes(fbxRootNode);
 
 	fbxImporter->Destroy();
 	m_fbxScene->Destroy();
@@ -109,42 +110,66 @@ mesh::Mesh* FBXImport::Import(
 	return m_mesh;
 }
 
-bool FBXImport::LoadMeshNodes(
-	FbxNode& fbxNode,
-	mesh::MeshNode &meshNode
+bool FBXImport::LoadNodes(
+	FbxNode& fbxNode
 	)
 {
-	// Make sure the mesh is triangulated
-	FbxGeometryConverter fbxGeometryConverter(m_fbxManager);	
-
-	// Check that this is a mesh
+	// Find ut the type of node ie Skeleton, Mesh, Camera, Light - currently only Bones and Mesh nodes are supported
 	FbxNodeAttribute* const fbxNodeAttribute = fbxNode.GetNodeAttribute();
 	if(fbxNodeAttribute)
 	{
 		const FbxNodeAttribute::EType fbxAttributeType = fbxNodeAttribute->GetAttributeType();
 
-		if(fbxAttributeType != FbxNodeAttribute::eMesh)
+		switch(fbxAttributeType)
 		{
-			FBXSDK_printf("Node %s type is %d. Only node of type eMesh (4) can be loaded\n", fbxNode.GetName(), fbxAttributeType);
-			return false;
+		case FbxNodeAttribute::eMesh:
+			LoadMeshNode(fbxNode);
+			break;
+		case FbxNodeAttribute::eSkeleton:
+			LoadBoneNode(fbxNode);
+
+			break;
+
+		default:
+			FBXSDK_printf("Node %s type is %d. Only node of type eMesh (4) or eSkeleton (3) can be loaded\n", fbxNode.GetName(), fbxAttributeType);
+
+			break;
+
 		}
+
 	}
 
+	for(int childIndex = 0; childIndex < fbxNode.GetChildCount(); childIndex++)
+	{
+		FbxNode &fbxChildNode = *fbxNode.GetChild(childIndex);
+		LoadNodes(fbxChildNode);
+	}
+
+	return true;
+}
+
+bool FBXImport::LoadMeshNode(
+	FbxNode& fbxNode
+	)
+{
 	FbxMesh* fbxMesh = fbxNode.GetMesh();
 	if(fbxMesh)
 	{
 		if(!fbxMesh->IsTriangleMesh())
 		{
+			// Make sure the mesh is triangulated
+			FbxGeometryConverter fbxGeometryConverter(m_fbxManager);	
 			FbxNodeAttribute* fbxNodeAttribute = fbxGeometryConverter.Triangulate(fbxNode.GetMesh(), true);
 			if(!fbxNodeAttribute)
 			{
-				FBXSDK_printf("Mesh Triangulation failed. Import aborted.\n");
+				FBXSDK_printf("Mesh Triangulation failed. Node Import aborted.\n");
 				return false;
 			}
 			fbxMesh = (FbxMesh *)fbxNodeAttribute;
 		}
 
-		m_mesh->AddChildNode(meshNode);
+		mesh::MeshNode &meshNode = *new mesh::MeshNode;
+		m_mesh->AddChildMeshNode(meshNode);
 
 		std::string name = fbxNode.GetName();
 		meshNode.SetName(name);
@@ -205,12 +230,22 @@ bool FBXImport::LoadMeshNodes(
 		}
 	}
 
-	for(int childIndex = 0; childIndex < fbxNode.GetChildCount(); childIndex++)
-	{
-		FbxNode &fbxChildNode = *fbxNode.GetChild(childIndex);
-		mesh::MeshNode &meshChildNode = *new mesh::MeshNode;
-		LoadMeshNodes(fbxChildNode, meshChildNode);
-	}
+	return true;
+}
+
+bool FBXImport::LoadBoneNode(
+	FbxNode& fbxNode // The FBX mesh to extract data from and add to m_mesh bone node list
+	)
+{
+	const FbxTime fbxTime = 0;//TODO read keys
+	const FbxAMatrix globalTransform = fbxNode.EvaluateGlobalTransform(fbxTime, FbxNode::eDestinationPivot);
+
+	mesh::BoneNode &boneNode = *new mesh::BoneNode;
+	m_mesh->AddChildBoneNode(boneNode);
+
+	std::string name = fbxNode.GetName();
+	boneNode.SetName(name);
+
 
 	return true;
 }
@@ -310,7 +345,7 @@ void FBXImport::LoadMaterials(
 				}
 				else
 				{
-					appearance->SetDiffuseTexturePath(std::string("Blank.tga"));
+					appearance->SetDiffuseTexturePath(m_dummyTexture);
 				}
 			}
 
@@ -681,4 +716,5 @@ void FBXImport::LoadColourVertexElement(
 	}
 
 }
+
 }

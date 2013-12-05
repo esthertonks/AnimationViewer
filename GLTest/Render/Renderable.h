@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm\glm.hpp>
+#include "../ImportMesh/ImportFwdDecl.h"
 
 namespace render
 {
@@ -14,6 +15,10 @@ public:
 	Renderable();
 
 	virtual ~Renderable();
+
+	virtual bool Create(
+		mesh::MeshPtr &importMesh
+		) = 0;
 
 	virtual void Rotate(
 		const float rotY,

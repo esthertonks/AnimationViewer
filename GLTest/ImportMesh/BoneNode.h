@@ -9,19 +9,64 @@
 namespace mesh
 {
 
-	class BoneNode
-	{
-		friend import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
+class BoneNode : public container::LinkedListItem<BoneNode>
+{
+public:
 
-		std::string m_name;
+BoneNode();
+~BoneNode();
 
-		glm::mat4x4 m_localTransform;		//Transform from this node to the parent node
-		glm::mat4x4 m_globalTransform;		// Transform from this node to the global model transform
+void SetName(
+	const std::string& name
+	)
+{
+	m_name = name;
+};
 
-		glm::mat4x4 m_inverseReferenceMatrix;	//!< The inverse reference matrix for this bone
+const std::string&	GetName()
+{		
+	return m_name;
+}
 
-		unsigned int m_hierarchyOrdinal;			//!< Index of this node in parent-first hierarchy traversal order
+void SetGlobalTransform(
+	glm::mat4x4 &globalTransform
+	)
+{
+	m_globalTransform = globalTransform;			
+};
 
-	};
+const glm::mat4x4 &GetGlobalTransform()
+{
+	return m_globalTransform;
+};
+
+void SetLocalKeyTransform(
+	glm::mat4x4 &localTransform
+	)
+{
+	m_localTransform = localTransform;
+};
+
+glm::mat4x4 &GetLocalKeyTransform(
+	int key
+	)
+{
+	return m_localTransform;
+};
+
+private:
+
+	friend import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
+
+	std::string m_name;
+
+	glm::mat4x4 m_localTransform;		//Transform from this node to the parent node
+	glm::mat4x4 m_globalTransform;		// Transform from this node to the global model transform
+
+	glm::mat4x4 m_inverseReferenceMatrix;	// The inverse reference matrix for this bone
+
+	unsigned int m_boneIndex;			// Index of this bone node in the list of parent->child bones
+
+};
 
 }

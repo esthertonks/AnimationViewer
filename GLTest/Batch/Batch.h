@@ -5,11 +5,6 @@
 #include "BatchFwdDecl.h"
 #include "../Render/RenderFwdDecl.h"
 
-// TODO general includes in its own header?
-#define GLEW_STATIC 1
-
-#include <GL/glew.h>
-
 namespace render
 {
 
@@ -41,7 +36,7 @@ public:
 		return m_vertexArray.size();
 	}
 
-	BatchVertexArrayPtr GetVertices()
+	RenderVertexArrayPtr GetVertices()
 	{
 		return m_vertexArray;
 	}
@@ -97,7 +92,7 @@ public:
 
 private:
 
-	BatchVertexArrayPtr m_vertexArray;
+	RenderVertexArrayPtr m_vertexArray;
 	IndexArrayPtr m_indexArray;
 	AppearancePtr m_appearance; // Several batches could have the same appearance
 	VertexFormatType m_vertexFormatType;
