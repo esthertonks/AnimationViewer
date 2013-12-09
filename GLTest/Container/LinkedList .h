@@ -68,16 +68,6 @@ namespace container
 
 	virtual LinkedListItem::~LinkedListItem()
 	{
-		if(m_next) //TODO - not this!!
-		{
-			delete m_next;
-			m_next = NULL;
-		}
-		if(m_previous)
-		{
-			delete m_previous;
-			m_previous = NULL;
-		}
 	};
 
 	ITEM *m_next;
