@@ -43,7 +43,7 @@ public:
 private:
 	void Prepare();
 
-	RenderVertexArrayPtr m_vertexArray;
+	ColourVertexArrayPtr m_vertexArray;
 	GLuint m_vertexArrayHandle;
 	GLuint m_positionBufferHandle;
 };

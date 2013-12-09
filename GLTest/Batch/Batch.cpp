@@ -32,7 +32,7 @@ void Batch::AllocateIndices(
 }
 
 void Batch::AddVertex(
-	const Vertex &vertex
+	const TexturedVertex &vertex
 	)
 {
 	m_vertexArray.push_back(vertex);
@@ -92,12 +92,12 @@ void Batch::Prepare()
 	m_indexBufferHandle = vboHandles[1];
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_positionBufferHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(render::Vertex) * GetNumVertices(), &m_vertexArray[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(render::TexturedVertex) * GetNumVertices(), &m_vertexArray[0], GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(render::Vertex), (GLubyte *)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(render::Vertex), (GLubyte *)sizeof(glm::vec3));
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(render::Vertex), (GLubyte *)(sizeof(glm::vec3) * 2));
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(render::Vertex), (GLubyte *)(sizeof(glm::vec3) * 3));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(render::TexturedVertex), (GLubyte *)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(render::TexturedVertex), (GLubyte *)sizeof(glm::vec3));
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(render::TexturedVertex), (GLubyte *)(sizeof(glm::vec3) * 2));
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(render::TexturedVertex), (GLubyte *)(sizeof(glm::vec3) * 3));
 
 	glEnableVertexAttribArray(0);  // Vertex position
 	glEnableVertexAttribArray(1);  // Vertex colour

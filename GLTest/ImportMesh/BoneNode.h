@@ -28,6 +28,18 @@ const std::string&	GetName()
 	return m_name;
 }
 
+bool isLeaf()
+{
+	return m_isLeaf;
+}
+
+void SetLeaf(
+	bool isLeaf
+	)
+{
+	m_isLeaf = isLeaf;
+}
+
 void SetGlobalTransform(
 	glm::mat4x4 &globalTransform
 	)
@@ -65,8 +77,8 @@ private:
 
 	glm::mat4x4 m_inverseReferenceMatrix;	// The inverse reference matrix for this bone
 
-	unsigned int m_boneIndex;			// Index of this bone node in the list of parent->child bones
-
+	unsigned int m_boneHierarchyDepth;	// The depth of this bone in the hierarchy
+	bool m_isLeaf; // Is this node the end of this chain of bones? ie is it only connected to one other bone and not two
 };
 
 }

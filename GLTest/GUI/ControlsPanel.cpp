@@ -5,6 +5,7 @@
 
 const int ID_BONES_CHECKBOX = 100;
 const int ID_NORMALS_CHECKBOX = 101;
+const int ID_MESH_CHECKBOX = 102;
 
 namespace gui
 {
@@ -12,6 +13,7 @@ namespace gui
 BEGIN_EVENT_TABLE(ControlsPanel, wxPanel)
 	EVT_CHECKBOX(ID_BONES_CHECKBOX, ControlsPanel::OnCheckboxClicked)
 	EVT_CHECKBOX(ID_NORMALS_CHECKBOX, ControlsPanel::OnCheckboxClicked)
+	EVT_CHECKBOX(ID_MESH_CHECKBOX, ControlsPanel::OnCheckboxClicked)
 END_EVENT_TABLE()
 
 ControlsPanel::ControlsPanel(
@@ -45,6 +47,13 @@ ControlsPanel::ControlsPanel(
 
 	checkBoxSizer->Add(normalsCheckBox, 20, wxALIGN_LEFT | wxALL, 10);
 
+	wxCheckBox *meshCheckBox = new wxCheckBox(this, ID_MESH_CHECKBOX, wxT("Show Mesh"));
+	meshCheckBox->SetForegroundColour(*wxWHITE);
+	meshCheckBox->SetValue(true);
+	meshCheckBox->SetToolTip(wxT("Show the current mesh"));
+
+	checkBoxSizer->Add(meshCheckBox, 20, wxALIGN_LEFT | wxALL, 10);
+
 	//wxStaticLine *separator = new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxSize(100, 1));
 	wxStaticLine *separator = new wxStaticLine(this);
 	separator->SetForegroundColour(*wxWHITE);
@@ -69,6 +78,10 @@ void ControlsPanel::OnCheckboxClicked(
 
 	case ID_NORMALS_CHECKBOX:
 		wxGetApp().ShowNormals(event.GetInt() ? true : false);
+		break;
+
+	case ID_MESH_CHECKBOX:
+		wxGetApp().ShowMesh(event.GetInt() ? true : false);
 		break;
 	}
 }

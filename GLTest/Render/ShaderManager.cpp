@@ -20,6 +20,8 @@ namespace render
 ShaderManager::ShaderManager()
 	: m_currentProgramType(ShaderProgramType::None)
 {
+	//TODO these could be specified in a text file
+	//TODO the program id doesnt get setup until initialise - should all of this be done at once? Or could initialise setup the program id passed on this info here?
 	Program phong;
 	phong.m_programId = -1;
 	phong.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_VERTEX_SHADER, "Shaders/PerFragmentPhong.vert"));
@@ -33,6 +35,13 @@ ShaderManager::ShaderManager()
 	lambert.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_FRAGMENT_SHADER, "Shaders/PerFragmentLambert.frag"));
 
 	m_shaderProgramByProgramType.insert(std::pair<ShaderProgramType, Program>(ShaderProgramType::Lambert, lambert));
+
+	Program overlay;
+	overlay.m_programId = -1;//TODO umm constructor?!
+	overlay.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_VERTEX_SHADER, "Shaders/Overlay.vert"));
+	overlay.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_FRAGMENT_SHADER, "Shaders/Overlay.frag"));
+
+	m_shaderProgramByProgramType.insert(std::pair<ShaderProgramType, Program>(ShaderProgramType::Overlay, overlay));
 }
 
 Program& ShaderManager::GetProgram(
@@ -47,6 +56,10 @@ int ShaderManager::GetProgramId(
 	)
 {
 	Program& program = GetProgram(programType);
+	if(program.m_programId == -1)
+	{
+		wxLogDebug("Program type %d not found, are the shaders setup and initialsed correctly?\n", programType);
+	}
 	return program.m_programId;
 }
 
@@ -77,6 +90,10 @@ bool ShaderManager::InitialiseShaders()
 	// Setup the lambert shaders
 	InitialiseShaders(ShaderProgramType::Lambert);
 	LinkPrograms(ShaderProgramType::Lambert);
+
+	// Setup the overlay shaders
+	InitialiseShaders(ShaderProgramType::Overlay);
+	LinkPrograms(ShaderProgramType::Overlay);
 
 	return true;
 }

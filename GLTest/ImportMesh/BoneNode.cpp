@@ -7,6 +7,8 @@ namespace mesh
 {
 
 BoneNode::BoneNode()
+	: m_isLeaf(false),
+	m_boneHierarchyDepth(0)
 {
 
 

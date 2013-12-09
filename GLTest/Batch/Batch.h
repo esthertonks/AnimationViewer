@@ -10,7 +10,7 @@ namespace render
 
 enum VertexFormatType;
 
-class Batch : public container::LinkedListItem<Batch>
+class Batch// : public container::LinkedListItem<Batch>
 {
 
 public:
@@ -36,7 +36,7 @@ public:
 		return m_vertexArray.size();
 	}
 
-	RenderVertexArrayPtr GetVertices()
+	TexturedVertexArrayPtr GetVertices()
 	{
 		return m_vertexArray;
 	}
@@ -66,7 +66,7 @@ public:
 	ShaderProgramType GetShaderProgramType();
 
 	void AddVertex(
-		const Vertex &vertex
+		const TexturedVertex &vertex
 		);
 
 	void AddIndex(
@@ -92,7 +92,7 @@ public:
 
 private:
 
-	RenderVertexArrayPtr m_vertexArray;
+	TexturedVertexArrayPtr m_vertexArray;
 	IndexArrayPtr m_indexArray;
 	AppearancePtr m_appearance; // Several batches could have the same appearance
 	VertexFormatType m_vertexFormatType;

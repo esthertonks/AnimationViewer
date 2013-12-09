@@ -15,7 +15,8 @@ class Renderable;
 class RenderableMesh;
 class RenderableBoneList;
 
-typedef std::vector<Vertex> RenderVertexArrayPtr;
+typedef std::vector<ColourVertex> ColourVertexArrayPtr;
+typedef std::vector<TexturedVertex> TexturedVertexArrayPtr;
 typedef std::vector<unsigned short> IndexArrayPtr;
 typedef boost::shared_ptr<Appearance> AppearancePtr;
 typedef boost::shared_ptr<Batch> BatchPtr;

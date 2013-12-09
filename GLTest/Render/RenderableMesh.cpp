@@ -59,26 +59,27 @@ void RenderableMesh::Render(
 		if(batchShaderProgramType != shaderManager.GetCurrentProgramType())
 		{
 			shaderManager.SetProgramCurrent(batchShaderProgramType);
-			GLuint programId = shaderManager.GetProgramId(batchShaderProgramType);
+			int programId = shaderManager.GetProgramId(batchShaderProgramType);
 
 			(*batchIterator)->PrepareShaderParams(programId);
 		}
 
 		if((*batchIterator)->GetShaderProgramType() != None)
 		{
-			assert(shaderManager.GetCurrentProgramId() != -1);
+			int programId = shaderManager.GetCurrentProgramId();
+			assert(programId != -1);
 
-			GLint modelMatrixLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "modelMatrix");
-			GLint viewMatrixLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "viewMatrix");
-			GLint projectionMatrixLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "projectionMatrix"); //TODO only needs setting on resize
-			GLint normalMatrixLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "normalMatrix");
+			GLint modelMatrixLocation = glGetUniformLocation(programId, "modelMatrix");
+			GLint viewMatrixLocation = glGetUniformLocation(programId, "viewMatrix");
+			GLint projectionMatrixLocation = glGetUniformLocation(programId, "projectionMatrix"); //TODO only needs setting on resize
+			GLint normalMatrixLocation = glGetUniformLocation(programId, "normalMatrix");
 			if(modelMatrixLocation >= 0 && viewMatrixLocation >= 0 && projectionMatrixLocation >= 0)
 			{
 				glm::mat4x4 modelViewMatrix = viewMatrix * GetModelMatrix();
 				glm::mat3x3 normalMatrix = glm::mat3x3(glm::vec3(modelViewMatrix[0]), glm::vec3(modelViewMatrix[1]), glm::vec3(modelViewMatrix[2]));
 
 				//TODO this should not be here - light class please. Also the other light params currently in the appearances should be in the same place as this...
-				GLint lightPositionLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "light.position");
+				GLint lightPositionLocation = glGetUniformLocation(programId, "light.position");
 				glm::vec4 lightPositionMatrix = viewMatrix * glm::vec4(100.0f, 0.0f, 0.0f, 1.0f); //TODO this is the same position as the camera - could do with being enforced...
 				glUniform4f(lightPositionLocation, lightPositionMatrix.x, lightPositionMatrix.y, lightPositionMatrix.z, lightPositionMatrix.w);
 

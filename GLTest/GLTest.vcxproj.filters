@@ -256,5 +256,11 @@
     <None Include="Shaders\PerFragmentLambert.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\Overlay.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Overlay.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

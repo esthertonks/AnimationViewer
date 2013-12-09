@@ -46,6 +46,10 @@ class AnimationApp: public wxApp
 		bool show
 		);
 
+	void ShowMesh(
+		bool show
+		);
+
 	private:
 	virtual bool OnInit();
 	void OnIdle(

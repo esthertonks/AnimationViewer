@@ -74,7 +74,7 @@ void BatchProcessor::CreateBatches(
 				unsigned int testVertexIndex = triangleArray[triangleIndex].m_vertexIndices[triangleCornerIndex];
 
 				// Compile the per vertex data from the mesh triangles
-				render::Vertex testVertex;
+				render::TexturedVertex testVertex;
 				testVertex.m_position = glm::vec3(vertexArray[testVertexIndex].m_position); //TODO method called CreatePerVertexVertex
 				testVertex.m_colour = triangleArray[triangleIndex].m_colours[triangleCornerIndex];
 				testVertex.m_normal = glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]);
@@ -87,7 +87,7 @@ void BatchProcessor::CreateBatches(
 					continue;
 				}
 
-				render::Vertex previouslyCreatedVertex = renderBatches[materialId]->GetVertices()[previouslyCreatedIndex];
+				render::TexturedVertex previouslyCreatedVertex = renderBatches[materialId]->GetVertices()[previouslyCreatedIndex];
 				
 				// If we have seen this vertex before, but this triangle corner has a different colour, uv coord or normal 
 				// then still create a new vertex for it (this will increase the vertex count in the mesh but will allow for
@@ -117,13 +117,13 @@ void BatchProcessor::CreateBatches(
 
 void BatchProcessor::AddDuplicateVertex(
 	const int oldVertexIndex,
-	const render::Vertex &currentVertex,
+	const render::TexturedVertex &currentVertex,
 	const unsigned int materialId,
 	render::Batch &batch,
 	std::vector<int> &perMaterialPreviouslyAssignedVertexIndexMap
 	)
 {
-	render::Vertex vertex;
+	render::TexturedVertex vertex;
 	vertex.m_position = currentVertex.m_position; //TODO override equals?
 	vertex.m_colour = currentVertex.m_colour;
 	vertex.m_uv = currentVertex.m_uv;

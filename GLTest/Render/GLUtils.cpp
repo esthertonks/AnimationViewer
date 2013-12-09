@@ -46,4 +46,31 @@ void GLUtils::DebugPrintGLInfo()
 	}
 }
 
+void GLUtils::ConvertFBXToGLMatrix(
+	const FbxAMatrix &fbxMatrix,
+	glm::mat4x4 &glmMatrix
+	)
+{
+	glmMatrix[0][0] = fbxMatrix[0][0];
+	glmMatrix[0][1] = fbxMatrix[0][1];
+	glmMatrix[0][2] = fbxMatrix[0][2];
+	glmMatrix[0][3] = fbxMatrix[0][3];
+
+	glmMatrix[1][0] = fbxMatrix[1][0];
+	glmMatrix[1][1] = fbxMatrix[1][1];
+	glmMatrix[1][2] = fbxMatrix[1][2];
+	glmMatrix[1][3] = fbxMatrix[1][3];
+
+	glmMatrix[2][0] = fbxMatrix[2][0];
+	glmMatrix[2][1] = fbxMatrix[2][1];
+	glmMatrix[2][2] = fbxMatrix[2][2];
+	glmMatrix[2][3] = fbxMatrix[2][3];
+
+	glmMatrix[3][0] = fbxMatrix[3][0];
+	glmMatrix[3][1] = fbxMatrix[3][1];
+	glmMatrix[3][2] = fbxMatrix[3][2];
+	glmMatrix[3][3] = fbxMatrix[3][3];
+
+}
+
 }

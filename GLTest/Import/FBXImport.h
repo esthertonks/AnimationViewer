@@ -1,6 +1,5 @@
 #pragma once
 
-#include <fbxsdk.h> //TODO global header file?
 #include <string>
 #include <boost/shared_array.hpp>
 #include "../Render/RenderFwdDecl.h"
@@ -12,7 +11,7 @@ namespace mesh
 	class Mesh;
 	class MeshNode;
 	class Triangle;
-	class Vertex;
+	class TexturedVertex;
 }
 
 namespace import
@@ -45,6 +44,15 @@ private:
 	bool LoadBoneNode(
 		FbxNode& fbxNode	// The FBX mesh to extract data from and add to m_mesh bone node list
 	);
+
+
+	/**
+	@brief Bake all possible FBX transforms into the statndard rotation, trnaslate and scale variables so the can be extracted easily later
+	*/
+	void BakeNodeTransforms(
+		FbxNode &node		//!< Node to bake transforms for
+		) const;
+
 
 	const unsigned int GetUVVertexIndex(
 		const unsigned int triangleIndex, 

@@ -16,18 +16,21 @@ RenderableBoneList::RenderableBoneList()
 bool RenderableBoneList::Create(
 	mesh::MeshPtr &importMesh
 	)
-{			
+{		
 	mesh::BoneNode *boneNode = importMesh->GetBoneNodeHierarchy();
 	for(boneNode; boneNode != NULL; boneNode = boneNode->m_next)
 	{
-		Vertex vertex;
-		glm::mat4x4 localTransform = boneNode->GetLocalKeyTransform(0);
-		vertex.m_position.x = localTransform[3][0];
-		vertex.m_position.y = localTransform[3][1];
-		vertex.m_position.z = localTransform[3][2];
+		ColourVertex vertex;
+		glm::mat4x4 globalTransform = boneNode->GetGlobalTransform();
+		vertex.m_position.x = globalTransform[3][0];
+		vertex.m_position.y = globalTransform[3][1];
+		vertex.m_position.z = globalTransform[3][2];
+		vertex.m_colour = glm::vec3(1.0, 0.0, 0.0);
 
 		m_vertexArray.push_back(vertex);
 	}
+
+	Prepare();
 
 	return true;
 }
@@ -40,22 +43,18 @@ void RenderableBoneList::Prepare()
 	glBindVertexArray(m_vertexArrayHandle);
 
 	// Create and populate the buffer objects
-	GLuint vboHandles[2];
-	glGenBuffers(2, vboHandles);
+	GLuint vboHandles[1];
+	glGenBuffers(1, vboHandles);
 	m_positionBufferHandle = vboHandles[0];
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_positionBufferHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(render::Vertex) * m_vertexArray.size(), &m_vertexArray[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(render::ColourVertex) * m_vertexArray.size(), &m_vertexArray[0], GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(render::Vertex), (GLubyte *)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(render::Vertex), (GLubyte *)sizeof(glm::vec3));
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(render::Vertex), (GLubyte *)(sizeof(glm::vec3) * 2));
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(render::Vertex), (GLubyte *)(sizeof(glm::vec3) * 3));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertex), (GLubyte *)0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertex), (GLubyte *)sizeof(glm::vec3));
 
 	glEnableVertexAttribArray(0);  // Vertex position
 	glEnableVertexAttribArray(1);  // Vertex colour
-	glEnableVertexAttribArray(2);  // Vertex normal
-	glEnableVertexAttribArray(3);  // Texture coord
 }
 
 void RenderableBoneList::Rotate(
@@ -87,31 +86,33 @@ void RenderableBoneList::Render(
 		return;
 	}
 
-	//TODO shader to draw linelists?
-	//TODO well most of this is duplicated in all renderables!!!!!!!!!??
-	GLint modelMatrixLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "modelMatrix");
-	GLint viewMatrixLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "viewMatrix");
-	GLint projectionMatrixLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "projectionMatrix"); //TODO only needs setting on resize
-	GLint normalMatrixLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "normalMatrix");
-	if(modelMatrixLocation >= 0 && viewMatrixLocation >= 0 && projectionMatrixLocation >= 0)
+	if(shaderManager.GetCurrentProgramType() != Overlay)
 	{
-		glm::mat4x4 modelViewMatrix = viewMatrix * GetModelMatrix();
-		glm::mat3x3 normalMatrix = glm::mat3x3(glm::vec3(modelViewMatrix[0]), glm::vec3(modelViewMatrix[1]), glm::vec3(modelViewMatrix[2]));
-
-		//TODO this should not be here - light class please. Also the other light params currently in the appearances should be in the same place as this...
-		GLint lightPositionLocation = glGetUniformLocation(shaderManager.GetCurrentProgramId(), "light.position");
-		glm::vec4 lightPositionMatrix = viewMatrix * glm::vec4(100.0f, 0.0f, 0.0f, 1.0f); //TODO this is the same position as the camera - could do with being enforced...
-		glUniform4f(lightPositionLocation, lightPositionMatrix.x, lightPositionMatrix.y, lightPositionMatrix.z, lightPositionMatrix.w);
-
-		glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &GetModelMatrix()[0][0]);//TODO pass fewer matrices through!!!
-		glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
-		glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
-		glUniformMatrix3fv(normalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
+		shaderManager.SetProgramCurrent(Overlay);
 	}
 
-	glBindVertexArray(m_vertexArrayHandle);
+	int programId = shaderManager.GetProgramId(Overlay);
+	if(programId != -1)
+	{
+		//TODO shader to draw linelists?
+		//TODO well most of this is duplicated in all renderables!!!!!!!!!??
+		GLint modelMatrixLocation = glGetUniformLocation(programId, "modelMatrix");
+		GLint viewMatrixLocation = glGetUniformLocation(programId, "viewMatrix");
+		GLint projectionMatrixLocation = glGetUniformLocation(programId, "projectionMatrix"); //TODO only needs setting on resize
+		if(modelMatrixLocation >= 0 && viewMatrixLocation >= 0 && projectionMatrixLocation >= 0)
+		{
+			glm::mat4x4 modelViewMatrix = viewMatrix * GetModelMatrix();
+			glm::mat3x3 normalMatrix = glm::mat3x3(glm::vec3(modelViewMatrix[0]), glm::vec3(modelViewMatrix[1]), glm::vec3(modelViewMatrix[2]));
 
-	glDrawElements(GL_LINE_STRIP, m_vertexArray.size(), GL_UNSIGNED_SHORT, (GLvoid*)0);
+			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &GetModelMatrix()[0][0]);//TODO pass fewer matrices through!!!
+			glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
+			glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
+		}
+
+		glBindVertexArray(m_vertexArrayHandle);
+
+		glDrawArrays(GL_LINE_STRIP, 0, m_vertexArray.size());
+	}
 }
 
 RenderableBoneList::~RenderableBoneList()

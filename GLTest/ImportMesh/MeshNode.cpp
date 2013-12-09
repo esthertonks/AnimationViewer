@@ -18,7 +18,7 @@ void MeshNode::AllocateVertices(
 	const int numVertices
 	)		
 {
-	m_vertexArray = MeshVertexArray(new Vertex[numVertices]);
+	m_vertexArray = MeshVertexArray(new ImportVertex[numVertices]);
 	m_numVertices = numVertices;
 }
 

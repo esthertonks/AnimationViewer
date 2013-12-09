@@ -10,10 +10,10 @@
 
 namespace mesh
 {
-	class Vertex;
+	class ImportVertex;
 	class Triangle;
 
-	typedef boost::shared_array<Vertex> MeshVertexArray; //TODO any better container?
+	typedef boost::shared_array<ImportVertex> MeshVertexArray; //TODO any better container?
 	typedef boost::shared_array<Triangle> MeshTriangleArray;
 
 class MeshNode : public container::LinkedListItem<MeshNode>

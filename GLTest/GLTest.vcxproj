@@ -155,6 +155,8 @@
     <None Include="Shaders\Diffuse.vert" />
     <None Include="Shaders\Flat.frag" />
     <None Include="Shaders\Flat.vert" />
+    <None Include="Shaders\Overlay.frag" />
+    <None Include="Shaders\Overlay.vert" />
     <None Include="Shaders\PerFragmentLambert.frag" />
     <None Include="Shaders\PerFragmentLambert.vert" />
     <None Include="Shaders\PerFragmentPhong.frag" />

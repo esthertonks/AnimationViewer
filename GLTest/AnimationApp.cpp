@@ -146,6 +146,20 @@ void AnimationApp::ShowNormals(
 
 }
 
+void AnimationApp::ShowMesh(
+	bool show
+	)
+{
+	if(show && m_currentMeshInfo.m_renderMesh)
+	{
+		m_renderCanvas->AddRenderable(m_currentMeshInfo.m_renderMesh);
+	}
+	else
+	{
+		m_renderCanvas->RemoveRenderable(m_currentMeshInfo.m_renderMesh);
+	}
+}
+
 void AnimationApp::Destroy()
 {
 	delete m_renderCanvas;//TODO putting this in a shared ptr doesnt work but may have been unrelated memory issue - try again?

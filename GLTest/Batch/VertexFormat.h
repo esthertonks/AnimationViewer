@@ -11,12 +11,19 @@ enum VertexFormatType //TODO may not need this?
 	TextureFormat
 };
 
-struct Vertex
+struct TexturedVertex
 {
 	glm::vec3 m_position;
 	glm::vec3 m_colour;
 	glm::vec3 m_normal;
 	glm::vec2 m_uv;
+};
+
+// This vertex has a position and colour but no normal or uv (used for overlays)
+struct ColourVertex
+{
+	glm::vec3 m_position;
+	glm::vec3 m_colour;
 };
 
 }

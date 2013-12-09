@@ -7,6 +7,7 @@
 #include "../Batch/LambertAppearance.h"
 #include "../Batch/PhongAppearance.h"
 #include "../Batch/Batch.h"
+#include "../Render/GLUtils.h"
 
 #include <assert.h>
 
@@ -100,6 +101,12 @@ mesh::MeshPtr FBXImport::Import(
 	// Fill the mesh with the imported data
 	m_mesh = mesh::MeshPtr(new mesh::Mesh());
 	FbxNode &fbxRootNode = *m_fbxScene->GetRootNode();
+
+	// Bake all FBX transforms ie pivots and offsets into standard scale, rotation etc
+	// See http://docs.autodesk.com/FBX/2014/ENU/FBX-SDK-Documentation/index.html?url=files/GUID-C35D98CB-5148-4B46-82D1-51077D8970EE.htm,topicNumber=d30e8813
+	BakeNodeTransforms(fbxRootNode);
+	fbxRootNode.ConvertPivotAnimationRecursive(NULL, FbxNode::eDestinationPivot, 30.0);	// FPS fixed at 30 atm
+
 	LoadNodes(fbxRootNode);
 
 	fbxImporter->Destroy();
@@ -237,17 +244,95 @@ bool FBXImport::LoadBoneNode(
 	FbxNode& fbxNode // The FBX mesh to extract data from and add to m_mesh bone node list
 	)
 {
-	const FbxTime fbxTime = 0;//TODO read keys
-	const FbxAMatrix globalTransform = fbxNode.EvaluateGlobalTransform(fbxTime, FbxNode::eDestinationPivot);
+	const FbxSkeleton* const fbxSkeleton = static_cast<const FbxSkeleton*>(fbxNode.GetNodeAttribute());
+	if (!fbxSkeleton)
+	{
+		FBXSDK_printf("Could not extract skeleton from node");
+		return false;
+	}
 
+	// Add the bone to the mesh as a parent->child list
 	mesh::BoneNode &boneNode = *new mesh::BoneNode;
+
+	// Find out and record whether this is a leaf node (in case we need to know the hierarchy and not just what the parent was)
+	const FbxSkeleton::EType skeletonType = fbxSkeleton->GetSkeletonType();
+	switch(skeletonType)
+	{
+	case FbxSkeleton::eLimb: // This is a leaf node ie the node is only connected to one other node
+		boneNode.m_isLeaf = true;
+		break;
+
+	case FbxSkeleton::eLimbNode:// This is a limb node ie the node is connected to two other nodes
+		boneNode.m_isLeaf = false;
+		break;
+
+	case FbxSkeleton::eRoot:// This node is not usually drawn. Discarding the node.
+	case FbxSkeleton::eEffector:// This node is not usually drawn. Discarding the node.
+
+		return false;
+	}
+
 	m_mesh->AddChildBoneNode(boneNode);
 
 	std::string name = fbxNode.GetName();
 	boneNode.SetName(name);
 
+	const FbxTime fbxTime = 0;//TODO read keys
+	const FbxAMatrix fbxGlobalTransform = fbxNode.EvaluateGlobalTransform(fbxTime, FbxNode::eDestinationPivot);
+	const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(fbxTime, FbxNode::eDestinationPivot);
+
+	glm::mat4x4 globalTransform;
+	render::GLUtils::ConvertFBXToGLMatrix(fbxGlobalTransform, globalTransform);
+
+	glm::mat4x4 localTransform;
+	render::GLUtils::ConvertFBXToGLMatrix(fbxLocalTransform, localTransform);
+
+	boneNode.SetGlobalTransform(globalTransform);
+	boneNode.SetLocalKeyTransform(localTransform);
 
 	return true;
+}
+
+/**
+	\brief Bake all possible FBX transforms into the statndard rotation, trnaslate and scale variables so the can be extracted easily later
+*/
+
+void FBXImport::BakeNodeTransforms(
+	FbxNode &node		//!< Node to bake transforms for
+	) const
+{
+	FbxVector4 zeroVector(0,0,0);
+ 
+	// Activate pivot converting 
+	node.SetPivotState(FbxNode::eSourcePivot, FbxNode::ePivotActive); 
+	node.SetPivotState(FbxNode::eDestinationPivot, FbxNode::ePivotActive); 
+ 
+	// We want to set all these to 0 and bake them into the transforms. 
+	node.SetPostRotation(FbxNode::eDestinationPivot, zeroVector); 
+	node.SetPreRotation(FbxNode::eDestinationPivot, zeroVector); 
+	node.SetRotationOffset(FbxNode::eDestinationPivot, zeroVector); 
+	node.SetScalingOffset(FbxNode::eDestinationPivot, zeroVector); 
+	node.SetRotationPivot(FbxNode::eDestinationPivot, zeroVector); 
+	node.SetScalingPivot(FbxNode::eDestinationPivot, zeroVector); 
+ 
+	// This is to import in a system that supports rotation order. 
+	// If rotation order is not supported, do this instead: 
+	node.SetRotationOrder(FbxNode::eDestinationPivot, eEulerXYZ); 
+ 
+	// Similarly, this is the case where geometric transforms are supported by the system. 
+	// If geometric transforms are not supported, set them to zero instead of the source’s geometric transforms. 
+	// Geometric transform = local transform, not inherited by children. 
+	node.SetGeometricTranslation(FbxNode::eDestinationPivot, node.GetGeometricTranslation(FbxNode::eSourcePivot)); 
+	node.SetGeometricRotation(FbxNode::eDestinationPivot, node.GetGeometricRotation(FbxNode::eSourcePivot)); 
+	node.SetGeometricScaling(FbxNode::eDestinationPivot, node.GetGeometricScaling(FbxNode::eSourcePivot)); 
+ 
+	// Idem for quaternions. 
+	node.SetQuaternionInterpolation(FbxNode::eDestinationPivot, node.GetQuaternionInterpolation(FbxNode::eSourcePivot));
+
+	// Recurse on children
+	const int childCount = node.GetChildCount();
+	for(int childNum = 0; childNum < childCount; childNum++)
+		BakeNodeTransforms(*node.GetChild(childNum));
 }
 
 /**
