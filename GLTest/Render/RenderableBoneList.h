@@ -7,6 +7,7 @@
 namespace mesh
 {
 	class Mesh;
+	class Node;
 }
 
 namespace render
@@ -41,6 +42,10 @@ public:
 		);
 
 private:
+	void AddPositionToVertexList(
+	mesh::Node *node
+	);
+
 	void Prepare();
 
 	ColourVertexArrayPtr m_vertexArray;

@@ -9,6 +9,7 @@
 namespace mesh
 {
 	class Mesh;
+	class Node;
 	class MeshNode;
 	class Triangle;
 	class TexturedVertex;
@@ -34,15 +35,18 @@ public:
 private:
 
 	bool LoadNodes(
-		FbxNode& fbxNode	// The FBX mesh to extract data from and add to m_mesh
+		FbxNode& fbxNode,	// The FBX mesh to extract data from and add to m_mesh
+		mesh::Node *parent
 	);
 
-	bool LoadMeshNode(
-		FbxNode &fbxNode				// The FBX mesh to extract data from and add to m_mesh mesh node list
+	mesh::Node *LoadMeshNode(
+		FbxNode &fbxNode,				// The FBX mesh to extract data from and add to m_mesh mesh node list
+		mesh::Node *parent
 		);
 
-	bool LoadBoneNode(
-		FbxNode& fbxNode	// The FBX mesh to extract data from and add to m_mesh bone node list
+	mesh::Node *LoadBoneNode(
+		FbxNode& fbxNode,	// The FBX mesh to extract data from and add to m_mesh bone node list
+		mesh::Node *parent
 	);
 
 

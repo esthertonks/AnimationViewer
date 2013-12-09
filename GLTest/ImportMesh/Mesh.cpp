@@ -5,7 +5,7 @@ namespace mesh
 
 Mesh::Mesh()
 {
-};
+}
 
 Mesh::~Mesh()
 {

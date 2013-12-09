@@ -218,6 +218,12 @@
     <ClInclude Include="ImportMesh\ImportFwdDecl.h">
       <Filter>ImportMesh</Filter>
     </ClInclude>
+    <ClInclude Include="Container\LinkedTree.h">
+      <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="ImportMesh\Node.h">
+      <Filter>ImportMesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Diffuse.frag">

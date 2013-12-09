@@ -31,7 +31,6 @@ public:
 	void AddDuplicateVertex(
 		const int oldVertexIndex,
 		const render::TexturedVertex &currentVertex,
-		const unsigned int materialId,
 		render::Batch &batch,
 		std::vector<int> &perMaterialOldToNewVertexIndexMap
 		);

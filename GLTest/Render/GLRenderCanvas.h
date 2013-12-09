@@ -87,6 +87,14 @@ public:
 		m_renderables.push_back(renderable);
 	}
 
+	// Add to the front of the render list ie for overlays
+	void AddRenderableToFront(
+		RenderablePtr &renderable
+		)
+	{
+		m_renderables.push_front(renderable);
+	}
+
 	void RemoveRenderable(
 		RenderablePtr &renderable
 		)

@@ -4,16 +4,13 @@
 */
 #pragma once
 
-#include "../Container/LinkedList .h"
-#include "MeshNode.h"
-#include "BoneNode.h"
+#include "Node.h"
 #include "../Batch/BatchFwdDecl.h"
 
 namespace mesh
 {
 
-class MeshNode;
-class BoneNode;
+class Node;
 
 class Mesh
 {
@@ -22,28 +19,17 @@ public:
 	Mesh::Mesh();
 	Mesh::~Mesh();
 
-	MeshNode* GetMeshNodeHierarchy()
+	Node* GetNodeHierarchy()
 	{
-		return m_meshNodes.m_root;
+		return m_nodes.m_root;
 	}
 
-	BoneNode* GetBoneNodeHierarchy()
-	{
-		return m_boneNodes.m_root;
-	}
-
-	void AddChildMeshNode(
-		MeshNode &node
+	void AddChildNode(
+		Node *parent,	// Parent node or NULL if no parent
+		Node *node		// Child node to add
 		)
 	{
-		m_meshNodes.Add(node);
-	}
-
-	void AddChildBoneNode(
-		BoneNode &node
-		)
-	{
-		m_boneNodes.Add(node);
+		m_nodes.AddAsChild(parent, node);
 	}
 
 	int GetNumVerticesWithMaterialId(
@@ -53,18 +39,21 @@ public:
 		return m_numVerticesPerMaterial[materialId];
 	}
 
-	render::AppearanceTable &GetAppearances()
+	render::AppearanceTable &GetAppearanceTable()
 	{
 		return m_appearanceTable;
 	}
 
 
+	std::vector<unsigned int> &GetNumVerticesPerMaterialArray()
+	{
+		return m_numVerticesPerMaterial;
+	}
+
 private:
-	friend import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
 	render::AppearanceTable m_appearanceTable; // Mapping of material id's to material names
 	std::vector<unsigned int> m_numVerticesPerMaterial; // A count of the number of vertex indices per material batch. Necessary for creating batches later
-	container::LinkedList<MeshNode> m_meshNodes;
-	container::LinkedList<BoneNode> m_boneNodes;
+	container::LinkedTree<Node> m_nodes;
 
 };
 }

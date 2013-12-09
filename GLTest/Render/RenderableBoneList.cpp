@@ -1,6 +1,7 @@
 #include "RenderableBoneList.h"
 
 #include "../ImportMesh/Mesh.h"
+#include "../ImportMesh/BoneNode.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../Render/ShaderManager.h"
@@ -17,22 +18,55 @@ bool RenderableBoneList::Create(
 	mesh::MeshPtr &importMesh
 	)
 {		
-	mesh::BoneNode *boneNode = importMesh->GetBoneNodeHierarchy();
-	for(boneNode; boneNode != NULL; boneNode = boneNode->m_next)
-	{
-		ColourVertex vertex;
-		glm::mat4x4 globalTransform = boneNode->GetGlobalTransform();
-		vertex.m_position.x = globalTransform[3][0];
-		vertex.m_position.y = globalTransform[3][1];
-		vertex.m_position.z = globalTransform[3][2];
-		vertex.m_colour = glm::vec3(1.0, 0.0, 0.0);
-
-		m_vertexArray.push_back(vertex);
-	}
+	mesh::Node *root = importMesh->GetNodeHierarchy();
+	AddPositionToVertexList(root);
 
 	Prepare();
 
 	return true;
+}
+
+void RenderableBoneList::AddPositionToVertexList(
+	mesh::Node *node
+	)
+{
+	for(node; node != NULL; node = node->m_next)
+	{
+		if(node->GetType() != mesh::NodeType::BoneType)
+		{
+			continue;
+		}
+
+		if(node->m_parent) // Dont bother with the root - it will be added as the parent of it's children
+		{
+			// Add the parent nodes position
+			mesh::BoneNode *parentNode = static_cast<mesh::BoneNode*>(node->m_parent); //TODO static cast?
+			ColourVertex parentVertex;
+			glm::mat4x4 parentGlobalTransform = parentNode->GetGlobalTransform();
+			parentVertex.m_position.x = parentGlobalTransform[3][0];
+			parentVertex.m_position.y = parentGlobalTransform[3][1];
+			parentVertex.m_position.z = parentGlobalTransform[3][2];
+			parentVertex.m_colour = glm::vec3(1.0, 0.0, 0.0);
+
+			m_vertexArray.push_back(parentVertex);
+
+			// Add this nodes position
+			mesh::BoneNode *boneNode = static_cast<mesh::BoneNode*>(node); //TODO static cast?
+			ColourVertex vertex;
+			glm::mat4x4 globalTransform = boneNode->GetGlobalTransform();
+			vertex.m_position.x = globalTransform[3][0];
+			vertex.m_position.y = globalTransform[3][1];
+			vertex.m_position.z = globalTransform[3][2];
+			vertex.m_colour = glm::vec3(1.0, 0.0, 0.0);
+
+			m_vertexArray.push_back(vertex);
+		}
+
+		if(node->m_firstChild)
+		{
+			AddPositionToVertexList(node->m_firstChild); // If this node has any children then add their info two
+		}
+	}
 }
 
 void RenderableBoneList::Prepare()
@@ -80,6 +114,10 @@ void RenderableBoneList::Render(
 	glm::mat4x4& projectionMatrix
 	)
 {
+	glEnable(GL_POINT_SPRITE);
+	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	glDisable(GL_DEPTH_TEST);
+
 	int numVertices = m_vertexArray.size();
 	if(numVertices == 0)
 	{
@@ -102,17 +140,24 @@ void RenderableBoneList::Render(
 		if(modelMatrixLocation >= 0 && viewMatrixLocation >= 0 && projectionMatrixLocation >= 0)
 		{
 			glm::mat4x4 modelViewMatrix = viewMatrix * GetModelMatrix();
-			glm::mat3x3 normalMatrix = glm::mat3x3(glm::vec3(modelViewMatrix[0]), glm::vec3(modelViewMatrix[1]), glm::vec3(modelViewMatrix[2]));
 
 			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &GetModelMatrix()[0][0]);//TODO pass fewer matrices through!!!
 			glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
 			glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
 		}
 
+		GLint pointSizeLocation = glGetUniformLocation(programId, "pointSize");
+		glUniform1f(pointSizeLocation, 10);
+
 		glBindVertexArray(m_vertexArrayHandle);
 
-		glDrawArrays(GL_LINE_STRIP, 0, m_vertexArray.size());
+		glDrawArrays(GL_LINES, 0, m_vertexArray.size());
+		glDrawArrays(GL_POINTS, 0, m_vertexArray.size());
 	}
+
+	glDisable(GL_POINT_SPRITE);
+	glDisable(GL_VERTEX_PROGRAM_POINT_SIZE);
+	glEnable(GL_DEPTH_TEST);
 }
 
 RenderableBoneList::~RenderableBoneList()

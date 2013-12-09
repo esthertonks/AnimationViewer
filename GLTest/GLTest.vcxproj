@@ -129,12 +129,14 @@
     <ClInclude Include="Batch\PhongAppearance.h" />
     <ClInclude Include="Batch\VertexFormat.h" />
     <ClInclude Include="Container\LinkedList .h" />
+    <ClInclude Include="Container\LinkedTree.h" />
     <ClInclude Include="GUI\ControlsPanel.h" />
     <ClInclude Include="ImportMesh\AnimatedMesh.h" />
     <ClInclude Include="ImportMesh\BoneNode.h" />
     <ClInclude Include="ImportMesh\ImportFwdDecl.h" />
     <ClInclude Include="ImportMesh\Mesh.h" />
     <ClInclude Include="ImportMesh\MeshNode.h" />
+    <ClInclude Include="ImportMesh\Node.h" />
     <ClInclude Include="ImportMesh\SkinnedVertex.h" />
     <ClInclude Include="ImportMesh\Triangle.h" />
     <ClInclude Include="ImportMesh\Vertex.h" />

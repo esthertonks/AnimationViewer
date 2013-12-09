@@ -6,7 +6,6 @@
 #include "../ImportMesh/Vertex.h"
 #include "../Batch/LambertAppearance.h"
 #include "../Batch/PhongAppearance.h"
-#include "../Batch/Batch.h"
 #include "../Render/GLUtils.h"
 
 #include <assert.h>
@@ -107,7 +106,7 @@ mesh::MeshPtr FBXImport::Import(
 	BakeNodeTransforms(fbxRootNode);
 	fbxRootNode.ConvertPivotAnimationRecursive(NULL, FbxNode::eDestinationPivot, 30.0);	// FPS fixed at 30 atm
 
-	LoadNodes(fbxRootNode);
+	LoadNodes(fbxRootNode, m_mesh->GetNodeHierarchy());
 
 	fbxImporter->Destroy();
 	m_fbxScene->Destroy();
@@ -118,9 +117,12 @@ mesh::MeshPtr FBXImport::Import(
 }
 
 bool FBXImport::LoadNodes(
-	FbxNode& fbxNode
+	FbxNode& fbxNode,
+	mesh::Node *parent
 	)
 {
+	mesh::Node *newNode = NULL;
+
 	// Find ut the type of node ie Skeleton, Mesh, Camera, Light - currently only Bones and Mesh nodes are supported
 	FbxNodeAttribute* const fbxNodeAttribute = fbxNode.GetNodeAttribute();
 	if(fbxNodeAttribute)
@@ -130,10 +132,10 @@ bool FBXImport::LoadNodes(
 		switch(fbxAttributeType)
 		{
 		case FbxNodeAttribute::eMesh:
-			LoadMeshNode(fbxNode);
+			newNode = LoadMeshNode(fbxNode, parent);
 			break;
 		case FbxNodeAttribute::eSkeleton:
-			LoadBoneNode(fbxNode);
+			newNode = LoadBoneNode(fbxNode, parent);
 
 			break;
 
@@ -149,17 +151,20 @@ bool FBXImport::LoadNodes(
 	for(int childIndex = 0; childIndex < fbxNode.GetChildCount(); childIndex++)
 	{
 		FbxNode &fbxChildNode = *fbxNode.GetChild(childIndex);
-		LoadNodes(fbxChildNode);
+
+		LoadNodes(fbxChildNode, newNode != NULL ? newNode : parent); // If we didnt load a node just pass through the parent. Otherwise pass the new node as the parent
 	}
 
 	return true;
 }
 
-bool FBXImport::LoadMeshNode(
-	FbxNode& fbxNode
+mesh::Node *FBXImport::LoadMeshNode(
+	FbxNode& fbxNode,
+	mesh::Node *parent
 	)
 {
 	FbxMesh* fbxMesh = fbxNode.GetMesh();
+	mesh::MeshNode *meshNode = NULL;
 	if(fbxMesh)
 	{
 		if(!fbxMesh->IsTriangleMesh())
@@ -170,21 +175,21 @@ bool FBXImport::LoadMeshNode(
 			if(!fbxNodeAttribute)
 			{
 				FBXSDK_printf("Mesh Triangulation failed. Node Import aborted.\n");
-				return false;
+				return NULL;
 			}
 			fbxMesh = (FbxMesh *)fbxNodeAttribute;
 		}
 
-		mesh::MeshNode &meshNode = *new mesh::MeshNode;
-		m_mesh->AddChildMeshNode(meshNode);
+		meshNode = new mesh::MeshNode();
+		m_mesh->AddChildNode(parent, meshNode);
 
 		std::string name = fbxNode.GetName();
-		meshNode.SetName(name);
+		meshNode->SetName(name);
 
 		// Extract and store vertices
 		const unsigned int numVertices = fbxMesh->GetControlPointsCount();
-		meshNode.AllocateVertices(numVertices);
-		mesh::MeshVertexArray vertexArray = meshNode.GetVertices();
+		meshNode->AllocateVertices(numVertices);
+		mesh::MeshVertexArray vertexArray = meshNode->GetVertices();
 
 		const FbxVector4* const fbxVertices = fbxMesh->GetControlPoints();
 		for(unsigned int vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
@@ -199,8 +204,8 @@ bool FBXImport::LoadMeshNode(
 		// Extract and store triangles
 		int numTriangles = fbxMesh->GetPolygonCount();
 
-		meshNode.AllocateTriangles(numTriangles);
-		mesh::MeshTriangleArray triangleArray = meshNode.GetTriangles();
+		meshNode->AllocateTriangles(numTriangles);
+		mesh::MeshTriangleArray triangleArray = meshNode->GetTriangles();
 
 			// Get the per triangle material index
 		const int materialLayerCount = fbxMesh->GetElementMaterialCount();
@@ -219,7 +224,7 @@ bool FBXImport::LoadMeshNode(
 
 			if(materialLayerCount != 0)
 			{
-				LoadMaterials(*fbxMesh, triangleIndex, meshNode, m_mesh->m_appearanceTable, m_mesh->m_numVerticesPerMaterial);
+				LoadMaterials(*fbxMesh, triangleIndex, *meshNode, m_mesh->GetAppearanceTable(), m_mesh->GetNumVerticesPerMaterialArray());
 			}
 			else
 			{
@@ -237,45 +242,47 @@ bool FBXImport::LoadMeshNode(
 		}
 	}
 
-	return true;
+	return meshNode;
 }
 
-bool FBXImport::LoadBoneNode(
-	FbxNode& fbxNode // The FBX mesh to extract data from and add to m_mesh bone node list
+mesh::Node *FBXImport::LoadBoneNode(
+	FbxNode& fbxNode, // The FBX mesh to extract data from and add to m_mesh bone node list
+	mesh::Node *parent
 	)
 {
 	const FbxSkeleton* const fbxSkeleton = static_cast<const FbxSkeleton*>(fbxNode.GetNodeAttribute());
+	mesh::BoneNode *boneNode = NULL;
 	if (!fbxSkeleton)
 	{
 		FBXSDK_printf("Could not extract skeleton from node");
-		return false;
+		return NULL;
 	}
 
 	// Add the bone to the mesh as a parent->child list
-	mesh::BoneNode &boneNode = *new mesh::BoneNode;
+	boneNode = new mesh::BoneNode;
 
 	// Find out and record whether this is a leaf node (in case we need to know the hierarchy and not just what the parent was)
-	const FbxSkeleton::EType skeletonType = fbxSkeleton->GetSkeletonType();
-	switch(skeletonType)
-	{
-	case FbxSkeleton::eLimb: // This is a leaf node ie the node is only connected to one other node
-		boneNode.m_isLeaf = true;
-		break;
+	//const FbxSkeleton::EType skeletonType = fbxSkeleton->GetSkeletonType();
+	//switch(skeletonType)
+	//{
+	//case FbxSkeleton::eLimb: // This is a leaf node ie the node is only connected to one other node
 
-	case FbxSkeleton::eLimbNode:// This is a limb node ie the node is connected to two other nodes
-		boneNode.m_isLeaf = false;
-		break;
+	//	break;
 
-	case FbxSkeleton::eRoot:// This node is not usually drawn. Discarding the node.
-	case FbxSkeleton::eEffector:// This node is not usually drawn. Discarding the node.
+	//case FbxSkeleton::eLimbNode:// This is a limb node ie the node is connected to two other nodes
 
-		return false;
-	}
+	//	break;
 
-	m_mesh->AddChildBoneNode(boneNode);
+	//case FbxSkeleton::eRoot:// This node is not usually drawn. Discarding the node.
+	//case FbxSkeleton::eEffector:// This node is not usually drawn. Discarding the node.
+
+	//	return false;
+	//}
+
+	m_mesh->AddChildNode(parent, boneNode);
 
 	std::string name = fbxNode.GetName();
-	boneNode.SetName(name);
+	boneNode->SetName(name);
 
 	const FbxTime fbxTime = 0;//TODO read keys
 	const FbxAMatrix fbxGlobalTransform = fbxNode.EvaluateGlobalTransform(fbxTime, FbxNode::eDestinationPivot);
@@ -287,10 +294,10 @@ bool FBXImport::LoadBoneNode(
 	glm::mat4x4 localTransform;
 	render::GLUtils::ConvertFBXToGLMatrix(fbxLocalTransform, localTransform);
 
-	boneNode.SetGlobalTransform(globalTransform);
-	boneNode.SetLocalKeyTransform(localTransform);
+	boneNode->SetGlobalTransform(globalTransform);
+	boneNode->SetLocalKeyTransform(localTransform);
 
-	return true;
+	return boneNode;
 }
 
 /**

@@ -1,12 +1,9 @@
 #pragma once
 
-#include <glm\glm.hpp>
-#include <string>
 #include <map>
 #include <boost\shared_array.hpp>
-#include "../Container/LinkedList .h"
 #include "../Import/FBXImport.h"
-#include "../Batch/BatchFwdDecl.h"
+#include "Node.h"
 
 namespace mesh
 {
@@ -16,23 +13,16 @@ namespace mesh
 	typedef boost::shared_array<ImportVertex> MeshVertexArray; //TODO any better container?
 	typedef boost::shared_array<Triangle> MeshTriangleArray;
 
-class MeshNode : public container::LinkedListItem<MeshNode>
+class MeshNode : public Node
 {
 public:
 
 	MeshNode();
 	~MeshNode();
 
-	void SetName(
-		const std::string& name
-		)
+	virtual NodeType GetType()
 	{
-		m_name = name;
-	};
-
-	const std::string&	GetName()
-	{		
-		return m_name;
+		return MeshType;
 	}
 
 	int GetNumTriangles()
@@ -64,15 +54,8 @@ public:
 										);
 
 private:
-	friend import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
-
-	std::string m_name;
-
-	//glm::mat4x4 m_localTransform;			//Transform from this node to the parent node
-	//glm::mat4x4 m_globalTransform;		// Transform from this node to the global model transform
-
 	// uvsets?
-
+	friend import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
 	MeshVertexArray m_vertexArray;
 	MeshTriangleArray m_triangleArray;
 	int m_numTriangles;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <boost\shared_array.hpp>
-#include "../Container/LinkedList .h"
 #include "BatchFwdDecl.h"
 #include "../Render/RenderFwdDecl.h"
 
@@ -10,7 +9,7 @@ namespace render
 
 enum VertexFormatType;
 
-class Batch// : public container::LinkedListItem<Batch>
+class Batch
 {
 
 public:

@@ -1,5 +1,6 @@
 #include "BatchProcessor.h"
 #include "../ImportMesh/Mesh.h"
+#include "../ImportMesh/MeshNode.h"
 #include "../ImportMesh/Triangle.h"
 #include "../ImportMesh/Vertex.h"
 #include "../Batch/VertexFormat.h"
@@ -33,7 +34,7 @@ void BatchProcessor::CreateBatches(
 	)
 {
 		// TODO for testing atm assume only one - rewrite for many shortly
-		render::AppearanceTable& appearances = importMesh->GetAppearances();
+		render::AppearanceTable& appearances = importMesh->GetAppearanceTable();
 		int numBatches = appearances.size();
 		renderBatches.resize(numBatches);
 
@@ -42,9 +43,15 @@ void BatchProcessor::CreateBatches(
 		// TODO need to split by vertex format first?
 
 	// TODO For now just average everything, but this needs to create batches and split normals for textures, colours and normals.
-		mesh::MeshNode* meshNode = importMesh->GetMeshNodeHierarchy();
-		for(meshNode; meshNode != NULL; meshNode = meshNode->m_next)
+		mesh::Node* node = importMesh->GetNodeHierarchy();
+		for(node; node != NULL; node = node->m_next)
 	{
+		if(node->GetType() != mesh::NodeType::MeshType)
+		{
+			continue;
+		}
+
+		mesh::MeshNode *meshNode = static_cast<mesh::MeshNode *>(node);
 		mesh::MeshTriangleArray triangleArray = meshNode->GetTriangles();
 		int numTriangles = meshNode->GetNumTriangles();
 		mesh::MeshVertexArray vertexArray = meshNode->GetVertices();
@@ -83,7 +90,7 @@ void BatchProcessor::CreateBatches(
 				int previouslyCreatedIndex = previouslyAssignedVertexIndexMap[testVertexIndex];
 				if(previouslyCreatedIndex == -1) // If this is the first time we have seen this index in this batch create a new vertex for the batch
 				{
-					AddDuplicateVertex(testVertexIndex, testVertex, materialId, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
+					AddDuplicateVertex(testVertexIndex, testVertex, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
 					continue;
 				}
 
@@ -94,15 +101,15 @@ void BatchProcessor::CreateBatches(
 				// hard edges and texture seams which will otherwise have to be averaged for opengl).
 				if(testVertex.m_colour != previouslyCreatedVertex.m_colour)
 				{
-					AddDuplicateVertex(testVertexIndex, testVertex, materialId, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
+					AddDuplicateVertex(testVertexIndex, testVertex, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
 				}
 				else if(glm::dot(testVertex.m_normal, previouslyCreatedVertex.m_normal) < DOT_THESHOLD) // The two normals are not the same - add a duplicate vertex
 				{
-					AddDuplicateVertex(testVertexIndex, testVertex, materialId, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
+					AddDuplicateVertex(testVertexIndex, testVertex, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
 				}
 				else if(testVertex.m_uv != previouslyCreatedVertex.m_uv) // dupicate verts for texture coordinates on texture seams
 				{
-					AddDuplicateVertex(testVertexIndex, testVertex, materialId, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
+					AddDuplicateVertex(testVertexIndex, testVertex, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
 				}
 				else // Any identical vertex was already added - just add the index to refer to the existing vert when rendering
 				{
@@ -118,7 +125,6 @@ void BatchProcessor::CreateBatches(
 void BatchProcessor::AddDuplicateVertex(
 	const int oldVertexIndex,
 	const render::TexturedVertex &currentVertex,
-	const unsigned int materialId,
 	render::Batch &batch,
 	std::vector<int> &perMaterialPreviouslyAssignedVertexIndexMap
 	)

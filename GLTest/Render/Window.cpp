@@ -60,7 +60,7 @@ void Window::OnClose(
 
 // Menu events:
 void Window::OnOpen(
-	wxCommandEvent& event
+	wxCommandEvent& WXUNUSED(event)
 	)
 {
 wxFileDialog* openDialog = new wxFileDialog(
