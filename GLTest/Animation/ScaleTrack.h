@@ -2,28 +2,28 @@
 
 #include "AnimationFwdDecl.h"
 /*
-	PositionTrack class
+	ScaleTrack class
 */
 namespace animation
 {
 
-class PositionTrack
+class ScaleTrack
 {
 public :
 
-PositionTrack(
+ScaleTrack(
 	const int numFrames
 	);
 
 void AddKey(
 	const int frame,
-	const glm::vec3 &position
+	const glm::vec3 &scale
 	);
 
 
 private:
 
-	Vector3Array m_positionKeys;
+	Vector3Array m_scaleKeys;
 };
 
 }

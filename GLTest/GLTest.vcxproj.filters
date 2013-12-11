@@ -34,9 +34,6 @@
     <ClCompile Include="Import\FBXImport.cpp">
       <Filter>Import</Filter>
     </ClCompile>
-    <ClCompile Include="ImportMesh\AnimatedMesh.cpp">
-      <Filter>ImportMesh</Filter>
-    </ClCompile>
     <ClCompile Include="ImportMesh\BoneNode.cpp">
       <Filter>ImportMesh</Filter>
     </ClCompile>
@@ -116,13 +113,13 @@
     <ClCompile Include="Render\RenderableBoneList.cpp">
       <Filter>Render</Filter>
     </ClCompile>
+    <ClCompile Include="Animation\AnimationInfo.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
       <Filter>Import</Filter>
-    </ClInclude>
-    <ClInclude Include="ImportMesh\AnimatedMesh.h">
-      <Filter>ImportMesh</Filter>
     </ClInclude>
     <ClInclude Include="ImportMesh\BoneNode.h">
       <Filter>ImportMesh</Filter>
@@ -223,6 +220,12 @@
     </ClInclude>
     <ClInclude Include="ImportMesh\Node.h">
       <Filter>ImportMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimationInfo.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimationFwdDecl.h">
+      <Filter>Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

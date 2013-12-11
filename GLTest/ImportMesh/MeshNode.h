@@ -2,8 +2,12 @@
 
 #include <map>
 #include <boost\shared_array.hpp>
-#include "../Import/FBXImport.h"
 #include "Node.h"
+
+namespace import
+{
+	class FBXImport;
+}
 
 namespace mesh
 {
@@ -55,7 +59,7 @@ public:
 
 private:
 	// uvsets?
-	friend import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
+	friend class import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
 	MeshVertexArray m_vertexArray;
 	MeshTriangleArray m_triangleArray;
 	int m_numTriangles;

@@ -49,6 +49,7 @@ private:
 		mesh::Node *parent
 	);
 
+	void LoadAnimationLayerInfo();
 
 	/**
 	@brief Bake all possible FBX transforms into the statndard rotation, trnaslate and scale variables so the can be extracted easily later
@@ -152,6 +153,7 @@ private:
 
 	FbxManager *m_fbxManager;			// FBX SDK manager
 	FbxScene *m_fbxScene;				// FBX SDK scene which data will be extracted from
+	FbxImporter* m_fbxImporter;			// Scene importer for the FBX file
 
 	mesh::MeshPtr m_mesh;					// The mesh to hold the imported data
 

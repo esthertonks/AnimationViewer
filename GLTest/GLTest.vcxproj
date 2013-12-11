@@ -84,6 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Animation\AnimationInfo.cpp" />
     <ClCompile Include="Animation\AnimationTrack.cpp" />
     <ClCompile Include="Animation\PositionTrack.cpp" />
     <ClCompile Include="Animation\RotationTrack.cpp" />
@@ -95,7 +96,6 @@
     <ClCompile Include="Batch\LambertAppearance.cpp" />
     <ClCompile Include="Batch\PhongAppearance.cpp" />
     <ClCompile Include="GUI\ControlsPanel.cpp" />
-    <ClCompile Include="ImportMesh\AnimatedMesh.cpp" />
     <ClCompile Include="ImportMesh\BoneNode.cpp" />
     <ClCompile Include="ImportMesh\Mesh.cpp" />
     <ClCompile Include="ImportMesh\MeshNode.cpp" />
@@ -116,6 +116,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationApp.h" />
+    <ClInclude Include="Animation\AnimationFwdDecl.h" />
+    <ClInclude Include="Animation\AnimationInfo.h" />
     <ClInclude Include="Animation\AnimationTrack.h" />
     <ClInclude Include="Animation\PositionTrack.h" />
     <ClInclude Include="Animation\RotationTrack.h" />
@@ -131,7 +133,6 @@
     <ClInclude Include="Container\LinkedList .h" />
     <ClInclude Include="Container\LinkedTree.h" />
     <ClInclude Include="GUI\ControlsPanel.h" />
-    <ClInclude Include="ImportMesh\AnimatedMesh.h" />
     <ClInclude Include="ImportMesh\BoneNode.h" />
     <ClInclude Include="ImportMesh\ImportFwdDecl.h" />
     <ClInclude Include="ImportMesh\Mesh.h" />

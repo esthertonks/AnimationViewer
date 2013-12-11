@@ -6,6 +6,7 @@
 
 #include "Node.h"
 #include "../Batch/BatchFwdDecl.h"
+#include "../Animation/AnimationInfo.h"
 
 namespace mesh
 {
@@ -50,10 +51,15 @@ public:
 		return m_numVerticesPerMaterial;
 	}
 
+	animation::AnimationInfo &GetAnimationInfo()
+	{
+		return m_animationInfo;
+	}
+
 private:
 	render::AppearanceTable m_appearanceTable; // Mapping of material id's to material names
 	std::vector<unsigned int> m_numVerticesPerMaterial; // A count of the number of vertex indices per material batch. Necessary for creating batches later
 	container::LinkedTree<Node> m_nodes;
-
+	animation::AnimationInfo m_animationInfo; // Extra info about all animation tracks
 };
 }

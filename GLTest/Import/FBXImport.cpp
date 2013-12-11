@@ -56,30 +56,30 @@ mesh::MeshPtr FBXImport::Import(
 		return NULL;
 	}
 
-	FbxImporter* fbxImporter = FbxImporter::Create(m_fbxManager,"");
+	m_fbxImporter = FbxImporter::Create(m_fbxManager,"");
 
-	if(!fbxImporter->Initialize(fbxFilename.c_str(), -1, ioSettings))
+	if(!m_fbxImporter->Initialize(fbxFilename.c_str(), -1, ioSettings))
 	{
-		FbxString error = fbxImporter->GetStatus().GetErrorString();
+		FbxString error = m_fbxImporter->GetStatus().GetErrorString();
 		FBXSDK_printf("Call to FbxImporter::Initialize() failed.\n");
 		FBXSDK_printf("FBX Import failed with error: %s\n", error.Buffer());
 
-		if (fbxImporter->GetStatus().GetCode() == FbxStatus::eInvalidFileVersion)
+		if (m_fbxImporter->GetStatus().GetCode() == FbxStatus::eInvalidFileVersion)
 		{
 			FBXSDK_printf("FBX file format version for file '%s' is not valid for this SDK version\n", fbxFilename);
 			return NULL;
 		}
 
-		fbxImporter->Destroy();
+		m_fbxImporter->Destroy();
 		m_fbxScene->Destroy();
 		ioSettings->Destroy();
 		m_fbxManager->Destroy();
 	}
 
-	if(!fbxImporter->IsFBX())
+	if(!m_fbxImporter->IsFBX())
 	{
 		FBXSDK_printf("File %s is not an FBX file. \n", fbxFilename);
-		fbxImporter->Destroy();
+		m_fbxImporter->Destroy();
 		m_fbxScene->Destroy();
 		ioSettings->Destroy();
 		m_fbxManager->Destroy();
@@ -87,10 +87,10 @@ mesh::MeshPtr FBXImport::Import(
 	}
 
 	// Import the scene.
-	if(!fbxImporter->Import(m_fbxScene))
+	if(!m_fbxImporter->Import(m_fbxScene))
 	{
 		FBXSDK_printf("Import failed for file: %s \n", fbxFilename);
-		fbxImporter->Destroy();
+		m_fbxImporter->Destroy();
 		m_fbxScene->Destroy();
 		ioSettings->Destroy();
 		m_fbxManager->Destroy();
@@ -106,9 +106,10 @@ mesh::MeshPtr FBXImport::Import(
 	BakeNodeTransforms(fbxRootNode);
 	fbxRootNode.ConvertPivotAnimationRecursive(NULL, FbxNode::eDestinationPivot, 30.0);	// FPS fixed at 30 atm
 
+	LoadAnimationLayerInfo();
 	LoadNodes(fbxRootNode, m_mesh->GetNodeHierarchy());
 
-	fbxImporter->Destroy();
+	m_fbxImporter->Destroy();
 	m_fbxScene->Destroy();
 	ioSettings->Destroy();
 	m_fbxManager->Destroy();
@@ -284,20 +285,78 @@ mesh::Node *FBXImport::LoadBoneNode(
 	std::string name = fbxNode.GetName();
 	boneNode->SetName(name);
 
-	const FbxTime fbxTime = 0;//TODO read keys
-	const FbxAMatrix fbxGlobalTransform = fbxNode.EvaluateGlobalTransform(fbxTime, FbxNode::eDestinationPivot);
-	const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(fbxTime, FbxNode::eDestinationPivot);
-
+	// Store the initial global pose values. The rest will be calulated from the local transforms //TODO do we even need to load the global transforms at all?
+	const FbxAMatrix fbxGlobalTransform = fbxNode.EvaluateGlobalTransform(0, FbxNode::eDestinationPivot);
 	glm::mat4x4 globalTransform;
 	render::GLUtils::ConvertFBXToGLMatrix(fbxGlobalTransform, globalTransform);
-
-	glm::mat4x4 localTransform;
-	render::GLUtils::ConvertFBXToGLMatrix(fbxLocalTransform, localTransform);
-
 	boneNode->SetGlobalTransform(globalTransform);
-	boneNode->SetLocalKeyTransform(localTransform);
+
+	animation::AnimationInfo &animationInfo = m_mesh->GetAnimationInfo();
+	// Load in the local keys transoforms for each key
+	FbxTime currentTime;
+	int numFrames = animationInfo.GetNumFrames();
+	double frameRate = animationInfo.GetFrameRate();
+	for(int frame = 0; frame <= numFrames; frame++)
+	{
+		currentTime.SetMilliSeconds(animationInfo.ConvertFrameToMilliseconds(frame));
+
+		const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(currentTime, FbxNode::eDestinationPivot);
+
+		glm::mat4x4 localTransform;
+		render::GLUtils::ConvertFBXToGLMatrix(fbxLocalTransform, localTransform);
+
+		boneNode->SetLocalKeyTransform(frame, localTransform);
+	}
+
+	// Record node scale inheritance //TODO scale inheritance
+	//if (parent)
+	//{
+	//	FbxEnum inheritType = fbxNode.InheritType.Get();
+	//	switch(inheritType)
+	//	{
+	//	case FbxTransform::eInheritRrs:
+	//		boneNode.m_inheritScale = false;
+	//		break;
+	//	case FbxTransform::eInheritRrSs:
+	//		FBXSDK_printf("Unsupported scale type used");
+	//		break;
+	//	case FbxTransform::eInheritRSrs:
+	//		boneNode.m_inheritScale = true;
+	//		break;
+	//	}
+	//}
+	//else
+	//{
+	//	boneNode.m_inheritScale = false;// No parent, cant inherit scale
+	//}
 
 	return boneNode;
+}
+
+void FBXImport::LoadAnimationLayerInfo()
+{
+	// Get the fps and calculate the number of frames that should be loaded
+	animation::AnimationInfo &animationInfo = m_mesh->GetAnimationInfo();
+
+	const FbxTakeInfo &takeInfo = *m_fbxImporter->GetTakeInfo(0);
+
+	const int startTime = takeInfo.mLocalTimeSpan.GetStart().GetMilliSeconds();
+	const int endTime = takeInfo.mLocalTimeSpan.GetStop().GetMilliSeconds();
+	FbxTime fbxStartTime(startTime);
+	FbxTime fbxEndTime(endTime);
+
+	// Set the default time for the animation track
+	double frameRate = 30.0f;
+	FbxTime::EMode fbxTimeMode;
+	if (m_fbxImporter->GetFrameRate(fbxTimeMode))
+	{
+		frameRate = FbxTime::GetFrameRate(fbxTimeMode);
+	}
+
+	animationInfo.SetFrameRate(frameRate);
+
+	int numFrames = (endTime - startTime) / frameRate;
+	animationInfo.SetNumFrames(numFrames);
 }
 
 /**
