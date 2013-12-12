@@ -11,15 +11,20 @@ PositionTrack::PositionTrack(
 }
 
 void PositionTrack::AddKey(
-	const int frame,
 	const glm::vec3 &position
 	)
 {
-	m_positionKeys[frame] = position;
+	m_positionKeys.push_back(position);
 }
 
 
+const glm::vec3 &PositionTrack::GetKey(
+	int frame
+	)
+{
 
+	return m_positionKeys[frame];
+}
 
 
 

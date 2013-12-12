@@ -32,8 +32,15 @@ void SetLocalKeyTransform(
 	const glm::mat4x4 &localTransform
 	);
 
-glm::mat4x4 &GetLocalKeyTransform(
-	int key
+void AddLocalKeyTransform(
+	const glm::vec3 &position,
+	const glm::quat &rotation,
+	const glm::vec3 &scale
+	);
+
+void GetLocalKeyTransform(
+	int key,
+	glm::mat4x4 &localTransform // Matrix to hold the returned transform
 	);
 
 

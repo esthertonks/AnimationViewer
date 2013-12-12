@@ -16,8 +16,11 @@ PositionTrack(
 	);
 
 void AddKey(
-	const int frame,
 	const glm::vec3 &position
+	);
+
+const glm::vec3 &GetKey(
+	int frame
 	);
 
 

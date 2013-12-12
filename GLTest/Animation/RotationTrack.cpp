@@ -11,11 +11,18 @@ RotationTrack::RotationTrack(
 }
 
 void RotationTrack::AddKey(
-	const int frame,
 	const glm::quat &rotation
 	)
 {
-	m_rotationKeys[frame] = rotation;
+	m_rotationKeys.push_back(rotation);
+}
+
+const glm::quat &RotationTrack::GetKey(
+	int frame
+	)
+{
+
+	return m_rotationKeys[frame];
 }
 
 

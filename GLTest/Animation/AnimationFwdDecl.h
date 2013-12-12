@@ -10,6 +10,7 @@ namespace animation
 	class RotationTrack;
 	class ScaleTrack;
 	class PositionTrack;
+	class AnimationTrack;
 
 	typedef boost::shared_ptr<animation::AnimationTrack> AnimationTrackPtr;
 	typedef boost::shared_ptr<animation::PositionTrack> PositionTrackPtr;

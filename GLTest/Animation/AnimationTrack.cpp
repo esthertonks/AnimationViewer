@@ -1,7 +1,7 @@
 #include "AnimationTrack.h"
 
 #include "RotationTrack.h"
-#include "ScaleTrack .h"
+#include "ScaleTrack.h"
 #include "PositionTrack.h"
 
 namespace animation

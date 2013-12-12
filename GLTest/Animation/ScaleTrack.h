@@ -16,10 +16,12 @@ ScaleTrack(
 	);
 
 void AddKey(
-	const int frame,
 	const glm::vec3 &scale
 	);
 
+const glm::vec3 &GetKey(
+	int frame
+	);
 
 private:
 

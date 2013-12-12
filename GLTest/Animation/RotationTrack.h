@@ -16,8 +16,11 @@ RotationTrack(
 	);
 
 void AddKey(
-	const int frame,
 	const glm::quat &rotation
+	);
+
+const glm::quat &GetKey(
+	int frame
 	);
 
 

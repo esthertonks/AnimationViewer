@@ -11,11 +11,18 @@ ScaleTrack::ScaleTrack(
 }
 
 void ScaleTrack::AddKey(
-	const int frame,
 	const glm::vec3 &scale
 	)
 {
-	m_scaleKeys[frame] = scale;
+	m_scaleKeys.push_back(scale);
+}
+
+const glm::vec3 &ScaleTrack::GetKey(
+	int frame
+	)
+{
+
+	return m_scaleKeys[frame];
 }
 
 }

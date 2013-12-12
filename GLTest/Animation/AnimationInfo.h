@@ -66,7 +66,7 @@ public :
 		double milliseconds
 		)
 	{
-		return milliseconds * fps;
+		return milliseconds * m_fps;
 	}
 
 private:

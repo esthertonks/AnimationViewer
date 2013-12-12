@@ -29,6 +29,9 @@
     <Filter Include="GUI">
       <UniqueIdentifier>{a0a5dc1b-3f5b-4dde-9696-61abfc354208}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{8d3b13a8-4a4e-41c8-89f1-8d9cd4434aa5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Import\FBXImport.cpp">
@@ -83,9 +86,6 @@
     <ClCompile Include="Render\ShaderManager.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="Render\GLUtils.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
     <ClCompile Include="Animation\AnimationTrack.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
@@ -115,6 +115,15 @@
     </ClCompile>
     <ClCompile Include="Animation\AnimationInfo.cpp">
       <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\GLUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\Animator.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\MathsUtils.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,9 +188,6 @@
     <ClInclude Include="Render\ShaderManager.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="Render\GLUtils.h">
-      <Filter>Render</Filter>
-    </ClInclude>
     <ClInclude Include="Render\RenderFwdDecl.h">
       <Filter>Render</Filter>
     </ClInclude>
@@ -192,9 +198,6 @@
       <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="Animation\RotationTrack.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation\ScaleTrack .h">
       <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="Render\RenderableMesh.h">
@@ -226,6 +229,18 @@
     </ClInclude>
     <ClInclude Include="Animation\AnimationFwdDecl.h">
       <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\ScaleTrack.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\GLUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\Animator.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\MathsUtils.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

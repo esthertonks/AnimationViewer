@@ -263,11 +263,11 @@ void GLRenderCanvas::InitGL()
 		return;
 	}
 
-	GLUtils::CheckOpenGLError(__FILE__,__LINE__);
+	utils::GLUtils::CheckOpenGLError(__FILE__,__LINE__);
 
 	m_shaderManager->InitialiseShaders(); //TODO failure message when failed?
 
-	GLUtils::CheckOpenGLError(__FILE__,__LINE__);
+	utils::GLUtils::CheckOpenGLError(__FILE__,__LINE__);
 
 	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
@@ -318,7 +318,7 @@ void GLRenderCanvas::Render(
 		return;
 	}
 
-	GLUtils::CheckOpenGLError(__FILE__,__LINE__);
+	utils::GLUtils::CheckOpenGLError(__FILE__,__LINE__);
 
 	SetCurrent(*m_context);
 

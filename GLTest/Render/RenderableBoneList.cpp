@@ -6,6 +6,8 @@
 
 #include "../Render/ShaderManager.h"
 
+#include "../Animation/Animator.h"
+
 namespace render
 {
 
@@ -18,7 +20,12 @@ bool RenderableBoneList::Create(
 	mesh::MeshPtr &importMesh
 	)
 {		
+	int frameNum = 0;
+
 	mesh::Node *root = importMesh->GetNodeHierarchy();
+	animation::Animator animator;
+	animator.PrepareBoneHierarcy(root, frameNum);
+
 	AddPositionToVertexList(root);
 
 	Prepare();

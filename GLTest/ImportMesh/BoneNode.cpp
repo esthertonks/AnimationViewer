@@ -1,5 +1,9 @@
 #include "BoneNode.h"
 #include "../Animation/AnimationTrack.h"
+#include "../Animation/PositionTrack.h"
+#include "../Animation/RotationTrack.h"
+#include "../Animation/ScaleTrack.h"
+#include "../Utils/MathsUtils.h"
 
 namespace mesh
 {
@@ -29,16 +33,45 @@ void BoneNode::SetLocalKeyTransform(
 	//Tsl::Maths::CQuaternion orientation;
 	//localTransform.Decompose(&position, &scale, &orientation);
 
-	m_animationTrack->GetPositionTrack().AddKey(frameNum, position.x, position.y, position.z, 0);
-	m_animationTrack->GetScaleTrack().AddKey(frameNum, scale.x, scale.y, scale.z, 0);
-	m_animationTrack->GetOrientationTrack().AddKey(frameNum, orientation.x, orientation.y, orientation.z, orientation.w, 0);
+	// As we are using uniform scaling atm can just get the rotation and translation from the transform.
+	//glm::vec3 position;
+	//glm::vec3 scale;
+	//glm::quat rotation;
+
+	//m_animationTrack->GetPositionTrack().AddKey(frameNum, position.x, position.y, position.z, 0);
+	//m_animationTrack->GetScaleTrack().AddKey(frameNum, scale.x, scale.y, scale.z, 0);
+	//m_animationTrack->GetOrientationTrack().AddKey(frameNum, orientation.x, orientation.y, orientation.z, orientation.w, 0);
 };
 
-glm::mat4x4 &BoneNode::GetLocalKeyTransform(
-	int key
+void BoneNode::AddLocalKeyTransform(
+	const glm::vec3 &position,
+	const glm::quat &rotation,
+	const glm::vec3 &scale
 	)
 {
-	return m_localTransform;
+	m_animationTrack->GetPositionTrack()->AddKey(position);
+	m_animationTrack->GetScaleTrack()->AddKey(scale);
+	m_animationTrack->GetRotationTrack()->AddKey(rotation);
+};
+
+void BoneNode::GetLocalKeyTransform(
+	int key,
+	glm::mat4x4 &localTransform
+	)
+{
+	glm::vec3& position = m_animationTrack->GetPositionTrack()->GetKey(key);
+	glm::quat& rotationQuat = m_animationTrack->GetRotationTrack()->GetKey(key);
+	glm::vec3& scale = m_animationTrack->GetScaleTrack()->GetKey(key);
+
+	//m_animationTrack.m_position.Eval(frameNum, localTranslation);
+	//m_animationTrack.m_orientation.Eval(frameNum, localOrientation);
+	//m_animationTrack.m_scale.Eval(frameNum, localScale);
+
+	glm::mat4x4 rotationMatrix(glm::mat4_cast(rotationQuat));
+
+	utils::MathsUtils::TranslateRotateScale(position, rotationMatrix, scale, localTransform);
+
+	return;
 };
 
 

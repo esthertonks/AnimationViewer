@@ -2,7 +2,7 @@
 
 #include "RenderFwdDecl.h"
 
-namespace utils
+namespace render
 {
 
 class GLUtils
@@ -15,6 +15,11 @@ static bool CheckOpenGLError(
 	);
 
 static void DebugPrintGLInfo();
+
+static void ConvertFBXToGLMatrix(
+	const FbxAMatrix &fbxMatrix,
+	glm::mat4x4 &glmMatrix
+	);
 
 };
 

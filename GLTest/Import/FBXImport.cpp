@@ -6,7 +6,7 @@
 #include "../ImportMesh/Vertex.h"
 #include "../Batch/LambertAppearance.h"
 #include "../Batch/PhongAppearance.h"
-#include "../Render/GLUtils.h"
+#include "../Utils/MathsUtils.h"
 
 #include <assert.h>
 
@@ -288,7 +288,7 @@ mesh::Node *FBXImport::LoadBoneNode(
 	// Store the initial global pose values. The rest will be calulated from the local transforms //TODO do we even need to load the global transforms at all?
 	const FbxAMatrix fbxGlobalTransform = fbxNode.EvaluateGlobalTransform(0, FbxNode::eDestinationPivot);
 	glm::mat4x4 globalTransform;
-	render::GLUtils::ConvertFBXToGLMatrix(fbxGlobalTransform, globalTransform);
+	utils::MathsUtils::ConvertFBXToGLMatrix(fbxGlobalTransform, globalTransform);
 	boneNode->SetGlobalTransform(globalTransform);
 
 	animation::AnimationInfo &animationInfo = m_mesh->GetAnimationInfo();
@@ -296,16 +296,32 @@ mesh::Node *FBXImport::LoadBoneNode(
 	FbxTime currentTime;
 	int numFrames = animationInfo.GetNumFrames();
 	double frameRate = animationInfo.GetFrameRate();
+
+	if(numFrames)
+	{
+		boneNode->AllocateAnimationTrack(numFrames);
+	}
+
 	for(int frame = 0; frame <= numFrames; frame++)
 	{
 		currentTime.SetMilliSeconds(animationInfo.ConvertFrameToMilliseconds(frame));
 
 		const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(currentTime, FbxNode::eDestinationPivot);
 
-		glm::mat4x4 localTransform;
-		render::GLUtils::ConvertFBXToGLMatrix(fbxLocalTransform, localTransform);
+		FbxVector4& fbxScale = fbxLocalTransform.GetS();
+		FbxVector4& fbxPosition = fbxLocalTransform.GetT();
+		FbxQuaternion& fbxRotation = fbxLocalTransform.GetQ();
 
-		boneNode->SetLocalKeyTransform(frame, localTransform);
+		glm::vec3 scale(fbxScale[0], fbxScale[1], fbxScale[2]);
+		glm::vec3 position(fbxPosition[0], fbxPosition[1], fbxPosition[2]);
+		glm::quat rotation(fbxRotation[0], fbxRotation[1], fbxRotation[2], fbxRotation[3]);
+
+		boneNode->AddLocalKeyTransform(position, rotation, scale);
+
+		//glm::mat4x4 localTransform;
+		//render::GLUtils::ConvertFBXToGLMatrix(fbxLocalTransform, localTransform);
+
+		//boneNode->SetLocalKeyTransform(frame, localTransform);
 	}
 
 	// Record node scale inheritance //TODO scale inheritance
