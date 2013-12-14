@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm\glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <fbxsdk.h> //TODO global header file?
 
 namespace utils
@@ -11,9 +12,9 @@ class MathsUtils
 public:
 
 static void TranslateRotateScale(
-	glm::vec3 &position, 
-	glm::mat4x4 &rotation,
-	glm::vec3 &scale,
+	const glm::vec3 &position, 
+	const glm::mat4x4 &rotation,
+	const glm::vec3 &scale,
 	glm::mat4x4 &result
 	);
 

@@ -18,9 +18,9 @@ namespace utils
 	M = T * R * S
 */
 void MathsUtils::TranslateRotateScale(
-	glm::vec3 &position, 
-	glm::mat4x4 &rotation,
-	glm::vec3 &scale,
+	const glm::vec3 &position, 
+	const glm::mat4x4 &rotation,
+	const glm::vec3 &scale,
 	glm::mat4x4 &result
 	)
 {

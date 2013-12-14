@@ -20,7 +20,7 @@ public :
 		m_fps = fps;
 	}
 
-	void SetNumFrames(float numFrames)
+	void SetNumFrames(int numFrames)
 	{
 		m_numFrames = numFrames;
 	}
@@ -66,7 +66,7 @@ public :
 		double milliseconds
 		)
 	{
-		return milliseconds * m_fps;
+		return floor(milliseconds * m_fps);
 	}
 
 private:

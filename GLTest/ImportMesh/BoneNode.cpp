@@ -56,20 +56,16 @@ void BoneNode::AddLocalKeyTransform(
 
 void BoneNode::GetLocalKeyTransform(
 	int key,
-	glm::mat4x4 &localTransform
+	glm::vec3& position,
+	glm::quat& rotationQuat,
+	glm::vec3& scale
 	)
 {
-	glm::vec3& position = m_animationTrack->GetPositionTrack()->GetKey(key);
-	glm::quat& rotationQuat = m_animationTrack->GetRotationTrack()->GetKey(key);
-	glm::vec3& scale = m_animationTrack->GetScaleTrack()->GetKey(key);
+	position = m_animationTrack->GetPositionTrack()->GetKey(key);
+	rotationQuat = m_animationTrack->GetRotationTrack()->GetKey(key);
+	scale = m_animationTrack->GetScaleTrack()->GetKey(key);
 
-	//m_animationTrack.m_position.Eval(frameNum, localTranslation);
-	//m_animationTrack.m_orientation.Eval(frameNum, localOrientation);
-	//m_animationTrack.m_scale.Eval(frameNum, localScale);
-
-	glm::mat4x4 rotationMatrix(glm::mat4_cast(rotationQuat));
-
-	utils::MathsUtils::TranslateRotateScale(position, rotationMatrix, scale, localTransform);
+	//utils::MathsUtils::TranslateRotateScale(position, rotationMatrix, scale, localTransform);
 
 	return;
 };

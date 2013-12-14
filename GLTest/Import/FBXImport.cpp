@@ -137,9 +137,7 @@ bool FBXImport::LoadNodes(
 			break;
 		case FbxNodeAttribute::eSkeleton:
 			newNode = LoadBoneNode(fbxNode, parent);
-
 			break;
-
 		default:
 			FBXSDK_printf("Node %s type is %d. Only node of type eMesh (4) or eSkeleton (3) can be loaded\n", fbxNode.GetName(), fbxAttributeType);
 
@@ -289,7 +287,14 @@ mesh::Node *FBXImport::LoadBoneNode(
 	const FbxAMatrix fbxGlobalTransform = fbxNode.EvaluateGlobalTransform(0, FbxNode::eDestinationPivot);
 	glm::mat4x4 globalTransform;
 	utils::MathsUtils::ConvertFBXToGLMatrix(fbxGlobalTransform, globalTransform);
-	boneNode->SetGlobalTransform(globalTransform);
+	boneNode->m_globalTransform = globalTransform;
+
+	//TODO temp to debug
+	glm::mat4x4 localTransform;
+	const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(0, FbxNode::eDestinationPivot);
+	utils::MathsUtils::ConvertFBXToGLMatrix(fbxLocalTransform, localTransform);
+
+	boneNode->m_localTransform = localTransform;
 
 	animation::AnimationInfo &animationInfo = m_mesh->GetAnimationInfo();
 	// Load in the local keys transoforms for each key
@@ -308,43 +313,40 @@ mesh::Node *FBXImport::LoadBoneNode(
 
 		const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(currentTime, FbxNode::eDestinationPivot);
 
-		FbxVector4& fbxScale = fbxLocalTransform.GetS();
-		FbxVector4& fbxPosition = fbxLocalTransform.GetT();
-		FbxQuaternion& fbxRotation = fbxLocalTransform.GetQ();
+		FbxVector4 fbxScale = fbxLocalTransform.GetS();
+		FbxVector4 fbxPosition = fbxLocalTransform.GetT();
+		FbxQuaternion fbxRotation = fbxLocalTransform.GetQ();
 
 		glm::vec3 scale(fbxScale[0], fbxScale[1], fbxScale[2]);
 		glm::vec3 position(fbxPosition[0], fbxPosition[1], fbxPosition[2]);
-		glm::quat rotation(fbxRotation[0], fbxRotation[1], fbxRotation[2], fbxRotation[3]);
+
+		// glm quat constructor expects w, x, y, z. FBX is x, y, z, w. glm nontheless stores x, y, z, w internally
+		glm::quat rotation(fbxRotation[3], fbxRotation[0], fbxRotation[1], fbxRotation[2]);
 
 		boneNode->AddLocalKeyTransform(position, rotation, scale);
-
-		//glm::mat4x4 localTransform;
-		//render::GLUtils::ConvertFBXToGLMatrix(fbxLocalTransform, localTransform);
-
-		//boneNode->SetLocalKeyTransform(frame, localTransform);
 	}
 
 	// Record node scale inheritance //TODO scale inheritance
-	//if (parent)
-	//{
-	//	FbxEnum inheritType = fbxNode.InheritType.Get();
-	//	switch(inheritType)
-	//	{
-	//	case FbxTransform::eInheritRrs:
-	//		boneNode.m_inheritScale = false;
-	//		break;
-	//	case FbxTransform::eInheritRrSs:
-	//		FBXSDK_printf("Unsupported scale type used");
-	//		break;
-	//	case FbxTransform::eInheritRSrs:
-	//		boneNode.m_inheritScale = true;
-	//		break;
-	//	}
-	//}
-	//else
-	//{
-	//	boneNode.m_inheritScale = false;// No parent, cant inherit scale
-	//}
+	if (parent)
+	{
+		FbxEnum inheritType = fbxNode.InheritType.Get();
+		switch(inheritType)
+		{
+		case FbxTransform::eInheritRrs:
+			boneNode->SetInheritScale(false);
+			break;
+		case FbxTransform::eInheritRrSs:
+			FBXSDK_printf("Unsupported scale type used");
+			break;
+		case FbxTransform::eInheritRSrs:
+			boneNode->SetInheritScale(true);
+			break;
+		}
+	}
+	else
+	{
+		boneNode->SetInheritScale(false);// No parent, cant inherit scale
+	}
 
 	return boneNode;
 }

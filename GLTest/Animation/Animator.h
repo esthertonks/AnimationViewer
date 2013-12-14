@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <glm/glm.hpp>
 /*
 	Information about an animation.
 */
@@ -21,8 +22,15 @@ public :
 	~Animator(){};
 
 void PrepareBoneHierarcy(
-	mesh::Node* rootBoneNode,
-	int frame
+	mesh::Node *node,
+	const int frame
+	);
+
+void PrepareBoneHierarcy(
+	mesh::Node* node,
+	const int frame,
+	const glm::mat4x4 &parentGlobalScaleMatrix,
+	const glm::mat4x4 &parentGlobalRotationMatrix
 	);
 
 void Interpolate(){};

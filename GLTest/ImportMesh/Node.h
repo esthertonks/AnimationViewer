@@ -4,6 +4,12 @@
 #include <string>
 #include <glm/glm.hpp>
 
+namespace import
+{
+	class FBXImport;
+}
+
+
 namespace mesh
 {
 
@@ -41,12 +47,19 @@ void SetGlobalTransform(
 	m_globalTransform = globalTransform;			
 };
 
-const glm::mat4x4 &GetGlobalTransform()
+const glm::mat4x4 &GetGlobalTransform() const
+{
+	return m_globalTransform;
+};
+
+glm::mat4x4 &GetGlobalTransform()
 {
 	return m_globalTransform;
 };
 
 private:
+	friend class import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
+
 	std::string m_name;
 
 	glm::mat4x4 m_globalTransform;		// Transform from this node to the global model transform

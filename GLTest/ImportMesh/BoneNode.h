@@ -8,6 +8,11 @@ namespace animation
 	class AnimationTrack;
 }
 
+namespace import
+{
+	class FBXImport;
+}
+
 namespace mesh
 {
 
@@ -40,13 +45,27 @@ void AddLocalKeyTransform(
 
 void GetLocalKeyTransform(
 	int key,
-	glm::mat4x4 &localTransform // Matrix to hold the returned transform
+	glm::vec3& position,
+	glm::quat& rotationQuat,
+	glm::vec3& scale
 	);
 
+void SetInheritScale(
+	bool inheritScale // When true this node inherits scale from it's parent (FbxTransform::eInheritRSrs). When false scale is not inherited (eInheritRrs)
+)
+{
+	m_inheritScale = inheritScale;
+}
+
+bool InheritsScale()
+{
+	return m_inheritScale;
+}
 
 private:
-	bool m_inheritScale;
-	//glm::mat4x4 m_localTransform;		//Transform from this node to the parent node
+	friend class import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
+	bool m_inheritScale; // When true this node inherits scale from it's parent (FbxTransform::eInheritRSrs). When false scale is not inherited (eInheritRrs)
+	glm::mat4x4 m_localTransform;		//Transform from this node to the parent node //TEMP to debug - we will get this from the keys
 	animation::AnimationTrackPtr m_animationTrack; // Local animation transforms per keyframe
 };
 

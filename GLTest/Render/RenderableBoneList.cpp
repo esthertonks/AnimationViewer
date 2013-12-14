@@ -20,7 +20,7 @@ bool RenderableBoneList::Create(
 	mesh::MeshPtr &importMesh
 	)
 {		
-	int frameNum = 0;
+	int frameNum = 1;
 
 	mesh::Node *root = importMesh->GetNodeHierarchy();
 	animation::Animator animator;
@@ -33,6 +33,7 @@ bool RenderableBoneList::Create(
 	return true;
 }
 
+static float col = 0.0f;
 void RenderableBoneList::AddPositionToVertexList(
 	mesh::Node *node
 	)
@@ -53,7 +54,7 @@ void RenderableBoneList::AddPositionToVertexList(
 			parentVertex.m_position.x = parentGlobalTransform[3][0];
 			parentVertex.m_position.y = parentGlobalTransform[3][1];
 			parentVertex.m_position.z = parentGlobalTransform[3][2];
-			parentVertex.m_colour = glm::vec3(1.0, 0.0, 0.0);
+			parentVertex.m_colour = glm::vec3(col, 0.0, 0.0);
 
 			m_vertexArray.push_back(parentVertex);
 
@@ -64,7 +65,8 @@ void RenderableBoneList::AddPositionToVertexList(
 			vertex.m_position.x = globalTransform[3][0];
 			vertex.m_position.y = globalTransform[3][1];
 			vertex.m_position.z = globalTransform[3][2];
-			vertex.m_colour = glm::vec3(1.0, 0.0, 0.0);
+			vertex.m_colour = glm::vec3(col, 0.0, 0.0);
+			col += 0.02f;
 
 			m_vertexArray.push_back(vertex);
 		}
