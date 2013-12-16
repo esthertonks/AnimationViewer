@@ -85,11 +85,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animation\AnimationInfo.cpp" />
-    <ClCompile Include="Animation\AnimationTrack.cpp" />
     <ClCompile Include="Animation\Animator.cpp" />
-    <ClCompile Include="Animation\PositionTrack.cpp" />
-    <ClCompile Include="Animation\RotationTrack.cpp" />
-    <ClCompile Include="Animation\ScaleTrack.cpp" />
+    <ClCompile Include="Animation\Track.cpp" />
+    <ClCompile Include="Animation\VectorTrack.cpp" />
+    <ClCompile Include="Animation\QuaternionTrack.cpp" />
     <ClCompile Include="Batch\Appearance.cpp" />
     <ClCompile Include="Batch\Batch.cpp" />
     <ClCompile Include="Batch\BatchList.cpp" />
@@ -120,11 +119,13 @@
     <ClInclude Include="AnimationApp.h" />
     <ClInclude Include="Animation\AnimationFwdDecl.h" />
     <ClInclude Include="Animation\AnimationInfo.h" />
-    <ClInclude Include="Animation\AnimationTrack.h" />
     <ClInclude Include="Animation\Animator.h" />
-    <ClInclude Include="Animation\PositionTrack.h" />
-    <ClInclude Include="Animation\RotationTrack.h" />
-    <ClInclude Include="Animation\ScaleTrack.h" />
+    <ClInclude Include="Animation\Key.h" />
+    <ClInclude Include="Animation\QuaternionKey.h" />
+    <ClInclude Include="Animation\Track.h" />
+    <ClInclude Include="Animation\VectorKey.h" />
+    <ClInclude Include="Animation\VectorTrack.h" />
+    <ClInclude Include="Animation\QuaternionTrack.h" />
     <ClInclude Include="Batch\Appearance.h" />
     <ClInclude Include="Batch\Batch.h" />
     <ClInclude Include="Batch\BatchFwdDecl.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="Render\RenderFwdDecl.h" />
     <ClInclude Include="Render\ShaderManager.h" />
     <ClInclude Include="Render\Window.h" />
+    <ClInclude Include="Utils\AnimationUtils.h" />
     <ClInclude Include="Utils\MathsUtils.h" />
   </ItemGroup>
   <ItemGroup>

@@ -7,16 +7,17 @@
 
 namespace animation
 {
-	class RotationTrack;
-	class ScaleTrack;
-	class PositionTrack;
-	class AnimationTrack;
+	class Key;
+	class VectorKey;
+	class QuaternionKey;
 
-	typedef boost::shared_ptr<animation::AnimationTrack> AnimationTrackPtr;
-	typedef boost::shared_ptr<animation::PositionTrack> PositionTrackPtr;
-	typedef boost::shared_ptr<animation::RotationTrack> RotationTrackPtr;
-	typedef boost::shared_ptr<animation::ScaleTrack> ScaleTrackPtr;
+	class Track;
+	class VectorTrack;
+	class QuaternionTrack;
 
-	typedef std::vector<glm::vec3> Vector3Array;
-	typedef std::vector<glm::quat> QuaternionArray;
+	typedef boost::shared_ptr<animation::Track> TrackPtr;
+	typedef boost::shared_ptr<animation::VectorTrack> VectorTrackPtr;
+	typedef boost::shared_ptr<animation::QuaternionTrack> QuaternionTrackPtr;
+
+	typedef std::vector<boost::shared_ptr<Key>> KeyArray;
 }

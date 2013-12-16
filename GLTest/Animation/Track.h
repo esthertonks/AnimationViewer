@@ -1,32 +1,32 @@
 #pragma once
 
 #include "AnimationFwdDecl.h"
+
 /*
-	PositionTrack class
+	Track base class
 */
 namespace animation
 {
 
-class PositionTrack
+class Track
 {
-public :
+public:
 
-PositionTrack(
+Track(
 	const int numFrames
 	);
 
 void AddKey(
-	const glm::vec3 &position
+	const boost::shared_ptr<Key>key
 	);
 
-const glm::vec3 &GetKey(
+const boost::shared_ptr<Key> GetKey(
 	int frame
 	);
 
-
 private:
 
-	Vector3Array m_positionKeys;
+	KeyArray m_keys;
 };
 
 }

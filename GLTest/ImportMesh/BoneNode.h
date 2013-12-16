@@ -28,9 +28,24 @@ virtual NodeType GetType()
 	return BoneType;
 }
 
-void AllocateAnimationTrack(
+void AllocateAnimationTracks(
 	int numFrames
 	);
+
+const animation::TrackPtr GetPositionTrack()
+{
+	return m_positionTrack;
+}
+
+const animation::TrackPtr GetScaleTrack()
+{
+	return m_scaleTrack;
+}
+
+const animation::TrackPtr GetRotationTrack()
+{
+	return m_rotationTrack;
+}
 
 void SetLocalKeyTransform(
 	int key,
@@ -38,17 +53,18 @@ void SetLocalKeyTransform(
 	);
 
 void AddLocalKeyTransform(
-	const glm::vec3 &position,
-	const glm::quat &rotation,
-	const glm::vec3 &scale
+	const long time,
+	const boost::shared_ptr<animation::VectorKey> position,
+	const boost::shared_ptr<animation::QuaternionKey> rotation,
+	const boost::shared_ptr<animation::VectorKey> scale
 	);
 
-void GetLocalKeyTransform(
-	int key,
-	glm::vec3& position,
-	glm::quat& rotationQuat,
-	glm::vec3& scale
-	);
+//void GetLocalKeyTransform(
+//	int key,
+//	glm::vec3& position,
+//	glm::quat& rotationQuat,
+//	glm::vec3& scale
+//	);
 
 void SetInheritScale(
 	bool inheritScale // When true this node inherits scale from it's parent (FbxTransform::eInheritRSrs). When false scale is not inherited (eInheritRrs)
@@ -66,7 +82,9 @@ private:
 	friend class import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
 	bool m_inheritScale; // When true this node inherits scale from it's parent (FbxTransform::eInheritRSrs). When false scale is not inherited (eInheritRrs)
 	glm::mat4x4 m_localTransform;		//Transform from this node to the parent node //TEMP to debug - we will get this from the keys
-	animation::AnimationTrackPtr m_animationTrack; // Local animation transforms per keyframe
+	animation::TrackPtr m_rotationTrack;
+	animation::TrackPtr m_scaleTrack;
+	animation::TrackPtr m_positionTrack;
 };
 
 }

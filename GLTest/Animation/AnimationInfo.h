@@ -55,20 +55,6 @@ public :
 		return m_name;
 	}
 
-	double ConvertFrameToMilliseconds(
-		int frame
-		)
-	{
-		return floor(frame * m_fps) * 1000;
-	}
-
-	int ConvertMillisecondsToFrame(
-		double milliseconds
-		)
-	{
-		return floor(milliseconds * m_fps);
-	}
-
 private:
 	double m_fps;
 	int m_numFrames;

@@ -7,6 +7,9 @@
 #include "../Batch/LambertAppearance.h"
 #include "../Batch/PhongAppearance.h"
 #include "../Utils/MathsUtils.h"
+#include "../Utils/AnimationUtils.h"
+#include "../Animation/VectorKey.h"
+#include "../Animation/QuaternionKey.h"
 
 #include <assert.h>
 
@@ -304,12 +307,12 @@ mesh::Node *FBXImport::LoadBoneNode(
 
 	if(numFrames)
 	{
-		boneNode->AllocateAnimationTrack(numFrames);
+		boneNode->AllocateAnimationTracks(numFrames);
 	}
 
 	for(int frame = 0; frame <= numFrames; frame++)
 	{
-		currentTime.SetMilliSeconds(animationInfo.ConvertFrameToMilliseconds(frame));
+		currentTime.SetMilliSeconds(utils::AnimationUtils::ConvertFrameToMilliseconds(frame, frameRate));
 
 		const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(currentTime, FbxNode::eDestinationPivot);
 
@@ -317,13 +320,13 @@ mesh::Node *FBXImport::LoadBoneNode(
 		FbxVector4 fbxPosition = fbxLocalTransform.GetT();
 		FbxQuaternion fbxRotation = fbxLocalTransform.GetQ();
 
-		glm::vec3 scale(fbxScale[0], fbxScale[1], fbxScale[2]);
-		glm::vec3 position(fbxPosition[0], fbxPosition[1], fbxPosition[2]);
+		boost::shared_ptr<animation::VectorKey> scale(new animation::VectorKey(glm::vec3(fbxScale[0], fbxScale[1], fbxScale[2])));
+		boost::shared_ptr<animation::VectorKey> position(new animation::VectorKey(glm::vec3(fbxPosition[0], fbxPosition[1], fbxPosition[2])));
 
 		// glm quat constructor expects w, x, y, z. FBX is x, y, z, w. glm nontheless stores x, y, z, w internally
-		glm::quat rotation(fbxRotation[3], fbxRotation[0], fbxRotation[1], fbxRotation[2]);
+		boost::shared_ptr<animation::QuaternionKey> rotation(new animation::QuaternionKey(glm::quat(fbxRotation[3], fbxRotation[0], fbxRotation[1], fbxRotation[2])));
 
-		boneNode->AddLocalKeyTransform(position, rotation, scale);
+		boneNode->AddLocalKeyTransform(currentTime.GetMilliSeconds(), position, rotation, scale);
 	}
 
 	// Record node scale inheritance //TODO scale inheritance

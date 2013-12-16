@@ -86,18 +86,6 @@
     <ClCompile Include="Render\ShaderManager.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="Animation\AnimationTrack.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation\PositionTrack.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation\RotationTrack.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation\ScaleTrack.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
     <ClCompile Include="Render\RenderableMesh.cpp">
       <Filter>Render</Filter>
     </ClCompile>
@@ -119,11 +107,20 @@
     <ClCompile Include="Render\GLUtils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\MathsUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\QuaternionTrack.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\VectorTrack.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
     <ClCompile Include="Animation\Animator.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Utils\MathsUtils.cpp">
-      <Filter>Utils</Filter>
+    <ClCompile Include="Animation\Track.cpp">
+      <Filter>Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -191,15 +188,6 @@
     <ClInclude Include="Render\RenderFwdDecl.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="Animation\AnimationTrack.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation\PositionTrack.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation\RotationTrack.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
     <ClInclude Include="Render\RenderableMesh.h">
       <Filter>Render</Filter>
     </ClInclude>
@@ -230,9 +218,6 @@
     <ClInclude Include="Animation\AnimationFwdDecl.h">
       <Filter>Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Animation\ScaleTrack.h">
-      <Filter>Animation</Filter>
-    </ClInclude>
     <ClInclude Include="Render\GLUtils.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -241,6 +226,27 @@
     </ClInclude>
     <ClInclude Include="Utils\MathsUtils.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\QuaternionTrack.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\VectorTrack.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\Track.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\AnimationUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\Key.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\QuaternionKey.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\VectorKey.h">
+      <Filter>Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

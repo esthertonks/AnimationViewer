@@ -1,26 +1,29 @@
 #include "BoneNode.h"
-#include "../Animation/AnimationTrack.h"
-#include "../Animation/PositionTrack.h"
-#include "../Animation/RotationTrack.h"
-#include "../Animation/ScaleTrack.h"
+#include "../Animation/VectorTrack.h"
+#include "../Animation/QuaternionTrack.h"
 #include "../Utils/MathsUtils.h"
+#include "../Animation/Key.h"
 
 namespace mesh
 {
 
 BoneNode::BoneNode()
 	: m_inheritScale(false),
-	m_animationTrack(NULL)
+	m_rotationTrack(NULL),
+	m_positionTrack(NULL),
+	m_scaleTrack(NULL)
 {
 
 };
 
 // Allocate memory for an animation track. Currently only one animation track is supported.
-void BoneNode::AllocateAnimationTrack(
+void BoneNode::AllocateAnimationTracks(
 	int numFrames
 	)
 {
-	m_animationTrack = animation::AnimationTrackPtr(new animation::AnimationTrack(numFrames));
+	m_rotationTrack = animation::TrackPtr(new animation::Track(numFrames));
+	m_scaleTrack = animation::TrackPtr(new animation::Track(numFrames));
+	m_positionTrack = animation::TrackPtr(new animation::Track(numFrames));
 }
 
 void BoneNode::SetLocalKeyTransform(
@@ -44,31 +47,32 @@ void BoneNode::SetLocalKeyTransform(
 };
 
 void BoneNode::AddLocalKeyTransform(
-	const glm::vec3 &position,
-	const glm::quat &rotation,
-	const glm::vec3 &scale
+	const long time,
+	const boost::shared_ptr<animation::VectorKey> position,
+	const boost::shared_ptr<animation::QuaternionKey> rotation,
+	const boost::shared_ptr<animation::VectorKey> scale
 	)
 {
-	m_animationTrack->GetPositionTrack()->AddKey(position);
-	m_animationTrack->GetScaleTrack()->AddKey(scale);
-	m_animationTrack->GetRotationTrack()->AddKey(rotation);
+	m_positionTrack->AddKey(boost::static_pointer_cast<animation::Key>(position));
+	m_scaleTrack->AddKey(boost::static_pointer_cast<animation::Key>(scale));
+	m_rotationTrack->AddKey(boost::static_pointer_cast<animation::Key>(rotation));
 };
-
-void BoneNode::GetLocalKeyTransform(
-	int key,
-	glm::vec3& position,
-	glm::quat& rotationQuat,
-	glm::vec3& scale
-	)
-{
-	position = m_animationTrack->GetPositionTrack()->GetKey(key);
-	rotationQuat = m_animationTrack->GetRotationTrack()->GetKey(key);
-	scale = m_animationTrack->GetScaleTrack()->GetKey(key);
-
-	//utils::MathsUtils::TranslateRotateScale(position, rotationMatrix, scale, localTransform);
-
-	return;
-};
+//
+//void BoneNode::GetLocalKeyTransform(
+//	int key,
+//	glm::vec3& position,
+//	glm::quat& rotationQuat,
+//	glm::vec3& scale
+//	)
+//{
+//	position = m_positionTrack->GetKey(key);
+//	rotationQuat = m_rotationTrack->GetKey(key);
+//	scale = m_scaleTrack->GetKey(key);
+//
+//	//utils::MathsUtils::TranslateRotateScale(position, rotationMatrix, scale, localTransform);
+//
+//	return;
+//};
 
 
 BoneNode::~BoneNode()
