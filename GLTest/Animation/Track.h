@@ -1,6 +1,11 @@
 #pragma once
 
-#include "AnimationFwdDecl.h"
+#include "Key.h"
+#include <vector>
+#include "boost/shared_ptr.hpp"
+
+//#include "AnimationFwdDecl.h"
+typedef std::vector<boost::shared_ptr<animation::Key>> KeyArray;
 
 /*
 	Track base class
@@ -17,12 +22,23 @@ Track(
 	);
 
 void AddKey(
-	const boost::shared_ptr<Key>key
+	boost::shared_ptr<Key>key
 	);
 
 const boost::shared_ptr<Key> GetKey(
 	int frame
 	);
+
+const KeyArray GetKeys() const
+{
+	return m_keys;
+}
+
+const int GetNumKeys() const
+{
+	return m_keys.size();
+
+}
 
 private:
 

@@ -1,7 +1,10 @@
 #pragma once
 
 #include "Node.h"
-#include "../Animation/AnimationFwdDecl.h"
+#include "../Animation/Track.h"
+#include "../Animation/VectorKey.h"
+#include "../Animation/QuaternionKey.h"
+//#include "../Animation/AnimationFwdDecl.h"
 
 namespace animation
 {
@@ -32,17 +35,17 @@ void AllocateAnimationTracks(
 	int numFrames
 	);
 
-const animation::TrackPtr GetPositionTrack()
+const boost::shared_ptr<animation::Track> GetPositionTrack()
 {
 	return m_positionTrack;
 }
 
-const animation::TrackPtr GetScaleTrack()
+const boost::shared_ptr<animation::Track> GetScaleTrack()
 {
 	return m_scaleTrack;
 }
 
-const animation::TrackPtr GetRotationTrack()
+const boost::shared_ptr<animation::Track> GetRotationTrack()
 {
 	return m_rotationTrack;
 }
@@ -53,10 +56,9 @@ void SetLocalKeyTransform(
 	);
 
 void AddLocalKeyTransform(
-	const long time,
-	const boost::shared_ptr<animation::VectorKey> position,
-	const boost::shared_ptr<animation::QuaternionKey> rotation,
-	const boost::shared_ptr<animation::VectorKey> scale
+	boost::shared_ptr<animation::VectorKey> position,
+	boost::shared_ptr<animation::QuaternionKey> rotation,
+	boost::shared_ptr<animation::VectorKey> scale
 	);
 
 //void GetLocalKeyTransform(
@@ -82,9 +84,9 @@ private:
 	friend class import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
 	bool m_inheritScale; // When true this node inherits scale from it's parent (FbxTransform::eInheritRSrs). When false scale is not inherited (eInheritRrs)
 	glm::mat4x4 m_localTransform;		//Transform from this node to the parent node //TEMP to debug - we will get this from the keys
-	animation::TrackPtr m_rotationTrack;
-	animation::TrackPtr m_scaleTrack;
-	animation::TrackPtr m_positionTrack;
+	boost::shared_ptr<animation::Track> m_rotationTrack;
+	boost::shared_ptr<animation::Track> m_scaleTrack;
+	boost::shared_ptr<animation::Track> m_positionTrack;
 };
 
 }

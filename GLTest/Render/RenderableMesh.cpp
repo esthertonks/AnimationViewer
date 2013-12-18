@@ -27,6 +27,30 @@ bool RenderableMesh::Create(
 	return true;
 }
 
+void RenderableMesh::Animate(
+	long globalStartTime,
+	animation::AnimationInfo *animationInfo
+	)
+{
+	//m_animator = boost::shared_ptr<animation::Animator>(new animation::Animator());
+	//m_animator = boost::shared_ptr<animation::Animator>(new animation::Animator());
+	//m_animator->StartAnimation(0, fps);
+}
+
+bool  RenderableMesh::Update(
+	long time
+	)
+{		
+	//mesh::Node *root = m_mesh->GetNodeHierarchy();
+	//m_animator->PrepareBoneHierarcy(root, time, fps);
+
+	//AddPositionToVertexList(root);
+
+	//Prepare();
+
+	return true;
+}
+
 void RenderableMesh::Rotate(
 	const float rotAroundY,
 	const float rotAroundX

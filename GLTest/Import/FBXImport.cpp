@@ -7,7 +7,6 @@
 #include "../Batch/LambertAppearance.h"
 #include "../Batch/PhongAppearance.h"
 #include "../Utils/MathsUtils.h"
-#include "../Utils/AnimationUtils.h"
 #include "../Animation/VectorKey.h"
 #include "../Animation/QuaternionKey.h"
 
@@ -303,7 +302,7 @@ mesh::Node *FBXImport::LoadBoneNode(
 	// Load in the local keys transoforms for each key
 	FbxTime currentTime;
 	int numFrames = animationInfo.GetNumFrames();
-	double frameRate = animationInfo.GetFrameRate();
+	double frameRate = animationInfo.GetFPS();
 
 	if(numFrames)
 	{
@@ -312,7 +311,8 @@ mesh::Node *FBXImport::LoadBoneNode(
 
 	for(int frame = 0; frame <= numFrames; frame++)
 	{
-		currentTime.SetMilliSeconds(utils::AnimationUtils::ConvertFrameToMilliseconds(frame, frameRate));
+		long time = animationInfo.ConvertFrameToMilliseconds(frame);
+		currentTime.SetMilliSeconds(time);
 
 		const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(currentTime, FbxNode::eDestinationPivot);
 
@@ -320,13 +320,13 @@ mesh::Node *FBXImport::LoadBoneNode(
 		FbxVector4 fbxPosition = fbxLocalTransform.GetT();
 		FbxQuaternion fbxRotation = fbxLocalTransform.GetQ();
 
-		boost::shared_ptr<animation::VectorKey> scale(new animation::VectorKey(glm::vec3(fbxScale[0], fbxScale[1], fbxScale[2])));
-		boost::shared_ptr<animation::VectorKey> position(new animation::VectorKey(glm::vec3(fbxPosition[0], fbxPosition[1], fbxPosition[2])));
+		boost::shared_ptr<animation::VectorKey> scale(new animation::VectorKey(fbxScale[0], fbxScale[1], fbxScale[2], time));
+		boost::shared_ptr<animation::VectorKey> position(new animation::VectorKey(fbxPosition[0], fbxPosition[1], fbxPosition[2], time));
 
 		// glm quat constructor expects w, x, y, z. FBX is x, y, z, w. glm nontheless stores x, y, z, w internally
-		boost::shared_ptr<animation::QuaternionKey> rotation(new animation::QuaternionKey(glm::quat(fbxRotation[3], fbxRotation[0], fbxRotation[1], fbxRotation[2])));
+		boost::shared_ptr<animation::QuaternionKey> rotation(new animation::QuaternionKey(fbxRotation[3], fbxRotation[0], fbxRotation[1], fbxRotation[2], time));
 
-		boneNode->AddLocalKeyTransform(currentTime.GetMilliSeconds(), position, rotation, scale);
+		boneNode->AddLocalKeyTransform(position, rotation, scale);
 	}
 
 	// Record node scale inheritance //TODO scale inheritance
@@ -363,6 +363,9 @@ void FBXImport::LoadAnimationLayerInfo()
 
 	const int startTime = takeInfo.mLocalTimeSpan.GetStart().GetMilliSeconds();
 	const int endTime = takeInfo.mLocalTimeSpan.GetStop().GetMilliSeconds();
+	animationInfo.SetStartTime(startTime);
+	animationInfo.SetEndTime(endTime);
+
 	FbxTime fbxStartTime(startTime);
 	FbxTime fbxEndTime(endTime);
 
@@ -374,7 +377,7 @@ void FBXImport::LoadAnimationLayerInfo()
 		frameRate = FbxTime::GetFrameRate(fbxTimeMode);
 	}
 
-	animationInfo.SetFrameRate(frameRate);
+	animationInfo.SetFPS(frameRate);
 
 	int numFrames = (endTime - startTime) / frameRate;
 	animationInfo.SetNumFrames(numFrames);

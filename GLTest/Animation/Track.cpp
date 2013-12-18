@@ -11,7 +11,7 @@ Track::Track(
 }
 
 void Track::AddKey(
-	const boost::shared_ptr<Key> key
+	boost::shared_ptr<Key> key
 	)
 {
 	m_keys.push_back(key);

@@ -8,6 +8,11 @@ namespace mesh
 	class Mesh;
 }
 
+namespace Animation
+{
+	class AnimationInfo;
+}
+
 namespace render
 {
 
@@ -32,6 +37,15 @@ public:
 	bool Create(
 		mesh::MeshPtr &importMesh
 		);
+
+	virtual void Animate(
+		long globalStartTime,
+		animation::AnimationInfo *animationInfo
+		);
+
+	virtual bool Update(
+		long globalTime
+	);
 
 	virtual void Rotate(
 		const float rotY,

@@ -10,6 +10,12 @@ namespace mesh
 	class Node;
 }
 
+namespace animation
+{
+	class Animator;
+	class AnimationInfo;
+}
+
 namespace render
 {
 
@@ -29,6 +35,15 @@ public:
 	virtual bool Create(
 		mesh::MeshPtr &importMesh
 		);
+
+	virtual void Animate(
+		long globalStartTime,
+		animation::AnimationInfo *animationInfo
+		);
+
+	virtual bool Update(
+		long globalTime
+	);
 
 	virtual void Rotate(
 		const float rotY,
@@ -51,5 +66,9 @@ private:
 	ColourVertexArrayPtr m_vertexArray;
 	GLuint m_vertexArrayHandle;
 	GLuint m_positionBufferHandle;
+	int m_numVerts;
+
+	mesh::MeshPtr m_mesh;
+	boost::shared_ptr<animation::Animator> m_animator;
 };
 }

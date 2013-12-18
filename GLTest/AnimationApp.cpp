@@ -54,17 +54,19 @@ void AnimationApp::OnIdle(
 	//Prepare Mesh - update animation
 	DWORD timeNow = timeGetTime();
 	//BatchList
-	//if(m_renderCanvas->hasEntities())
-	//{
-		float delta = 0.001f * timeNow - m_lastTime;
+	if(m_currentMeshInfo.m_renderMesh)
+	{
+		if(m_boneOverlay)
+		{
+			float delta = timeNow - m_lastTime;
 
-		float fps = 1/delta;
-
+			m_boneOverlay->Update(timeNow);
+		}
 		//m_input->Do SomethingWithCamera();
 		//m_camera->GetView();
 		//animate(delta);
-		m_renderCanvas->RenderImmediate();
-	//}
+	}
+	m_renderCanvas->RenderImmediate();
 	m_lastTime = timeNow;
 
 	evt.RequestMore(); // Request continuous rendering, rather than just once on idle
@@ -125,6 +127,9 @@ void AnimationApp::ShowBones(
 		{
 			m_renderCanvas->AddRenderable(renderable);
 			m_boneOverlay = renderable;
+			animation::AnimationInfo& animationInfo = m_currentMeshInfo.m_importMesh->GetAnimationInfo();
+			animationInfo.SetLoop(false);
+			m_boneOverlay->Animate(timeGetTime(), &animationInfo);
 		}
 		else
 		{

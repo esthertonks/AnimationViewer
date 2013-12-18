@@ -12,7 +12,9 @@ namespace render
 {
 
 RenderableBoneList::RenderableBoneList()
-	: Renderable()
+	: Renderable(),
+	m_animator(NULL),
+	m_numVerts(0)
 {
 }
 
@@ -20,14 +22,37 @@ bool RenderableBoneList::Create(
 	mesh::MeshPtr &importMesh
 	)
 {		
-	int frameNum = 1;
+	m_mesh = importMesh;
+	m_numVerts = 0;
+	return true;
+}
 
-	mesh::Node *root = importMesh->GetNodeHierarchy();
-	animation::Animator animator;
-	animator.PrepareBoneHierarcy(root, frameNum);
+//TODO animator in main class and pass in the mesh!!! render mesh is something entirely different!!!!!
+// TODO isnt this called setAnimation?
+void RenderableBoneList::Animate(
+	long globalStartTime,
+	animation::AnimationInfo *animationInfo
+	)
+{
+	m_animator = boost::shared_ptr<animation::Animator>(new animation::Animator());
+	m_animator = boost::shared_ptr<animation::Animator>(new animation::Animator());
+	m_animator->StartAnimation(globalStartTime, animationInfo);
+}
+
+bool RenderableBoneList::Update(
+	long globalTime
+	)
+{
+	if(!m_animator)
+	{
+		return false;
+	}
+	m_vertexArray.clear();
+	mesh::Node *root = m_mesh->GetNodeHierarchy();
+	m_animator->PrepareBoneHierarcy(root, globalTime);
 
 	AddPositionToVertexList(root);
-
+	m_numVerts = m_vertexArray.size(); // Keep a record of the new verts so that the draw calls can use it
 	Prepare();
 
 	return true;
@@ -40,7 +65,7 @@ void RenderableBoneList::AddPositionToVertexList(
 {
 	for(node; node != NULL; node = node->m_next)
 	{
-		if(node->GetType() != mesh::NodeType::BoneType)
+		if(node->GetType() != mesh::BoneType)
 		{
 			continue;
 		}
@@ -91,7 +116,7 @@ void RenderableBoneList::Prepare()
 	m_positionBufferHandle = vboHandles[0];
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_positionBufferHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(render::ColourVertex) * m_vertexArray.size(), &m_vertexArray[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(render::ColourVertex) * m_numVerts, &m_vertexArray[0], GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertex), (GLubyte *)0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertex), (GLubyte *)sizeof(glm::vec3));
@@ -127,8 +152,7 @@ void RenderableBoneList::Render(
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	glDisable(GL_DEPTH_TEST);
 
-	int numVertices = m_vertexArray.size();
-	if(numVertices == 0)
+	if(m_numVerts == 0)
 	{
 		return;
 	}
@@ -160,8 +184,8 @@ void RenderableBoneList::Render(
 
 		glBindVertexArray(m_vertexArrayHandle);
 
-		glDrawArrays(GL_LINES, 0, m_vertexArray.size());
-		glDrawArrays(GL_POINTS, 0, m_vertexArray.size());
+		glDrawArrays(GL_LINES, 0, m_numVerts);
+		glDrawArrays(GL_POINTS, 0, m_numVerts);
 	}
 
 	glDisable(GL_POINT_SPRITE);

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Key.h"
-#include <glm/glm.hpp>
 
 /*
 	Track base class
@@ -14,13 +13,16 @@ class VectorKey : public Key
 public :
 
 VectorKey(
-	glm::vec3 &value
-	)
+	float x, float y, float z, long time) : Key(time)
 {
-	m_value = value;
+	m_x = x;
+	m_y = y;
+	m_z = z;
 };
 
-glm::vec3 m_value;
+float m_x;
+float m_y;
+float m_z;
 };
 
 }

@@ -24,6 +24,43 @@ static void ConvertFBXToGLMatrix(
 	const FbxAMatrix &fbxMatrix,
 	glm::mat4x4 &glmMatrix
 	);
+
+static int Clamp(
+	int value,
+	int minValue,
+	int maxValue
+	)
+{
+	if(value < minValue)
+	{
+		value = minValue;
+	}
+	else if(value > maxValue)
+	{
+		value = maxValue;
+	}
+
+	return value;
+}
+
+static float Clamp(
+	float value,
+	float minValue,
+	float maxValue
+	)
+{
+	if(value < minValue)
+	{
+		value = minValue;
+	}
+	else if(value > maxValue)
+	{
+		value = maxValue;
+	}
+
+	return value;
+}
+
 };
 
 }

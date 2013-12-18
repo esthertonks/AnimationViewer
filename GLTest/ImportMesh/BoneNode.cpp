@@ -1,6 +1,5 @@
 #include "BoneNode.h"
-#include "../Animation/VectorTrack.h"
-#include "../Animation/QuaternionTrack.h"
+#include "../Animation/Track.h"
 #include "../Utils/MathsUtils.h"
 #include "../Animation/Key.h"
 
@@ -21,9 +20,9 @@ void BoneNode::AllocateAnimationTracks(
 	int numFrames
 	)
 {
-	m_rotationTrack = animation::TrackPtr(new animation::Track(numFrames));
-	m_scaleTrack = animation::TrackPtr(new animation::Track(numFrames));
-	m_positionTrack = animation::TrackPtr(new animation::Track(numFrames));
+	m_rotationTrack = boost::shared_ptr<animation::Track>(new animation::Track(numFrames));
+	m_scaleTrack = boost::shared_ptr<animation::Track>(new animation::Track(numFrames));
+	m_positionTrack = boost::shared_ptr<animation::Track>(new animation::Track(numFrames));
 }
 
 void BoneNode::SetLocalKeyTransform(
@@ -47,15 +46,19 @@ void BoneNode::SetLocalKeyTransform(
 };
 
 void BoneNode::AddLocalKeyTransform(
-	const long time,
-	const boost::shared_ptr<animation::VectorKey> position,
-	const boost::shared_ptr<animation::QuaternionKey> rotation,
-	const boost::shared_ptr<animation::VectorKey> scale
+	boost::shared_ptr<animation::VectorKey> position,
+	boost::shared_ptr<animation::QuaternionKey> rotation,
+	boost::shared_ptr<animation::VectorKey> scale
 	)
 {
-	m_positionTrack->AddKey(boost::static_pointer_cast<animation::Key>(position));
-	m_scaleTrack->AddKey(boost::static_pointer_cast<animation::Key>(scale));
-	m_rotationTrack->AddKey(boost::static_pointer_cast<animation::Key>(rotation));
+	boost::shared_ptr<animation::Key> tempPos = boost::static_pointer_cast<animation::Key>(position);
+	m_positionTrack->AddKey(tempPos);
+
+	boost::shared_ptr<animation::Key> tempScale = boost::static_pointer_cast<animation::Key>(scale);
+	m_scaleTrack->AddKey(tempScale);
+
+	boost::shared_ptr<animation::Key> tempRot = boost::static_pointer_cast<animation::Key>(rotation);
+	m_rotationTrack->AddKey(tempRot);
 };
 //
 //void BoneNode::GetLocalKeyTransform(

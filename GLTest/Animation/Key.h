@@ -1,18 +1,20 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
 /*
 	Track base class
 */
 namespace animation
 {
 
-class Key abstract
+class Key
 {
 public :
 
-Key(){};
+Key(long time){
+	m_time = time;
+};
+
+virtual ~Key(){};
 
 long m_time;
 };
