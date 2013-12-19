@@ -111,6 +111,13 @@ mesh::MeshPtr FBXImport::Import(
 	LoadAnimationLayerInfo();
 	LoadNodes(fbxRootNode, m_mesh->GetNodeHierarchy());
 
+	// Now the all the animation is loaded adjust the time to make sure that it starts at zero
+	animation::AnimationInfo &animationInfo = m_mesh->GetAnimationInfo();
+	animationInfo.SetEndTime(animationInfo.GetEndTime() - animationInfo.GetStartTime());
+	animationInfo.SetStartTime(0);
+
+	// TODO revome duplicate keys
+
 	m_fbxImporter->Destroy();
 	m_fbxScene->Destroy();
 	ioSettings->Destroy();
@@ -312,7 +319,7 @@ mesh::Node *FBXImport::LoadBoneNode(
 	for(int frame = 0; frame <= numFrames; frame++)
 	{
 		long time = animationInfo.ConvertFrameToMilliseconds(frame);
-		currentTime.SetMilliSeconds(time);
+		currentTime.SetMilliSeconds(time + animationInfo.GetStartTime()); //Make sure the animation is evaluated at the time if it set in the FBX
 
 		const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(currentTime, FbxNode::eDestinationPivot);
 
@@ -320,6 +327,7 @@ mesh::Node *FBXImport::LoadBoneNode(
 		FbxVector4 fbxPosition = fbxLocalTransform.GetT();
 		FbxQuaternion fbxRotation = fbxLocalTransform.GetQ();
 
+		// Store the keys with the adjusted time (ie the time starting at 0 regardless or where it started in the FBX file
 		boost::shared_ptr<animation::VectorKey> scale(new animation::VectorKey(fbxScale[0], fbxScale[1], fbxScale[2], time));
 		boost::shared_ptr<animation::VectorKey> position(new animation::VectorKey(fbxPosition[0], fbxPosition[1], fbxPosition[2], time));
 
