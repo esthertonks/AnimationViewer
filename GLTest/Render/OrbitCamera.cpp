@@ -22,7 +22,7 @@ OrbitCamera::OrbitCamera(
 	m_yaw(0.0f),
 	m_pitch(0.0f),
 	m_maxZoom(500.0f),
-	m_minZoom(10 - glm::length(m_position)),
+	m_minZoom(-500/*10 - glm::length(m_position)*/),
 	m_zoom(0.0f)
 {
 	RotateCamera();
