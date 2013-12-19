@@ -25,7 +25,7 @@ public:
 		return m_vertexArrayHandle;
 	}
 
-	int GetNumIndices()
+	unsigned short GetNumIndices()
 	{
 		return m_indexArray.size();
 	}
@@ -69,7 +69,7 @@ public:
 		);
 
 	void AddIndex(
-		const short vertexIndex
+		const unsigned short vertexIndex
 		);
 
 	void							AllocateVertices(
@@ -77,7 +77,7 @@ public:
 										);
 
 	void							AllocateIndices(
-										const short numIndices
+										const unsigned short numIndices
 										);
 
 	void Prepare();

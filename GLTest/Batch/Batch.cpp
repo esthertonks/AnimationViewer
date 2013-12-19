@@ -25,7 +25,7 @@ void Batch::AllocateVertices(
 }
 
 void Batch::AllocateIndices(
-	const short numIndices
+	const unsigned short numIndices
 	)		
 {
 	m_indexArray.reserve(numIndices);
@@ -39,7 +39,7 @@ void Batch::AddVertex(
 }
 
 void Batch::AddIndex(
-	const short vertexIndex
+	const unsigned short vertexIndex
 	)
 {
 	m_indexArray.push_back(vertexIndex);
