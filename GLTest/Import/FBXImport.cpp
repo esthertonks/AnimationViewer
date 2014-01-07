@@ -111,10 +111,10 @@ mesh::MeshPtr FBXImport::Import(
 	LoadAnimationLayerInfo();
 	LoadNodes(fbxRootNode, m_mesh->GetNodeHierarchy());
 
-	// Now the all the animation is loaded adjust the time to make sure that it starts at zero
+	// Now the all the animation is loaded adjust the time to make sure that it starts at zero //TODO function
 	animation::AnimationInfo &animationInfo = m_mesh->GetAnimationInfo();
-	animationInfo.SetEndTime(animationInfo.GetEndTime() - animationInfo.GetStartTime());
-	animationInfo.SetStartTime(0);
+	animationInfo.SetEndSample(animationInfo.GetEndSample() - animationInfo.GetStartSample());
+	animationInfo.SetStartSample(0);
 
 	// TODO revome duplicate keys
 
@@ -299,40 +299,44 @@ mesh::Node *FBXImport::LoadBoneNode(
 	boneNode->m_globalTransform = globalTransform;
 
 	//TODO temp to debug
-	glm::mat4x4 localTransform;
-	const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(0, FbxNode::eDestinationPivot);
-	utils::MathsUtils::ConvertFBXToGLMatrix(fbxLocalTransform, localTransform);
+	glm::mat4x4 initialLocalTransform;
+	const FbxAMatrix fbxInitialLocalTransform = fbxNode.EvaluateLocalTransform(0, FbxNode::eDestinationPivot);
+	utils::MathsUtils::ConvertFBXToGLMatrix(fbxInitialLocalTransform, initialLocalTransform);
 
-	boneNode->m_localTransform = localTransform;
+	boneNode->m_localTransform = initialLocalTransform;
 
 	animation::AnimationInfo &animationInfo = m_mesh->GetAnimationInfo();
 	// Load in the local keys transoforms for each key
-	FbxTime currentTime;
-	int numFrames = animationInfo.GetNumFrames();
+	int numSamples = animationInfo.GetNumFrameSamples();
 	double frameRate = animationInfo.GetFPS();
 
-	if(numFrames)
+	if(numSamples)
 	{
-		boneNode->AllocateAnimationTracks(numFrames);
+		boneNode->AllocateAnimationTracks(numSamples);
 	}
 
-	for(int frame = 0; frame <= numFrames; frame++)
-	{
-		long time = animationInfo.ConvertFrameToMilliseconds(frame);
-		currentTime.SetMilliSeconds(time + animationInfo.GetStartTime()); //Make sure the animation is evaluated at the time if it set in the FBX
+	int startFrame = animationInfo.GetStartSample();
+	long startTime = animationInfo.ConvertFrameToMilliseconds(startFrame);
+	FbxTime fbxTime;
 
-		const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(currentTime, FbxNode::eDestinationPivot);
+	for(int sample = 0; sample <= numSamples; sample++)
+	{
+		long sampleTime = animationInfo.ConvertFrameToMilliseconds(sample); // Get the number of milliseconds into the animation for this sample frame (starting at 0)
+		fbxTime.SetMilliSeconds(startTime + sampleTime); // Find the current time in the FBX file (starting at anim start time)
+
+		const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(fbxTime, FbxNode::eDestinationPivot);
 
 		FbxVector4 fbxScale = fbxLocalTransform.GetS();
 		FbxVector4 fbxPosition = fbxLocalTransform.GetT();
 		FbxQuaternion fbxRotation = fbxLocalTransform.GetQ();
+		FbxVector4 rotTestTemp = fbxLocalTransform.GetR();//TODO remove
 
 		// Store the keys with the adjusted time (ie the time starting at 0 regardless or where it started in the FBX file
-		boost::shared_ptr<animation::VectorKey> scale(new animation::VectorKey(fbxScale[0], fbxScale[1], fbxScale[2], time));
-		boost::shared_ptr<animation::VectorKey> position(new animation::VectorKey(fbxPosition[0], fbxPosition[1], fbxPosition[2], time));
+		boost::shared_ptr<animation::VectorKey> scale(new animation::VectorKey(fbxScale[0], fbxScale[1], fbxScale[2], sampleTime));
+		boost::shared_ptr<animation::VectorKey> position(new animation::VectorKey(fbxPosition[0], fbxPosition[1], fbxPosition[2], sampleTime));
 
 		// glm quat constructor expects w, x, y, z. FBX is x, y, z, w. glm nontheless stores x, y, z, w internally
-		boost::shared_ptr<animation::QuaternionKey> rotation(new animation::QuaternionKey(fbxRotation[3], fbxRotation[0], fbxRotation[1], fbxRotation[2], time));
+		boost::shared_ptr<animation::QuaternionKey> rotation(new animation::QuaternionKey(fbxRotation[0], fbxRotation[1], fbxRotation[2], fbxRotation[3], sampleTime));
 
 		boneNode->AddLocalKeyTransform(position, rotation, scale);
 	}
@@ -369,15 +373,7 @@ void FBXImport::LoadAnimationLayerInfo()
 
 	const FbxTakeInfo &takeInfo = *m_fbxImporter->GetTakeInfo(0);
 
-	const int startTime = takeInfo.mLocalTimeSpan.GetStart().GetMilliSeconds();
-	const int endTime = takeInfo.mLocalTimeSpan.GetStop().GetMilliSeconds();
-	animationInfo.SetStartTime(startTime);
-	animationInfo.SetEndTime(endTime);
-
-	FbxTime fbxStartTime(startTime);
-	FbxTime fbxEndTime(endTime);
-
-	// Set the default time for the animation track
+	// Set the frame rate as millisecond to frame conversion is based on this
 	double frameRate = 30.0f;
 	FbxTime::EMode fbxTimeMode;
 	if (m_fbxImporter->GetFrameRate(fbxTimeMode))
@@ -387,7 +383,14 @@ void FBXImport::LoadAnimationLayerInfo()
 
 	animationInfo.SetFPS(frameRate);
 
-	int numFrames = (endTime - startTime) / frameRate;
+	// Set the start and end frame. Use frame and not time to prevent rounding errors
+	const long startTime = takeInfo.mLocalTimeSpan.GetStart().GetMilliSeconds();
+	const long endTime = takeInfo.mLocalTimeSpan.GetStop().GetMilliSeconds();
+	animationInfo.SetStartSample(animationInfo.ConvertMillisecondsToFrame(startTime));
+	animationInfo.SetEndSample(animationInfo.ConvertMillisecondsToFrame(endTime));
+
+	int numFrames = animationInfo.GetEndSample() - animationInfo.GetStartSample() - 1; // This will return the number of frame samples ie |-|-|-|-| (where | is a sample). So -1 for the number of frames (where - is a frame)
+
 	animationInfo.SetNumFrames(numFrames);
 }
 

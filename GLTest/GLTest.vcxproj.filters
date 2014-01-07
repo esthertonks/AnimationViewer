@@ -116,6 +116,12 @@
     <ClCompile Include="Animation\Track.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
+    <ClCompile Include="GUI\AnimationPanel.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\ViewPanel.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
@@ -232,6 +238,12 @@
     </ClInclude>
     <ClInclude Include="Animation\VectorKey.h">
       <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\AnimationPanel.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\ViewPanel.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

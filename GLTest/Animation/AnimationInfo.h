@@ -24,6 +24,7 @@ public :
 		m_millisecondsPerHalfFrame = 500.0f/m_fps;
 	}
 
+	// Set the number of frames ie |-|-|-|-| (where - is a frame and | is a frame sample)
 	void SetNumFrames(int numFrames)
 	{
 		m_numFrames = numFrames;
@@ -39,18 +40,33 @@ public :
 		m_name = name;
 	}
 
-	void SetStartTime(
-		long startTime
+	// Use the frames for comparision rather than the raw times as due to rounding errors they may not quite match up
+	//void SetStartTime(
+	//	long startTime
+	//	)
+	//{
+	//	m_startTime = startTime;
+	//}
+
+	//void SetEndTime(
+	//	long endTime
+	//	)
+	//{
+	//	m_endTime = endTime;
+	//}
+
+	void SetStartSample(
+		int startSample
 		)
 	{
-		m_startTime = startTime;
+		m_startSample = startSample;
 	}
 
-	void SetEndTime(
-		long endTime
+	void SetEndSample(
+		int endSample
 		)
 	{
-		m_endTime = endTime;
+		m_endSample = endSample;
 	}
 
 	const double GetFPS() const
@@ -63,7 +79,12 @@ public :
 		return m_numFrames;
 	}
 
-	bool GetLoop() const
+	const int GetNumFrameSamples() const
+	{
+		return m_numFrames + 1;
+	}
+
+	bool IsLooping() const
 	{
 		return m_loop;
 	}
@@ -73,25 +94,38 @@ public :
 		return m_name;
 	}
 
-	const long GetStartTime() const
+	//const long GetStartTime() const
+	//{
+	//	return m_startTime;
+	//}
+
+	//const long GetEndTime() const
+	//{
+	//	return m_endTime;
+	//}
+
+	const int GetStartSample() const
 	{
-		return m_startTime;
+		return m_startSample;
 	}
 
-	const long GetEndTime() const
+	const int GetEndSample() const
 	{
-		return m_endTime;
+		return m_endSample;
 	}
 
-	float ConvertFrameToMilliseconds(
+	long ConvertFrameToMilliseconds(
 		const int frame
 	)
 	{
-		return floor(static_cast<float>(frame) * m_millisecondsPerFrame);
+		return floor(frame * m_millisecondsPerFrame);
 	}
 
+	/**
+		Set FPS must be called before this
+	*/
  int ConvertMillisecondsToFrame(
-	const double milliseconds
+	const long milliseconds
 	)
 	{
 		return static_cast<int>(floor(milliseconds / m_millisecondsPerFrame));
@@ -105,8 +139,8 @@ private:
 	int m_numFrames;
 	bool m_loop;
 	std::string m_name;
-	long m_startTime;
-	long m_endTime;
+	int m_startSample;
+	int m_endSample;
 	float m_fps;
 	float m_millisecondsPerFrame;	//1000.0f/m_fps;
 	float m_millisecondsPerHalfFrame; //500.0f/m_fps;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <wchar.h>
-#include "vld.h"
+//#include <wchar.h>
+//#include "vld.h"
 #include "wx/wx.h"
 #include "Batch\BatchFwdDecl.h"
 #include "ImportMesh\ImportFwdDecl.h"
@@ -49,6 +49,10 @@ class AnimationApp: public wxApp
 	void ShowMesh(
 		bool show
 		);
+
+	void PlayAnimation();
+	void PauseAnimation();
+	void StopAnimation();
 
 	private:
 	virtual bool OnInit();

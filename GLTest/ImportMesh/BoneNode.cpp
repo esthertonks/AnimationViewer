@@ -51,6 +51,7 @@ void BoneNode::AddLocalKeyTransform(
 	boost::shared_ptr<animation::VectorKey> scale
 	)
 {
+	//TODO get rid of temps
 	boost::shared_ptr<animation::Key> tempPos = boost::static_pointer_cast<animation::Key>(position);
 	m_positionTrack->AddKey(tempPos);
 

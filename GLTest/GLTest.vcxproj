@@ -93,7 +93,9 @@
     <ClCompile Include="Batch\BatchProcessor.cpp" />
     <ClCompile Include="Batch\LambertAppearance.cpp" />
     <ClCompile Include="Batch\PhongAppearance.cpp" />
+    <ClCompile Include="GUI\AnimationPanel.cpp" />
     <ClCompile Include="GUI\ControlsPanel.cpp" />
+    <ClCompile Include="GUI\ViewPanel.cpp" />
     <ClCompile Include="ImportMesh\BoneNode.cpp" />
     <ClCompile Include="ImportMesh\Mesh.cpp" />
     <ClCompile Include="ImportMesh\MeshNode.cpp" />
@@ -132,7 +134,9 @@
     <ClInclude Include="Batch\VertexFormat.h" />
     <ClInclude Include="Container\LinkedList .h" />
     <ClInclude Include="Container\LinkedTree.h" />
+    <ClInclude Include="GUI\AnimationPanel.h" />
     <ClInclude Include="GUI\ControlsPanel.h" />
+    <ClInclude Include="GUI\ViewPanel.h" />
     <ClInclude Include="ImportMesh\BoneNode.h" />
     <ClInclude Include="ImportMesh\ImportFwdDecl.h" />
     <ClInclude Include="ImportMesh\Mesh.h" />

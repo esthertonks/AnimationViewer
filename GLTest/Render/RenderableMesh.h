@@ -43,6 +43,9 @@ public:
 		animation::AnimationInfo *animationInfo
 		);
 
+	virtual void PauseAnimation();
+	virtual void StopAnimation();
+
 	virtual bool Update(
 		long globalTime
 	);

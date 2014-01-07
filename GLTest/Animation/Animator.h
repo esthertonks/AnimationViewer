@@ -31,6 +31,8 @@ void StartAnimation(
 	AnimationInfo *animationInfo
 	);
 
+void PauseAnimation();
+
 void StopAnimation();
 
 void PrepareBoneHierarcy(
@@ -39,7 +41,7 @@ void PrepareBoneHierarcy(
 	);
 
 void PrepareBoneHierarcy(
-	int frame,
+	int sample,
 	mesh::Node* node,
 	const glm::mat4x4 &parentGlobalScaleMatrix,
 	const glm::mat4x4 &parentGlobalRotationMatrix
@@ -56,17 +58,17 @@ private:
 //	);
 
 boost::shared_ptr<VectorKey> InterpolatePosition(
-	int frame,
+	int sample,
 	boost::shared_ptr<animation::Track> positionTrack
 	);
 
 boost::shared_ptr<QuaternionKey> InterpolateRotation(
-	int frame,
+	int sample,
 	boost::shared_ptr<animation::Track> rotationTrack
 	);
 
 boost::shared_ptr<VectorKey> InterpolateScale(
-	int frame,
+	int sample,
 	boost::shared_ptr<animation::Track> scaleTrack
 	);
 
@@ -90,6 +92,8 @@ boost::shared_ptr<QuaternionKey> Slerp(
 
 	long m_globalStartTime;
 	long m_localCurrentTime;
+	long m_animStartTime;
+	long m_animEndTime;
 	AnimationInfo *m_animationInfo;
 };
 

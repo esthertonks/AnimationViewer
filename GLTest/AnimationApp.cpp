@@ -19,6 +19,8 @@ bool AnimationApp::OnInit()
 	int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
 	wxFrame *frame = new render::Window(NULL, wxT("Animation App"), wxDefaultPosition, wxSize(width, height), wxDEFAULT_FRAME_STYLE);
 	frame->SetBackgroundColour(wxColour(25.0f, 25.0f, 25.0f));
+	frame->SetMinSize(wxSize(800, 800));
+	frame->SetMaxSize(wxSize(width, height));
 	//m_renderCanvas = new render::GLRenderCanvas(frame, wxID_ANY, wxDefaultPosition, wxSize(800, 800), wxSUNKEN_BORDER, "Animation App");
 	m_renderCanvas = new render::GLRenderCanvas(frame);
 	wxBoxSizer *horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -127,9 +129,6 @@ void AnimationApp::ShowBones(
 		{
 			m_renderCanvas->AddRenderable(renderable);
 			m_boneOverlay = renderable;
-			animation::AnimationInfo& animationInfo = m_currentMeshInfo.m_importMesh->GetAnimationInfo();
-			animationInfo.SetLoop(false);
-			m_boneOverlay->Animate(timeGetTime(), &animationInfo);
 		}
 		else
 		{
@@ -162,6 +161,37 @@ void AnimationApp::ShowMesh(
 	else
 	{
 		m_renderCanvas->RemoveRenderable(m_currentMeshInfo.m_renderMesh);
+	}
+}
+
+void AnimationApp::PlayAnimation()
+{
+	if(!m_currentMeshInfo.m_importMesh)
+	{
+		return;
+	}
+
+	animation::AnimationInfo& animationInfo = m_currentMeshInfo.m_importMesh->GetAnimationInfo();
+	animationInfo.SetLoop(false);
+	if(m_boneOverlay)
+	{
+		m_boneOverlay->Animate(timeGetTime(), &animationInfo);
+	}
+}
+
+void AnimationApp::PauseAnimation()
+{
+	if(m_boneOverlay)
+	{
+		m_boneOverlay->PauseAnimation();
+	}
+}
+
+void AnimationApp::StopAnimation()
+{
+	if(m_boneOverlay)
+	{
+		m_boneOverlay->StopAnimation();
 	}
 }
 

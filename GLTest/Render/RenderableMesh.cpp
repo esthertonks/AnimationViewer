@@ -37,6 +37,18 @@ void RenderableMesh::Animate(
 	//m_animator->StartAnimation(0, fps);
 }
 
+void RenderableMesh::PauseAnimation()
+{
+	//m_animator->PauseAnimation();
+	//delete m_animator;
+}
+
+void RenderableMesh::StopAnimation()
+{
+	//m_animator->StopAnimation();
+	//delete m_animator;
+}
+
 bool  RenderableMesh::Update(
 	long time
 	)

@@ -29,6 +29,9 @@ public:
 		animation::AnimationInfo *animationInfo
 		) = 0;
 
+	virtual void PauseAnimation() = 0;
+	virtual void StopAnimation() = 0;
+
 	virtual bool Update(
 		long deltaTime
 	) = 0;

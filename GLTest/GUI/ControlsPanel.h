@@ -17,12 +17,8 @@ class ControlsPanel : public wxPanel
 		long style
 	);
 
-	void OnCheckboxClicked(
-		wxCommandEvent& event
-		);
-
 	protected:
-		DECLARE_EVENT_TABLE()
+
 };
 
 }

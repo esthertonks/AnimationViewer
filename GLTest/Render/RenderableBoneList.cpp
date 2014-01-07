@@ -35,21 +35,38 @@ void RenderableBoneList::Animate(
 	)
 {
 	m_animator = boost::shared_ptr<animation::Animator>(new animation::Animator());
-	m_animator = boost::shared_ptr<animation::Animator>(new animation::Animator());
 	m_animator->StartAnimation(globalStartTime, animationInfo);
+}
+
+void RenderableBoneList::PauseAnimation()
+{
+	if(m_animator) // TODO stop using this to control whether it is animating. At least use a bool. NULL with shared_ptr???
+	{
+		m_animator->StopAnimation(); //TODO we are controlling whether the animation is playing here not the animator. Incorrent???!
+		m_animator = NULL;
+	}
+}
+
+void RenderableBoneList::StopAnimation()
+{
+	if(m_animator) // TODO stop using this to control whether it is animating. At least use a bool. NULL with shared_ptr???
+	{
+		Update(0);
+		m_animator->StopAnimation();//TODO we are controlling whether the animation is playing here not the animator. Incorrent???!
+		m_animator = NULL;
+	}
 }
 
 bool RenderableBoneList::Update(
 	long globalTime
 	)
 {
-	if(!m_animator)
-	{
-		return false;
-	}
 	m_vertexArray.clear();
 	mesh::Node *root = m_mesh->GetNodeHierarchy();
-	m_animator->PrepareBoneHierarcy(root, globalTime);
+	if(m_animator)
+	{
+		m_animator->PrepareBoneHierarcy(root, globalTime);
+	}
 
 	AddPositionToVertexList(root);
 	m_numVerts = m_vertexArray.size(); // Keep a record of the new verts so that the draw calls can use it
@@ -85,6 +102,10 @@ void RenderableBoneList::AddPositionToVertexList(
 
 			// Add this nodes position
 			mesh::BoneNode *boneNode = static_cast<mesh::BoneNode*>(node); //TODO static cast?
+			if(boneNode->GetName() == "Bip01 L UpperArm")
+			{
+				int stop = 0;
+			}
 			ColourVertex vertex;
 			glm::mat4x4& globalTransform = boneNode->GetGlobalTransform();
 			vertex.m_position.x = globalTransform[3][0];

@@ -18,6 +18,8 @@ namespace animation
 Animator::Animator()
 	: m_globalStartTime(0),
 	m_localCurrentTime(0),
+	m_animStartTime(0),
+	m_animEndTime(0),
 	m_animationInfo(NULL)
 {
 
@@ -31,24 +33,40 @@ void Animator::StartAnimation(
 {
 	m_globalStartTime = globalStartTime;
 	m_animationInfo = animationInfo;
+
+	// Calculate the start and end times for this animation
+	m_animStartTime = animationInfo->ConvertFrameToMilliseconds(animationInfo->GetStartSample());
+	m_animEndTime = animationInfo->ConvertFrameToMilliseconds(animationInfo->GetEndSample());
 }
 
+// TODO the bone list is currently controlling this = shouldn't be??!
+void Animator::PauseAnimation()
+{
+	m_globalStartTime = 0;
+	m_animationInfo = NULL;
+
+}
+
+// TODO the bone list is currently controlling this = shouldn't be??!
 void Animator::StopAnimation()
 {
-
-
+	m_globalStartTime = 0;
+	m_localCurrentTime = 0;
+	m_animEndTime = 0;
+	m_animStartTime = 0;
+	m_animationInfo = NULL;
 }
 
 void Animator::ClampTime()
 {
-	if(m_animationInfo->GetLoop())
+	if(m_animationInfo->IsLooping())
 	{
-		long animLength = m_animationInfo->GetEndTime() - m_animationInfo->GetStartTime();//TODO anim duration
+		long animLength = m_animEndTime - m_animStartTime;//TODO anim duration
 		m_localCurrentTime = m_localCurrentTime % animLength;
 	}
 	else
 	{
-		m_localCurrentTime = utils::MathsUtils::Clamp(m_localCurrentTime, m_animationInfo->GetStartTime(), m_animationInfo->GetEndTime());
+		m_localCurrentTime = utils::MathsUtils::Clamp(m_localCurrentTime, m_animStartTime, m_animEndTime);
 	}
 }
 
@@ -62,17 +80,18 @@ void Animator::PrepareBoneHierarcy(
 
 	ClampTime();
 
-	int frame = m_animationInfo->ConvertMillisecondsToFrame(m_localCurrentTime);
-	assert(frame < m_animationInfo->GetNumFrames());
+	int sample = m_animationInfo->ConvertMillisecondsToFrame(m_localCurrentTime);
+	wxLogDebug("sample: %ld\n", sample);
+	assert(sample <= m_animationInfo->GetNumFrameSamples()); // Number of frames = number of frame samples - 1
 
 	const glm::mat4x4 parentGlobalScaleMatrix(1.0f);// These will be identity for the root node
 	const glm::mat4x4 parentGlobalRotationMatrix(1.0f);
 
-	PrepareBoneHierarcy(frame, node, parentGlobalScaleMatrix, parentGlobalRotationMatrix);
+	PrepareBoneHierarcy(sample, node, parentGlobalScaleMatrix, parentGlobalRotationMatrix);
 }
 
 void Animator::PrepareBoneHierarcy(
-	int frame,
+	int sample,
 	mesh::Node *node,
 	const glm::mat4x4 &parentGlobalScaleMatrix,
 	const glm::mat4x4 &parentGlobalRotationMatrix
@@ -86,12 +105,21 @@ void Animator::PrepareBoneHierarcy(
 
 			// Create local matrix in the order scale, rotate, translate to be stored in the global transform data (local transform data is only temporarily store
 			//boneNode->GetLocalKeyTransform(frame, localPosition, localRotationKey, localScaleKey);
-			boost::shared_ptr<VectorKey> localPositionKey = InterpolatePosition(frame, boneNode->GetPositionTrack());
-			boost::shared_ptr<QuaternionKey> localRotationKey = InterpolateRotation(frame, boneNode->GetRotationTrack());
-			boost::shared_ptr<VectorKey> localScaleKey = InterpolateScale(frame, boneNode->GetScaleTrack());
+			boost::shared_ptr<VectorKey> localPositionKey = InterpolatePosition(sample, boneNode->GetPositionTrack());
+			boost::shared_ptr<QuaternionKey> localRotationKey = InterpolateRotation(sample, boneNode->GetRotationTrack());
+			boost::shared_ptr<VectorKey> localScaleKey = InterpolateScale(sample, boneNode->GetScaleTrack());
+			wxLogDebug("name: %s\n", boneNode->GetName().c_str());
+
+			wxLogDebug("local posx: %f\n", localPositionKey->m_x);
+			wxLogDebug("local posy: %f\n", localPositionKey->m_y);
+			wxLogDebug("local posz: %f\n", localPositionKey->m_z);
+
+			wxLogDebug("local rotx: %f\n", localRotationKey->m_x);
+			wxLogDebug("local roty: %f\n", localRotationKey->m_y);
+			wxLogDebug("local rotz: %f\n", localRotationKey->m_z);
 
 			glm::mat4x4 localScaleMatrix(glm::scale(glm::mat4(1.0), glm::vec3(localScaleKey->m_x, localScaleKey->m_y, localScaleKey->m_z)));
-			glm::mat4x4 localRotationMatrix(glm::mat4_cast(glm::quat(localRotationKey->m_x, localRotationKey->m_y, localRotationKey->m_z, localRotationKey->m_w)));
+			glm::mat4x4 localRotationMatrix(glm::mat4_cast(glm::quat(localRotationKey->m_w, localRotationKey->m_x, localRotationKey->m_y, localRotationKey->m_z))); // The constructor takes w, x, y, z not x, y, z, w
 
 			// Get the transform which needs setting
 			glm::mat4x4& globalTransform = boneNode->GetGlobalTransform();
@@ -116,8 +144,32 @@ void Animator::PrepareBoneHierarcy(
 				// Transform the position by the whole parent transform so that the position gets rotated and scaled correctly.
 				// Use a vector transform here as we don't want any other info from the global transform at this point.
 				glm::vec4 globalPosition = parentTransform * glm::vec4(localPositionKey->m_x, localPositionKey->m_y, localPositionKey->m_z, 1.0f);
+				wxLogDebug("global posx without local rotation: %f\n", globalPosition.x);
+				wxLogDebug("global posy without local rotation: %f\n", globalPosition.y);
+				wxLogDebug("global posz without local rotation: %f\n", globalPosition.z);
+
 				glm::mat4x4 globalPositionMatrix(glm::translate(glm::mat4(1.0), glm::vec3(globalPosition)));
 				globalTransform = globalPositionMatrix * globalRotationAndScale;
+
+				wxLogDebug("global transform00: %f\n", globalTransform[0][0]);
+				wxLogDebug("global transform01: %f\n", globalTransform[0][1]);
+				wxLogDebug("global transform02: %f\n", globalTransform[0][2]);
+				wxLogDebug("global transform03: %f\n", globalTransform[0][3]);
+
+				wxLogDebug("global transform10: %f\n", globalTransform[1][0]);
+				wxLogDebug("global transform11: %f\n", globalTransform[1][1]);
+				wxLogDebug("global transform12: %f\n", globalTransform[1][2]);
+				wxLogDebug("global transform13: %f\n", globalTransform[1][3]);
+
+				wxLogDebug("global transform20: %f\n", globalTransform[2][0]);
+				wxLogDebug("global transform21: %f\n", globalTransform[2][1]);
+				wxLogDebug("global transform22: %f\n", globalTransform[2][2]);
+				wxLogDebug("global transform23: %f\n", globalTransform[2][3]);
+
+				wxLogDebug("global transform30: %f\n", globalTransform[3][0]);
+				wxLogDebug("global transform31: %f\n", globalTransform[3][1]);
+				wxLogDebug("global transform32: %f\n", globalTransform[3][2]);
+				wxLogDebug("global transform33: %f\n", globalTransform[3][3]);
 
 				if(node->m_firstChild)
 				{
@@ -127,7 +179,7 @@ void Animator::PrepareBoneHierarcy(
 					// Record the global scale and rotation matrices for use by the child
 					glm::mat4x4 globalRotationMatrix = parentGlobalRotationMatrix * localRotationMatrix;
 
-					PrepareBoneHierarcy(frame, node->m_firstChild, globalScaleMatrix, globalRotationMatrix); // Passing the parent scale and rotation avoids extracting them from the global transform which is non trivial
+					PrepareBoneHierarcy(sample, node->m_firstChild, globalScaleMatrix, globalRotationMatrix); // Passing the parent scale and rotation avoids extracting them from the global transform which is non trivial
 				}
 
 			}
@@ -138,7 +190,7 @@ void Animator::PrepareBoneHierarcy(
 
 				if(node->m_firstChild)
 				{
-					PrepareBoneHierarcy(frame, node->m_firstChild, localScaleMatrix, localRotationMatrix); // Passing the parent scale and rotation avoids extracting them from the global transform which is non trivial
+					PrepareBoneHierarcy(sample, node->m_firstChild, localScaleMatrix, localRotationMatrix); // Passing the parent scale and rotation avoids extracting them from the global transform which is non trivial
 				}
 
 			}
@@ -178,54 +230,54 @@ void Animator::PrepareBoneHierarcy(
 //}
 
 boost::shared_ptr<VectorKey> Animator::InterpolatePosition(
-	int frame,
+	int sample,
 	boost::shared_ptr<animation::Track> positionTrack
 	)
 {
-	const boost::shared_ptr<VectorKey> currentPositionKey = boost::static_pointer_cast<VectorKey>(positionTrack->GetKey(frame));
+	const boost::shared_ptr<VectorKey> currentPositionKey = boost::static_pointer_cast<VectorKey>(positionTrack->GetKey(sample));
 	if(currentPositionKey->m_time == m_localCurrentTime) // First check if the time is exactly on the key
 	{
 		return currentPositionKey;
 	}
 	else // Otherwise interpolate
 	{
-		const boost::shared_ptr<VectorKey> nextPositionKey = boost::static_pointer_cast<VectorKey>(positionTrack->GetKey(frame + 1));
+		const boost::shared_ptr<VectorKey> nextPositionKey = boost::static_pointer_cast<VectorKey>(positionTrack->GetKey(sample + 1));
 
 		return Lerp(m_localCurrentTime, currentPositionKey, nextPositionKey);
 	}
 }
 
 boost::shared_ptr<QuaternionKey> Animator::InterpolateRotation(
-	int frame,
+	int sample,
 	boost::shared_ptr<animation::Track> rotationTrack
 	)
 {
-	const boost::shared_ptr<QuaternionKey> currentRotationKey = boost::static_pointer_cast<QuaternionKey>(rotationTrack->GetKey(frame));
+	const boost::shared_ptr<QuaternionKey> currentRotationKey = boost::static_pointer_cast<QuaternionKey>(rotationTrack->GetKey(sample));
 	if(currentRotationKey->m_time == m_localCurrentTime) // First check if the time is exactly on the key
 	{
 		return currentRotationKey;
 	}
 	else
 	{
-		const boost::shared_ptr<QuaternionKey> nextRotationKey = boost::static_pointer_cast<QuaternionKey>(rotationTrack->GetKey(frame + 1));
+		const boost::shared_ptr<QuaternionKey> nextRotationKey = boost::static_pointer_cast<QuaternionKey>(rotationTrack->GetKey(sample + 1));
 
-		return Slerp(m_localCurrentTime, currentRotationKey, nextRotationKey);
+		return currentRotationKey;//Slerp(m_localCurrentTime, currentRotationKey, nextRotationKey); //TODO put back commented out to rule out interpolation issues
 	}
 }
 
 boost::shared_ptr<VectorKey> Animator::InterpolateScale(
-	int frame,
+	int sample,
 	boost::shared_ptr<animation::Track> scaleTrack
 	)
 {
-	const boost::shared_ptr<VectorKey> currentScaleKey = boost::static_pointer_cast<VectorKey>(scaleTrack->GetKey(frame));
+	const boost::shared_ptr<VectorKey> currentScaleKey = boost::static_pointer_cast<VectorKey>(scaleTrack->GetKey(sample));
 	if(currentScaleKey->m_time == m_localCurrentTime) // First check if the time is exactly on the key
 	{
 		return currentScaleKey;
 	}
 	else
 	{
-		const boost::shared_ptr<VectorKey> nextScaleKey = boost::static_pointer_cast<VectorKey>(scaleTrack->GetKey(frame + 1));
+		const boost::shared_ptr<VectorKey> nextScaleKey = boost::static_pointer_cast<VectorKey>(scaleTrack->GetKey(sample + 1));
 		return Lerp(m_localCurrentTime, currentScaleKey, nextScaleKey);
 	}
 }
@@ -239,9 +291,9 @@ boost::shared_ptr<VectorKey> Animator::Lerp(
 	// Most likely it isnt so find the 2 keys on either side of the time and find the proportional (0.0 - 1.0) time between the two
 	float propertionalTime = (time - key->m_time) / (float)(nextKey->m_time - key->m_time);
 	//assert((propertionalTime >= 0) && (propertionalTime <= 1));
-	wxLogDebug("time: %ld\n", time);
-	wxLogDebug("keytime: %ld\n", key->m_time);
-	wxLogDebug("next key time: %ld\n", nextKey->m_time);
+	//wxLogDebug("time: %ld\n", time);
+	//wxLogDebug("keytime: %ld\n", key->m_time);
+	//wxLogDebug("next key time: %ld\n", nextKey->m_time);
 
 	// Next (LERP) interpolate keyA + (keyB - keyA) * t
 	float x = key->m_x + (nextKey->m_x - key->m_x) * propertionalTime;
