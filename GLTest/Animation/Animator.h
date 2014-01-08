@@ -43,8 +43,8 @@ void PrepareBoneHierarcy(
 void PrepareBoneHierarcy(
 	int sample,
 	mesh::Node* node,
-	const glm::mat4x4 &parentGlobalScaleMatrix,
-	const glm::mat4x4 &parentGlobalRotationMatrix
+	const FbxAMatrix &parentGlobalScaleMatrix,
+	const FbxAMatrix &parentGlobalRotationMatrix
 	);
 
 private:

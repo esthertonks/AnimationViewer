@@ -92,10 +92,10 @@ void RenderableBoneList::AddPositionToVertexList(
 			// Add the parent nodes position
 			mesh::BoneNode *parentNode = static_cast<mesh::BoneNode*>(node->m_parent); //TODO static cast?
 			ColourVertex parentVertex;
-			glm::mat4x4& parentGlobalTransform = parentNode->GetGlobalTransform();
-			parentVertex.m_position.x = parentGlobalTransform[3][0];
-			parentVertex.m_position.y = parentGlobalTransform[3][1];
-			parentVertex.m_position.z = parentGlobalTransform[3][2];
+			FbxAMatrix& parentGlobalTransform = parentNode->GetGlobalTransform();
+			parentVertex.m_position.x = static_cast<float>(parentGlobalTransform[3][0]);
+			parentVertex.m_position.y = static_cast<float>(parentGlobalTransform[3][1]);
+			parentVertex.m_position.z = static_cast<float>(parentGlobalTransform[3][2]);
 			parentVertex.m_colour = glm::vec3(col, 0.0, 0.0);
 
 			m_vertexArray.push_back(parentVertex);
@@ -107,10 +107,10 @@ void RenderableBoneList::AddPositionToVertexList(
 				int stop = 0;
 			}
 			ColourVertex vertex;
-			glm::mat4x4& globalTransform = boneNode->GetGlobalTransform();
-			vertex.m_position.x = globalTransform[3][0];
-			vertex.m_position.y = globalTransform[3][1];
-			vertex.m_position.z = globalTransform[3][2];
+			FbxAMatrix& globalTransform = boneNode->GetGlobalTransform();
+			vertex.m_position.x = static_cast<float>(globalTransform[3][0]);
+			vertex.m_position.y = static_cast<float>(globalTransform[3][1]);
+			vertex.m_position.z = static_cast<float>(globalTransform[3][2]);
 			vertex.m_colour = glm::vec3(col, 0.0, 0.0);
 			col += 0.02f;
 

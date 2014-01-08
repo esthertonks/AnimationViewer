@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fbxsdk.h>
 //#include <boost/shared_array.hpp>
 //#include <glm/glm.hpp>
 //#include <glm/gtx/quaternion.hpp> 

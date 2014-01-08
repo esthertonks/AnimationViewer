@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AnimationFwdDecl.h"
 /*
 	Track base class
 */

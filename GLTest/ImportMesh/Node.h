@@ -2,7 +2,7 @@
 
 #include "../Container/LinkedTree.h"
 #include <string>
-#include <glm/glm.hpp>
+#include <fbxsdk.h>
 
 namespace import
 {
@@ -41,18 +41,18 @@ const std::string&	GetName()
 }
 
 void SetGlobalTransform(
-	glm::mat4x4 &globalTransform
+	FbxAMatrix &globalTransform
 	)
 {
 	m_globalTransform = globalTransform;			
 };
 
-const glm::mat4x4 &GetGlobalTransform() const
+const FbxAMatrix &GetGlobalTransform() const
 {
 	return m_globalTransform;
 };
 
-glm::mat4x4 &GetGlobalTransform()
+FbxAMatrix &GetGlobalTransform()
 {
 	return m_globalTransform;
 };
@@ -62,9 +62,10 @@ private:
 
 	std::string m_name;
 
-	glm::mat4x4 m_globalTransform;		// Transform from this node to the global model transform. This is updated each tick during animation
+	// FBX SDK for higher precision
+	FbxAMatrix m_globalTransform;		// Transform from this node to the global model transform. This is updated each tick during animation
 
-	glm::mat4x4 m_inverseReferenceMatrix;	// The inverse reference matrix for this bone
+	FbxAMatrix m_inverseReferenceMatrix;	// The inverse reference matrix for this bone
 };
 
 }

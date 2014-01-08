@@ -25,11 +25,11 @@ void BoneNode::AllocateAnimationTracks(
 	m_positionTrack = boost::shared_ptr<animation::Track>(new animation::Track(numFrames));
 }
 
-void BoneNode::SetLocalKeyTransform(
-	int frameNum,
-	const glm::mat4x4 &localTransform
-	)
-{
+//void BoneNode::SetLocalKeyTransform(
+	//int frameNum,
+	//const FbxAMatrix localTransform
+	//)
+//{
 	//m_localTransform = localTransform;
 	//Tsl::Maths::CVector3 position, scale;
 	//Tsl::Maths::CQuaternion orientation;
@@ -43,7 +43,7 @@ void BoneNode::SetLocalKeyTransform(
 	//m_animationTrack->GetPositionTrack().AddKey(frameNum, position.x, position.y, position.z, 0);
 	//m_animationTrack->GetScaleTrack().AddKey(frameNum, scale.x, scale.y, scale.z, 0);
 	//m_animationTrack->GetOrientationTrack().AddKey(frameNum, orientation.x, orientation.y, orientation.z, orientation.w, 0);
-};
+//};
 
 void BoneNode::AddLocalKeyTransform(
 	boost::shared_ptr<animation::VectorKey> position,

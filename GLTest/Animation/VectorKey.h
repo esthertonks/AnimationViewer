@@ -13,16 +13,14 @@ class VectorKey : public Key
 public :
 
 VectorKey(
-	float x, float y, float z, long time) : Key(time)
+FbxVector4 vector, 
+long time) 
+: Key(time)
 {
-	m_x = x;
-	m_y = y;
-	m_z = z;
+	m_vector = vector;
 };
 
-float m_x;
-float m_y;
-float m_z;
+FbxVector4 m_vector;
 };
 
 }

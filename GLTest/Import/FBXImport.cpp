@@ -295,16 +295,12 @@ mesh::Node *FBXImport::LoadBoneNode(
 
 	// Store the initial global pose values. The rest will be calulated from the local transforms //TODO do we even need to load the global transforms at all?
 	const FbxAMatrix fbxGlobalTransform = fbxNode.EvaluateGlobalTransform(0, FbxNode::eDestinationPivot);
-	glm::mat4x4 globalTransform;
-	utils::MathsUtils::ConvertFBXToGLMatrix(fbxGlobalTransform, globalTransform);
-	boneNode->m_globalTransform = globalTransform;
+	boneNode->m_globalTransform = fbxGlobalTransform;
 
 	//TODO temp to debug
 	glm::mat4x4 initialLocalTransform;
 	const FbxAMatrix fbxInitialLocalTransform = fbxNode.EvaluateLocalTransform(0, FbxNode::eDestinationPivot);
-	utils::MathsUtils::ConvertFBXToGLMatrix(fbxInitialLocalTransform, initialLocalTransform);
-
-	boneNode->m_localTransform = initialLocalTransform;
+	boneNode->m_localTransform = fbxInitialLocalTransform;
 
 	animation::AnimationInfo &animationInfo = m_mesh->GetAnimationInfo();
 	// Load in the local keys transoforms for each key
@@ -333,13 +329,13 @@ mesh::Node *FBXImport::LoadBoneNode(
 		FbxVector4 rotTestTemp = fbxLocalTransform.GetR();//TODO remove
 
 		// Store the keys with the adjusted time (ie the time starting at 0 regardless or where it started in the FBX file
-		boost::shared_ptr<animation::VectorKey> scale(new animation::VectorKey(fbxScale[0], fbxScale[1], fbxScale[2], sampleTime));
-		boost::shared_ptr<animation::VectorKey> position(new animation::VectorKey(fbxPosition[0], fbxPosition[1], fbxPosition[2], sampleTime));
+		boost::shared_ptr<animation::VectorKey> scaleKey(new animation::VectorKey(fbxScale, sampleTime));
+		boost::shared_ptr<animation::VectorKey> positionKey(new animation::VectorKey(fbxPosition, sampleTime));
 
 		// glm quat constructor expects w, x, y, z. FBX is x, y, z, w. glm nontheless stores x, y, z, w internally
-		boost::shared_ptr<animation::QuaternionKey> rotation(new animation::QuaternionKey(fbxRotation[0], fbxRotation[1], fbxRotation[2], fbxRotation[3], sampleTime));
+		boost::shared_ptr<animation::QuaternionKey> rotationKey(new animation::QuaternionKey(fbxRotation, sampleTime));
 
-		boneNode->AddLocalKeyTransform(position, rotation, scale);
+		boneNode->AddLocalKeyTransform(positionKey, rotationKey, scaleKey);
 	}
 
 	// Record node scale inheritance //TODO scale inheritance

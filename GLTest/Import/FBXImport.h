@@ -2,7 +2,6 @@
 
 #include <string>
 #include <boost/shared_array.hpp>
-#include "../Render/RenderFwdDecl.h"
 #include "../Batch/BatchFwdDecl.h"
 #include "../ImportMesh/ImportFwdDecl.h"
 
