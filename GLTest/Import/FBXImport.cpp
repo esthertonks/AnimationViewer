@@ -103,16 +103,17 @@ mesh::MeshPtr FBXImport::Import(
 	m_mesh = mesh::MeshPtr(new mesh::Mesh());
 	FbxNode &fbxRootNode = *m_fbxScene->GetRootNode();
 
+	LoadAnimationLayerInfo();
+	animation::AnimationInfo &animationInfo = m_mesh->GetAnimationInfo();
+
 	// Bake all FBX transforms ie pivots and offsets into standard scale, rotation etc
 	// See http://docs.autodesk.com/FBX/2014/ENU/FBX-SDK-Documentation/index.html?url=files/GUID-C35D98CB-5148-4B46-82D1-51077D8970EE.htm,topicNumber=d30e8813
 	BakeNodeTransforms(fbxRootNode);
-	fbxRootNode.ConvertPivotAnimationRecursive(NULL, FbxNode::eDestinationPivot, 30.0);	// FPS fixed at 30 atm
+	fbxRootNode.ConvertPivotAnimationRecursive(NULL, FbxNode::eDestinationPivot, animationInfo.GetFPS());	// FPS fixed at 30 atm
 
-	LoadAnimationLayerInfo();
 	LoadNodes(fbxRootNode, m_mesh->GetNodeHierarchy());
 
 	// Now the all the animation is loaded adjust the time to make sure that it starts at zero //TODO function
-	animation::AnimationInfo &animationInfo = m_mesh->GetAnimationInfo();
 	animationInfo.SetEndSample(animationInfo.GetEndSample() - animationInfo.GetStartSample());
 	animationInfo.SetStartSample(0);
 

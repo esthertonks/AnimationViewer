@@ -17,7 +17,7 @@ public :
 	AnimationInfo();
 	~AnimationInfo(){};
 
-	void SetFPS(double fps)
+	void SetFPS(float fps)
 	{
 		m_fps = utils::MathsUtils::Clamp(fps, 0.01f, 1000.0f);
 		m_millisecondsPerFrame = 1000.0f/m_fps;
@@ -118,7 +118,7 @@ public :
 		const int frame
 	)
 	{
-		return floor(frame * m_millisecondsPerFrame);
+		return static_cast<long>(floor(frame * m_millisecondsPerFrame));
 	}
 
 	/**

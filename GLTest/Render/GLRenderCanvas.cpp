@@ -345,7 +345,7 @@ void GLRenderCanvas::Render(
 	int width = GetSize().GetWidth();
 	int height = GetSize().GetHeight();
 
-	glm::mat4x4& projectionMatrix = glm::perspective(40.0f, (float)width / (float) height, 1.0f, 600.f);
+	glm::mat4x4 projectionMatrix = glm::perspective(40.0f, (float)width / (float) height, 1.0f, 600.f);
 
 	
 	Renderables::const_iterator renderableIterator;
