@@ -73,19 +73,19 @@ boost::shared_ptr<VectorKey> InterpolateScale(
 	);
 
 boost::shared_ptr<VectorKey> Lerp(
-	const long time, 
+	const float time, 
 	const boost::shared_ptr<VectorKey> key,
 	const boost::shared_ptr<VectorKey> nextKey
 	);
 
 boost::shared_ptr<QuaternionKey> Lerp(
-	const long time, 
+	const float time, 
 	const boost::shared_ptr<QuaternionKey> key,
 	const boost::shared_ptr<QuaternionKey> nextKey
 	);
 
 boost::shared_ptr<QuaternionKey> Slerp(
-	const long time, 
+	const float time, 
 	const boost::shared_ptr<QuaternionKey> key,
 	const boost::shared_ptr<QuaternionKey> nextKey
 	);
