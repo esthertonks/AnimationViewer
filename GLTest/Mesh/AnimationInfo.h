@@ -6,7 +6,7 @@
 	Information about an animation.
 */
 
-namespace animation
+namespace mesh
 {
 
 	//TODO better called animation details?
@@ -28,11 +28,6 @@ public :
 	void SetNumFrames(int numFrames)
 	{
 		m_numFrames = numFrames;
-	}
-
-	void SetLoop(bool loop)
-	{
-		m_loop = loop;
 	}
 				
 	void SetName(const std::string &name)
@@ -83,11 +78,6 @@ public :
 	{
 		return m_numFrames + 1;
 	}
-
-	bool IsLooping() const
-	{
-		return m_loop;
-	}
 				
 	const std::string &GetName() const
 	{
@@ -137,7 +127,6 @@ private:
 	// Global time = global start time + ((millisecondsPerFrame/m_fps) * localTime)
 	// Local time = (globalTime - localTime) * m_fps
 	int m_numFrames;
-	bool m_loop;
 	std::string m_name;
 	int m_startSample;
 	int m_endSample;

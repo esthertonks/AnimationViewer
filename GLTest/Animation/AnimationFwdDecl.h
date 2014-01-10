@@ -1,13 +1,14 @@
 #pragma once
 
 #include <fbxsdk.h>
-//#include <boost/shared_array.hpp>
+#include <boost/shared_ptr.hpp>
 //#include <glm/glm.hpp>
 //#include <glm/gtx/quaternion.hpp> 
 //#include <vector>
 
-//namespace animation
-//{
+namespace animation
+{
+	class AnimationController;
 	//class Key;
 	//class VectorKey;
 	//class QuaternionKey;
@@ -21,4 +22,5 @@
 	//typedef boost::shared_ptr<animation::QuaternionTrack> QuaternionTrackPtr;
 
 	//typedef std::vector<boost::shared_ptr<Key>> KeyArray;
-//}
+	typedef boost::shared_ptr<animation::AnimationController> AnimationControllerPtr;
+}

@@ -6,7 +6,7 @@
 
 #include "Node.h"
 #include "../Batch/BatchFwdDecl.h"
-#include "../Animation/AnimationInfo.h"
+#include "MeshFwdDecl.h"
 
 namespace mesh
 {
@@ -37,7 +37,7 @@ public:
 		int materialId
 	)
 	{
-		return m_numVerticesPerMaterial[materialId];
+		return m_numVerticesPerMaterialArray[materialId];
 	}
 
 	render::AppearanceTable &GetAppearanceTable()
@@ -48,18 +48,25 @@ public:
 
 	std::vector<unsigned int> &GetNumVerticesPerMaterialArray()
 	{
-		return m_numVerticesPerMaterial;
+		return m_numVerticesPerMaterialArray;
 	}
 
-	animation::AnimationInfo &GetAnimationInfo()
+	mesh::AnimationInfoPtr GetAnimationInfo()
 	{
 		return m_animationInfo;
 	}
 
+	void SetAnimationInfo(
+		mesh::AnimationInfoPtr animationInfo
+		)
+	{
+		m_animationInfo = animationInfo;
+	}
+
 private:
-	render::AppearanceTable m_appearanceTable; // Mapping of material id's to material names
-	std::vector<unsigned int> m_numVerticesPerMaterial; // A count of the number of vertex indices per material batch. Necessary for creating batches later
+	render::AppearanceTable m_appearanceTable; // Mapping of material id's to material names //TODO pointer and set method
+	std::vector<unsigned int> m_numVerticesPerMaterialArray; // A count of the number of vertex indices per material batch. Necessary for creating batches later
 	container::LinkedTree<Node> m_nodes;
-	animation::AnimationInfo m_animationInfo; // Extra info about all animation tracks
+	mesh::AnimationInfoPtr m_animationInfo; // Extra info about all animation tracks
 };
 }

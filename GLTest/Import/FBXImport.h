@@ -3,7 +3,7 @@
 #include <string>
 #include <boost/shared_array.hpp>
 #include "../Batch/BatchFwdDecl.h"
-#include "../ImportMesh/ImportFwdDecl.h"
+#include "../Mesh/MeshFwdDecl.h"
 
 namespace mesh
 {

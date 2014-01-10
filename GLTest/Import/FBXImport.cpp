@@ -1,9 +1,10 @@
 #include "FBXImport.h"
-#include "../ImportMesh/Mesh.h"
-#include "../ImportMesh/MeshNode.h"
-#include "../ImportMesh/BoneNode.h"
-#include "../ImportMesh/Triangle.h"
-#include "../ImportMesh/Vertex.h"
+#include "../Mesh/Mesh.h"
+#include "../Mesh/MeshNode.h"
+#include "../Mesh/BoneNode.h"
+#include "../Mesh/Triangle.h"
+#include "../Mesh/Vertex.h"
+#include "../Mesh/AnimationInfo.h"
 #include "../Batch/LambertAppearance.h"
 #include "../Batch/PhongAppearance.h"
 #include "../Utils/MathsUtils.h"
@@ -104,18 +105,18 @@ mesh::MeshPtr FBXImport::Import(
 	FbxNode &fbxRootNode = *m_fbxScene->GetRootNode();
 
 	LoadAnimationLayerInfo();
-	animation::AnimationInfo &animationInfo = m_mesh->GetAnimationInfo();
+	mesh::AnimationInfoPtr animationInfo = m_mesh->GetAnimationInfo();
 
 	// Bake all FBX transforms ie pivots and offsets into standard scale, rotation etc
 	// See http://docs.autodesk.com/FBX/2014/ENU/FBX-SDK-Documentation/index.html?url=files/GUID-C35D98CB-5148-4B46-82D1-51077D8970EE.htm,topicNumber=d30e8813
 	BakeNodeTransforms(fbxRootNode);
-	fbxRootNode.ConvertPivotAnimationRecursive(NULL, FbxNode::eDestinationPivot, animationInfo.GetFPS());	// FPS fixed at 30 atm
+	fbxRootNode.ConvertPivotAnimationRecursive(NULL, FbxNode::eDestinationPivot, animationInfo->GetFPS());	// FPS fixed at 30 atm
 
 	LoadNodes(fbxRootNode, m_mesh->GetNodeHierarchy());
 
 	// Now the all the animation is loaded adjust the time to make sure that it starts at zero //TODO function
-	animationInfo.SetEndSample(animationInfo.GetEndSample() - animationInfo.GetStartSample());
-	animationInfo.SetStartSample(0);
+	animationInfo->SetEndSample(animationInfo->GetEndSample() - animationInfo->GetStartSample());
+	animationInfo->SetStartSample(0);
 
 	// TODO revome duplicate keys
 
@@ -302,23 +303,23 @@ mesh::Node *FBXImport::LoadBoneNode(
 	const FbxAMatrix fbxInitialLocalTransform = fbxNode.EvaluateLocalTransform(0, FbxNode::eDestinationPivot);
 	boneNode->m_localTransform = fbxInitialLocalTransform;
 
-	animation::AnimationInfo &animationInfo = m_mesh->GetAnimationInfo();
+	mesh::AnimationInfoPtr animationInfo = m_mesh->GetAnimationInfo();
 	// Load in the local keys transoforms for each key
-	int numSamples = animationInfo.GetNumFrameSamples();
-	double frameRate = animationInfo.GetFPS();
+	int numSamples = animationInfo->GetNumFrameSamples();
+	double frameRate = animationInfo->GetFPS();
 
 	if(numSamples)
 	{
 		boneNode->AllocateAnimationTracks(numSamples);
 	}
 
-	int startFrame = animationInfo.GetStartSample();
-	long startTime = animationInfo.ConvertFrameToMilliseconds(startFrame);
+	int startFrame = animationInfo->GetStartSample();
+	long startTime = animationInfo->ConvertFrameToMilliseconds(startFrame);
 	FbxTime fbxTime;
 
 	for(int sample = 0; sample <= numSamples; sample++)
 	{
-		long sampleTime = animationInfo.ConvertFrameToMilliseconds(sample); // Get the number of milliseconds into the animation for this sample frame (starting at 0)
+		long sampleTime = animationInfo->ConvertFrameToMilliseconds(sample); // Get the number of milliseconds into the animation for this sample frame (starting at 0)
 		fbxTime.SetMilliSeconds(startTime + sampleTime); // Find the current time in the FBX file (starting at anim start time)
 
 		const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(fbxTime, FbxNode::eDestinationPivot);
@@ -366,7 +367,7 @@ mesh::Node *FBXImport::LoadBoneNode(
 void FBXImport::LoadAnimationLayerInfo()
 {
 	// Get the fps and calculate the number of frames that should be loaded
-	animation::AnimationInfo &animationInfo = m_mesh->GetAnimationInfo();
+	mesh::AnimationInfoPtr animationInfo = mesh::AnimationInfoPtr(new mesh::AnimationInfo());
 
 	const FbxTakeInfo &takeInfo = *m_fbxImporter->GetTakeInfo(0);
 
@@ -378,17 +379,19 @@ void FBXImport::LoadAnimationLayerInfo()
 		frameRate = FbxTime::GetFrameRate(fbxTimeMode);
 	}
 
-	animationInfo.SetFPS(frameRate);
+	animationInfo->SetFPS(frameRate);
 
 	// Set the start and end frame. Use frame and not time to prevent rounding errors
 	const long startTime = takeInfo.mLocalTimeSpan.GetStart().GetMilliSeconds();
 	const long endTime = takeInfo.mLocalTimeSpan.GetStop().GetMilliSeconds();
-	animationInfo.SetStartSample(animationInfo.ConvertMillisecondsToFrame(startTime));
-	animationInfo.SetEndSample(animationInfo.ConvertMillisecondsToFrame(endTime));
+	animationInfo->SetStartSample(animationInfo->ConvertMillisecondsToFrame(startTime));
+	animationInfo->SetEndSample(animationInfo->ConvertMillisecondsToFrame(endTime));
 
-	int numFrames = animationInfo.GetEndSample() - animationInfo.GetStartSample() - 1; // This will return the number of frame samples ie |-|-|-|-| (where | is a sample). So -1 for the number of frames (where - is a frame)
+	int numFrames = animationInfo->GetEndSample() - animationInfo->GetStartSample() - 1; // This will return the number of frame samples ie |-|-|-|-| (where | is a sample). So -1 for the number of frames (where - is a frame)
 
-	animationInfo.SetNumFrames(numFrames);
+	animationInfo->SetNumFrames(numFrames);
+
+	m_mesh->SetAnimationInfo(animationInfo);
 }
 
 /**

@@ -1,11 +1,10 @@
 #include "AnimationInfo.h"
 
-namespace animation
+namespace mesh
 {
 
 AnimationInfo::AnimationInfo()
 : m_numFrames(0),
-m_loop(false),
 m_name(""),
 m_startSample(0),
 m_endSample(0),

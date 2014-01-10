@@ -6,56 +6,49 @@
 #include "Track.h"
 #include "VectorKey.h"
 #include "QuaternionKey.h"
+#include "../Mesh/MeshFwdDecl.h"
 /*
-	Information about an animation.
+	Animates any mesh::Mesh using the animation tracks contained within that mesh
 */
-
-namespace mesh
-{
-	class Node;
-}
 
 namespace animation
 {
-	class AnimationInfo;
 
-class Animator
+class AnimationController
 {
 public :
 
-	Animator();
-	~Animator(){};
+	AnimationController();
+
+	~AnimationController(){};
 
 void StartAnimation(
 	long globalStartTime,
-	AnimationInfo *animationInfo
+	long animStartTime,
+	long animEndTime
 	);
 
 void PauseAnimation();
 
 void StopAnimation();
 
-void PrepareBoneHierarcy(
-	mesh::Node *node,
-	const long globalTime
+void Update(
+	mesh::MeshPtr m_mesh,
+	const long globalTime,
+	const bool isLooping
 	);
 
-void PrepareBoneHierarcy(
+private:
+	void ClampTime(
+		const bool isLooping
+		);
+
+	void PrepareBoneHierarcy(
 	int sample,
 	mesh::Node* node,
 	const FbxAMatrix &parentGlobalScaleMatrix,
 	const FbxAMatrix &parentGlobalRotationMatrix
 	);
-
-private:
-	void ClampTime();
-//void BinarySearchKeys(
-//	boost::shared_ptr<animation::Track> track,
-//	const long timeToFind,
-//	int startKeyIndex,
-//	int endKeyIndex,
-//	int &currentKeyIndex
-//	);
 
 boost::shared_ptr<VectorKey> InterpolatePosition(
 	int sample,
@@ -90,11 +83,21 @@ boost::shared_ptr<QuaternionKey> Slerp(
 	const boost::shared_ptr<QuaternionKey> nextKey
 	);
 
+/*
+	Takes the current time and the time at the keyframe before and after this time.
+	Returns a normalised time value between 0.0 and 1.0 where 0.0 is the time at the last
+	keyframe and 1.0 is the time at the next keyframe.
+*/
+float NormalizeTime(
+	const long currentTime, // The current local time
+	const long lastKeyTime, // The time at the last keyframe
+	const long nextKeyTime	 // The time at the next keyframe
+	) const;
+
 	long m_globalStartTime;
 	long m_localCurrentTime;
 	long m_animStartTime;
 	long m_animEndTime;
-	AnimationInfo *m_animationInfo;
 };
 
 }

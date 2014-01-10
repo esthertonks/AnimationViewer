@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glm\glm.hpp>
-#include "../ImportMesh/ImportFwdDecl.h"
+#include "../Mesh/MeshFwdDecl.h"
 
 namespace animation
 {
@@ -21,20 +21,10 @@ public:
 	virtual ~Renderable();
 
 	virtual bool Create(
-		mesh::MeshPtr &importMesh
+		mesh::MeshPtr &mesh
 		) = 0;
 
-	virtual void Animate(
-		long globalStartTime,
-		animation::AnimationInfo *animationInfo
-		) = 0;
-
-	virtual void PauseAnimation() = 0;
-	virtual void StopAnimation() = 0;
-
-	virtual bool Update(
-		long deltaTime
-	) = 0;
+	virtual bool Update() = 0;
 
 	virtual void Rotate(
 		const float rotY,

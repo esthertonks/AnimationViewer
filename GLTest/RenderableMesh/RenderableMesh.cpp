@@ -1,9 +1,9 @@
 #include "RenderableMesh.h"
-#include "ShaderManager.h"
+#include "../Render/ShaderManager.h"
 #include "../Batch/BatchProcessor.h"
 #include "../Batch/BatchList.h"
 #include "../Batch/Batch.h"
-#include "../ImportMesh/Mesh.h"
+#include "../Mesh/Mesh.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace render
@@ -15,43 +15,19 @@ RenderableMesh::RenderableMesh()
 }
 
 bool RenderableMesh::Create(
-	mesh::MeshPtr &importMesh
+	mesh::MeshPtr &mesh
 	)
 {			
 	batch::BatchProcessor meshBatchProcessor;
 		
-	meshBatchProcessor.CreateBatches(importMesh, m_renderBatches);
+	meshBatchProcessor.CreateBatches(mesh, m_renderBatches);
 		
 	meshBatchProcessor.PrepareBatches(m_renderBatches);
 
 	return true;
 }
 
-void RenderableMesh::Animate(
-	long globalStartTime,
-	animation::AnimationInfo *animationInfo
-	)
-{
-	//m_animator = boost::shared_ptr<animation::Animator>(new animation::Animator());
-	//m_animator = boost::shared_ptr<animation::Animator>(new animation::Animator());
-	//m_animator->StartAnimation(0, fps);
-}
-
-void RenderableMesh::PauseAnimation()
-{
-	//m_animator->PauseAnimation();
-	//delete m_animator;
-}
-
-void RenderableMesh::StopAnimation()
-{
-	//m_animator->StopAnimation();
-	//delete m_animator;
-}
-
-bool  RenderableMesh::Update(
-	long time
-	)
+bool  RenderableMesh::Update()
 {		
 	//mesh::Node *root = m_mesh->GetNodeHierarchy();
 	//m_animator->PrepareBoneHierarcy(root, time, fps);

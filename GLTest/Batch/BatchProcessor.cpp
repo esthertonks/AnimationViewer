@@ -1,8 +1,8 @@
 #include "BatchProcessor.h"
-#include "../ImportMesh/Mesh.h"
-#include "../ImportMesh/MeshNode.h"
-#include "../ImportMesh/Triangle.h"
-#include "../ImportMesh/Vertex.h"
+#include "../Mesh/Mesh.h"
+#include "../Mesh/MeshNode.h"
+#include "../Mesh/Triangle.h"
+#include "../Mesh/Vertex.h"
 #include "../Batch/VertexFormat.h"
 #include "../Batch/BatchList.h"
 #include "../Batch/Batch.h"
@@ -29,12 +29,12 @@ BatchProcessor::~BatchProcessor()
 
 // Create per vertex data in per material batches. Extra vertices are created to accommodate per triangle corner information.
 void BatchProcessor::CreateBatches(
-	mesh::MeshPtr &importMesh,
+	mesh::MeshPtr &mesh,
 	render::BatchList &renderBatches // Batch vector to fill in
 	)
 {
 		// TODO for testing atm assume only one - rewrite for many shortly
-		render::AppearanceTable& appearances = importMesh->GetAppearanceTable();
+		render::AppearanceTable& appearances = mesh->GetAppearanceTable();
 		int numBatches = appearances.size();
 		renderBatches.resize(numBatches);
 
@@ -43,7 +43,7 @@ void BatchProcessor::CreateBatches(
 		// TODO need to split by vertex format first?
 
 	// TODO For now just average everything, but this needs to create batches and split normals for textures, colours and normals.
-		mesh::Node* node = importMesh->GetNodeHierarchy();
+		mesh::Node* node = mesh->GetNodeHierarchy();
 		for(node; node != NULL; node = node->m_next)
 	{
 		if(node->GetType() != mesh::NodeType::MeshType)
@@ -69,7 +69,7 @@ void BatchProcessor::CreateBatches(
 			if(!renderBatches[materialId]) // If a batch for this material does not already exist then create it
 			{
 				renderBatches[materialId] = render::BatchPtr(new render::Batch(render::ColourFormat));
-				int numVertices = importMesh->GetNumVerticesWithMaterialId(materialId);
+				int numVertices = mesh->GetNumVerticesWithMaterialId(materialId);
 				renderBatches[materialId]->AllocateVertices(numVertices);
 				renderBatches[materialId]->AllocateIndices(numVertices);
 				renderBatches[materialId]->SetAppearance(appearances[materialId]);

@@ -2,11 +2,13 @@
 #include "Render/GLRenderCanvas.h"
 #include "Render/Window.h"
 #include "Import/FBXImport.h"
-#include "ImportMesh/Mesh.h"
-#include "Render\Renderable.h"
-#include "Render\RenderableMesh.h"
-#include "Render\RenderableBoneList.h"
-#include "GUI\ControlsPanel.h"
+#include "Mesh/Mesh.h"
+#include "RenderableMesh/Renderable.h"
+#include "RenderableMesh/RenderableMesh.h"
+#include "RenderableMesh/RenderableBoneList.h"
+#include "GUI/ControlsPanel.h"
+#include "Mesh/AnimationInfo.h"
+#include "Animation/AnimationController.h"
 
 const int ID_BONES_CHECKBOX = 100;
 const int ID_NORMALS_CHECKBOX = 101;
@@ -39,7 +41,7 @@ bool AnimationApp::OnInit()
 	m_fbxImporter = boost::shared_ptr<import::FBXImport>(new import::FBXImport());
 
 	m_currentMeshInfo.m_renderMesh = NULL;
-	m_currentMeshInfo.m_importMesh = NULL;
+	m_currentMeshInfo.m_mesh = NULL;
 
 	frame->Show(TRUE);
 
@@ -58,11 +60,18 @@ void AnimationApp::OnIdle(
 	//BatchList
 	if(m_currentMeshInfo.m_renderMesh)
 	{
-		if(m_boneOverlay)
+		// Update animation
+		if(m_currentMeshInfo.m_mesh && m_meshAnimator)
 		{
 			float delta = timeNow - m_lastTime;
+			m_meshAnimator->Update(m_currentMeshInfo.m_mesh, timeNow, false);
+		}
 
-			m_boneOverlay->Update(timeNow);
+		// Update any render meshes with the new bone hierarchy
+		if(m_boneOverlay)
+		{
+			// TODO this should have the bone hierarchy passed in? Certainly shouldn't be storing the mesh....
+			m_boneOverlay->Update(); // Update the render mesh with the new bone info
 		}
 		//m_input->Do SomethingWithCamera();
 		//m_camera->GetView();
@@ -90,12 +99,12 @@ void AnimationApp::ImportFBX(
 {
 	//TODO should the render mesh be a different type of mesh?
 	//TODO should the processing be done right away by the importer and the rest of the app only knows about the render compatible mesh?
-	m_currentMeshInfo.m_importMesh = m_fbxImporter->Import(filePath);
-	if(m_currentMeshInfo.m_importMesh)
+	m_currentMeshInfo.m_mesh = m_fbxImporter->Import(filePath);
+	if(m_currentMeshInfo.m_mesh)
 	{
 		render::RenderableMeshPtr renderableMesh = render::RenderableMeshPtr(new render::RenderableMesh());
 
-		if(renderableMesh->Create(m_currentMeshInfo.m_importMesh))
+		if(renderableMesh->Create(m_currentMeshInfo.m_mesh))
 		{
 			render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(renderableMesh);
 			m_renderCanvas->AddRenderable(renderable);
@@ -104,7 +113,7 @@ void AnimationApp::ImportFBX(
 		else
 		{
 			m_currentMeshInfo.m_renderMesh = NULL;
-			m_currentMeshInfo.m_importMesh = NULL;
+			m_currentMeshInfo.m_mesh = NULL;
 		}
 	}
 	else
@@ -121,14 +130,15 @@ void AnimationApp::ShowBones(
 {
 	//TODO actually better to create this on mesh load maybe???
 
-	if(show && m_currentMeshInfo.m_importMesh) // If there is no mesh do nothing
+	if(show && m_currentMeshInfo.m_mesh) // If there is no mesh do nothing
 	{
 		render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(render::RenderableBoneListPtr(new render::RenderableBoneList()));
 
-		if(renderable->Create(m_currentMeshInfo.m_importMesh))
+		if(renderable->Create(m_currentMeshInfo.m_mesh))
 		{
 			m_renderCanvas->AddRenderable(renderable);
 			m_boneOverlay = renderable;
+			m_meshAnimator = boost::shared_ptr<animation::AnimationController>(new animation::AnimationController());
 		}
 		else
 		{
@@ -166,32 +176,34 @@ void AnimationApp::ShowMesh(
 
 void AnimationApp::PlayAnimation()
 {
-	if(!m_currentMeshInfo.m_importMesh)
+	if(!m_currentMeshInfo.m_mesh)
 	{
 		return;
 	}
 
-	animation::AnimationInfo& animationInfo = m_currentMeshInfo.m_importMesh->GetAnimationInfo();
-	animationInfo.SetLoop(false);
-	if(m_boneOverlay)
+	mesh::AnimationInfoPtr animationInfo = m_currentMeshInfo.m_mesh->GetAnimationInfo();
+	if(m_meshAnimator)
 	{
-		m_boneOverlay->Animate(timeGetTime(), &animationInfo);
+		long animStartTime = animationInfo->ConvertFrameToMilliseconds(animationInfo->GetStartSample());
+		long animEndTime = animationInfo->ConvertFrameToMilliseconds(animationInfo->GetEndSample());
+
+		m_meshAnimator->StartAnimation(timeGetTime(), animStartTime, animEndTime);
 	}
 }
 
 void AnimationApp::PauseAnimation()
 {
-	if(m_boneOverlay)
+	if(m_meshAnimator)
 	{
-		m_boneOverlay->PauseAnimation();
+		m_meshAnimator->PauseAnimation();
 	}
 }
 
 void AnimationApp::StopAnimation()
 {
-	if(m_boneOverlay)
+	if(m_meshAnimator)
 	{
-		m_boneOverlay->StopAnimation();
+		m_meshAnimator->StopAnimation();
 	}
 }
 

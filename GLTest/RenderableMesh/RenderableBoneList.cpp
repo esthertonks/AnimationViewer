@@ -1,77 +1,41 @@
 #include "RenderableBoneList.h"
 
-#include "../ImportMesh/Mesh.h"
-#include "../ImportMesh/BoneNode.h"
+#include "../Mesh/Mesh.h"
+#include "../Mesh/BoneNode.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../Render/ShaderManager.h"
-
-#include "../Animation/Animator.h"
+#include <wx/log.h>
 
 namespace render
 {
 
 RenderableBoneList::RenderableBoneList()
 	: Renderable(),
-	m_animator(NULL),
 	m_numVerts(0)
 {
 }
 
 bool RenderableBoneList::Create(
-	mesh::MeshPtr &importMesh
+	mesh::MeshPtr &mesh
 	)
 {		
-	m_mesh = importMesh;
+	m_mesh = mesh;
 	m_numVerts = 0;
 	return true;
 }
 
-//TODO animator in main class and pass in the mesh!!! render mesh is something entirely different!!!!!
-// TODO isnt this called setAnimation?
-void RenderableBoneList::Animate(
-	long globalStartTime,
-	animation::AnimationInfo *animationInfo
-	)
-{
-	m_animator = boost::shared_ptr<animation::Animator>(new animation::Animator());
-	m_animator->StartAnimation(globalStartTime, animationInfo);
-}
-
-void RenderableBoneList::PauseAnimation()
-{
-	if(m_animator) // TODO stop using this to control whether it is animating. At least use a bool. NULL with shared_ptr???
-	{
-		m_animator->StopAnimation(); //TODO we are controlling whether the animation is playing here not the animator. Incorrent???!
-		m_animator = NULL;
-	}
-}
-
-void RenderableBoneList::StopAnimation()
-{
-	if(m_animator) // TODO stop using this to control whether it is animating. At least use a bool. NULL with shared_ptr???
-	{
-		Update(0);
-		m_animator->StopAnimation();//TODO we are controlling whether the animation is playing here not the animator. Incorrent???!
-		m_animator = NULL;
-	}
-}
-
-bool RenderableBoneList::Update(
-	long globalTime
-	)
+bool RenderableBoneList::Update()
 {
 	m_vertexArray.clear();
+
+	// Get the updated hierarchy and extract the current positions for the line overlay
 	mesh::Node *root = m_mesh->GetNodeHierarchy();
-	if(m_animator)
-	{
-		m_animator->PrepareBoneHierarcy(root, globalTime);
-	}
 
 	AddPositionToVertexList(root);
 	m_numVerts = m_vertexArray.size(); // Keep a record of the new verts so that the draw calls can use it
-	Prepare();
-
+	Prepare(); // Prepare for rendering
+	//wxLogDebug("tick3");
 	return true;
 }
 
@@ -186,6 +150,10 @@ void RenderableBoneList::Render(
 	int programId = shaderManager.GetProgramId(Overlay);
 	if(programId != -1)
 	{
+		//wxLogDebug("draw!");
+		//wxLogDebug("pos x %f", m_vertexArray[0].m_position.x);
+		//wxLogDebug("pos y %f", m_vertexArray[0].m_position.y);
+		//wxLogDebug("pos z %f", m_vertexArray[0].m_position.z);
 		//TODO shader to draw linelists?
 		//TODO well most of this is duplicated in all renderables!!!!!!!!!??
 		GLint modelMatrixLocation = glGetUniformLocation(programId, "modelMatrix");

@@ -35,20 +35,10 @@ public:
 	}
 
 	bool Create(
-		mesh::MeshPtr &importMesh
+		mesh::MeshPtr &mesh
 		);
 
-	virtual void Animate(
-		long globalStartTime,
-		animation::AnimationInfo *animationInfo
-		);
-
-	virtual void PauseAnimation();
-	virtual void StopAnimation();
-
-	virtual bool Update(
-		long globalTime
-	);
+	virtual bool Update();
 
 	virtual void Rotate(
 		const float rotY,

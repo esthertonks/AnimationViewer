@@ -12,7 +12,7 @@ namespace mesh
 
 namespace animation
 {
-	class Animator;
+	class AnimationController;
 	class AnimationInfo;
 }
 
@@ -33,20 +33,10 @@ public:
 	const glm::mat4x4 &GetModelMatrix();
 
 	virtual bool Create(
-		mesh::MeshPtr &importMesh
+		mesh::MeshPtr &mesh
 		);
 
-	virtual void Animate(
-		long globalStartTime,
-		animation::AnimationInfo *animationInfo
-		);
-
-	virtual void PauseAnimation();
-	virtual void StopAnimation();
-
-	virtual bool Update(
-		long globalTime
-	);
+	virtual bool Update();
 
 	virtual void Rotate(
 		const float rotY,
@@ -72,6 +62,5 @@ private:
 	int m_numVerts;
 
 	mesh::MeshPtr m_mesh;
-	boost::shared_ptr<animation::Animator> m_animator;
 };
 }

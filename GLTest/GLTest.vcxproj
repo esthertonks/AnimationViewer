@@ -84,8 +84,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Animation\AnimationInfo.cpp" />
-    <ClCompile Include="Animation\Animator.cpp" />
+    <ClCompile Include="Animation\AnimationController.cpp" />
     <ClCompile Include="Animation\Track.cpp" />
     <ClCompile Include="Batch\Appearance.cpp" />
     <ClCompile Include="Batch\Batch.cpp" />
@@ -96,21 +95,22 @@
     <ClCompile Include="GUI\AnimationPanel.cpp" />
     <ClCompile Include="GUI\ControlsPanel.cpp" />
     <ClCompile Include="GUI\ViewPanel.cpp" />
-    <ClCompile Include="ImportMesh\BoneNode.cpp" />
-    <ClCompile Include="ImportMesh\Mesh.cpp" />
-    <ClCompile Include="ImportMesh\MeshNode.cpp" />
-    <ClCompile Include="ImportMesh\SkinnedVertex.cpp" />
-    <ClCompile Include="ImportMesh\Triangle.cpp" />
-    <ClCompile Include="ImportMesh\Vertex.cpp" />
     <ClCompile Include="Import\FBXImport.cpp" />
     <ClCompile Include="AnimationApp.cpp" />
+    <ClCompile Include="Mesh\AnimationInfo.cpp" />
+    <ClCompile Include="Mesh\BoneNode.cpp" />
+    <ClCompile Include="Mesh\Mesh.cpp" />
+    <ClCompile Include="Mesh\MeshNode.cpp" />
+    <ClCompile Include="Mesh\SkinnedVertex.cpp" />
+    <ClCompile Include="Mesh\Triangle.cpp" />
+    <ClCompile Include="Mesh\Vertex.cpp" />
+    <ClCompile Include="RenderableMesh\Renderable.cpp" />
+    <ClCompile Include="RenderableMesh\RenderableBoneList.cpp" />
+    <ClCompile Include="RenderableMesh\RenderableMesh.cpp" />
     <ClCompile Include="Render\FirstPersonCamera.cpp" />
     <ClCompile Include="Render\GLUtils.cpp" />
     <ClCompile Include="Render\OrbitCamera.cpp" />
     <ClCompile Include="Render\GLRenderCanvas.cpp" />
-    <ClCompile Include="Render\Renderable.cpp" />
-    <ClCompile Include="Render\RenderableBoneList.cpp" />
-    <ClCompile Include="Render\RenderableMesh.cpp" />
     <ClCompile Include="Render\ShaderManager.cpp" />
     <ClCompile Include="Render\Window.cpp" />
     <ClCompile Include="Utils\MathsUtils.cpp" />
@@ -118,8 +118,7 @@
   <ItemGroup>
     <ClInclude Include="AnimationApp.h" />
     <ClInclude Include="Animation\AnimationFwdDecl.h" />
-    <ClInclude Include="Animation\AnimationInfo.h" />
-    <ClInclude Include="Animation\Animator.h" />
+    <ClInclude Include="Animation\AnimationController.h" />
     <ClInclude Include="Animation\Key.h" />
     <ClInclude Include="Animation\QuaternionKey.h" />
     <ClInclude Include="Animation\Track.h" />
@@ -137,22 +136,23 @@
     <ClInclude Include="GUI\AnimationPanel.h" />
     <ClInclude Include="GUI\ControlsPanel.h" />
     <ClInclude Include="GUI\ViewPanel.h" />
-    <ClInclude Include="ImportMesh\BoneNode.h" />
-    <ClInclude Include="ImportMesh\ImportFwdDecl.h" />
-    <ClInclude Include="ImportMesh\Mesh.h" />
-    <ClInclude Include="ImportMesh\MeshNode.h" />
-    <ClInclude Include="ImportMesh\Node.h" />
-    <ClInclude Include="ImportMesh\SkinnedVertex.h" />
-    <ClInclude Include="ImportMesh\Triangle.h" />
-    <ClInclude Include="ImportMesh\Vertex.h" />
     <ClInclude Include="Import\FBXImport.h" />
+    <ClInclude Include="Mesh\AnimationInfo.h" />
+    <ClInclude Include="Mesh\BoneNode.h" />
+    <ClInclude Include="Mesh\Mesh.h" />
+    <ClInclude Include="Mesh\MeshFwdDecl.h" />
+    <ClInclude Include="Mesh\MeshNode.h" />
+    <ClInclude Include="Mesh\Node.h" />
+    <ClInclude Include="Mesh\SkinnedVertex.h" />
+    <ClInclude Include="Mesh\Triangle.h" />
+    <ClInclude Include="Mesh\Vertex.h" />
+    <ClInclude Include="RenderableMesh\Renderable.h" />
+    <ClInclude Include="RenderableMesh\RenderableBoneList.h" />
+    <ClInclude Include="RenderableMesh\RenderableMesh.h" />
     <ClInclude Include="Render\FirstPersonCamera.h" />
     <ClInclude Include="Render\GLUtils.h" />
     <ClInclude Include="Render\OrbitCamera.h" />
     <ClInclude Include="Render\GLRenderCanvas.h" />
-    <ClInclude Include="Render\Renderable.h" />
-    <ClInclude Include="Render\RenderableBoneList.h" />
-    <ClInclude Include="Render\RenderableMesh.h" />
     <ClInclude Include="Render\RenderFwdDecl.h" />
     <ClInclude Include="Render\ShaderManager.h" />
     <ClInclude Include="Render\Window.h" />

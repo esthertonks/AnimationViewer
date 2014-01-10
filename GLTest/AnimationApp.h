@@ -4,21 +4,18 @@
 //#include "vld.h"
 #include "wx/wx.h"
 #include "Batch\BatchFwdDecl.h"
-#include "ImportMesh\ImportFwdDecl.h"
+#include "Mesh\MeshFwdDecl.h"
+#include "Animation\AnimationFwdDecl.h"
 
 namespace render
 {
 	class GLRenderCanvas;
+	class Batch;
 }
 
 namespace import
 {
 	class FBXImport;
-}
-
-namespace render
-{
-	class Batch;
 }
 
 class AnimationApp: public wxApp
@@ -68,12 +65,13 @@ class AnimationApp: public wxApp
 	struct CurrentMeshInfo
 	{
 		render::RenderablePtr m_renderMesh;
-		mesh::MeshPtr m_importMesh;
+		mesh::MeshPtr m_mesh;
 	};
 
 	CurrentMeshInfo m_currentMeshInfo;
 
 	render::RenderablePtr m_boneOverlay;//TODO so....where does this live? Needs storing so we can remove it from the renderer when we check bones off
+	animation::AnimationControllerPtr m_meshAnimator;
 };
 
 DECLARE_APP(AnimationApp)

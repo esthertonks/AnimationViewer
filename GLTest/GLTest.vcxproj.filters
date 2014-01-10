@@ -11,9 +11,6 @@
     <Filter Include="Render">
       <UniqueIdentifier>{963d48bb-219d-4b8d-a960-59a9281ed1f6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ImportMesh">
-      <UniqueIdentifier>{adef16f5-2916-40ed-8fef-446a6d7383c5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{2fa95ea1-dfaf-47aa-9581-cc708fed176a}</UniqueIdentifier>
     </Filter>
@@ -32,28 +29,16 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{8d3b13a8-4a4e-41c8-89f1-8d9cd4434aa5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mesh">
+      <UniqueIdentifier>{adef16f5-2916-40ed-8fef-446a6d7383c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderableMesh">
+      <UniqueIdentifier>{398d860d-aa58-40e5-a924-7b2e0ffb01c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Import\FBXImport.cpp">
       <Filter>Import</Filter>
-    </ClCompile>
-    <ClCompile Include="ImportMesh\BoneNode.cpp">
-      <Filter>ImportMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="ImportMesh\Mesh.cpp">
-      <Filter>ImportMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="ImportMesh\MeshNode.cpp">
-      <Filter>ImportMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="ImportMesh\SkinnedVertex.cpp">
-      <Filter>ImportMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="ImportMesh\Triangle.cpp">
-      <Filter>ImportMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="ImportMesh\Vertex.cpp">
-      <Filter>ImportMesh</Filter>
     </ClCompile>
     <ClCompile Include="Render\Window.cpp">
       <Filter>Render</Filter>
@@ -86,32 +71,17 @@
     <ClCompile Include="Render\ShaderManager.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="Render\RenderableMesh.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
-    <ClCompile Include="Render\Renderable.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
     <ClCompile Include="Render\GLRenderCanvas.cpp">
       <Filter>Render</Filter>
     </ClCompile>
     <ClCompile Include="GUI\ControlsPanel.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="Render\RenderableBoneList.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation\AnimationInfo.cpp">
-      <Filter>Animation</Filter>
-    </ClCompile>
     <ClCompile Include="Render\GLUtils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Utils\MathsUtils.cpp">
       <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation\Animator.cpp">
-      <Filter>Animation</Filter>
     </ClCompile>
     <ClCompile Include="Animation\Track.cpp">
       <Filter>Animation</Filter>
@@ -122,28 +92,43 @@
     <ClCompile Include="GUI\ViewPanel.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="Animation\AnimationController.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableMesh\Renderable.cpp">
+      <Filter>RenderableMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableMesh\RenderableBoneList.cpp">
+      <Filter>RenderableMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableMesh\RenderableMesh.cpp">
+      <Filter>RenderableMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\BoneNode.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\Mesh.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\MeshNode.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\SkinnedVertex.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\Triangle.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\Vertex.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\AnimationInfo.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
       <Filter>Import</Filter>
-    </ClInclude>
-    <ClInclude Include="ImportMesh\BoneNode.h">
-      <Filter>ImportMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="ImportMesh\Mesh.h">
-      <Filter>ImportMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="ImportMesh\MeshNode.h">
-      <Filter>ImportMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="ImportMesh\SkinnedVertex.h">
-      <Filter>ImportMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="ImportMesh\Triangle.h">
-      <Filter>ImportMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="ImportMesh\Vertex.h">
-      <Filter>ImportMesh</Filter>
     </ClInclude>
     <ClInclude Include="Render\Window.h">
       <Filter>Render</Filter>
@@ -188,41 +173,20 @@
     <ClInclude Include="Render\RenderFwdDecl.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="Render\RenderableMesh.h">
-      <Filter>Render</Filter>
-    </ClInclude>
-    <ClInclude Include="Render\Renderable.h">
-      <Filter>Render</Filter>
-    </ClInclude>
     <ClInclude Include="Render\GLRenderCanvas.h">
       <Filter>Render</Filter>
     </ClInclude>
     <ClInclude Include="GUI\ControlsPanel.h">
       <Filter>GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Render\RenderableBoneList.h">
-      <Filter>Render</Filter>
-    </ClInclude>
-    <ClInclude Include="ImportMesh\ImportFwdDecl.h">
-      <Filter>ImportMesh</Filter>
-    </ClInclude>
     <ClInclude Include="Container\LinkedTree.h">
       <Filter>Container</Filter>
-    </ClInclude>
-    <ClInclude Include="ImportMesh\Node.h">
-      <Filter>ImportMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation\AnimationInfo.h">
-      <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="Animation\AnimationFwdDecl.h">
       <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="Render\GLUtils.h">
       <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation\Animator.h">
-      <Filter>Animation</Filter>
     </ClInclude>
     <ClInclude Include="Utils\MathsUtils.h">
       <Filter>Utils</Filter>
@@ -244,6 +208,45 @@
     </ClInclude>
     <ClInclude Include="GUI\ViewPanel.h">
       <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimationController.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableMesh\Renderable.h">
+      <Filter>RenderableMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableMesh\RenderableBoneList.h">
+      <Filter>RenderableMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableMesh\RenderableMesh.h">
+      <Filter>RenderableMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\BoneNode.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\Mesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\MeshFwdDecl.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\MeshNode.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\Node.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\SkinnedVertex.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\Triangle.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\Vertex.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\AnimationInfo.h">
+      <Filter>Mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
