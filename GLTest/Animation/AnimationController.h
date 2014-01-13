@@ -83,17 +83,6 @@ boost::shared_ptr<QuaternionKey> Slerp(
 	const boost::shared_ptr<QuaternionKey> nextKey
 	);
 
-/*
-	Takes the current time and the time at the keyframe before and after this time.
-	Returns a normalised time value between 0.0 and 1.0 where 0.0 is the time at the last
-	keyframe and 1.0 is the time at the next keyframe.
-*/
-float NormalizeTime(
-	const long currentTime, // The current local time
-	const long lastKeyTime, // The time at the last keyframe
-	const long nextKeyTime	 // The time at the next keyframe
-	) const;
-
 	long m_globalStartTime;
 	long m_localCurrentTime;
 	long m_animStartTime;

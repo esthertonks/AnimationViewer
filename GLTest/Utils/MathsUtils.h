@@ -25,6 +25,17 @@ static void ConvertFBXToGLMatrix(
 	glm::mat4x4 &glmMatrix
 	);
 
+/*
+	Takes the current time and the time at the keyframe before and after this time.
+	Returns a normalised time value between 0.0 and 1.0 where 0.0 is the time at the last
+	keyframe and 1.0 is the time at the next keyframe.
+*/
+static float NormalizeValue(
+	const long currentValue, // The current value
+	const long lastValue, // Start value
+	const long nextValue	 // End Value
+	);
+
 static int Clamp(
 	int value,
 	int minValue,

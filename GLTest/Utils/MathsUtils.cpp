@@ -73,4 +73,17 @@ void MathsUtils::ConvertFBXToGLMatrix(
 
 }
 
+float MathsUtils::NormalizeValue(
+	const long currentValue, // The current value - must be between start and end values
+	const long lastValue,	 // Start value
+	const long nextValue	 // End Value
+	)
+{
+	assert(currentValue > lastValue && currentValue < nextValue);
+	// Find the current time value as a 0 - 1 proporion between the two keys
+	float normalizedValue = (currentValue - lastValue) / (float)(nextValue - lastValue);
+	assert(normalizedValue > -0.00001f && normalizedValue < 1.000001f);
+	return normalizedValue;
+}
+
 }

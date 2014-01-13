@@ -193,7 +193,7 @@ boost::shared_ptr<VectorKey> AnimationController::InterpolatePosition(
 		const boost::shared_ptr<VectorKey> nextPositionKey = boost::static_pointer_cast<VectorKey>(positionTrack->GetKey(sample + 1));
 
 		// Find the current time value as a 0 - 1 proporion between the two keys
-		const float normalizedTime = NormalizeTime(m_localCurrentTime, lastPositionKey->m_time, nextPositionKey->m_time);
+		const float normalizedTime = utils::MathsUtils::NormalizeValue(m_localCurrentTime, lastPositionKey->m_time, nextPositionKey->m_time);
 		return Lerp(normalizedTime, lastPositionKey, nextPositionKey);
 	}
 }
@@ -213,8 +213,8 @@ boost::shared_ptr<QuaternionKey> AnimationController::InterpolateRotation(
 		const boost::shared_ptr<QuaternionKey> nextRotationKey = boost::static_pointer_cast<QuaternionKey>(rotationTrack->GetKey(sample + 1));
 
 		// Find the current time value as a 0 - 1 proporion between the two keys
-		const float normalizedTime = NormalizeTime(m_localCurrentTime, lastRotationKey->m_time, nextRotationKey->m_time);
-		return Slerp(normalizedTime, lastRotationKey, nextRotationKey); //TODO put back commented out to rule out interpolation issues
+		const float normalizedTime = utils::MathsUtils::NormalizeValue(m_localCurrentTime, lastRotationKey->m_time, nextRotationKey->m_time);
+		return Slerp(normalizedTime, lastRotationKey, nextRotationKey);
 	}
 }
 
@@ -232,7 +232,7 @@ boost::shared_ptr<VectorKey> AnimationController::InterpolateScale(
 	{
 		const boost::shared_ptr<VectorKey> nextScaleKey = boost::static_pointer_cast<VectorKey>(scaleTrack->GetKey(sample + 1));
 		// Find the current time value as a 0 - 1 proportion between the two keys
-		const float normalizedTime = NormalizeTime(m_localCurrentTime, lastScaleKey->m_time, nextScaleKey->m_time);
+		const float normalizedTime = utils::MathsUtils::NormalizeValue(m_localCurrentTime, lastScaleKey->m_time, nextScaleKey->m_time);
 		return Lerp(normalizedTime, lastScaleKey, nextScaleKey);
 	}
 }
@@ -296,18 +296,6 @@ boost::shared_ptr<QuaternionKey> AnimationController::Slerp(
 	}
 
 	return Lerp(normalizedTime, key, nextKey); // Keys are pretty much the same so just lerp
-}
-
-float AnimationController::NormalizeTime(
-	const long currentTime, // The current local time
-	const long lastKeyTime, // The time at the last keyframe
-	const long nextKeyTime	 // The time at the next keyframe
-	) const
-{
-	// Find the current time value as a 0 - 1 proporion between the two keys
-	float normalizedTime = (currentTime - lastKeyTime) / (float)(nextKeyTime - lastKeyTime);
-	assert(normalizedTime > -0.00001f && normalizedTime < 1.000001f);
-	return normalizedTime;
 }
 
 }
