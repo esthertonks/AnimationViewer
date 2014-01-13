@@ -79,7 +79,7 @@ float MathsUtils::NormalizeValue(
 	const long nextValue	 // End Value
 	)
 {
-	assert(currentValue > lastValue && currentValue < nextValue);
+	assert(currentValue >= lastValue && currentValue <= nextValue);
 	// Find the current time value as a 0 - 1 proporion between the two keys
 	float normalizedValue = (currentValue - lastValue) / (float)(nextValue - lastValue);
 	assert(normalizedValue > -0.00001f && normalizedValue < 1.000001f);
