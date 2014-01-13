@@ -1,7 +1,7 @@
 #pragma once
 
-//#include <wchar.h>
-//#include "vld.h"
+#include <wchar.h>
+#include "vld.h"
 #include "wx/wx.h"
 #include "Batch\BatchFwdDecl.h"
 #include "Mesh\MeshFwdDecl.h"

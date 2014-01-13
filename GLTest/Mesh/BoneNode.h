@@ -2,13 +2,13 @@
 
 #include "Node.h"
 #include "boost/shared_ptr.hpp"
+#include "../Animation/VectorKey.h"
+#include "../Animation/QuaternionKey.h"
 
 namespace animation
 {
 	class VectorTrack;
 	class QuaternionTrack;
-	class VectorKey;
-	class QuaternionKey;
 }
 
 namespace import
@@ -89,7 +89,7 @@ bool InheritsScale()
 private:
 	friend class import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
 	bool m_inheritScale; // When true this node inherits scale from it's parent (FbxTransform::eInheritRSrs). When false scale is not inherited (eInheritRrs)
-	//FbxAMatrix m_localTransform;		//Transform from this node to the parent node //TEMP to debug - we will get this from the keys
+
 	boost::shared_ptr<animation::QuaternionTrack> m_rotationTrack;
 	boost::shared_ptr<animation::VectorTrack> m_scaleTrack;
 	boost::shared_ptr<animation::VectorTrack> m_positionTrack;

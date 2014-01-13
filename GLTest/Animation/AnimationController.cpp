@@ -114,10 +114,9 @@ void AnimationController::PrepareBoneHierarcy(
 		{
 			mesh::BoneNode* boneNode = static_cast<mesh::BoneNode*>(node);
 
-			//TODO these only need declaring once
-			VectorKey localPositionKey(0, 0, 0, 0);
-			VectorKey localScaleKey(0, 0, 0, 0);
-			QuaternionKey localRotationKey(0, 0, 0, 0, 0);
+			animation::VectorKey localPositionKey;
+			animation::VectorKey localScaleKey;
+			animation::QuaternionKey localRotationKey;
 
 			InterpolatePosition(sample, boneNode->GetPositionTrack(), localPositionKey);
 			InterpolateRotation(sample, boneNode->GetRotationTrack(), localRotationKey);
@@ -193,7 +192,7 @@ void AnimationController::InterpolatePosition(
 	const VectorKey &lastPositionKey = positionTrack->GetKey(sample);
 	if(lastPositionKey.m_time == m_localCurrentTime) // First check if the time is exactly on the key
 	{
-		result = VectorKey(lastPositionKey.m_vector, 0);
+		result = lastPositionKey;
 	}
 	else // Otherwise interpolate
 	{
@@ -214,7 +213,7 @@ void AnimationController::InterpolateRotation(
 	const QuaternionKey &lastRotationKey = rotationTrack->GetKey(sample);
 	if(lastRotationKey.m_time == m_localCurrentTime) // First check if the time is exactly on the key
 	{
-		result = QuaternionKey(lastRotationKey.m_quaternion, 0);
+		result = lastRotationKey;
 	}
 	else
 	{
@@ -235,7 +234,7 @@ void AnimationController::InterpolateScale(
 	const VectorKey &lastScaleKey = scaleTrack->GetKey(sample);
 	if(lastScaleKey.m_time == m_localCurrentTime) // First check if the time is exactly on the key
 	{
-		result = VectorKey(lastScaleKey.m_vector, 0);
+		result = lastScaleKey;
 	}
 	else
 	{
@@ -254,7 +253,7 @@ void AnimationController::Lerp(
 	)
 {
 	// keyA + (keyB - keyA) * t
-	result = VectorKey(key.m_vector + (nextKey.m_vector - key.m_vector) * normalizedTime, 0); //TODO overload operator
+	result.m_vector = key.m_vector + (nextKey.m_vector - key.m_vector) * normalizedTime; //TODO overload operator
 	return;
 }
 
@@ -266,7 +265,7 @@ void AnimationController::Lerp(
 	)
 {
 	// keyA + (keyB - keyA) * t
-	result = QuaternionKey(key.m_quaternion + (nextKey.m_quaternion - key.m_quaternion) * normalizedTime, 0);
+	result.m_quaternion = key.m_quaternion + (nextKey.m_quaternion - key.m_quaternion) * normalizedTime;
 	return;
 }
 
@@ -287,7 +286,7 @@ void AnimationController::Slerp(
 
 	if(cosTheta == 1)
 	{
-		result = QuaternionKey(key.m_quaternion, 0); // The two key are the same so just return.
+		result.m_quaternion = key.m_quaternion; // The two key are the same so just return.
 		return;
 	}
 

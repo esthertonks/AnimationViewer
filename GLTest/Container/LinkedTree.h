@@ -94,6 +94,12 @@ namespace container
 
 	virtual LinkedTreeItem::~LinkedTreeItem()
 	{
+		for(ITEM *item = m_firstChild; item != NULL; )
+		{
+			ITEM *temp = item;
+			item = item->m_next;
+			delete temp;
+		}
 	};
 
 	ITEM *m_next;// Next sibling item at this hierarchy level
