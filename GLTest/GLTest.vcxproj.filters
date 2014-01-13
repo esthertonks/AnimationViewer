@@ -125,6 +125,12 @@
     <ClCompile Include="Mesh\AnimationInfo.cpp">
       <Filter>Mesh</Filter>
     </ClCompile>
+    <ClCompile Include="Animation\QuaternionTrack.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\VectorTrack.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
@@ -247,6 +253,12 @@
     </ClInclude>
     <ClInclude Include="Mesh\AnimationInfo.h">
       <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\QuaternionTrack.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\VectorTrack.h">
+      <Filter>Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,7 +4,8 @@
 #include "../Mesh/BoneNode.h"
 #include "../Animation/QuaternionKey.h"
 #include "../Animation/VectorKey.h"
-#include "../Animation/Track.h"
+#include "../Animation/QuaternionTrack.h"
+#include "../Animation/VectorTrack.h"
 #include "../Utils/MathsUtils.h"
 #include "../Mesh/AnimationInfo.h"
 #include "../Mesh/Mesh.h"
@@ -113,14 +114,19 @@ void AnimationController::PrepareBoneHierarcy(
 		{
 			mesh::BoneNode* boneNode = static_cast<mesh::BoneNode*>(node);
 
-			boost::shared_ptr<VectorKey> localPositionKey = InterpolatePosition(sample, boneNode->GetPositionTrack());
-			boost::shared_ptr<QuaternionKey> localRotationKey = InterpolateRotation(sample, boneNode->GetRotationTrack());
-			boost::shared_ptr<VectorKey> localScaleKey = InterpolateScale(sample, boneNode->GetScaleTrack());
+			//TODO these only need declaring once
+			VectorKey localPositionKey(0, 0, 0, 0);
+			VectorKey localScaleKey(0, 0, 0, 0);
+			QuaternionKey localRotationKey(0, 0, 0, 0, 0);
+
+			InterpolatePosition(sample, boneNode->GetPositionTrack(), localPositionKey);
+			InterpolateRotation(sample, boneNode->GetRotationTrack(), localRotationKey);
+			InterpolateScale(sample, boneNode->GetScaleTrack(), localScaleKey);
 
 			FbxAMatrix localScaleMatrix;
-			localScaleMatrix.SetS(localScaleKey->m_vector);
+			localScaleMatrix.SetS(localScaleKey.m_vector);
 			FbxAMatrix localRotationMatrix;
-			localRotationMatrix.SetQ(localRotationKey->m_quaternion);
+			localRotationMatrix.SetQ(localRotationKey.m_quaternion);
 
 			// Get the transform which needs setting
 			FbxAMatrix& globalTransform = boneNode->GetGlobalTransform();
@@ -144,7 +150,7 @@ void AnimationController::PrepareBoneHierarcy(
 
 				// Transform the position by the whole parent transform so that the position gets rotated and scaled correctly.
 				// Use a vector transform here as we don't want any other info from the global transform at this point.
-				FbxVector4 globalPosition = parentTransform.MultT(localPositionKey->m_vector);
+				FbxVector4 globalPosition = parentTransform.MultT(localPositionKey.m_vector);
 
 				FbxAMatrix globalPositionMatrix;
 				globalPositionMatrix.SetT(globalPosition);
@@ -165,7 +171,7 @@ void AnimationController::PrepareBoneHierarcy(
 			else // No parent, so the global transform must be the same as the local transform
 			{
 				FbxAMatrix localTranslationMatrix;
-				localTranslationMatrix.SetT(localPositionKey->m_vector);
+				localTranslationMatrix.SetT(localPositionKey.m_vector);
 				globalTransform = localTranslationMatrix * localRotationMatrix * localScaleMatrix;
 
 				if(node->m_firstChild)
@@ -178,15 +184,16 @@ void AnimationController::PrepareBoneHierarcy(
 	}
 }
 
-boost::shared_ptr<VectorKey> AnimationController::InterpolatePosition(
+void AnimationController::InterpolatePosition(
 	int sample,
-	boost::shared_ptr<animation::Track> positionTrack
+	boost::shared_ptr<animation::VectorTrack> positionTrack,
+	VectorKey &result
 	)
 {
 	const boost::shared_ptr<VectorKey> lastPositionKey = boost::static_pointer_cast<VectorKey>(positionTrack->GetKey(sample));
 	if(lastPositionKey->m_time == m_localCurrentTime) // First check if the time is exactly on the key
 	{
-		return lastPositionKey;
+		result = VectorKey(lastPositionKey->m_vector, 0);
 	}
 	else // Otherwise interpolate
 	{
@@ -194,19 +201,20 @@ boost::shared_ptr<VectorKey> AnimationController::InterpolatePosition(
 
 		// Find the current time value as a 0 - 1 proporion between the two keys
 		const float normalizedTime = utils::MathsUtils::NormalizeValue(m_localCurrentTime, lastPositionKey->m_time, nextPositionKey->m_time);
-		return Lerp(normalizedTime, lastPositionKey, nextPositionKey);
+		Lerp(normalizedTime, lastPositionKey, nextPositionKey, result);
 	}
 }
 
-boost::shared_ptr<QuaternionKey> AnimationController::InterpolateRotation(
+void AnimationController::InterpolateRotation(
 	int sample,
-	boost::shared_ptr<animation::Track> rotationTrack
+	boost::shared_ptr<animation::QuaternionTrack> rotationTrack,
+	QuaternionKey &result
 	)
 {
 	const boost::shared_ptr<QuaternionKey> lastRotationKey = boost::static_pointer_cast<QuaternionKey>(rotationTrack->GetKey(sample));
 	if(lastRotationKey->m_time == m_localCurrentTime) // First check if the time is exactly on the key
 	{
-		return lastRotationKey;
+		result = QuaternionKey(lastRotationKey->m_quaternion, 0);
 	}
 	else
 	{
@@ -214,57 +222,61 @@ boost::shared_ptr<QuaternionKey> AnimationController::InterpolateRotation(
 
 		// Find the current time value as a 0 - 1 proporion between the two keys
 		const float normalizedTime = utils::MathsUtils::NormalizeValue(m_localCurrentTime, lastRotationKey->m_time, nextRotationKey->m_time);
-		return Slerp(normalizedTime, lastRotationKey, nextRotationKey);
+		Slerp(normalizedTime, lastRotationKey, nextRotationKey, result);
 	}
 }
 
-boost::shared_ptr<VectorKey> AnimationController::InterpolateScale(
+void AnimationController::InterpolateScale(
 	int sample,
-	boost::shared_ptr<animation::Track> scaleTrack
+	boost::shared_ptr<animation::VectorTrack> scaleTrack,
+	VectorKey &result
 	)
 {
 	const boost::shared_ptr<VectorKey> lastScaleKey = boost::static_pointer_cast<VectorKey>(scaleTrack->GetKey(sample));
 	if(lastScaleKey->m_time == m_localCurrentTime) // First check if the time is exactly on the key
 	{
-		return lastScaleKey;
+		result = VectorKey(lastScaleKey->m_vector, 0);
 	}
 	else
 	{
 		const boost::shared_ptr<VectorKey> nextScaleKey = boost::static_pointer_cast<VectorKey>(scaleTrack->GetKey(sample + 1));
 		// Find the current time value as a 0 - 1 proportion between the two keys
 		const float normalizedTime = utils::MathsUtils::NormalizeValue(m_localCurrentTime, lastScaleKey->m_time, nextScaleKey->m_time);
-		return Lerp(normalizedTime, lastScaleKey, nextScaleKey);
+		Lerp(normalizedTime, lastScaleKey, nextScaleKey, result);
 	}
 }
 
-boost::shared_ptr<VectorKey> AnimationController::Lerp(
+void AnimationController::Lerp(
 	const float normalizedTime, // time value between 0 and 1 for interpolating betwen the keys
 	const boost::shared_ptr<VectorKey> key,
-	const boost::shared_ptr<VectorKey> nextKey
+	const boost::shared_ptr<VectorKey> nextKey,
+	VectorKey &result
 	)
 {
 	// keyA + (keyB - keyA) * t
-	FbxVector4 result = key->m_vector + (nextKey->m_vector - key->m_vector) * normalizedTime;
-	return boost::shared_ptr<VectorKey>(new VectorKey(result, 0));
+	result = VectorKey(key->m_vector + (nextKey->m_vector - key->m_vector) * normalizedTime, 0); //TODO overload operator
+	return;
 }
 
-boost::shared_ptr<QuaternionKey> AnimationController::Lerp(
+void AnimationController::Lerp(
 	const float normalizedTime, // time value between 0 and 1 for interpolating betwen the keys
 	const boost::shared_ptr<QuaternionKey> key,
-	const boost::shared_ptr<QuaternionKey> nextKey
+	const boost::shared_ptr<QuaternionKey> nextKey,
+	QuaternionKey &result
 	)
 {
 	// keyA + (keyB - keyA) * t
-	FbxQuaternion result = key->m_quaternion + (nextKey->m_quaternion - key->m_quaternion) * normalizedTime;
-	return boost::shared_ptr<QuaternionKey>(new QuaternionKey(result, 0));
+	result = QuaternionKey(key->m_quaternion + (nextKey->m_quaternion - key->m_quaternion) * normalizedTime, 0);
+	return;
 }
 
 // Interpolate a quaternion rotation using SLERP
 // TODO optimise ie http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
-boost::shared_ptr<QuaternionKey> AnimationController::Slerp(
+void AnimationController::Slerp(
 	const float normalizedTime, // time value between 0 and 1 for interpolating betwen the keys
 	const boost::shared_ptr<QuaternionKey> key,
-	const boost::shared_ptr<QuaternionKey> nextKey
+	const boost::shared_ptr<QuaternionKey> nextKey,
+	QuaternionKey &result
 	)
 {
 	FbxQuaternion nextQuaternion = nextKey->m_quaternion; //Copy this incase we need to negate it
@@ -275,7 +287,8 @@ boost::shared_ptr<QuaternionKey> AnimationController::Slerp(
 
 	if(cosTheta == 1)
 	{
-		return key; // The two key are the same so just return.
+		result = QuaternionKey(key->m_quaternion, 0); // The two key are the same so just return.
+		return;
 	}
 
 	if(cosTheta < 0) // q1 and q2 are more than 90 degrees apart so invert one of them to reduce spinning
@@ -290,12 +303,13 @@ boost::shared_ptr<QuaternionKey> AnimationController::Slerp(
 		double firstKeyWeight = glm::sin((1 - normalizedTime) * theta) / glm::sin(theta);
 		double nextKeyWeight = glm::sin(normalizedTime * theta) / glm::sin(theta);
 
-		FbxQuaternion result = (key->m_quaternion * firstKeyWeight) + (nextQuaternion * nextKeyWeight);
+		FbxQuaternion interpolatedQuat = (key->m_quaternion * firstKeyWeight) + (nextQuaternion * nextKeyWeight);
 
-		return boost::shared_ptr<QuaternionKey>(new QuaternionKey(result, 0));
+		result = QuaternionKey(interpolatedQuat, 0);
+		return;
 	}
 
-	return Lerp(normalizedTime, key, nextKey); // Keys are pretty much the same so just lerp
+	return Lerp(normalizedTime, key, nextKey, result); // Keys are pretty much the same so just lerp
 }
 
 }

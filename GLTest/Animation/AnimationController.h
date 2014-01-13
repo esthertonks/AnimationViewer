@@ -3,9 +3,6 @@
 #include <string>
 #include <glm/glm.hpp>
 //#include "AnimationFwdDecl.h"
-#include "Track.h"
-#include "VectorKey.h"
-#include "QuaternionKey.h"
 #include "../Mesh/MeshFwdDecl.h"
 /*
 	Animates any mesh::Mesh using the animation tracks contained within that mesh
@@ -13,6 +10,10 @@
 
 namespace animation
 {
+	class QuaternionKey;
+	class VectorKey;
+	class QuaternionTrack;
+	class VectorTrack;
 
 class AnimationController
 {
@@ -20,7 +21,7 @@ public :
 
 	AnimationController();
 
-	~AnimationController(){};
+	~AnimationController(){}
 
 void StartAnimation(
 	long globalStartTime,
@@ -43,44 +44,50 @@ private:
 		const bool isLooping
 		);
 
-	void PrepareBoneHierarcy(
+void PrepareBoneHierarcy(
 	int sample,
 	mesh::Node* node,
 	const FbxAMatrix &parentGlobalScaleMatrix,
 	const FbxAMatrix &parentGlobalRotationMatrix
 	);
 
-boost::shared_ptr<VectorKey> InterpolatePosition(
+void InterpolatePosition(
 	int sample,
-	boost::shared_ptr<animation::Track> positionTrack
+	boost::shared_ptr<animation::VectorTrack> positionTrack,
+	VectorKey &result
 	);
 
-boost::shared_ptr<QuaternionKey> InterpolateRotation(
+void InterpolateRotation(
 	int sample,
-	boost::shared_ptr<animation::Track> rotationTrack
+	boost::shared_ptr<animation::QuaternionTrack> rotationTrack,
+	QuaternionKey &result
 	);
 
-boost::shared_ptr<VectorKey> InterpolateScale(
+void InterpolateScale(
 	int sample,
-	boost::shared_ptr<animation::Track> scaleTrack
+	boost::shared_ptr<animation::VectorTrack> scaleTrack,
+	VectorKey &result
 	);
 
-boost::shared_ptr<VectorKey> Lerp(
+void Lerp(
 	const float time, 
 	const boost::shared_ptr<VectorKey> key,
-	const boost::shared_ptr<VectorKey> nextKey
+	const boost::shared_ptr<VectorKey> nextKey,
+	VectorKey &result
 	);
 
-boost::shared_ptr<QuaternionKey> Lerp(
+void Lerp(
 	const float time, 
 	const boost::shared_ptr<QuaternionKey> key,
-	const boost::shared_ptr<QuaternionKey> nextKey
+	const boost::shared_ptr<QuaternionKey> nextKey,
+	QuaternionKey &result
 	);
 
-boost::shared_ptr<QuaternionKey> Slerp(
+void Slerp(
 	const float time, 
 	const boost::shared_ptr<QuaternionKey> key,
-	const boost::shared_ptr<QuaternionKey> nextKey
+	const boost::shared_ptr<QuaternionKey> nextKey,
+	QuaternionKey &result
 	);
 
 	long m_globalStartTime;

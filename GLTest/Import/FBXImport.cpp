@@ -299,9 +299,9 @@ mesh::Node *FBXImport::LoadBoneNode(
 	boneNode->m_globalTransform = fbxGlobalTransform;
 
 	//TODO temp to debug
-	glm::mat4x4 initialLocalTransform;
-	const FbxAMatrix fbxInitialLocalTransform = fbxNode.EvaluateLocalTransform(0, FbxNode::eDestinationPivot);
-	boneNode->m_localTransform = fbxInitialLocalTransform;
+	//glm::mat4x4 initialLocalTransform;
+	//const FbxAMatrix fbxInitialLocalTransform = fbxNode.EvaluateLocalTransform(0, FbxNode::eDestinationPivot);
+	//boneNode->m_localTransform = fbxInitialLocalTransform;
 
 	mesh::AnimationInfoPtr animationInfo = m_mesh->GetAnimationInfo();
 	// Load in the local keys transoforms for each key
@@ -336,7 +336,9 @@ mesh::Node *FBXImport::LoadBoneNode(
 		// glm quat constructor expects w, x, y, z. FBX is x, y, z, w. glm nontheless stores x, y, z, w internally
 		boost::shared_ptr<animation::QuaternionKey> rotationKey(new animation::QuaternionKey(fbxRotation, sampleTime));
 
-		boneNode->AddLocalKeyTransform(positionKey, rotationKey, scaleKey);
+		boneNode->AddPositionKey(positionKey);
+		boneNode->AddRotationKey(rotationKey);
+		boneNode->AddScaleKey(scaleKey);
 	}
 
 	// Record node scale inheritance //TODO scale inheritance

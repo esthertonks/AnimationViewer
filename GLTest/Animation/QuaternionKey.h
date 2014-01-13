@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Key.h"
-//#include <glm/gtx/quaternion.hpp> 
 
 /*
 	Track base class
@@ -13,14 +12,19 @@ class QuaternionKey : public Key
 {
 public :
 
-//QuaternionKey(
-//	glm::quat &value
-//	)
-//{
-//	m_value = value;
-//}
-
-//glm::quat m_value;
+QuaternionKey(
+double x, 
+double y,
+double z,
+double w,
+long time) 
+: Key(time)
+{
+	m_quaternion[0] = x;
+	m_quaternion[1] = y;
+	m_quaternion[2] = z;
+	m_quaternion[3] = w;
+};
 
 QuaternionKey(FbxQuaternion quaternion, long time) : Key(time)
 {

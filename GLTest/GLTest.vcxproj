@@ -85,7 +85,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Animation\AnimationController.cpp" />
+    <ClCompile Include="Animation\QuaternionTrack.cpp" />
     <ClCompile Include="Animation\Track.cpp" />
+    <ClCompile Include="Animation\VectorTrack.cpp" />
     <ClCompile Include="Batch\Appearance.cpp" />
     <ClCompile Include="Batch\Batch.cpp" />
     <ClCompile Include="Batch\BatchList.cpp" />
@@ -121,8 +123,10 @@
     <ClInclude Include="Animation\AnimationController.h" />
     <ClInclude Include="Animation\Key.h" />
     <ClInclude Include="Animation\QuaternionKey.h" />
+    <ClInclude Include="Animation\QuaternionTrack.h" />
     <ClInclude Include="Animation\Track.h" />
     <ClInclude Include="Animation\VectorKey.h" />
+    <ClInclude Include="Animation\VectorTrack.h" />
     <ClInclude Include="Batch\Appearance.h" />
     <ClInclude Include="Batch\Batch.h" />
     <ClInclude Include="Batch\BatchFwdDecl.h" />
