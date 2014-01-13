@@ -56,15 +56,15 @@ const boost::shared_ptr<animation::QuaternionTrack> GetRotationTrack()
 	//);
 
 void AddPositionKey(
-	const	boost::shared_ptr<animation::VectorKey> position
+	const animation::VectorKey &position
 	);
 
 void AddRotationKey(
-	const boost::shared_ptr<animation::QuaternionKey> rotation
+	const animation::QuaternionKey &rotation
 	);
 
 void AddScaleKey(
-	boost::shared_ptr<animation::VectorKey> scale
+	const animation::VectorKey &scale
 	);
 
 //void GetLocalKeyTransform(

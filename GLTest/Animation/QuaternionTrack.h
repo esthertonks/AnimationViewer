@@ -19,13 +19,13 @@ QuaternionTrack(
 }
 
 void QuaternionTrack::AddKey(
-	boost::shared_ptr<QuaternionKey> key
+	const QuaternionKey &key
 	)
 {
 	m_keys.push_back(key);
 }
 
-const boost::shared_ptr<QuaternionKey> QuaternionTrack::GetKey(
+const QuaternionKey& QuaternionTrack::GetKey(
 	int key
 	)
 {

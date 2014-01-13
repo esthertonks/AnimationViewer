@@ -190,17 +190,17 @@ void AnimationController::InterpolatePosition(
 	VectorKey &result
 	)
 {
-	const boost::shared_ptr<VectorKey> lastPositionKey = boost::static_pointer_cast<VectorKey>(positionTrack->GetKey(sample));
-	if(lastPositionKey->m_time == m_localCurrentTime) // First check if the time is exactly on the key
+	const VectorKey &lastPositionKey = positionTrack->GetKey(sample);
+	if(lastPositionKey.m_time == m_localCurrentTime) // First check if the time is exactly on the key
 	{
-		result = VectorKey(lastPositionKey->m_vector, 0);
+		result = VectorKey(lastPositionKey.m_vector, 0);
 	}
 	else // Otherwise interpolate
 	{
-		const boost::shared_ptr<VectorKey> nextPositionKey = boost::static_pointer_cast<VectorKey>(positionTrack->GetKey(sample + 1));
+		const VectorKey &nextPositionKey = positionTrack->GetKey(sample + 1);
 
 		// Find the current time value as a 0 - 1 proporion between the two keys
-		const float normalizedTime = utils::MathsUtils::NormalizeValue(m_localCurrentTime, lastPositionKey->m_time, nextPositionKey->m_time);
+		const float normalizedTime = utils::MathsUtils::NormalizeValue(m_localCurrentTime, lastPositionKey.m_time, nextPositionKey.m_time);
 		Lerp(normalizedTime, lastPositionKey, nextPositionKey, result);
 	}
 }
@@ -211,17 +211,17 @@ void AnimationController::InterpolateRotation(
 	QuaternionKey &result
 	)
 {
-	const boost::shared_ptr<QuaternionKey> lastRotationKey = boost::static_pointer_cast<QuaternionKey>(rotationTrack->GetKey(sample));
-	if(lastRotationKey->m_time == m_localCurrentTime) // First check if the time is exactly on the key
+	const QuaternionKey &lastRotationKey = rotationTrack->GetKey(sample);
+	if(lastRotationKey.m_time == m_localCurrentTime) // First check if the time is exactly on the key
 	{
-		result = QuaternionKey(lastRotationKey->m_quaternion, 0);
+		result = QuaternionKey(lastRotationKey.m_quaternion, 0);
 	}
 	else
 	{
-		const boost::shared_ptr<QuaternionKey> nextRotationKey = boost::static_pointer_cast<QuaternionKey>(rotationTrack->GetKey(sample + 1));
+		const QuaternionKey &nextRotationKey = rotationTrack->GetKey(sample + 1);
 
 		// Find the current time value as a 0 - 1 proporion between the two keys
-		const float normalizedTime = utils::MathsUtils::NormalizeValue(m_localCurrentTime, lastRotationKey->m_time, nextRotationKey->m_time);
+		const float normalizedTime = utils::MathsUtils::NormalizeValue(m_localCurrentTime, lastRotationKey.m_time, nextRotationKey.m_time);
 		Slerp(normalizedTime, lastRotationKey, nextRotationKey, result);
 	}
 }
@@ -232,41 +232,41 @@ void AnimationController::InterpolateScale(
 	VectorKey &result
 	)
 {
-	const boost::shared_ptr<VectorKey> lastScaleKey = boost::static_pointer_cast<VectorKey>(scaleTrack->GetKey(sample));
-	if(lastScaleKey->m_time == m_localCurrentTime) // First check if the time is exactly on the key
+	const VectorKey &lastScaleKey = scaleTrack->GetKey(sample);
+	if(lastScaleKey.m_time == m_localCurrentTime) // First check if the time is exactly on the key
 	{
-		result = VectorKey(lastScaleKey->m_vector, 0);
+		result = VectorKey(lastScaleKey.m_vector, 0);
 	}
 	else
 	{
-		const boost::shared_ptr<VectorKey> nextScaleKey = boost::static_pointer_cast<VectorKey>(scaleTrack->GetKey(sample + 1));
+		const VectorKey &nextScaleKey = scaleTrack->GetKey(sample + 1);
 		// Find the current time value as a 0 - 1 proportion between the two keys
-		const float normalizedTime = utils::MathsUtils::NormalizeValue(m_localCurrentTime, lastScaleKey->m_time, nextScaleKey->m_time);
+		const float normalizedTime = utils::MathsUtils::NormalizeValue(m_localCurrentTime, lastScaleKey.m_time, nextScaleKey.m_time);
 		Lerp(normalizedTime, lastScaleKey, nextScaleKey, result);
 	}
 }
 
 void AnimationController::Lerp(
 	const float normalizedTime, // time value between 0 and 1 for interpolating betwen the keys
-	const boost::shared_ptr<VectorKey> key,
-	const boost::shared_ptr<VectorKey> nextKey,
+	const VectorKey &key,
+	const VectorKey &nextKey,
 	VectorKey &result
 	)
 {
 	// keyA + (keyB - keyA) * t
-	result = VectorKey(key->m_vector + (nextKey->m_vector - key->m_vector) * normalizedTime, 0); //TODO overload operator
+	result = VectorKey(key.m_vector + (nextKey.m_vector - key.m_vector) * normalizedTime, 0); //TODO overload operator
 	return;
 }
 
 void AnimationController::Lerp(
 	const float normalizedTime, // time value between 0 and 1 for interpolating betwen the keys
-	const boost::shared_ptr<QuaternionKey> key,
-	const boost::shared_ptr<QuaternionKey> nextKey,
+	const QuaternionKey &key,
+	const QuaternionKey &nextKey,
 	QuaternionKey &result
 	)
 {
 	// keyA + (keyB - keyA) * t
-	result = QuaternionKey(key->m_quaternion + (nextKey->m_quaternion - key->m_quaternion) * normalizedTime, 0);
+	result = QuaternionKey(key.m_quaternion + (nextKey.m_quaternion - key.m_quaternion) * normalizedTime, 0);
 	return;
 }
 
@@ -274,27 +274,27 @@ void AnimationController::Lerp(
 // TODO optimise ie http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
 void AnimationController::Slerp(
 	const float normalizedTime, // time value between 0 and 1 for interpolating betwen the keys
-	const boost::shared_ptr<QuaternionKey> key,
-	const boost::shared_ptr<QuaternionKey> nextKey,
+	const QuaternionKey &key,
+	const QuaternionKey &nextKey,
 	QuaternionKey &result
 	)
 {
-	FbxQuaternion nextQuaternion = nextKey->m_quaternion; //Copy this incase we need to negate it
+	FbxQuaternion nextQuaternion = nextKey.m_quaternion; //Copy this incase we need to negate it
 
 	// First calcualte the 4D dot product which gives cos theta
-	double cosTheta = key->m_quaternion[0] * nextQuaternion[0] + key->m_quaternion[1] * nextQuaternion[1]
-					+ key->m_quaternion[2] * nextQuaternion[2] + key->m_quaternion[3] * nextQuaternion[3];
+	double cosTheta = key.m_quaternion[0] * nextQuaternion[0] + key.m_quaternion[1] * nextQuaternion[1]
+					+ key.m_quaternion[2] * nextQuaternion[2] + key.m_quaternion[3] * nextQuaternion[3];
 
 	if(cosTheta == 1)
 	{
-		result = QuaternionKey(key->m_quaternion, 0); // The two key are the same so just return.
+		result = QuaternionKey(key.m_quaternion, 0); // The two key are the same so just return.
 		return;
 	}
 
 	if(cosTheta < 0) // q1 and q2 are more than 90 degrees apart so invert one of them to reduce spinning
 	{
 		cosTheta *= -1;
-		nextQuaternion = -nextKey->m_quaternion;
+		nextQuaternion = -nextKey.m_quaternion;
 	}
 
 	if(cosTheta < 0.99999f) // If the keys are different
@@ -303,7 +303,7 @@ void AnimationController::Slerp(
 		double firstKeyWeight = glm::sin((1 - normalizedTime) * theta) / glm::sin(theta);
 		double nextKeyWeight = glm::sin(normalizedTime * theta) / glm::sin(theta);
 
-		FbxQuaternion interpolatedQuat = (key->m_quaternion * firstKeyWeight) + (nextQuaternion * nextKeyWeight);
+		FbxQuaternion interpolatedQuat = (key.m_quaternion * firstKeyWeight) + (nextQuaternion * nextKeyWeight);
 
 		result = QuaternionKey(interpolatedQuat, 0);
 		return;

@@ -71,22 +71,22 @@ void InterpolateScale(
 
 void Lerp(
 	const float time, 
-	const boost::shared_ptr<VectorKey> key,
-	const boost::shared_ptr<VectorKey> nextKey,
+	const VectorKey &key,
+	const VectorKey &nextKey,
 	VectorKey &result
 	);
 
 void Lerp(
 	const float time, 
-	const boost::shared_ptr<QuaternionKey> key,
-	const boost::shared_ptr<QuaternionKey> nextKey,
+	const QuaternionKey &key,
+	const QuaternionKey &nextKey,
 	QuaternionKey &result
 	);
 
 void Slerp(
 	const float time, 
-	const boost::shared_ptr<QuaternionKey> key,
-	const boost::shared_ptr<QuaternionKey> nextKey,
+	const QuaternionKey &key,
+	const QuaternionKey &nextKey,
 	QuaternionKey &result
 	);
 

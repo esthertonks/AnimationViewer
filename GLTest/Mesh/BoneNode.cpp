@@ -27,21 +27,21 @@ void BoneNode::AllocateAnimationTracks(
 }
 
 void BoneNode::AddPositionKey(
-	const boost::shared_ptr<animation::VectorKey> position
+	const animation::VectorKey &position
 	)
 {
 	m_positionTrack->AddKey(position);
 };
 
 void BoneNode::AddRotationKey(
-	const boost::shared_ptr<animation::QuaternionKey> rotation
+	const animation::QuaternionKey &rotation
 	)
 {
 	m_rotationTrack->AddKey(rotation);
 };
 
 void BoneNode::AddScaleKey(
-	const boost::shared_ptr<animation::VectorKey> scale
+	const animation::VectorKey &scale
 	)
 {
 	m_scaleTrack->AddKey(scale);

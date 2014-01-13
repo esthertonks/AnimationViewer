@@ -324,17 +324,14 @@ mesh::Node *FBXImport::LoadBoneNode(
 
 		const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(fbxTime, FbxNode::eDestinationPivot);
 
-		FbxVector4 fbxScale = fbxLocalTransform.GetS();
-		FbxVector4 fbxPosition = fbxLocalTransform.GetT();
-		FbxQuaternion fbxRotation = fbxLocalTransform.GetQ();
-		FbxVector4 rotTestTemp = fbxLocalTransform.GetR();//TODO remove
+		//FbxVector4 rotTestTemp = fbxLocalTransform.GetR();//TODO remove
 
 		// Store the keys with the adjusted time (ie the time starting at 0 regardless or where it started in the FBX file
-		boost::shared_ptr<animation::VectorKey> scaleKey(new animation::VectorKey(fbxScale, sampleTime));
-		boost::shared_ptr<animation::VectorKey> positionKey(new animation::VectorKey(fbxPosition, sampleTime));
+		animation::VectorKey scaleKey(fbxLocalTransform.GetS(), sampleTime);
+		animation::VectorKey positionKey(fbxLocalTransform.GetT(), sampleTime);
 
 		// glm quat constructor expects w, x, y, z. FBX is x, y, z, w. glm nontheless stores x, y, z, w internally
-		boost::shared_ptr<animation::QuaternionKey> rotationKey(new animation::QuaternionKey(fbxRotation, sampleTime));
+		animation::QuaternionKey rotationKey(fbxLocalTransform.GetQ(), sampleTime);
 
 		boneNode->AddPositionKey(positionKey);
 		boneNode->AddRotationKey(rotationKey);

@@ -21,8 +21,8 @@ namespace animation
 	//typedef boost::shared_ptr<animation::VectorTrack> VectorTrackPtr;
 	//typedef boost::shared_ptr<animation::QuaternionTrack> QuaternionTrackPtr;
 
-	typedef std::vector<boost::shared_ptr<animation::QuaternionKey>> QuaternionKeyArray;
-	typedef std::vector<boost::shared_ptr<animation::VectorKey>> VectorKeyArray;
+	typedef std::vector<animation::QuaternionKey> QuaternionKeyArray;
+	typedef std::vector<animation::VectorKey> VectorKeyArray;
 
 	//typedef std::vector<boost::shared_ptr<Key>> KeyArray;
 	typedef boost::shared_ptr<animation::AnimationController> AnimationControllerPtr;

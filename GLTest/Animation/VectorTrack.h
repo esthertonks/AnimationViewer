@@ -19,13 +19,13 @@ VectorTrack(
 }
 
 void VectorTrack::AddKey(
-	boost::shared_ptr<VectorKey> key
+	const VectorKey &key
 	)
 {
 	m_keys.push_back(key);
 }
 
-const boost::shared_ptr<VectorKey> VectorTrack::GetKey(
+const VectorKey &VectorTrack::GetKey(
 	int key
 	)
 {
