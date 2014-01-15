@@ -63,7 +63,7 @@ void AnimationApp::OnIdle(
 		// Update animation
 		if(m_currentMeshInfo.m_mesh && m_meshAnimator)
 		{
-			float delta = timeNow - m_lastTime;
+			//float delta = timeNow - m_lastTime;
 			m_meshAnimator->Update(m_currentMeshInfo.m_mesh, timeNow, false);
 		}
 

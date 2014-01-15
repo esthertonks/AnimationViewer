@@ -86,6 +86,13 @@ bool InheritsScale()
 	return m_inheritScale;
 }
 
+void SetInverseReferenceMatrix(
+	FbxAMatrix &inverseReferenceMatrix
+)
+{
+	m_inverseReferenceMatrix = inverseReferenceMatrix;
+}
+
 private:
 	friend class import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
 	bool m_inheritScale; // When true this node inherits scale from it's parent (FbxTransform::eInheritRSrs). When false scale is not inherited (eInheritRrs)
@@ -93,6 +100,8 @@ private:
 	boost::shared_ptr<animation::QuaternionTrack> m_rotationTrack;
 	boost::shared_ptr<animation::VectorTrack> m_scaleTrack;
 	boost::shared_ptr<animation::VectorTrack> m_positionTrack;
+
+	FbxAMatrix m_inverseReferenceMatrix;	// The inverse reference matrix for this bone - calculated on import
 };
 
 }

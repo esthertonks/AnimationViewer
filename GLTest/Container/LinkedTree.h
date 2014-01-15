@@ -92,6 +92,31 @@ namespace container
 		m_endChild = NULL;
 	};
 
+	virtual ITEM* GetNextChildFirst()
+	{
+		if(m_firstChild)
+		{
+			return m_firstChild;
+		}
+
+		if(m_next)
+		{
+			return m_next;
+		}
+
+		for(ITEM *parent = m_parent; parent != NULL; )
+		{
+			if(parent->m_next)
+			{
+				return m_parent->m_next;
+			}
+
+			parent = m_parent->m_parent;
+		}
+
+		return NULL;
+	}
+
 	virtual LinkedTreeItem::~LinkedTreeItem()
 	{
 		for(ITEM *item = m_firstChild; item != NULL; )

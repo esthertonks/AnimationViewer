@@ -113,9 +113,6 @@
     <ClCompile Include="Mesh\MeshNode.cpp">
       <Filter>Mesh</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh\SkinnedVertex.cpp">
-      <Filter>Mesh</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh\Triangle.cpp">
       <Filter>Mesh</Filter>
     </ClCompile>
@@ -240,9 +237,6 @@
       <Filter>Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Mesh\Node.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh\SkinnedVertex.h">
       <Filter>Mesh</Filter>
     </ClInclude>
     <ClInclude Include="Mesh\Triangle.h">

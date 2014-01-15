@@ -82,7 +82,8 @@ void BatchProcessor::CreateBatches(
 
 				// Compile the per vertex data from the mesh triangles
 				render::TexturedVertex testVertex;
-				testVertex.m_position = glm::vec3(vertexArray[testVertexIndex].m_position); //TODO method called CreatePerVertexVertex
+				FbxVector4 position = vertexArray[testVertexIndex].GetPosition();
+				testVertex.m_position = glm::vec3(static_cast<float>(position[0]), static_cast<float>(position[1]), static_cast<float>(position[2])); //TODO method called CreatePerVertexVertex
 				testVertex.m_colour = triangleArray[triangleIndex].m_colours[triangleCornerIndex];
 				testVertex.m_normal = glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]);
 				testVertex.m_uv = triangleArray[triangleIndex].m_uvs[triangleCornerIndex];

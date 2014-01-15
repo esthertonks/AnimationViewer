@@ -12,6 +12,8 @@ namespace mesh
 {
 
 class Node;
+class MeshNode;
+class BoneNode;
 
 class Mesh
 {
@@ -25,6 +27,18 @@ public:
 		return m_nodes.m_root;
 	}
 
+	void SetMeshNode(
+		MeshNode *meshNode
+		)
+	{
+		m_meshNode = meshNode;
+	}
+
+	MeshNode* GetMeshNode()
+	{
+		return m_meshNode;
+	}
+
 	void AddChildNode(
 		Node *parent,	// Parent node or NULL if no parent
 		Node *node		// Child node to add
@@ -32,6 +46,10 @@ public:
 	{
 		m_nodes.AddAsChild(parent, node);
 	}
+
+	BoneNode* GetBoneByName(
+		std::string name
+	);
 
 	int GetNumVerticesWithMaterialId(
 		int materialId
@@ -67,6 +85,7 @@ private:
 	render::AppearanceTable m_appearanceTable; // Mapping of material id's to material names //TODO pointer and set method
 	std::vector<unsigned int> m_numVerticesPerMaterialArray; // A count of the number of vertex indices per material batch. Necessary for creating batches later
 	container::LinkedTree<Node> m_nodes;
+	mesh::MeshNode *m_meshNode;				// We are only supporting one mesh, so keep a record of it's node to aid loading the skin //TODO currently this is also in the bone hierarchy, may be easier to just keep it separate here?
 	mesh::AnimationInfoPtr m_animationInfo; // Extra info about all animation tracks
 };
 }

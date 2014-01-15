@@ -11,10 +11,10 @@ namespace import
 
 namespace mesh
 {
-	class ImportVertex;
+	class Vertex;
 	class Triangle;
 
-	typedef boost::shared_array<ImportVertex> MeshVertexArray; //TODO any better container?
+	typedef boost::shared_array<Vertex> MeshVertexArray; //TODO any better container?
 	typedef boost::shared_array<Triangle> MeshTriangleArray;
 
 class MeshNode : public Node
@@ -57,6 +57,18 @@ public:
 										const int numTriangles
 										);
 
+	inline void FlagAsSkinned(
+		bool isSkinned
+		)
+	{
+		m_isSkinned = isSkinned;
+	}
+
+	inline bool IsSkinned()
+	{
+		return m_isSkinned;
+	}
+
 private:
 	// uvsets?
 	friend class import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
@@ -64,6 +76,8 @@ private:
 	MeshTriangleArray m_triangleArray;
 	int m_numTriangles;
 	int m_numVertices;
+
+	bool m_isSkinned;
 };
 
 

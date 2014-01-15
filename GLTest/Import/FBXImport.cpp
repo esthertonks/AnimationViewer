@@ -114,6 +114,8 @@ mesh::MeshPtr FBXImport::Import(
 
 	LoadNodes(fbxRootNode, m_mesh->GetNodeHierarchy());
 
+	LoadSkin(fbxRootNode);
+
 	// Now the all the animation is loaded adjust the time to make sure that it starts at zero //TODO function
 	animationInfo->SetEndSample(animationInfo->GetEndSample() - animationInfo->GetStartSample());
 	animationInfo->SetStartSample(0);
@@ -177,6 +179,12 @@ mesh::Node *FBXImport::LoadMeshNode(
 	mesh::MeshNode *meshNode = NULL;
 	if(fbxMesh)
 	{
+		if(m_mesh->GetMeshNode() != NULL)
+		{
+			FBXSDK_printf("Ignoring attempt to load mesh - more than one mesh is not supported.\n");
+			return NULL; // We have already loaded a mesh so ignore this one
+		}
+
 		if(!fbxMesh->IsTriangleMesh())
 		{
 			// Make sure the mesh is triangulated
@@ -193,6 +201,8 @@ mesh::Node *FBXImport::LoadMeshNode(
 		meshNode = new mesh::MeshNode();
 		m_mesh->AddChildNode(parent, meshNode);
 
+		m_mesh->SetMeshNode(meshNode);	// We are only supporting one mesh, so store it to add loading the skin
+
 		std::string name = fbxNode.GetName();
 		meshNode->SetName(name);
 
@@ -204,11 +214,7 @@ mesh::Node *FBXImport::LoadMeshNode(
 		const FbxVector4* const fbxVertices = fbxMesh->GetControlPoints();
 		for(unsigned int vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
 		{
-			fbxVertices[vertexIndex];
-
-			vertexArray[vertexIndex].m_position.x = static_cast<float>(fbxVertices[vertexIndex][0]);
-			vertexArray[vertexIndex].m_position.y = static_cast<float>(fbxVertices[vertexIndex][1]);
-			vertexArray[vertexIndex].m_position.z = static_cast<float>(fbxVertices[vertexIndex][2]);
+			vertexArray[vertexIndex].SetPosition(fbxVertices[vertexIndex]);
 		}
 
 		// Extract and store triangles
@@ -306,7 +312,7 @@ mesh::Node *FBXImport::LoadBoneNode(
 	mesh::AnimationInfoPtr animationInfo = m_mesh->GetAnimationInfo();
 	// Load in the local keys transoforms for each key
 	int numSamples = animationInfo->GetNumFrameSamples();
-	double frameRate = animationInfo->GetFPS();
+	//double frameRate = animationInfo->GetFPS();
 
 	if(numSamples)
 	{
@@ -391,6 +397,115 @@ void FBXImport::LoadAnimationLayerInfo()
 	animationInfo->SetNumFrames(numFrames);
 
 	m_mesh->SetAnimationInfo(animationInfo);
+}
+
+void FBXImport::LoadSkin(
+	FbxNode& fbxNode // The FBX mesh to extract data from
+	)
+{
+	FbxGeometry* const fbxGeometry = fbxNode.GetGeometry();
+	if (!fbxGeometry)
+	{
+		return;
+	}
+
+	const FbxSkin* const fbxSkinDeformer = static_cast<const FbxSkin*>(fbxGeometry->GetDeformer(0, FbxDeformer::eSkin));
+	if (!fbxSkinDeformer)
+	{
+		return;
+	}
+
+    const FbxSkin::EType fbxSkinningType = fbxSkinDeformer->GetSkinningType();
+	switch(fbxSkinningType)
+	{
+	case FbxSkin::eLinear:
+	case FbxSkin::eRigid:
+		LoadSkin(*fbxGeometry, *fbxSkinDeformer);
+		break;
+
+	default:
+		FBXSDK_printf("Unsupported skin type used");
+	}
+}
+
+void FBXImport::LoadSkin(
+	const FbxGeometry &fbxGeometry,// The FBX mesh geometry node to extract data from
+	const FbxSkin &fbxSkin// The skin itself to extract the skin info from
+	)
+{
+	mesh::MeshNode *meshNode = m_mesh->GetMeshNode(); // The mesh node to store the loaded skin info in
+
+	const int numVertices = fbxGeometry.GetControlPointsCount();
+
+	// For all skins and all clusters, accumulate their deformation and weight on each vertex and store them in 'clusterDeformation' and 'clusterWeight'
+	const int numSkins = fbxGeometry.GetDeformerCount(FbxDeformer::eSkin);
+
+	for (int skinIndex = 0; skinIndex < numSkins; skinIndex++)
+	{
+		FbxSkin *skinDeformer = static_cast<FbxSkin*>(fbxGeometry.GetDeformer(skinIndex, FbxDeformer::eSkin));
+        
+		// Cluster = group of vertices affected by this bone
+		const int numClusters = skinDeformer->GetClusterCount();
+		for(int clusterNum = 0; clusterNum < numClusters; clusterNum++)
+		{
+			FbxCluster *cluster = skinDeformer->GetCluster(clusterNum);
+
+			// Check this cluster's deformation mode
+			const FbxCluster::ELinkMode fbxClusterMode = cluster->GetLinkMode();
+			switch(fbxClusterMode)
+			{
+			case FbxCluster::eNormalize:	// Weights have been normalized
+			case FbxCluster::eTotalOne:		// Weights add up to one
+				break;
+
+			default: // Currently this must be eAdditive - weights could add up to more than 1 - not currently supported
+				FBXSDK_printf("Unsupported skin cluster type used. Please ensure that the skin weights total one or have been normalized.");
+			}
+
+			// The bone node that this cluster is influenced by
+			FbxNode* const fbxLinkedBoneNode = cluster->GetLink();
+			if (!fbxLinkedBoneNode)
+			{
+				FBXSDK_printf("Failed to find linked bone node importing skin");
+				continue;
+			}
+
+			mesh::BoneNode* linkedBone = m_mesh->GetBoneByName(fbxLinkedBoneNode->GetName());
+
+			// Store the inverse reference matrix for the bone this cluster is connected to
+			FbxAMatrix boneReferenceMatrix;
+			cluster->GetTransformLinkMatrix(boneReferenceMatrix);
+
+			FbxAMatrix inverseBoneReferenceMatrix;
+			inverseBoneReferenceMatrix = boneReferenceMatrix.Inverse();
+
+			linkedBone->SetInverseReferenceMatrix(inverseBoneReferenceMatrix);
+
+			meshNode->FlagAsSkinned(true);
+
+			const int numClusterIndices = cluster->GetControlPointIndicesCount();
+			const int *controlPointIndices = cluster->GetControlPointIndices();
+			const double *controlPointWeights = cluster->GetControlPointWeights();
+
+			// Store them
+			int vertexInfluenceNum = 0;
+			mesh::MeshVertexArray vertexArray = meshNode->GetVertices();
+			for(int clusterIndex = 0; clusterIndex < numClusterIndices; clusterIndex++)
+			{
+				const int controlPointIndex = controlPointIndices[clusterIndex];
+				assert(controlPointIndex < numVertices);
+
+				const float controlPointWeight = static_cast<float>(controlPointWeights[clusterIndex]);
+				if (controlPointWeight < 0.00001f) // Ignore really small weights
+					continue;
+
+				mesh::MeshVertexArray vertexArray = meshNode->GetVertices();
+				vertexArray[controlPointIndex].AddWeight(linkedBone, controlPointWeight);
+
+				vertexInfluenceNum++;
+			}
+		}
+	}
 }
 
 /**

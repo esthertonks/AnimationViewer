@@ -64,8 +64,6 @@ private:
 
 	// FBX SDK for higher precision
 	FbxAMatrix m_globalTransform;		// Transform from this node to the global model transform. This is updated each tick during animation
-
-	FbxAMatrix m_inverseReferenceMatrix;	// The inverse reference matrix for this bone
 };
 
 }

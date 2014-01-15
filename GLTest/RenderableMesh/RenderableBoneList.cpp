@@ -54,7 +54,7 @@ void RenderableBoneList::AddPositionToVertexList(
 		if(node->m_parent) // Dont bother with the root - it will be added as the parent of it's children
 		{
 			// Add the parent nodes position
-			mesh::BoneNode *parentNode = static_cast<mesh::BoneNode*>(node->m_parent); //TODO static cast?
+			mesh::BoneNode *parentNode = static_cast<mesh::BoneNode*>(node->m_parent);
 			ColourVertex parentVertex;
 			FbxAMatrix& parentGlobalTransform = parentNode->GetGlobalTransform();
 			parentVertex.m_position.x = static_cast<float>(parentGlobalTransform[3][0]);
@@ -65,11 +65,8 @@ void RenderableBoneList::AddPositionToVertexList(
 			m_vertexArray.push_back(parentVertex);
 
 			// Add this nodes position
-			mesh::BoneNode *boneNode = static_cast<mesh::BoneNode*>(node); //TODO static cast?
-			if(boneNode->GetName() == "Bip01 L UpperArm")
-			{
-				int stop = 0;
-			}
+			mesh::BoneNode *boneNode = static_cast<mesh::BoneNode*>(node);
+
 			ColourVertex vertex;
 			FbxAMatrix& globalTransform = boneNode->GetGlobalTransform();
 			vertex.m_position.x = static_cast<float>(globalTransform[3][0]);

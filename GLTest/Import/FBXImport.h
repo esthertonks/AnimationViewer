@@ -50,6 +50,15 @@ private:
 
 	void LoadAnimationLayerInfo();
 
+	void LoadSkin(
+		FbxNode& fbxNode // The FBX mesh to extract data from
+		);
+
+	void LoadSkin(
+		const FbxGeometry &fbxGeometry,// The FBX mesh geometry node to extract data from
+		const FbxSkin &fbxSkin// The skin itself to extract the skin info from
+		);
+
 	/**
 	@brief Bake all possible FBX transforms into the statndard rotation, trnaslate and scale variables so the can be extracted easily later
 	*/
