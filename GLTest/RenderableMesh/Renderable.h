@@ -24,7 +24,9 @@ public:
 		mesh::MeshPtr &mesh
 		) = 0;
 
-	virtual bool Update() = 0;
+	virtual bool Update(
+		mesh::Node *boneHierarchyRoot
+		) = 0;
 
 	virtual void Rotate(
 		const float rotY,

@@ -11,4 +11,7 @@ namespace mesh
 
 	typedef boost::shared_ptr<Mesh> MeshPtr;
 	typedef boost::shared_ptr<AnimationInfo> AnimationInfoPtr;
+
+	#define MAX_BONES 128;
+	#define MAX_INFLUENCES 4
 }

@@ -98,11 +98,15 @@ void Batch::Prepare()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)sizeof(glm::vec3));
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)(sizeof(glm::vec3) * 2));
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)(sizeof(glm::vec3) * 3));
+	glVertexAttribIPointer(4, 4, GL_INT, sizeof(render::TexturedSkinnedVertex), (GLubyte *)(sizeof(glm::vec3) * 3) + sizeof(glm::vec2) * 2);
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)(sizeof(glm::vec3) * 3) + sizeof(glm::vec2) * 2 + sizeof(int) * 4);
 
 	glEnableVertexAttribArray(0);  // Vertex position
 	glEnableVertexAttribArray(1);  // Vertex colour
 	glEnableVertexAttribArray(2);  // Vertex normal
 	glEnableVertexAttribArray(3);  // Texture coord
+	glEnableVertexAttribArray(4);  // Bone id [4]
+	glEnableVertexAttribArray(5);  // Bone weight [4]
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferHandle);
 
@@ -120,9 +124,13 @@ void Batch::PrepareShaderParams(
 
 Batch::~Batch()
 {
-	// Disable the two vertex array attributes.
+	// Disable the vertex array attributes.
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+	glDisableVertexAttribArray(3);
+	glDisableVertexAttribArray(4);
+	glDisableVertexAttribArray(5);
 	
 	// Release the vertex buffer.
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

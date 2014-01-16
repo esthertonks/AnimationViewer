@@ -67,11 +67,16 @@ void AnimationApp::OnIdle(
 			m_meshAnimator->Update(m_currentMeshInfo.m_mesh, timeNow, false);
 		}
 
+		if(m_currentMeshInfo.m_renderMesh)// TODO should just be an array of renderables to update? What about the array of renderable in the render component???
+		{
+			m_currentMeshInfo.m_renderMesh->Update(m_currentMeshInfo.m_mesh->GetNodeHierarchy());
+		}
+
 		// Update any render meshes with the new bone hierarchy
 		if(m_boneOverlay)
 		{
 			// TODO this should have the bone hierarchy passed in? Certainly shouldn't be storing the mesh....
-			m_boneOverlay->Update(); // Update the render mesh with the new bone info
+			m_boneOverlay->Update(m_currentMeshInfo.m_mesh->GetNodeHierarchy()); // Update the render mesh with the new bone info
 		}
 		//m_input->Do SomethingWithCamera();
 		//m_camera->GetView();

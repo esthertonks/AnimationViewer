@@ -25,6 +25,7 @@ BoneNode* Mesh::GetBoneByName(
 
 		node = node->GetNextChildFirst();
 	}
+	return NULL;
 }
 
 Mesh::~Mesh()

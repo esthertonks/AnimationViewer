@@ -56,9 +56,6 @@
     <ClCompile Include="Batch\Batch.cpp">
       <Filter>Batch</Filter>
     </ClCompile>
-    <ClCompile Include="Batch\BatchList.cpp">
-      <Filter>Batch</Filter>
-    </ClCompile>
     <ClCompile Include="Batch\BatchProcessor.cpp">
       <Filter>Batch</Filter>
     </ClCompile>
@@ -150,9 +147,6 @@
       <Filter>Batch</Filter>
     </ClInclude>
     <ClInclude Include="Batch\Batch.h">
-      <Filter>Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="Batch\BatchList.h">
       <Filter>Batch</Filter>
     </ClInclude>
     <ClInclude Include="Batch\BatchProcessor.h">

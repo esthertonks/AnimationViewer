@@ -5,8 +5,6 @@
 namespace mesh
 {
 
-#define MAX_INFLUENCES 4
-
 class Vertex
 {
 public:

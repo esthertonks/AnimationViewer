@@ -27,7 +27,7 @@ struct TexturedSkinnedVertex
 	glm::vec3 m_normal;
 	glm::vec2 m_uv;
 	float m_boneWeights[4];
-	float m_boneIds[4]; // float because gl required passing floats
+	unsigned int m_boneIds[4];
 	int m_numWeights;
 };
 

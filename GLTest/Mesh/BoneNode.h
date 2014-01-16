@@ -34,6 +34,11 @@ virtual NodeType GetType()
 	return BoneType;
 }
 
+unsigned int GetId()
+{
+	return m_id;
+}
+
 void AllocateAnimationTracks(
 	int numFrames
 	);
@@ -94,6 +99,11 @@ void SetInverseReferenceMatrix(
 )
 {
 	m_inverseReferenceMatrix = inverseReferenceMatrix;
+}
+
+const FbxAMatrix &GetInverseReferenceMatrix()
+{
+	return m_inverseReferenceMatrix;
 }
 
 private:

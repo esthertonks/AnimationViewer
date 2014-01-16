@@ -1,6 +1,5 @@
 #include "RenderableBoneList.h"
 
-#include "../Mesh/Mesh.h"
 #include "../Mesh/BoneNode.h"
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -17,22 +16,20 @@ RenderableBoneList::RenderableBoneList()
 }
 
 bool RenderableBoneList::Create(
-	mesh::MeshPtr &mesh
+	mesh::MeshPtr &mesh // Ignored - this particular overlay doesnt need the mesh itself
 	)
 {		
-	m_mesh = mesh;
 	m_numVerts = 0;
 	return true;
 }
 
-bool RenderableBoneList::Update()
+bool RenderableBoneList::Update(
+	mesh::Node *boneHierarchyRoot
+	)
 {
 	m_vertexArray.clear();
 
-	// Get the updated hierarchy and extract the current positions for the line overlay
-	mesh::Node *root = m_mesh->GetNodeHierarchy();
-
-	AddPositionToVertexList(root);
+	AddPositionToVertexList(boneHierarchyRoot);
 	m_numVerts = m_vertexArray.size(); // Keep a record of the new verts so that the draw calls can use it
 	Prepare(); // Prepare for rendering
 	//wxLogDebug("tick3");

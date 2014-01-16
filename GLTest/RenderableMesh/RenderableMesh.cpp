@@ -1,10 +1,11 @@
 #include "RenderableMesh.h"
 #include "../Render/ShaderManager.h"
 #include "../Batch/BatchProcessor.h"
-#include "../Batch/BatchList.h"
 #include "../Batch/Batch.h"
 #include "../Mesh/Mesh.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "../Mesh/BoneNode.h"
+#include "../Utils/MathsUtils.h"
 
 namespace render
 {
@@ -27,14 +28,33 @@ bool RenderableMesh::Create(
 	return true;
 }
 
-bool  RenderableMesh::Update()
+bool  RenderableMesh::Update(
+	mesh::Node *boneHierarchyRoot
+	)
 {		
-	//mesh::Node *root = m_mesh->GetNodeHierarchy();
-	//m_animator->PrepareBoneHierarcy(root, time, fps);
+	static int idCheck = 0;
 
-	//AddPositionToVertexList(root);
+	//TODO these MUST be in the sameorder they were added in import so the id's match up
+	for(mesh::Node *node = boneHierarchyRoot; node != NULL; node = boneHierarchyRoot->m_next)
+	{
+		if(node->GetType() == mesh::NodeType::BoneType)
+		{
+			mesh::BoneNode *bone = static_cast<mesh::BoneNode*>(node);
+			assert(bone->GetId() == idCheck);
+			idCheck++;
 
-	//Prepare();
+			glm::mat4x4 bonePaletteMatrix;
+
+			utils::MathsUtils::ConvertFBXToGLMatrix(bone->GetGlobalTransform() * bone->GetInverseReferenceMatrix(), bonePaletteMatrix);
+
+			m_matrixPalette.push_back(bonePaletteMatrix);
+		}
+
+		for(mesh::Node* childNode = node->m_firstChild; childNode != NULL; childNode = childNode->m_next)
+		{
+			Update(childNode);
+		}
+	}
 
 	return true;
 }
@@ -99,6 +119,12 @@ void RenderableMesh::Render(
 				glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
 				glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
 				glUniformMatrix3fv(normalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
+			}
+
+			GLint bonePaletteMatrixLocation = glGetUniformLocation(programId, "boneMatrixPalette");
+			if(bonePaletteMatrixLocation >= 0)
+			{
+				glUniformMatrix4fv(bonePaletteMatrixLocation, m_matrixPalette.size(), GL_FALSE, &m_matrixPalette[0][0][0]);
 			}
 
 				//wxLogDebug("%u\n", GetVertexArrayHandle());

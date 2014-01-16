@@ -2,6 +2,7 @@
 
 #include "Renderable.h"
 #include "../Batch/BatchFwdDecl.h"
+#include "../Mesh/MeshFwdDecl.h"
 
 namespace mesh
 {
@@ -38,7 +39,9 @@ public:
 		mesh::MeshPtr &mesh
 		);
 
-	virtual bool Update();
+	virtual bool Update(
+		mesh::Node *boneHierarchyRoot
+		);
 
 	virtual void Rotate(
 		const float rotY,
@@ -53,5 +56,6 @@ public:
 
 private:
 	render::BatchList m_renderBatches;
+	std::vector<glm::mat4x4> m_matrixPalette;//TODO 4x3
 };
 }

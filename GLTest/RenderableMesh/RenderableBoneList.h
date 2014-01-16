@@ -36,7 +36,9 @@ public:
 		mesh::MeshPtr &mesh
 		);
 
-	virtual bool Update();
+	virtual bool Update(
+		mesh::Node *boneHierarchyRoot
+		);
 
 	virtual void Rotate(
 		const float rotY,
@@ -60,7 +62,5 @@ private:
 	GLuint m_vertexArrayHandle;
 	GLuint m_positionBufferHandle;
 	int m_numVerts;
-
-	mesh::MeshPtr m_mesh;
 };
 }

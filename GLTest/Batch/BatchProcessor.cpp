@@ -4,7 +4,6 @@
 #include "../Mesh/Triangle.h"
 #include "../Mesh/Vertex.h"
 #include "../Batch/VertexFormat.h"
-#include "../Batch/BatchList.h"
 #include "../Batch/Batch.h"
 #include "../Batch/Appearance.h"
 
