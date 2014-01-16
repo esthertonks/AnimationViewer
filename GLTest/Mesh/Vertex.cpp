@@ -4,12 +4,8 @@
 namespace mesh
 {
 	Vertex::Vertex()
-		: m_numBoneInfluences(0)
+		: m_numInfluences(0)
 	{
-
-
 	}
-
-
 
 }

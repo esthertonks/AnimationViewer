@@ -63,12 +63,12 @@ void BatchProcessor::CreateBatches(
 
 		for(int triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
 		{
-			unsigned int materialId = triangleArray[triangleIndex].m_materialId;
+			unsigned int materialId = triangleArray[triangleIndex].GetMaterialId();
 			std::vector<int> previouslyAssignedVertexIndexMap = perMaterialPreviouslyAssignedVertexIndexMap[materialId];
 
 			if(!renderBatches[materialId]) // If a batch for this material does not already exist then create it
 			{
-				renderBatches[materialId] = render::BatchPtr(new render::Batch(render::ColourFormat));
+				renderBatches[materialId] = render::BatchPtr(new render::Batch(/*render::ColourFormat*/));
 				int numVertices = mesh->GetNumVerticesWithMaterialId(materialId);
 				renderBatches[materialId]->AllocateVertices(numVertices);
 				renderBatches[materialId]->AllocateIndices(numVertices);
@@ -78,15 +78,24 @@ void BatchProcessor::CreateBatches(
 			// Assign the mesh information to batches. Reassigning the indices as the data is processed.
 			for(int triangleCornerIndex = 0; triangleCornerIndex < 3; triangleCornerIndex++)
 			{
-				unsigned int testVertexIndex = triangleArray[triangleIndex].m_vertexIndices[triangleCornerIndex];
+				unsigned int testVertexIndex = triangleArray[triangleIndex].GetVertexIndex(triangleCornerIndex);
 
 				// Compile the per vertex data from the mesh triangles
-				render::TexturedVertex testVertex;
+
+				// First create a per vertex vert - if a vert at this index has not been added previously then add it. 
+				// If a vert at this index has already been added then only add this one if it differs from the previous one
+				//TODO can bone indeces/weights be set by triangle corner vertex? If yes then these should also be split where they differ.
+				render::TexturedSkinnedVertex testVertex;
 				FbxVector4 position = vertexArray[testVertexIndex].GetPosition();
 				testVertex.m_position = glm::vec3(static_cast<float>(position[0]), static_cast<float>(position[1]), static_cast<float>(position[2])); //TODO method called CreatePerVertexVertex
-				testVertex.m_colour = triangleArray[triangleIndex].m_colours[triangleCornerIndex];
-				testVertex.m_normal = glm::vec3(triangleArray[triangleIndex].m_normals[triangleCornerIndex]);
-				testVertex.m_uv = triangleArray[triangleIndex].m_uvs[triangleCornerIndex];
+				testVertex.m_colour = triangleArray[triangleIndex].GetColour(triangleCornerIndex);
+				testVertex.m_normal = glm::vec3(triangleArray[triangleIndex].GetNormal(triangleCornerIndex));
+				testVertex.m_uv = triangleArray[triangleIndex].GetUV(triangleCornerIndex);
+				for(int weightIndex = 0; weightIndex < MAX_INFLUENCES; weightIndex++)
+				{
+					testVertex.m_boneWeights[weightIndex] = vertexArray[testVertexIndex].GetBoneWeight(weightIndex);
+					testVertex.m_boneIds[weightIndex] = vertexArray[testVertexIndex].GetBoneInfluenceId(weightIndex);
+				}
 
 				int previouslyCreatedIndex = previouslyAssignedVertexIndexMap[testVertexIndex];
 				if(previouslyCreatedIndex == -1) // If this is the first time we have seen this index in this batch create a new vertex for the batch
@@ -95,7 +104,7 @@ void BatchProcessor::CreateBatches(
 					continue;
 				}
 
-				render::TexturedVertex previouslyCreatedVertex = renderBatches[materialId]->GetVertices()[previouslyCreatedIndex];
+				render::TexturedSkinnedVertex previouslyCreatedVertex = renderBatches[materialId]->GetVertices()[previouslyCreatedIndex];
 				
 				// If we have seen this vertex before, but this triangle corner has a different colour, uv coord or normal 
 				// then still create a new vertex for it (this will increase the vertex count in the mesh but will allow for
@@ -123,22 +132,28 @@ void BatchProcessor::CreateBatches(
 	return;
 }
 
+//TODO override equals?
 void BatchProcessor::AddDuplicateVertex(
 	const int oldVertexIndex,
-	const render::TexturedVertex &currentVertex,
+	const render::TexturedSkinnedVertex &currentVertex,
 	render::Batch &batch,
 	std::vector<int> &perMaterialPreviouslyAssignedVertexIndexMap
 	)
 {
-	render::TexturedVertex vertex;
+	render::TexturedSkinnedVertex vertex;
 	vertex.m_position = currentVertex.m_position; //TODO override equals?
 	vertex.m_colour = currentVertex.m_colour;
 	vertex.m_uv = currentVertex.m_uv;
 	vertex.m_normal += currentVertex.m_normal;
 	vertex.m_normal = glm::normalize(vertex.m_normal); // Make sure these are normalised
+	for(int weightIndex = 0; weightIndex < currentVertex.m_numWeights; weightIndex++)
+	{
+		vertex.m_boneWeights[weightIndex] = currentVertex.m_boneWeights[weightIndex];
+		vertex.m_boneIds[weightIndex] = currentVertex.m_boneIds[weightIndex];
+	}
 
 	int newIndex = batch.GetNumVertices();
-	perMaterialPreviouslyAssignedVertexIndexMap[oldVertexIndex] = newIndex;
+	perMaterialPreviouslyAssignedVertexIndexMap[oldVertexIndex] = newIndex; //TODO uh shorter name?
 	batch.AddVertex(vertex);
 	batch.AddIndex(newIndex);
 

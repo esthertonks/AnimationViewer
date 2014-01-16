@@ -4,7 +4,6 @@
 
 namespace mesh
 {
-	class BoneNode;
 
 #define MAX_INFLUENCES 4
 
@@ -14,23 +13,44 @@ public:
 	Vertex::Vertex();
 
 	void AddWeight(
-		const mesh::BoneNode* boneInfluence,
+		const unsigned int boneInfluenceid,
 		const float weight
 		)
 	{
-		assert(m_numBoneInfluences <= MAX_INFLUENCES);
-		m_boneInfluence[m_numBoneInfluences++] = boneInfluence;
-		m_jointWeight[m_numBoneInfluences++] = weight;
+		assert(m_numInfluences <= MAX_INFLUENCES);
+		m_boneInfluenceIds[m_numInfluences++] = boneInfluenceid;
+		m_boneWeights[m_numInfluences++] = weight;
 	}
 
-	unsigned int GetMaxBoneInfulences()
+	float GetBoneWeight(
+		int influenceIndex
+		)
 	{
-		return MAX_INFLUENCES;
+		return m_boneWeights[influenceIndex];
+	}
+
+	unsigned int GetBoneInfluence(
+		int influenceIndex
+		)
+	{
+		return m_boneInfluenceIds[influenceIndex];
+	}
+
+	unsigned int GetNumInfluences()
+	{
+		return m_numInfluences;
+	}
+
+	unsigned int GetBoneInfluenceId(
+		int influenceIndex
+		)
+	{
+		return m_boneInfluenceIds[influenceIndex];
 	}
 
 	void SetPosition(
 		FbxVector4 position
-		)
+	)
 	{
 		m_position = position;
 	}
@@ -41,12 +61,11 @@ public:
 	}
 
 private:
-
+	
 	FbxVector4 m_position;
-
-	const mesh::BoneNode* m_boneInfluence[4]; //Max 4 joints per vertex (could use uint8)
-	float m_jointWeight[4];
-	int m_numBoneInfluences;
+	unsigned int m_boneInfluenceIds[4]; //Max 4 joints per vertex (could use uint8) //TODO has to be float to pass to gl?
+	float m_boneWeights[4];
+	unsigned int m_numInfluences;
 };
 
 }

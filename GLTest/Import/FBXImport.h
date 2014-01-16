@@ -11,7 +11,7 @@ namespace mesh
 	class Node;
 	class MeshNode;
 	class Triangle;
-	class TexturedVertex;
+	class TexturedSkinnedVertex;
 }
 
 namespace import
@@ -45,7 +45,8 @@ private:
 
 	mesh::Node *LoadBoneNode(
 		FbxNode& fbxNode,	// The FBX mesh to extract data from and add to m_mesh bone node list
-		mesh::Node *parent
+		mesh::Node *parent,
+		const int boneId
 	);
 
 	void LoadAnimationLayerInfo();
@@ -55,8 +56,7 @@ private:
 		);
 
 	void LoadSkin(
-		const FbxGeometry &fbxGeometry,// The FBX mesh geometry node to extract data from
-		const FbxSkin &fbxSkin// The skin itself to extract the skin info from
+		const FbxGeometry &fbxGeometry// The FBX mesh geometry node to extract data from
 		);
 
 	/**

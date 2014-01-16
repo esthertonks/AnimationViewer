@@ -136,6 +136,7 @@ bool FBXImport::LoadNodes(
 	)
 {
 	mesh::Node *newNode = NULL;
+	static int boneId = 0;
 
 	// Find ut the type of node ie Skeleton, Mesh, Camera, Light - currently only Bones and Mesh nodes are supported
 	FbxNodeAttribute* const fbxNodeAttribute = fbxNode.GetNodeAttribute();
@@ -149,7 +150,7 @@ bool FBXImport::LoadNodes(
 			newNode = LoadMeshNode(fbxNode, parent);
 			break;
 		case FbxNodeAttribute::eSkeleton:
-			newNode = LoadBoneNode(fbxNode, parent);
+			newNode = LoadBoneNode(fbxNode, parent, boneId++);
 			break;
 		default:
 			FBXSDK_printf("Node %s type is %d. Only node of type eMesh (4) or eSkeleton (3) can be loaded\n", fbxNode.GetName(), fbxAttributeType);
@@ -263,7 +264,8 @@ mesh::Node *FBXImport::LoadMeshNode(
 
 mesh::Node *FBXImport::LoadBoneNode(
 	FbxNode& fbxNode, // The FBX mesh to extract data from and add to m_mesh bone node list
-	mesh::Node *parent
+	mesh::Node *parent,
+	const int boneId
 	)
 {
 	const FbxSkeleton* const fbxSkeleton = static_cast<const FbxSkeleton*>(fbxNode.GetNodeAttribute());
@@ -275,7 +277,7 @@ mesh::Node *FBXImport::LoadBoneNode(
 	}
 
 	// Add the bone to the mesh as a parent->child list
-	boneNode = new mesh::BoneNode;
+	boneNode = new mesh::BoneNode(boneId);
 
 	// Find out and record whether this is a leaf node (in case we need to know the hierarchy and not just what the parent was)
 	//const FbxSkeleton::EType skeletonType = fbxSkeleton->GetSkeletonType();
@@ -409,18 +411,18 @@ void FBXImport::LoadSkin(
 		return;
 	}
 
-	const FbxSkin* const fbxSkinDeformer = static_cast<const FbxSkin*>(fbxGeometry->GetDeformer(0, FbxDeformer::eSkin));
-	if (!fbxSkinDeformer)
+	const FbxSkin* const fbxskin = static_cast<const FbxSkin*>(fbxGeometry->GetDeformer(0, FbxDeformer::eSkin));
+	if (!fbxskin)
 	{
 		return;
 	}
 
-    const FbxSkin::EType fbxSkinningType = fbxSkinDeformer->GetSkinningType();
+    const FbxSkin::EType fbxSkinningType = fbxskin->GetSkinningType();
 	switch(fbxSkinningType)
 	{
 	case FbxSkin::eLinear:
 	case FbxSkin::eRigid:
-		LoadSkin(*fbxGeometry, *fbxSkinDeformer);
+		LoadSkin(*fbxGeometry);
 		break;
 
 	default:
@@ -429,8 +431,7 @@ void FBXImport::LoadSkin(
 }
 
 void FBXImport::LoadSkin(
-	const FbxGeometry &fbxGeometry,// The FBX mesh geometry node to extract data from
-	const FbxSkin &fbxSkin// The skin itself to extract the skin info from
+	const FbxGeometry &fbxGeometry// The FBX mesh geometry node to extract data from
 	)
 {
 	mesh::MeshNode *meshNode = m_mesh->GetMeshNode(); // The mesh node to store the loaded skin info in
@@ -442,13 +443,13 @@ void FBXImport::LoadSkin(
 
 	for (int skinIndex = 0; skinIndex < numSkins; skinIndex++)
 	{
-		FbxSkin *skinDeformer = static_cast<FbxSkin*>(fbxGeometry.GetDeformer(skinIndex, FbxDeformer::eSkin));
+		FbxSkin *skin = static_cast<FbxSkin*>(fbxGeometry.GetDeformer(skinIndex, FbxDeformer::eSkin));
         
 		// Cluster = group of vertices affected by this bone
-		const int numClusters = skinDeformer->GetClusterCount();
+		const int numClusters = skin->GetClusterCount();
 		for(int clusterNum = 0; clusterNum < numClusters; clusterNum++)
 		{
-			FbxCluster *cluster = skinDeformer->GetCluster(clusterNum);
+			FbxCluster *cluster = skin->GetCluster(clusterNum);
 
 			// Check this cluster's deformation mode
 			const FbxCluster::ELinkMode fbxClusterMode = cluster->GetLinkMode();
@@ -500,7 +501,7 @@ void FBXImport::LoadSkin(
 					continue;
 
 				mesh::MeshVertexArray vertexArray = meshNode->GetVertices();
-				vertexArray[controlPointIndex].AddWeight(linkedBone, controlPointWeight);
+				vertexArray[controlPointIndex].AddWeight(linkedBone->m_id, controlPointWeight);
 
 				vertexInfluenceNum++;
 			}
@@ -567,7 +568,7 @@ void FBXImport::LoadMaterials(
 	if (materialId >= 0)
 	{
 		const FbxSurfaceMaterial& surfaceMaterial = *fbxMesh.GetNode()->GetMaterial(materialId);
-		meshNode.m_triangleArray[triangleIndex].m_materialId = materialId;
+		meshNode.m_triangleArray[triangleIndex].SetMaterialId(materialId);
 
 		if(appearanceTable.count(materialId) == 0)
 		{
@@ -699,7 +700,9 @@ void FBXImport::LoadColours(
 		for (int triangleCornerId = 0; triangleCornerId < 3; triangleCornerId++)
 		{
 			int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
-			LoadColourVertexElement(*vertexColourElement, triangle.m_colours[triangleCornerId], triangleCornerId, vertexIndex);
+			glm::vec3 colour;
+			LoadColourVertexElement(*vertexColourElement, colour, triangleCornerId, vertexIndex);
+			triangle.SetColour(colour, triangleCornerId);
 		}
 	}
 }
@@ -724,7 +727,9 @@ void FBXImport::LoadUVs(
 		for (int triangleCornerId = 0; triangleCornerId < 3; triangleCornerId++)
 		{
 			int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
-			LoadVector2VertexElement(*uvElement, triangle.m_uvs[triangleCornerId], triangleIndex, triangleCornerId, vertexIndex);
+			glm::vec2 uv;
+			LoadVector2VertexElement(*uvElement, uv, triangleIndex, triangleCornerId, vertexIndex);
+			triangle.SetUV(uv, triangleCornerId);
 		}
 	}
 }
@@ -749,8 +754,9 @@ void FBXImport::LoadNormals(
 		for (int triangleCornerId = 0; triangleCornerId < 3; triangleCornerId++)
 		{
 			int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
-			LoadVector4VertexElement(*normalElement, triangle.m_normals[triangleCornerId], (triangleIndex * 3) + triangleCornerId, vertexIndex);
-			//wxLogDebug("NormalA %f, %f, %f\n", triangle.m_normals[triangleCornerId].x, triangle.m_normals[triangleCornerId].y, triangle.m_normals[triangleCornerId].z);
+			glm::vec4 normal;
+			LoadVector4VertexElement(*normalElement, normal, (triangleIndex * 3) + triangleCornerId, vertexIndex);
+			triangle.SetNormal(normal, triangleCornerId);
 		}
 	}
 }
@@ -775,7 +781,9 @@ void FBXImport::LoadBinormals(
 		for (int triangleCornerId = 0; triangleCornerId < 3; triangleCornerId++)
 		{
 			int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
-			LoadVector4VertexElement(*binormalElement, triangle.m_binormals[triangleCornerId], triangleCornerId, vertexIndex);
+			glm::vec4 binormal;
+			LoadVector4VertexElement(*binormalElement, binormal, triangleCornerId, vertexIndex);
+			triangle.SetBinormal(binormal, triangleCornerId);
 		}
 	}	
 }
@@ -800,7 +808,9 @@ void FBXImport::LoadTangents(
 		for (int triangleCornerId = 0; triangleCornerId < 3; triangleCornerId++)
 		{
 			int vertexIndex = fbxMesh.GetPolygonVertex(triangleIndex, triangleCornerId);
-			LoadVector4VertexElement(*tangentElement, triangle.m_tangents[triangleCornerId], triangleCornerId, vertexIndex);
+			glm::vec4 tangent;
+			LoadVector4VertexElement(*tangentElement, tangent, triangleCornerId, vertexIndex);
+			triangle.SetTangent(tangent, triangleCornerId);
 		}
 	}
 }

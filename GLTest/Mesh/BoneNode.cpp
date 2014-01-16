@@ -7,11 +7,14 @@
 namespace mesh
 {
 
-BoneNode::BoneNode()
+BoneNode::BoneNode(
+	unsigned int id
+	)
 	: m_inheritScale(false),
 	m_rotationTrack(NULL),
 	m_positionTrack(NULL),
-	m_scaleTrack(NULL)
+	m_scaleTrack(NULL),
+	m_id(id)
 {
 
 };

@@ -23,7 +23,10 @@ class BoneNode : public Node
 {
 public:
 
-BoneNode();
+BoneNode(
+	unsigned int id
+	);
+
 ~BoneNode();
 
 virtual NodeType GetType()
@@ -102,6 +105,8 @@ private:
 	boost::shared_ptr<animation::VectorTrack> m_positionTrack;
 
 	FbxAMatrix m_inverseReferenceMatrix;	// The inverse reference matrix for this bone - calculated on import
+
+	unsigned int m_id;
 };
 
 }

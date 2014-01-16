@@ -7,7 +7,7 @@
 namespace render
 {
 
-enum VertexFormatType;
+//enum VertexFormatType;
 
 class Batch
 {
@@ -15,7 +15,7 @@ class Batch
 public:
 
 	Batch(
-		VertexFormatType vertexFormatType
+		//VertexFormatType vertexFormatType
 		);
 
 	~Batch();
@@ -35,15 +35,15 @@ public:
 		return m_vertexArray.size();
 	}
 
-	TexturedVertexArrayPtr GetVertices()
+	TexturedSkinnedVertexArrayPtr GetVertices()
 	{
 		return m_vertexArray;
 	}
 
-	VertexFormatType Batch::GetVertexFormatType()
-	{
-		return m_vertexFormatType;
-	}
+	//VertexFormatType Batch::GetVertexFormatType()
+	//{
+	//	return m_vertexFormatType;
+	//}
 
 	IndexArrayPtr GetIndices()
 	{
@@ -65,7 +65,7 @@ public:
 	ShaderProgramType GetShaderProgramType();
 
 	void AddVertex(
-		const TexturedVertex &vertex
+		const TexturedSkinnedVertex &vertex
 		);
 
 	void AddIndex(
@@ -91,10 +91,10 @@ public:
 
 private:
 
-	TexturedVertexArrayPtr m_vertexArray;
+	TexturedSkinnedVertexArrayPtr m_vertexArray;
 	IndexArrayPtr m_indexArray;
 	AppearancePtr m_appearance; // Several batches could have the same appearance
-	VertexFormatType m_vertexFormatType;
+	//VertexFormatType m_vertexFormatType;
 
 	GLuint m_vertexArrayHandle;
 
