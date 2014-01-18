@@ -23,9 +23,7 @@ class BoneNode : public Node
 {
 public:
 
-BoneNode(
-	unsigned int id
-	);
+BoneNode();
 
 ~BoneNode();
 
@@ -117,6 +115,7 @@ private:
 	FbxAMatrix m_inverseReferenceMatrix;	// The inverse reference matrix for this bone - calculated on import
 
 	unsigned int m_id;
+	static unsigned int m_counter;
 };
 
 }

@@ -45,15 +45,12 @@ private:
 
 	mesh::Node *LoadBoneNode(
 		FbxNode& fbxNode,	// The FBX mesh to extract data from and add to m_mesh bone node list
-		mesh::Node *parent,
-		const int boneId
+		mesh::Node *parent
 	);
 
 	void LoadAnimationLayerInfo();
 
-	void LoadSkin(
-		FbxNode& fbxNode // The FBX mesh to extract data from
-		);
+	void LoadSkin();
 
 	void LoadSkin(
 		const FbxGeometry &fbxGeometry// The FBX mesh geometry node to extract data from
@@ -166,6 +163,15 @@ private:
 	mesh::MeshPtr m_mesh;					// The mesh to hold the imported data
 
 	static const std::string m_dummyTexture;
+
+	// Store the mesh nodes temporarily in case they are needed for skinning
+	struct MeshNodeInfo
+	{
+		mesh::MeshNode *m_meshNode;
+		FbxNode *m_fbxMeshNode;
+	};
+
+	MeshNodeInfo m_meshNodeInfo;
 };
 
 }

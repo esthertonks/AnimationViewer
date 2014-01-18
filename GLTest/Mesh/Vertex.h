@@ -16,8 +16,9 @@ public:
 		)
 	{
 		assert(m_numInfluences <= MAX_INFLUENCES);
-		m_boneInfluenceIds[m_numInfluences++] = boneInfluenceid;
-		m_boneWeights[m_numInfluences++] = weight;
+		m_boneInfluenceIds[m_numInfluences] = boneInfluenceid;
+		m_boneWeights[m_numInfluences] = weight;
+		m_numInfluences++;
 	}
 
 	float GetBoneWeight(

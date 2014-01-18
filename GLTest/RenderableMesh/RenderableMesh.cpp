@@ -18,7 +18,7 @@ RenderableMesh::RenderableMesh()
 bool RenderableMesh::Create(
 	mesh::MeshPtr &mesh
 	)
-{			
+{	
 	batch::BatchProcessor meshBatchProcessor;
 		
 	meshBatchProcessor.CreateBatches(mesh, m_renderBatches);
@@ -28,32 +28,41 @@ bool RenderableMesh::Create(
 	return true;
 }
 
-bool  RenderableMesh::Update(
-	mesh::Node *boneHierarchyRoot
+static int boneIdCheck = 0;
+
+bool RenderableMesh::Update(
+	mesh::Node *root
 	)
 {		
-	static int idCheck = 0;
+	m_matrixPalette.clear();
+	boneIdCheck = 0;
+	UpdateInternal(root);
 
-	//TODO these MUST be in the sameorder they were added in import so the id's match up
-	for(mesh::Node *node = boneHierarchyRoot; node != NULL; node = boneHierarchyRoot->m_next)
+	return true;
+}
+
+bool RenderableMesh::UpdateInternal(
+	mesh::Node *parent
+	)
+{		
+	//TODO these MUST be in the sameorder they were added in import so the id's match up //TODO createPalette method in either animator or mesh class?
+	if(parent->GetType() == mesh::NodeType::BoneType)
 	{
-		if(node->GetType() == mesh::NodeType::BoneType)
-		{
-			mesh::BoneNode *bone = static_cast<mesh::BoneNode*>(node);
-			assert(bone->GetId() == idCheck);
-			idCheck++;
+		mesh::BoneNode *bone = static_cast<mesh::BoneNode*>(parent);
+		assert(bone->GetId() == boneIdCheck);
 
-			glm::mat4x4 bonePaletteMatrix;
+		glm::mat4x4 bonePaletteMatrix;
 
-			utils::MathsUtils::ConvertFBXToGLMatrix(bone->GetGlobalTransform() * bone->GetInverseReferenceMatrix(), bonePaletteMatrix);
+		utils::MathsUtils::ConvertFBXToGLMatrix(bone->GetGlobalTransform() * bone->GetInverseReferenceMatrix(), bonePaletteMatrix);
 
-			m_matrixPalette.push_back(bonePaletteMatrix);
-		}
+		m_matrixPalette.push_back(bonePaletteMatrix);
 
-		for(mesh::Node* childNode = node->m_firstChild; childNode != NULL; childNode = childNode->m_next)
-		{
-			Update(childNode);
-		}
+		boneIdCheck++;
+	}
+
+	for(mesh::Node* childNode = parent->m_firstChild; childNode != NULL; childNode = childNode->m_next)
+	{
+		UpdateInternal(childNode);
 	}
 
 	return true;
@@ -122,7 +131,7 @@ void RenderableMesh::Render(
 			}
 
 			GLint bonePaletteMatrixLocation = glGetUniformLocation(programId, "boneMatrixPalette");
-			if(bonePaletteMatrixLocation >= 0)
+			if(bonePaletteMatrixLocation >= 0 && m_matrixPalette.size() > 0)
 			{
 				glUniformMatrix4fv(bonePaletteMatrixLocation, m_matrixPalette.size(), GL_FALSE, &m_matrixPalette[0][0][0]);
 			}

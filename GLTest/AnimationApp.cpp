@@ -39,6 +39,7 @@ bool AnimationApp::OnInit()
 	//frame->SetAutoLayout(true);
 
 	m_fbxImporter = boost::shared_ptr<import::FBXImport>(new import::FBXImport());
+	m_meshAnimator = boost::shared_ptr<animation::AnimationController>(new animation::AnimationController());
 
 	m_currentMeshInfo.m_renderMesh = NULL;
 	m_currentMeshInfo.m_mesh = NULL;
@@ -61,23 +62,24 @@ void AnimationApp::OnIdle(
 	if(m_currentMeshInfo.m_renderMesh)
 	{
 		// Update animation
-		if(m_currentMeshInfo.m_mesh && m_meshAnimator)
+		if(m_currentMeshInfo.m_mesh && m_meshAnimator && m_meshAnimator->IsAnimating())
 		{
 			//float delta = timeNow - m_lastTime;
 			m_meshAnimator->Update(m_currentMeshInfo.m_mesh, timeNow, false);
+
+			if(m_currentMeshInfo.m_renderMesh)// TODO should just be an array of renderables to update? What about the array of renderable in the render component???
+			{
+				m_currentMeshInfo.m_renderMesh->Update(m_currentMeshInfo.m_mesh->GetNodeHierarchy());
+			}
+
+			// Update any render meshes with the new bone hierarchy
+			if(m_boneOverlay)
+			{
+				// TODO this should have the bone hierarchy passed in? Certainly shouldn't be storing the mesh....
+				m_boneOverlay->Update(m_currentMeshInfo.m_mesh->GetNodeHierarchy()); // Update the render mesh with the new bone info
+			}
 		}
 
-		if(m_currentMeshInfo.m_renderMesh)// TODO should just be an array of renderables to update? What about the array of renderable in the render component???
-		{
-			m_currentMeshInfo.m_renderMesh->Update(m_currentMeshInfo.m_mesh->GetNodeHierarchy());
-		}
-
-		// Update any render meshes with the new bone hierarchy
-		if(m_boneOverlay)
-		{
-			// TODO this should have the bone hierarchy passed in? Certainly shouldn't be storing the mesh....
-			m_boneOverlay->Update(m_currentMeshInfo.m_mesh->GetNodeHierarchy()); // Update the render mesh with the new bone info
-		}
 		//m_input->Do SomethingWithCamera();
 		//m_camera->GetView();
 		//animate(delta);
@@ -114,6 +116,10 @@ void AnimationApp::ImportFBX(
 			render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(renderableMesh);
 			m_renderCanvas->AddRenderable(renderable);
 			m_currentMeshInfo.m_renderMesh = renderable;
+
+			// Make sure the bone hierarchy is correct //TODO but it always will be yes? May not be necessary
+			m_meshAnimator->Update(m_currentMeshInfo.m_mesh, 0, false);
+			m_currentMeshInfo.m_renderMesh->Update(m_currentMeshInfo.m_mesh->GetNodeHierarchy());
 		}
 		else
 		{
@@ -143,7 +149,7 @@ void AnimationApp::ShowBones(
 		{
 			m_renderCanvas->AddRenderable(renderable);
 			m_boneOverlay = renderable;
-			m_meshAnimator = boost::shared_ptr<animation::AnimationController>(new animation::AnimationController());
+			m_boneOverlay->Update(m_currentMeshInfo.m_mesh->GetNodeHierarchy());
 		}
 		else
 		{

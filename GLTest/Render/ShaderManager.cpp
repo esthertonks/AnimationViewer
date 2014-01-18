@@ -58,7 +58,7 @@ int ShaderManager::GetProgramId(
 	Program& program = GetProgram(programType);
 	if(program.m_programId == -1)
 	{
-		wxLogDebug("Program type %d not found, are the shaders setup and initialsed correctly?\n", programType);
+		wxLogDebug("Program type %d not found, check the shader compilation.\n", programType);
 	}
 	return program.m_programId;
 }

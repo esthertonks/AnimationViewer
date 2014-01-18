@@ -23,6 +23,11 @@ public :
 
 	~AnimationController(){}
 
+bool IsAnimating()
+{
+	return m_animEndTime != 0;
+}
+
 void StartAnimation(
 	long globalStartTime,
 	long animStartTime,

@@ -37,11 +37,6 @@ void BatchProcessor::CreateBatches(
 		int numBatches = appearances.size();
 		renderBatches.resize(numBatches);
 
-		// TODO need to split verts along uv seams first
-		// TODO need to split verts along hard edge normals first
-		// TODO need to split by vertex format first?
-
-	// TODO For now just average everything, but this needs to create batches and split normals for textures, colours and normals.
 		mesh::Node* node = mesh->GetNodeHierarchy();
 		for(node; node != NULL; node = node->m_next)
 	{
@@ -145,7 +140,7 @@ void BatchProcessor::AddDuplicateVertex(
 	vertex.m_uv = currentVertex.m_uv;
 	vertex.m_normal += currentVertex.m_normal;
 	vertex.m_normal = glm::normalize(vertex.m_normal); // Make sure these are normalised
-	for(int weightIndex = 0; weightIndex < currentVertex.m_numWeights; weightIndex++)
+	for(int weightIndex = 0; weightIndex < MAX_INFLUENCES; weightIndex++)
 	{
 		vertex.m_boneWeights[weightIndex] = currentVertex.m_boneWeights[weightIndex];
 		vertex.m_boneIds[weightIndex] = currentVertex.m_boneIds[weightIndex];

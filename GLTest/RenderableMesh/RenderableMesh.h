@@ -40,7 +40,7 @@ public:
 		);
 
 	virtual bool Update(
-		mesh::Node *boneHierarchyRoot
+		mesh::Node *root
 		);
 
 	virtual void Rotate(
@@ -55,6 +55,10 @@ public:
 		);
 
 private:
+	bool UpdateInternal(
+		mesh::Node *parent
+		);
+
 	render::BatchList m_renderBatches;
 	std::vector<glm::mat4x4> m_matrixPalette;//TODO 4x3
 };

@@ -26,10 +26,10 @@ struct TexturedSkinnedVertex
 	glm::vec3 m_colour;
 	glm::vec3 m_normal;
 	glm::vec2 m_uv;
+	float m_boneIds[4];//TODO unfloat???
 	float m_boneWeights[4];
-	unsigned int m_boneIds[4];
-	int m_numWeights;
 };
+
 
 // This vertex has a position and colour but no normal or uv (used for overlays)
 struct ColourVertex

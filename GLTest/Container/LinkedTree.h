@@ -108,10 +108,10 @@ namespace container
 		{
 			if(parent->m_next)
 			{
-				return m_parent->m_next;
+				return parent->m_next;
 			}
 
-			parent = m_parent->m_parent;
+			parent = parent->m_parent;
 		}
 
 		return NULL;

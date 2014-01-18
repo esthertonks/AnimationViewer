@@ -93,13 +93,21 @@ void Batch::Prepare()
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_positionBufferHandle);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(render::TexturedSkinnedVertex) * GetNumVertices(), &m_vertexArray[0], GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)sizeof(glm::vec3));
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)(sizeof(glm::vec3) * 2));
-	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)(sizeof(glm::vec3) * 3));
-	glVertexAttribIPointer(4, 4, GL_INT, sizeof(render::TexturedSkinnedVertex), (GLubyte *)(sizeof(glm::vec3) * 3) + sizeof(glm::vec2) * 2);
-	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)(sizeof(glm::vec3) * 3) + sizeof(glm::vec2) * 2 + sizeof(int) * 4);
+	int test = sizeof(render::TexturedSkinnedVertex);
+	int offset = 0;
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)offset);
+	offset += sizeof(glm::vec3);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)offset);
+	offset += sizeof(glm::vec3);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)offset);
+	offset += sizeof(glm::vec3);
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)offset);
+	offset += sizeof(glm::vec2);
+	//glVertexAttribIPointer(4, 4, GL_UNSIGNED_INT, sizeof(render::TexturedSkinnedVertex), (GLubyte *)offset);
+	//offset += sizeof(unsigned int) * 4;
+	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)offset);
+	offset += sizeof(glm::vec4);
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)offset);
 
 	glEnableVertexAttribArray(0);  // Vertex position
 	glEnableVertexAttribArray(1);  // Vertex colour

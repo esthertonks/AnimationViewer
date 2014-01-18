@@ -7,16 +7,15 @@
 namespace mesh
 {
 
-BoneNode::BoneNode(
-	unsigned int id
-	)
+unsigned int BoneNode::m_counter = 0;
+
+BoneNode::BoneNode()
 	: m_inheritScale(false),
 	m_rotationTrack(NULL),
 	m_positionTrack(NULL),
 	m_scaleTrack(NULL),
-	m_id(id)
+	m_id(m_counter++)
 {
-
 };
 
 // Allocate memory for an animation track. Currently only one animation track is supported.

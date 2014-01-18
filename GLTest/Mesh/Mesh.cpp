@@ -5,7 +5,6 @@ namespace mesh
 {
 
 Mesh::Mesh()
-	: m_meshNode(NULL)
 {
 }
 
@@ -13,7 +12,7 @@ BoneNode* Mesh::GetBoneByName(
 	std::string name
 )
 {
-	for(Node *node = m_nodes.m_root; node != NULL; )
+	for(Node *node = m_nodes.m_root; node != NULL; node = node->GetNextChildFirst())
 	{
 		if(node->GetType() == NodeType::BoneType)
 		{
@@ -22,9 +21,8 @@ BoneNode* Mesh::GetBoneByName(
 				return static_cast<BoneNode*>(node);
 			}
 		}
-
-		node = node->GetNextChildFirst();
 	}
+
 	return NULL;
 }
 
