@@ -16,7 +16,7 @@ RenderableBoneList::RenderableBoneList()
 }
 
 bool RenderableBoneList::Create(
-	mesh::MeshPtr &mesh // Ignored - this particular overlay doesnt need the mesh itself
+	mesh::MeshPtr mesh // Ignored - this particular overlay doesnt need the mesh itself
 	)
 {		
 	m_numVerts = 0;
@@ -24,7 +24,7 @@ bool RenderableBoneList::Create(
 }
 
 bool RenderableBoneList::Update(
-	mesh::Node *boneHierarchyRoot
+	mesh::BoneNode *boneHierarchyRoot
 	)
 {
 	m_vertexArray.clear();
@@ -38,22 +38,16 @@ bool RenderableBoneList::Update(
 
 static float col = 0.0f;
 void RenderableBoneList::AddPositionToVertexList(
-	mesh::Node *node
+	mesh::BoneNode *boneNode
 	)
 {
-	for(node; node != NULL; node = node->m_next)
+	for(boneNode; boneNode != NULL; boneNode = boneNode->m_next)
 	{
-		if(node->GetType() != mesh::BoneType)
-		{
-			continue;
-		}
-
-		if(node->m_parent) // Dont bother with the root - it will be added as the parent of it's children
+		if(boneNode->m_parent) // Dont bother with the root - it will be added as the parent of it's children
 		{
 			// Add the parent nodes position
-			mesh::BoneNode *parentNode = static_cast<mesh::BoneNode*>(node->m_parent);
 			ColourVertex parentVertex;
-			FbxAMatrix& parentGlobalTransform = parentNode->GetGlobalTransform();
+			FbxAMatrix& parentGlobalTransform = boneNode->m_parent->GetGlobalTransform();
 			parentVertex.m_position.x = static_cast<float>(parentGlobalTransform[3][0]);
 			parentVertex.m_position.y = static_cast<float>(parentGlobalTransform[3][1]);
 			parentVertex.m_position.z = static_cast<float>(parentGlobalTransform[3][2]);
@@ -62,8 +56,6 @@ void RenderableBoneList::AddPositionToVertexList(
 			m_vertexArray.push_back(parentVertex);
 
 			// Add this nodes position
-			mesh::BoneNode *boneNode = static_cast<mesh::BoneNode*>(node);
-
 			ColourVertex vertex;
 			FbxAMatrix& globalTransform = boneNode->GetGlobalTransform();
 			vertex.m_position.x = static_cast<float>(globalTransform[3][0]);
@@ -75,9 +67,9 @@ void RenderableBoneList::AddPositionToVertexList(
 			m_vertexArray.push_back(vertex);
 		}
 
-		if(node->m_firstChild)
+		if(boneNode->m_firstChild)
 		{
-			AddPositionToVertexList(node->m_firstChild); // If this node has any children then add their info two
+			AddPositionToVertexList(boneNode->m_firstChild); // If this node has any children then add their info two
 		}
 	}
 }

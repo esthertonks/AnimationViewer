@@ -73,7 +73,7 @@ void ShaderManager::SetProgramCurrent(
 
 	m_currentProgramType = programType;
 
-	//OutputDebugShaderAttributeInfo(programType);
+	OutputDebugShaderAttributeInfo(programType);
 }
 
 /**

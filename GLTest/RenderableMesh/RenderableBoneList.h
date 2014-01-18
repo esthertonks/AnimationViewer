@@ -33,11 +33,11 @@ public:
 	const glm::mat4x4 &GetModelMatrix();
 
 	virtual bool Create(
-		mesh::MeshPtr &mesh
+		mesh::MeshPtr mesh
 		);
 
 	virtual bool Update(
-		mesh::Node *boneHierarchyRoot
+		mesh::BoneNode *boneHierarchyRoot
 		);
 
 	virtual void Rotate(
@@ -53,7 +53,7 @@ public:
 
 private:
 	void AddPositionToVertexList(
-	mesh::Node *node
+		mesh::BoneNode *boneHierarchyRoot
 	);
 
 	void Prepare();

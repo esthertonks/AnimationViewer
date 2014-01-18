@@ -4,8 +4,8 @@ layout (location = 0) in vec3 vertexPosition;
 layout (location = 1) in vec3 vertexColour;
 layout (location = 2) in vec3 vertexNormal;
 layout (location = 3) in vec2 vertexTexCoord;
-layout (location = 4) in int boneIds[4];
-layout (location = 5) in float boneWeights[4];
+layout (location = 4) in vec4 boneIds;
+layout (location = 5) in vec4 boneWeights;
 
 out vec3 position;
 out vec3 normal;
@@ -42,7 +42,8 @@ void main()
 	// Convert to eye coordinates
 	position = vec3(viewMatrix * modelMatrix * skinnedPosition);
 	normal = normalize(normalMatrix * vertexNormal);
-	colour = vertexColour;
+	//colour = vec3(boneMatrixPalette[1][0][0], 1.0, 1.0);
+	colour = vec3(skinnedPosition);
 	textureCoord = vertexTexCoord;
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * skinnedPosition;
 

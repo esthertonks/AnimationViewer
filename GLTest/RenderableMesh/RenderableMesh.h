@@ -36,11 +36,11 @@ public:
 	}
 
 	bool Create(
-		mesh::MeshPtr &mesh
+		mesh::MeshPtr mesh
 		);
 
 	virtual bool Update(
-		mesh::Node *root
+		mesh::BoneNode *boneHierarchyRoot
 		);
 
 	virtual void Rotate(
@@ -56,7 +56,7 @@ public:
 
 private:
 	bool UpdateInternal(
-		mesh::Node *parent
+		mesh::BoneNode *parent
 		);
 
 	render::BatchList m_renderBatches;

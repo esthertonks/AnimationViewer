@@ -4,14 +4,13 @@
 */
 #pragma once
 
-#include "Node.h"
+#include "../Container/LinkedTree.h"
 #include "../Batch/BatchFwdDecl.h"
 #include "MeshFwdDecl.h"
 
 namespace mesh
 {
 
-class Node;
 class MeshNode;
 class BoneNode;
 
@@ -22,21 +21,34 @@ public:
 	Mesh::Mesh();
 	Mesh::~Mesh();
 
-	Node* GetNodeHierarchy()
+	BoneNode* GetBoneNodeHierarchy()
 	{
-		return m_nodes.m_root;
+		return m_boneNodes.m_root;
 	}
 
-	void AddChildNode(
-		Node *parent,	// Parent node or NULL if no parent
-		Node *node		// Child node to add
+	MeshNode* GetMeshNodeHierarchy()
+	{
+		return m_meshNodes.m_root;
+	}
+
+	void AddChildBoneNode(
+		BoneNode *parent,	// Parent node or NULL if no parent
+		BoneNode *node		// Child node to add
 		)
 	{
-		m_nodes.AddAsChild(parent, node);
+		m_boneNodes.AddAsChild(parent, node);
+	}
+
+	void AddChildMeshNode(
+		MeshNode *parent,	// Parent node or NULL if no parent
+		MeshNode *node		// Child node to add
+		)
+	{
+		m_meshNodes.AddAsChild(parent, node);
 	}
 
 	BoneNode* GetBoneByName(
-		std::string name
+		const std::string &name
 	);
 
 	int GetNumVerticesWithMaterialId(
@@ -72,7 +84,8 @@ public:
 private:
 	render::AppearanceTable m_appearanceTable; // Mapping of material id's to material names //TODO pointer and set method
 	std::vector<unsigned int> m_numVerticesPerMaterialArray; // A count of the number of vertex indices per material batch. Necessary for creating batches later
-	container::LinkedTree<Node> m_nodes;
+	container::LinkedTree<BoneNode> m_boneNodes;
+	container::LinkedTree<MeshNode> m_meshNodes;
 	mesh::AnimationInfoPtr m_animationInfo; // Extra info about all animation tracks
 };
 }

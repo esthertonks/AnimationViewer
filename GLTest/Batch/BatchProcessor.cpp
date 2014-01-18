@@ -1,6 +1,7 @@
 #include "BatchProcessor.h"
 #include "../Mesh/Mesh.h"
 #include "../Mesh/MeshNode.h"
+#include "../Mesh/BoneNode.h"
 #include "../Mesh/Triangle.h"
 #include "../Mesh/Vertex.h"
 #include "../Batch/VertexFormat.h"
@@ -32,20 +33,14 @@ void BatchProcessor::CreateBatches(
 	render::BatchList &renderBatches // Batch vector to fill in
 	)
 {
-		// TODO for testing atm assume only one - rewrite for many shortly
-		render::AppearanceTable& appearances = mesh->GetAppearanceTable();
-		int numBatches = appearances.size();
-		renderBatches.resize(numBatches);
+	// TODO for testing atm assume only one - rewrite for many shortly
+	render::AppearanceTable& appearances = mesh->GetAppearanceTable();
+	int numBatches = appearances.size();
+	renderBatches.resize(numBatches);
 
-		mesh::Node* node = mesh->GetNodeHierarchy();
-		for(node; node != NULL; node = node->m_next)
+	mesh::MeshNode* meshNode = mesh->GetMeshNodeHierarchy();
+	for(meshNode; meshNode != NULL; meshNode = meshNode->m_next)
 	{
-		if(node->GetType() != mesh::NodeType::MeshType)
-		{
-			continue;
-		}
-
-		mesh::MeshNode *meshNode = static_cast<mesh::MeshNode *>(node);
 		mesh::MeshTriangleArray triangleArray = meshNode->GetTriangles();
 		int numTriangles = meshNode->GetNumTriangles();
 		mesh::MeshVertexArray vertexArray = meshNode->GetVertices();

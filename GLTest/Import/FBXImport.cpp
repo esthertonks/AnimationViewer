@@ -10,6 +10,7 @@
 #include "../Utils/MathsUtils.h"
 #include "../Animation/VectorKey.h"
 #include "../Animation/QuaternionKey.h"
+#include <boost/filesystem.hpp>
 
 #include <assert.h>
 
@@ -111,7 +112,7 @@ mesh::MeshPtr FBXImport::Import(
 	BakeNodeTransforms(fbxRootNode);
 	fbxRootNode.ConvertPivotAnimationRecursive(NULL, FbxNode::eDestinationPivot, animationInfo->GetFPS());	// FPS fixed at 30 atm
 
-	LoadNodes(fbxRootNode, m_mesh->GetNodeHierarchy());
+	LoadNodes(fbxRootNode, m_mesh->GetBoneNodeHierarchy(), m_mesh->GetMeshNodeHierarchy());
 
 	LoadSkin();
 
@@ -131,10 +132,12 @@ mesh::MeshPtr FBXImport::Import(
 
 bool FBXImport::LoadNodes(
 	FbxNode& fbxNode,
-	mesh::Node *parent
+	mesh::BoneNode *parentBone,
+	mesh::MeshNode *parentMesh
 	)
 {
-	mesh::Node *newNode = NULL;
+	mesh::MeshNode *newMeshNode = NULL;
+	mesh::BoneNode *newBoneNode = NULL;
 
 	// Find ut the type of node ie Skeleton, Mesh, Camera, Light - currently only Bones and Mesh nodes are supported
 	FbxNodeAttribute* const fbxNodeAttribute = fbxNode.GetNodeAttribute();
@@ -145,10 +148,10 @@ bool FBXImport::LoadNodes(
 		switch(fbxAttributeType)
 		{
 		case FbxNodeAttribute::eMesh:
-			newNode = LoadMeshNode(fbxNode, parent);
+			newMeshNode = LoadMeshNode(fbxNode, parentMesh);
 			break;
 		case FbxNodeAttribute::eSkeleton:
-			newNode = LoadBoneNode(fbxNode, parent);
+			newBoneNode = LoadBoneNode(fbxNode, parentBone);
 			break;
 		default:
 			FBXSDK_printf("Node %s type is %d. Only node of type eMesh (4) or eSkeleton (3) can be loaded\n", fbxNode.GetName(), fbxAttributeType);
@@ -163,15 +166,15 @@ bool FBXImport::LoadNodes(
 	{
 		FbxNode &fbxChildNode = *fbxNode.GetChild(childIndex);
 
-		LoadNodes(fbxChildNode, newNode != NULL ? newNode : parent); // If we didnt load a node just pass through the parent. Otherwise pass the new node as the parent
+		LoadNodes(fbxChildNode, newBoneNode != NULL ? newBoneNode : parentBone, newMeshNode != NULL ? newMeshNode : parentMesh); // If we didnt load a node just pass through the parent. Otherwise pass the new node as the parent
 	}
 
 	return true;
 }
 
-mesh::Node *FBXImport::LoadMeshNode(
+mesh::MeshNode *FBXImport::LoadMeshNode(
 	FbxNode& fbxNode,
-	mesh::Node *parent
+	mesh::MeshNode *parent
 	)
 {
 	FbxMesh* fbxMesh = fbxNode.GetMesh();
@@ -198,13 +201,16 @@ mesh::Node *FBXImport::LoadMeshNode(
 		}
 
 		meshNode = new mesh::MeshNode();
-		m_mesh->AddChildNode(parent, meshNode);
+		m_mesh->AddChildMeshNode(parent, meshNode);
 
 		m_meshNodeInfo.m_meshNode = meshNode;	// We are only supporting one mesh, so store it to add loading the skin
 		m_meshNodeInfo.m_fbxMeshNode = &fbxNode;
 
 		std::string name = fbxNode.GetName();
 		meshNode->SetName(name);
+
+		const FbxAMatrix fbxGlobalTransform = fbxNode.EvaluateGlobalTransform(0, FbxNode::eDestinationPivot);
+		meshNode->m_globalTransform = fbxGlobalTransform;
 
 		// Extract and store vertices
 		const unsigned int numVertices = fbxMesh->GetControlPointsCount();
@@ -261,9 +267,9 @@ mesh::Node *FBXImport::LoadMeshNode(
 	return meshNode;
 }
 
-mesh::Node *FBXImport::LoadBoneNode(
+mesh::BoneNode *FBXImport::LoadBoneNode(
 	FbxNode& fbxNode, // The FBX mesh to extract data from and add to m_mesh bone node list
-	mesh::Node *parent
+	mesh::BoneNode *parent
 	)
 {
 	const FbxSkeleton* const fbxSkeleton = static_cast<const FbxSkeleton*>(fbxNode.GetNodeAttribute());
@@ -295,7 +301,7 @@ mesh::Node *FBXImport::LoadBoneNode(
 	//	return false;
 	//}
 
-	m_mesh->AddChildNode(parent, boneNode);
+	m_mesh->AddChildBoneNode(parent, boneNode);
 
 	std::string name = fbxNode.GetName();
 	boneNode->SetName(name);
@@ -638,10 +644,9 @@ void FBXImport::LoadMaterials(
 			for(int textureIndex = 0; textureIndex < 1; textureIndex++)
 			{
 				FbxFileTexture* fbxFileTexture = materialProperty.GetSrcObject<FbxFileTexture>(textureIndex);
-				if(fbxFileTexture != NULL)
+				if(fbxFileTexture != NULL && boost::filesystem::exists(fbxFileTexture->GetFileName()))
 				{
-					std::string textureFilename = fbxFileTexture->GetFileName();//TODO cant currently support multiple materials!
-					appearance->SetDiffuseTexturePath(textureFilename);
+					appearance->SetDiffuseTexturePath(fbxFileTexture->GetFileName());
 				}
 				else
 				{

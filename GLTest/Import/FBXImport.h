@@ -8,7 +8,7 @@
 namespace mesh
 {
 	class Mesh;
-	class Node;
+	class BoneNode;
 	class MeshNode;
 	class Triangle;
 	class TexturedSkinnedVertex;
@@ -35,17 +35,18 @@ private:
 
 	bool LoadNodes(
 		FbxNode& fbxNode,	// The FBX mesh to extract data from and add to m_mesh
-		mesh::Node *parent
+		mesh::BoneNode *parentBone,
+		mesh::MeshNode *parentMesh
 	);
 
-	mesh::Node *LoadMeshNode(
+	mesh::MeshNode *LoadMeshNode(
 		FbxNode &fbxNode,				// The FBX mesh to extract data from and add to m_mesh mesh node list
-		mesh::Node *parent
+		mesh::MeshNode *parent
 		);
 
-	mesh::Node *LoadBoneNode(
+	mesh::BoneNode *LoadBoneNode(
 		FbxNode& fbxNode,	// The FBX mesh to extract data from and add to m_mesh bone node list
-		mesh::Node *parent
+		mesh::BoneNode *parent
 	);
 
 	void LoadAnimationLayerInfo();

@@ -72,6 +72,33 @@ namespace container
 		}
 	}
 
+	virtual TYPE* GetNextChildFirst(
+		TYPE *item
+		)
+	{
+		if(item->m_firstChild)
+		{
+			return item->m_firstChild;
+		}
+
+		if(item->m_next)
+		{
+			return item->m_next;
+		}
+
+		for(TYPE *parent = item->m_parent; parent != NULL; )
+		{
+			if(parent->m_next)
+			{
+				return parent->m_next;
+			}
+
+			parent = parent->m_parent;
+		}
+
+		return NULL;
+	}
+
 	TYPE *m_root;
 	TYPE *m_end;
 
@@ -91,31 +118,6 @@ namespace container
 		m_firstChild = NULL;
 		m_endChild = NULL;
 	};
-
-	virtual ITEM* GetNextChildFirst()
-	{
-		if(m_firstChild)
-		{
-			return m_firstChild;
-		}
-
-		if(m_next)
-		{
-			return m_next;
-		}
-
-		for(ITEM *parent = m_parent; parent != NULL; )
-		{
-			if(parent->m_next)
-			{
-				return parent->m_next;
-			}
-
-			parent = parent->m_parent;
-		}
-
-		return NULL;
-	}
 
 	virtual LinkedTreeItem::~LinkedTreeItem()
 	{

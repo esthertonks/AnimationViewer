@@ -8,6 +8,11 @@
 	Animates any mesh::Mesh using the animation tracks contained within that mesh
 */
 
+namespace mesh
+{
+	class BoneNode;
+}
+
 namespace animation
 {
 	class QuaternionKey;
@@ -51,7 +56,7 @@ private:
 
 void PrepareBoneHierarcy(
 	int sample,
-	mesh::Node* node,
+	mesh::BoneNode* boneNode,
 	const FbxAMatrix &parentGlobalScaleMatrix,
 	const FbxAMatrix &parentGlobalRotationMatrix
 	);

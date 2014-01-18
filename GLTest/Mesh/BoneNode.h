@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Node.h"
+//#include "Node.h"
+#include <fbxsdk.h>
+#include "../Container/LinkedTree.h"
 #include "boost/shared_ptr.hpp"
 #include "../Animation/VectorKey.h"
 #include "../Animation/QuaternionKey.h"
@@ -19,7 +21,7 @@ namespace import
 namespace mesh
 {
 
-class BoneNode : public Node
+class BoneNode : public container::LinkedTreeItem<BoneNode>
 {
 public:
 
@@ -27,9 +29,21 @@ BoneNode();
 
 ~BoneNode();
 
-virtual NodeType GetType()
+//virtual NodeType GetType()
+//{
+//	return BoneType;
+//}
+
+void SetName(
+	const std::string& name
+	)
 {
-	return BoneType;
+	m_name = name;
+};
+
+std::string&	GetName()
+{		
+	return m_name;
 }
 
 unsigned int GetId()
@@ -92,6 +106,16 @@ bool InheritsScale()
 	return m_inheritScale;
 }
 
+const FbxAMatrix &GetGlobalTransform() const
+{
+	return m_globalTransform;
+};
+
+FbxAMatrix &GetGlobalTransform()
+{
+	return m_globalTransform;
+};
+
 void SetInverseReferenceMatrix(
 	FbxAMatrix &inverseReferenceMatrix
 )
@@ -116,6 +140,10 @@ private:
 
 	unsigned int m_id;
 	static unsigned int m_counter;
+
+	std::string m_name;
+
+	FbxAMatrix m_globalTransform;		// Transform from this node to the global model transform. This is updated each tick during animation
 };
 
 }

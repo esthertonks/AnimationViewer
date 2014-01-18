@@ -2,7 +2,6 @@
 #include "../Render/ShaderManager.h"
 #include "../Batch/BatchProcessor.h"
 #include "../Batch/Batch.h"
-#include "../Mesh/Mesh.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "../Mesh/BoneNode.h"
 #include "../Utils/MathsUtils.h"
@@ -16,7 +15,7 @@ RenderableMesh::RenderableMesh()
 }
 
 bool RenderableMesh::Create(
-	mesh::MeshPtr &mesh
+	mesh::MeshPtr mesh
 	)
 {	
 	batch::BatchProcessor meshBatchProcessor;
@@ -31,36 +30,32 @@ bool RenderableMesh::Create(
 static int boneIdCheck = 0;
 
 bool RenderableMesh::Update(
-	mesh::Node *root
+	mesh::BoneNode *boneHierarchyRoot
 	)
 {		
 	m_matrixPalette.clear();
 	boneIdCheck = 0;
-	UpdateInternal(root);
+	UpdateInternal(boneHierarchyRoot);
 
 	return true;
 }
 
 bool RenderableMesh::UpdateInternal(
-	mesh::Node *parent
+	mesh::BoneNode *parent
 	)
 {		
 	//TODO these MUST be in the sameorder they were added in import so the id's match up //TODO createPalette method in either animator or mesh class?
-	if(parent->GetType() == mesh::NodeType::BoneType)
-	{
-		mesh::BoneNode *bone = static_cast<mesh::BoneNode*>(parent);
-		assert(bone->GetId() == boneIdCheck);
+	assert(parent->GetId() == boneIdCheck);
 
-		glm::mat4x4 bonePaletteMatrix;
+	glm::mat4x4 bonePaletteMatrix;
 
-		utils::MathsUtils::ConvertFBXToGLMatrix(bone->GetGlobalTransform() * bone->GetInverseReferenceMatrix(), bonePaletteMatrix);
+	utils::MathsUtils::ConvertFBXToGLMatrix(parent->GetGlobalTransform() * parent->GetInverseReferenceMatrix(), bonePaletteMatrix);
 
-		m_matrixPalette.push_back(bonePaletteMatrix);
+	m_matrixPalette.push_back(bonePaletteMatrix);
 
-		boneIdCheck++;
-	}
+	boneIdCheck++;
 
-	for(mesh::Node* childNode = parent->m_firstChild; childNode != NULL; childNode = childNode->m_next)
+	for(mesh::BoneNode* childNode = parent->m_firstChild; childNode != NULL; childNode = childNode->m_next)
 	{
 		UpdateInternal(childNode);
 	}

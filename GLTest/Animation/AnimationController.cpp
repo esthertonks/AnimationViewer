@@ -1,7 +1,8 @@
 #include "AnimationController.h"
 
-#include "../Mesh/Node.h"
+//#include "../Mesh/Node.h"
 #include "../Mesh/BoneNode.h"
+#include "../Mesh/MeshNode.h" //TODO ug why do I need this?
 #include "../Animation/QuaternionKey.h"
 #include "../Animation/VectorKey.h"
 #include "../Animation/QuaternionTrack.h"
@@ -74,7 +75,7 @@ void AnimationController::Update(
 	const bool isLooping
 	)
 {
-	mesh::Node *root = mesh->GetNodeHierarchy();
+	mesh::BoneNode *root = mesh->GetBoneNodeHierarchy();
 
 	float playSpeed = 1; // 2x. Slower = 1/2 times. reverse = -2x
 	bool reverse = false;
@@ -103,84 +104,80 @@ void AnimationController::Update(
 
 void AnimationController::PrepareBoneHierarcy(
 	int sample,
-	mesh::Node *node,
+	mesh::BoneNode *boneNode,
 	const FbxAMatrix &parentGlobalScaleMatrix,
 	const FbxAMatrix &parentGlobalRotationMatrix
 	)
 {
-	for(node; node != NULL; node = node->m_next)
+	for(boneNode; boneNode != NULL; boneNode = boneNode->m_next)
 	{
-		if(node->GetType() == mesh::BoneType)
-		{
-			mesh::BoneNode* boneNode = static_cast<mesh::BoneNode*>(node);
+		animation::VectorKey localPositionKey;
+		animation::VectorKey localScaleKey;
+		animation::QuaternionKey localRotationKey;
 
-			animation::VectorKey localPositionKey;
-			animation::VectorKey localScaleKey;
-			animation::QuaternionKey localRotationKey;
+		InterpolatePosition(sample, boneNode->GetPositionTrack(), localPositionKey);
+		InterpolateRotation(sample, boneNode->GetRotationTrack(), localRotationKey);
+		InterpolateScale(sample, boneNode->GetScaleTrack(), localScaleKey);
 
-			InterpolatePosition(sample, boneNode->GetPositionTrack(), localPositionKey);
-			InterpolateRotation(sample, boneNode->GetRotationTrack(), localRotationKey);
-			InterpolateScale(sample, boneNode->GetScaleTrack(), localScaleKey);
+		FbxAMatrix localScaleMatrix;
+		localScaleMatrix.SetS(localScaleKey.m_vector);
+		FbxAMatrix localRotationMatrix;
+		localRotationMatrix.SetQ(localRotationKey.m_quaternion);
 
-			FbxAMatrix localScaleMatrix;
-			localScaleMatrix.SetS(localScaleKey.m_vector);
-			FbxAMatrix localRotationMatrix;
-			localRotationMatrix.SetQ(localRotationKey.m_quaternion);
+		// Get the transform which needs setting
+		FbxAMatrix& globalTransform = boneNode->GetGlobalTransform();
 
-			// Get the transform which needs setting
-			FbxAMatrix& globalTransform = boneNode->GetGlobalTransform();
+		if(boneNode->m_parent)
+		{			
+			const FbxAMatrix& parentTransform = boneNode->m_parent->GetGlobalTransform();
 
-			if(boneNode->m_parent)
-			{			
-				const FbxAMatrix& parentTransform = boneNode->m_parent->GetGlobalTransform();
+			FbxAMatrix globalRotationAndScale;
 
-				FbxAMatrix globalRotationAndScale;
+			// Bones exported from Max or Maya can inherit or not inherit scale on each node. In order to deal with this the rotation and scale must be calucated separately from the translation.
 
-				// Bones exported from Max or Maya can inherit or not inherit scale on each node. In order to deal with this the rotation and scale must be calucated separately from the translation.
-
-				if(boneNode->InheritsScale()) //FbxTransform::eInheritRrSs - translation * (parentRotate * localRotate * parentScale * local Scale)
-				{
-					globalRotationAndScale = parentGlobalRotationMatrix * localRotationMatrix * parentGlobalScaleMatrix * localScaleMatrix;
-				}
-				else //FbxTransform::eInheritRrs - translation * (parentRotate * localRotate * local Scale)
-				{
-					globalRotationAndScale = parentGlobalRotationMatrix * localRotationMatrix * localScaleMatrix;
-				}
-
-				// Transform the position by the whole parent transform so that the position gets rotated and scaled correctly.
-				// Use a vector transform here as we don't want any other info from the global transform at this point.
-				FbxVector4 globalPosition = parentTransform.MultT(localPositionKey.m_vector);
-
-				FbxAMatrix globalPositionMatrix;
-				globalPositionMatrix.SetT(globalPosition);
-				globalTransform = globalPositionMatrix * globalRotationAndScale;
-
-				if(node->m_firstChild)
-				{
-					// Record the global scale and rotation matrices for use by the child
-					FbxAMatrix globalScaleMatrix = parentGlobalScaleMatrix * localScaleMatrix;
-
-					// Record the global scale and rotation matrices for use by the child
-					FbxAMatrix globalRotationMatrix = parentGlobalRotationMatrix * localRotationMatrix;
-
-					PrepareBoneHierarcy(sample, node->m_firstChild, globalScaleMatrix, globalRotationMatrix); // Passing the parent scale and rotation avoids extracting them from the global transform which is non trivial
-				}
-
-			}
-			else // No parent, so the global transform must be the same as the local transform
+			if(boneNode->InheritsScale()) //FbxTransform::eInheritRrSs - translation * (parentRotate * localRotate * parentScale * local Scale)
 			{
-				FbxAMatrix localTranslationMatrix;
-				localTranslationMatrix.SetT(localPositionKey.m_vector);
-				globalTransform = localTranslationMatrix * localRotationMatrix * localScaleMatrix;
-
-				if(node->m_firstChild)
-				{
-					PrepareBoneHierarcy(sample, node->m_firstChild, localScaleMatrix, localRotationMatrix); // Passing the parent scale and rotation avoids extracting them from the global transform which is non trivial
-				}
-
+				globalRotationAndScale = parentGlobalRotationMatrix * localRotationMatrix * parentGlobalScaleMatrix * localScaleMatrix;
 			}
+			else //FbxTransform::eInheritRrs - translation * (parentRotate * localRotate * local Scale)
+			{
+				globalRotationAndScale = parentGlobalRotationMatrix * localRotationMatrix * localScaleMatrix;
+			}
+
+			// Transform the position by the whole parent transform so that the position gets rotated and scaled correctly.
+			// Use a vector transform here as we don't want any other info from the global transform at this point.
+			FbxVector4 globalPosition = parentTransform.MultT(localPositionKey.m_vector);
+
+			FbxAMatrix globalPositionMatrix;
+			globalPositionMatrix.SetT(globalPosition);
+			globalTransform = globalPositionMatrix * globalRotationAndScale;
+
+			if(boneNode->m_firstChild)
+			{
+				// Record the global scale and rotation matrices for use by the child
+				FbxAMatrix globalScaleMatrix = parentGlobalScaleMatrix * localScaleMatrix;
+
+				// Record the global scale and rotation matrices for use by the child
+				FbxAMatrix globalRotationMatrix = parentGlobalRotationMatrix * localRotationMatrix;
+
+				PrepareBoneHierarcy(sample, boneNode->m_firstChild, globalScaleMatrix, globalRotationMatrix); // Passing the parent scale and rotation avoids extracting them from the global transform which is non trivial
+			}
+
+		}
+		else // No parent, so the global transform must be the same as the local transform
+		{
+			FbxAMatrix localTranslationMatrix;
+			localTranslationMatrix.SetT(localPositionKey.m_vector);
+			globalTransform = localTranslationMatrix * localRotationMatrix * localScaleMatrix;
+
+			if(boneNode->m_firstChild)
+			{
+				PrepareBoneHierarcy(sample, boneNode->m_firstChild, localScaleMatrix, localRotationMatrix); // Passing the parent scale and rotation avoids extracting them from the global transform which is non trivial
+			}
+
 		}
 	}
+
 }
 
 void AnimationController::InterpolatePosition(

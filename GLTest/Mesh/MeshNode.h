@@ -1,8 +1,9 @@
 #pragma once
 
+#include <fbxsdk.h>
 #include <map>
 #include <boost\shared_array.hpp>
-#include "Node.h"
+#include "../Container/LinkedTree.h"
 
 namespace import
 {
@@ -17,16 +18,23 @@ namespace mesh
 	typedef boost::shared_array<Vertex> MeshVertexArray; //TODO any better container?
 	typedef boost::shared_array<Triangle> MeshTriangleArray;
 
-class MeshNode : public Node
+class MeshNode : public container::LinkedTreeItem<MeshNode>
 {
 public:
 
 	MeshNode();
 	~MeshNode();
 
-	virtual NodeType GetType()
+	void SetName(
+		const std::string& name
+		)
 	{
-		return MeshType;
+		m_name = name;
+	};
+
+	const std::string&	GetName()
+	{		
+		return m_name;
 	}
 
 	int GetNumTriangles()
@@ -78,6 +86,10 @@ private:
 	int m_numVertices;
 
 	bool m_isSkinned;
+
+	std::string m_name;
+
+	FbxAMatrix m_globalTransform;		// Transform from this node to the global model transform. This is updated each tick during animation
 };
 
 

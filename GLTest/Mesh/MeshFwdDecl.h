@@ -7,7 +7,6 @@ namespace mesh
 {
 	class Mesh;
 	class AnimationInfo;
-	class Node;
 
 	typedef boost::shared_ptr<Mesh> MeshPtr;
 	typedef boost::shared_ptr<AnimationInfo> AnimationInfoPtr;

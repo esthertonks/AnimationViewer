@@ -131,4 +131,5 @@ void main()
 
 	vec3 ambientAndDiffuse = InterpolateVector(ambient, diffuse, material.diffuseFactor);
 	fragmentColour = vec4(ambientAndDiffuse, 1.0) + vec4(specular, 1.0);
+	//fragmentColour = vec4(colour, 1.0);
 }

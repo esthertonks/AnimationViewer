@@ -1,5 +1,7 @@
 #include "Mesh.h"
 #include "BoneNode.h"
+#include "MeshNode.h"
+#include <string>
 
 namespace mesh
 {
@@ -9,17 +11,14 @@ Mesh::Mesh()
 }
 
 BoneNode* Mesh::GetBoneByName(
-	std::string name
+	const std::string &name
 )
 {
-	for(Node *node = m_nodes.m_root; node != NULL; node = node->GetNextChildFirst())
+	for(BoneNode *node = m_boneNodes.m_root; node != NULL; node = m_boneNodes.GetNextChildFirst(node))
 	{
-		if(node->GetType() == NodeType::BoneType)
+		if(node->GetName() == name)
 		{
-			if(node->GetName() == name)
-			{
-				return static_cast<BoneNode*>(node);
-			}
+			return node;
 		}
 	}
 
