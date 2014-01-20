@@ -101,16 +101,11 @@ void RenderableBoneList::Rotate(
 	const float rotAroundX
 	)
 {
-	m_rotAroundY += rotAroundY;
-	m_rotAroundX += rotAroundX;
+	//m_rotAroundY += rotAroundY;
+	//m_rotAroundX += rotAroundX;
 
-	m_modelMatrix = glm::rotate(glm::mat4(1.0f), m_rotAroundY, glm::vec3(0.0f, 1.0f, 0.0f));
-	m_modelMatrix = glm::rotate(m_modelMatrix, m_rotAroundX, glm::vec3(1.0f, 0.0f, 0.0f));
-}
-
-const glm::mat4x4 &RenderableBoneList::GetModelMatrix()
-{
-	return m_modelMatrix;
+	//m_modelMatrix = glm::rotate(glm::mat4(1.0f), m_rotAroundY, glm::vec3(0.0f, 1.0f, 0.0f));
+	//m_modelMatrix = glm::rotate(m_modelMatrix, m_rotAroundX, glm::vec3(1.0f, 0.0f, 0.0f));
 }
 
 void RenderableBoneList::Render(
@@ -147,9 +142,9 @@ void RenderableBoneList::Render(
 		GLint projectionMatrixLocation = glGetUniformLocation(programId, "projectionMatrix"); //TODO only needs setting on resize
 		if(modelMatrixLocation >= 0 && viewMatrixLocation >= 0 && projectionMatrixLocation >= 0)
 		{
-			glm::mat4x4 modelViewMatrix = viewMatrix * GetModelMatrix();
+			glm::mat4x4 modelViewMatrix = viewMatrix * glm::mat4(1.0f);//GetModelMatrix();
 
-			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &GetModelMatrix()[0][0]);//TODO pass fewer matrices through!!!
+			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &glm::mat4(1.0f)[0][0]);//&GetModelMatrix()[0][0]);//TODO pass fewer matrices through!!!
 			glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
 			glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
 		}

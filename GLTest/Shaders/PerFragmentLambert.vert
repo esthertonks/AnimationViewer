@@ -31,19 +31,20 @@ void main()
 			//skinnedPosition += boneWeights[weightIndex] * boneMatrixPalette[int(boneIds[weightIndex])] * vec4(vertexPosition, 1.0);
 		//}
 	// }
+	vec4 worldPosition = modelMatrix * vec4(vertexPosition, 1.0); // Put the verts into position and THEN skin them
 	mat4 weightedBoneMatrix = //boneMatrixPalette[int(boneIds[2])] * boneWeights[1];
 							boneMatrixPalette[int(boneIds[0])] * boneWeights[0]
 							+ boneMatrixPalette[int(boneIds[1])] * boneWeights[1]
 							+ boneMatrixPalette[int(boneIds[2])] * boneWeights[2]
 							+ boneMatrixPalette[int(boneIds[3])] * boneWeights[3];
 
-	vec4 skinnedPosition = weightedBoneMatrix * vec4(vertexPosition, 1.0);
+	vec4 skinnedPosition = weightedBoneMatrix * worldPosition;
 
 	// Convert to eye coordinates
-	position = vec3(viewMatrix * modelMatrix * skinnedPosition);
-	normal = normalize(normalMatrix * vertexNormal);
+	position = vec3(viewMatrix * skinnedPosition);
+	normal = normalize(normalMatrix * vertexNormal);//TODO mult by skinning matrix?
 	colour = vec3(boneMatrixPalette[1][0][0], 1.0, 1.0);
 	textureCoord = vertexTexCoord;
-	gl_Position = projectionMatrix * viewMatrix * modelMatrix * skinnedPosition;
+	gl_Position = projectionMatrix * viewMatrix * skinnedPosition;
 
 }

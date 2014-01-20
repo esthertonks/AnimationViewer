@@ -30,8 +30,6 @@ public:
 
 	~RenderableBoneList();
 
-	const glm::mat4x4 &GetModelMatrix();
-
 	virtual bool Create(
 		mesh::MeshPtr mesh
 		);

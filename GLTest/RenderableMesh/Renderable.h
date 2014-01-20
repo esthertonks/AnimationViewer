@@ -47,6 +47,5 @@ public:
 protected:
 	float m_rotAroundY;
 	float m_rotAroundX;
-	glm::mat4x4 m_modelMatrix; // Animatable meshes must be identity
 };
 }

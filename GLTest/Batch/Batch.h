@@ -86,6 +86,17 @@ public:
 		GLuint programId
 		);
 
+	const glm::mat4x4 GetModelMatrix()
+	{
+		return m_batchModelMatrix;
+	}
+
+	void SetModelMatrix(
+		glm::mat4x4 modelMatrix
+	)
+	{
+		m_batchModelMatrix = modelMatrix;
+	};
 
 	void Render();
 
@@ -102,5 +113,7 @@ private:
 	GLuint m_positionBufferHandle;
 
 	bool m_meshLoaded;
+
+	glm::mat4x4 m_batchModelMatrix; // 
 };
 }

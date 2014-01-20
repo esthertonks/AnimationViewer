@@ -5,10 +5,12 @@
 
 namespace mesh
 {
+	unsigned int MeshNode::m_counter = 0;
 
 MeshNode::MeshNode()
 	: m_numTriangles(0),
-	m_numVertices(0)
+	m_numVertices(0),
+	m_id(m_counter++) //TODO could do with something less error prone than an int id - name crc maybe?
 {
 
 

@@ -26,7 +26,7 @@ public:
 
 	void CreateBatches(
 		mesh::MeshPtr &mesh,
-		render::BatchList &renderBatches // Batch vector to fill in
+		render::PerNodeBatchList &renderBatches // Batch vector to fill in
 		);
 
 	void AddDuplicateVertex(
@@ -37,7 +37,7 @@ public:
 		);
 
 	void BatchProcessor::PrepareBatches(
-		render::BatchList &renderBatches
+		render::PerNodeBatchList &perNodeRenderBatches
 		);
 
 	void SortBatches();//TODO
@@ -47,7 +47,7 @@ private:
 		mesh::MeshPtr &mesh,
 		mesh::MeshNode* meshNode,
 		render::AppearanceTable& appearances,
-		render::BatchList &renderBatches // Batch vector to fill in
+		render::PerNodeBatchList &perNodeRenderBatches // Map of Batch vector lists to fill in - one for each mesh node (ie one per unique model matrix)
 	);
 
 };

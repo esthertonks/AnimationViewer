@@ -207,8 +207,14 @@ mesh::MeshNode *FBXImport::LoadMeshNode(
 		std::string name = fbxNode.GetName();
 		meshNode->SetName(name);
 
-		const FbxAMatrix fbxGlobalTransform = fbxNode.EvaluateGlobalTransform(0, FbxNode::eDestinationPivot);
-		meshNode->m_globalTransform = fbxGlobalTransform;
+		const FbxAMatrix fbxGlobalTransform = fbxNode.EvaluateGlobalTransform();
+		FbxAMatrix fbxLocalTransform;
+		FbxVector4 position = fbxNode.LclTranslation.Get();
+		FbxVector4 rotation = fbxNode.LclRotation.Get();
+		FbxVector4 scale = fbxNode.LclScaling.Get();
+
+		fbxLocalTransform.SetTRS(position, rotation, scale);
+		meshNode->m_globalTransform = fbxLocalTransform;
 
 		// Extract and store vertices
 		const unsigned int numVertices = fbxMesh->GetControlPointsCount();

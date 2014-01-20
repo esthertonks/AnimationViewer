@@ -14,7 +14,7 @@ BoneNode::BoneNode()
 	m_rotationTrack(NULL),
 	m_positionTrack(NULL),
 	m_scaleTrack(NULL),
-	m_id(m_counter++)
+	m_id(m_counter++) //TODO could do with something less error prone than an int id - name crc maybe?
 {
 };
 

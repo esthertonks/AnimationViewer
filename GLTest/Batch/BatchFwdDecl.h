@@ -22,6 +22,7 @@ typedef std::vector<unsigned short> IndexArrayPtr;
 typedef boost::shared_ptr<Appearance> AppearancePtr;
 typedef boost::shared_ptr<Batch> BatchPtr;
 typedef std::vector<BatchPtr> BatchList;
+typedef std::map<int, std::vector<BatchPtr>> PerNodeBatchList;
 
 typedef boost::shared_ptr<Renderable> RenderablePtr;
 typedef boost::shared_ptr<render::RenderableMesh> RenderableMeshPtr;

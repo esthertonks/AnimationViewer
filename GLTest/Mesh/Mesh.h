@@ -37,6 +37,7 @@ public:
 		)
 	{
 		m_boneNodes.AddAsChild(parent, node);
+		m_numBoneNodes++;
 	}
 
 	void AddChildMeshNode(
@@ -45,11 +46,27 @@ public:
 		)
 	{
 		m_meshNodes.AddAsChild(parent, node);
+		m_numMeshNodes++;
 	}
 
 	BoneNode* GetBoneByName(
 		const std::string &name
 	);
+
+	unsigned int GetNumMeshNodes()
+	{
+		return m_numMeshNodes;
+	};
+
+	unsigned int GetNumBoneNodes()
+	{
+		return m_numBoneNodes;
+	};
+
+	render::AppearanceTable &GetAppearanceTable()
+	{
+		return m_appearanceTable;
+	}
 
 	int GetNumVerticesWithMaterialId(
 		int materialId
@@ -57,12 +74,6 @@ public:
 	{
 		return m_numVerticesPerMaterialArray[materialId];
 	}
-
-	render::AppearanceTable &GetAppearanceTable()
-	{
-		return m_appearanceTable;
-	}
-
 
 	std::vector<unsigned int> &GetNumVerticesPerMaterialArray()
 	{
@@ -87,5 +98,7 @@ private:
 	container::LinkedTree<BoneNode> m_boneNodes;
 	container::LinkedTree<MeshNode> m_meshNodes;
 	mesh::AnimationInfoPtr m_animationInfo; // Extra info about all animation tracks
+	unsigned int m_numMeshNodes;
+	unsigned int m_numBoneNodes;
 };
 }

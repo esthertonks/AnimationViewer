@@ -60,7 +60,7 @@ void AnimationApp::OnIdle(
 {
 	//Prepare Mesh - update animation
 	DWORD timeNow = timeGetTime();
-	//BatchList
+
 	if(m_currentMeshInfo.m_renderMesh)
 	{
 		// Update animation

@@ -7,6 +7,7 @@
 #include "../Batch/VertexFormat.h"
 #include "../Batch/Batch.h"
 #include "../Batch/Appearance.h"
+#include "../Utils/MathsUtils.h"
 
 #include <wx\log.h>
 
@@ -30,16 +31,16 @@ BatchProcessor::~BatchProcessor()
 // Create per vertex data in per material batches. Extra vertices are created to accommodate per triangle corner information.
 void BatchProcessor::CreateBatches(
 	mesh::MeshPtr &mesh,
-	render::BatchList &renderBatches // Batch vector to fill in
+	render::PerNodeBatchList &perNodeRenderBatches // Batch vector to fill in
 	)
 {
-	// TODO for testing atm assume only one - rewrite for many shortly
+	// Each node needs a new batch (due to each node having a different matrix transform
+	//TODO could insist on node transforms being zero and thus create fewer batches). Within each node each material needs a new batch.
 	render::AppearanceTable& appearances = mesh->GetAppearanceTable();
-	renderBatches.resize(appearances.size());
 
 	mesh::MeshNode* rootMeshNode = mesh->GetMeshNodeHierarchy();
 
-	CreateBatchesInternal(mesh, rootMeshNode, appearances, renderBatches);
+	CreateBatchesInternal(mesh, rootMeshNode, appearances, perNodeRenderBatches);
 
 	return;
 }
@@ -49,16 +50,26 @@ void BatchProcessor::CreateBatchesInternal(
 	mesh::MeshPtr &mesh,
 	mesh::MeshNode* meshNode,
 	render::AppearanceTable& appearances,
-	render::BatchList &renderBatches // Batch vector to fill in
+	render::PerNodeBatchList &perNodeRenderBatches // Batch vector to fill in
 	)
 {
 	for(meshNode; meshNode != NULL; meshNode = meshNode->m_next)
 	{
+		render::BatchList renderBatches; // Each node needs a new set of batches (due to each node having a different matrix transform)
+		renderBatches.resize(appearances.size());//Worst case scenario - should usually be less than this.
+
 		mesh::MeshTriangleArray triangleArray = meshNode->GetTriangles();
 		int numTriangles = meshNode->GetNumTriangles();
+		if(numTriangles == 0)
+		{
+			continue;
+		}
 		mesh::MeshVertexArray vertexArray = meshNode->GetVertices();
 		int numVertices = meshNode->GetNumVertices();
-
+		if(numVertices == 0)
+		{
+			continue;
+		}
 		// Map containing the material id and a vector array containing the new index for vector[oldindex] in the array
 		std::vector<int>previouslyAssignedVertexIndexMap(numVertices, -1);
 		std::vector<std::vector<int>> perMaterialPreviouslyAssignedVertexIndexMap(appearances.size(), previouslyAssignedVertexIndexMap);
@@ -75,6 +86,9 @@ void BatchProcessor::CreateBatchesInternal(
 				renderBatches[materialId]->AllocateVertices(numVertices);
 				renderBatches[materialId]->AllocateIndices(numVertices);
 				renderBatches[materialId]->SetAppearance(appearances[materialId]);
+				glm::mat4 batchModelMatrix;
+				utils::MathsUtils::ConvertFBXToGLMatrix(meshNode->GetGlobalTransform(), batchModelMatrix);
+				renderBatches[materialId]->SetModelMatrix(batchModelMatrix);
 			}
 
 			// Assign the mesh information to batches. Reassigning the indices as the data is processed.
@@ -130,9 +144,12 @@ void BatchProcessor::CreateBatchesInternal(
 			}
 		}
 
+		std::pair<unsigned int, render::BatchList> renderBatchWithMeshId(meshNode->GetId(), renderBatches);
+		perNodeRenderBatches.insert(renderBatchWithMeshId);
+
 		for(mesh::MeshNode *childNode = meshNode->m_firstChild; childNode != NULL; childNode++)
 		{
-			CreateBatchesInternal(mesh, childNode, appearances, renderBatches);
+			CreateBatchesInternal(mesh, childNode, appearances, perNodeRenderBatches);
 		}
 	}
 }
@@ -161,17 +178,22 @@ void BatchProcessor::AddDuplicateVertex(
 	perMaterialPreviouslyAssignedVertexIndexMap[oldVertexIndex] = newIndex; //TODO uh shorter name?
 	batch.AddVertex(vertex);
 	batch.AddIndex(newIndex);
-
 }
 
 void BatchProcessor::PrepareBatches(
-	render::BatchList &renderBatches
+	render::PerNodeBatchList &perNodeRenderBatches
 	)
 {
-	render::BatchList::const_iterator batchIterator;
-	for(batchIterator = renderBatches.begin(); batchIterator != renderBatches.end(); batchIterator++)
+	render::PerNodeBatchList::const_iterator batchListIterator;
+	for(batchListIterator = perNodeRenderBatches.begin(); batchListIterator != perNodeRenderBatches.end(); batchListIterator++)
 	{
-		(*batchIterator)->Prepare();
+		render::BatchList renderBatches = batchListIterator->second;
+
+		render::BatchList::const_iterator batchIterator;
+		for(batchIterator = renderBatches.begin(); batchIterator != renderBatches.end(); batchIterator++)
+		{
+			(*batchIterator)->Prepare();
+		}
 	}
 }
 

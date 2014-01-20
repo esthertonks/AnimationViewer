@@ -37,6 +37,11 @@ public:
 		return m_name;
 	}
 
+	unsigned int GetId()
+	{
+		return m_id;
+	}
+
 	int GetNumTriangles()
 	{
 		return m_numTriangles;
@@ -77,6 +82,11 @@ public:
 		return m_isSkinned;
 	}
 
+	FbxAMatrix &GetGlobalTransform()
+	{
+		return m_globalTransform;
+	};
+
 private:
 	// uvsets?
 	friend class import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
@@ -90,6 +100,9 @@ private:
 	std::string m_name;
 
 	FbxAMatrix m_globalTransform;		// Transform from this node to the global model transform. This is updated each tick during animation
+
+	unsigned int m_id;
+	static unsigned int m_counter;
 };
 
 

@@ -28,11 +28,9 @@ public:
 
 	~RenderableMesh();
 
-	const glm::mat4x4 &GetModelMatrix();
-
-	const render::BatchList &GetBatches()
+	const render::PerNodeBatchList &GetBatches()
 	{
-		return m_renderBatches;
+		return m_perNodeRenderBatches;
 	}
 
 	bool Create(
@@ -59,7 +57,7 @@ private:
 		mesh::BoneNode *parent
 		);
 
-	render::BatchList m_renderBatches;
+	render::PerNodeBatchList m_perNodeRenderBatches; //TODO rendermesh now is aware of nodes - do we really want this?
 	std::vector<glm::mat4x4> m_matrixPalette;//TODO 4x3
 };
 }
