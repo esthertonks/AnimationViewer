@@ -35,10 +35,23 @@ void BatchProcessor::CreateBatches(
 {
 	// TODO for testing atm assume only one - rewrite for many shortly
 	render::AppearanceTable& appearances = mesh->GetAppearanceTable();
-	int numBatches = appearances.size();
-	renderBatches.resize(numBatches);
+	renderBatches.resize(appearances.size());
 
-	mesh::MeshNode* meshNode = mesh->GetMeshNodeHierarchy();
+	mesh::MeshNode* rootMeshNode = mesh->GetMeshNodeHierarchy();
+
+	CreateBatchesInternal(mesh, rootMeshNode, appearances, renderBatches);
+
+	return;
+}
+
+
+void BatchProcessor::CreateBatchesInternal(
+	mesh::MeshPtr &mesh,
+	mesh::MeshNode* meshNode,
+	render::AppearanceTable& appearances,
+	render::BatchList &renderBatches // Batch vector to fill in
+	)
+{
 	for(meshNode; meshNode != NULL; meshNode = meshNode->m_next)
 	{
 		mesh::MeshTriangleArray triangleArray = meshNode->GetTriangles();
@@ -46,9 +59,9 @@ void BatchProcessor::CreateBatches(
 		mesh::MeshVertexArray vertexArray = meshNode->GetVertices();
 		int numVertices = meshNode->GetNumVertices();
 
-				// Map containing the material id and a vector array containing the new index for vector[oldindex] in the array
+		// Map containing the material id and a vector array containing the new index for vector[oldindex] in the array
 		std::vector<int>previouslyAssignedVertexIndexMap(numVertices, -1);
-		std::vector<std::vector<int>> perMaterialPreviouslyAssignedVertexIndexMap(numBatches, previouslyAssignedVertexIndexMap);
+		std::vector<std::vector<int>> perMaterialPreviouslyAssignedVertexIndexMap(appearances.size(), previouslyAssignedVertexIndexMap);
 
 		for(int triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
 		{
@@ -116,9 +129,12 @@ void BatchProcessor::CreateBatches(
 				}
 			}
 		}
-	}
 
-	return;
+		for(mesh::MeshNode *childNode = meshNode->m_firstChild; childNode != NULL; childNode++)
+		{
+			CreateBatchesInternal(mesh, childNode, appearances, renderBatches);
+		}
+	}
 }
 
 //TODO override equals?

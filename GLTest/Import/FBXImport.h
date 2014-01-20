@@ -54,7 +54,8 @@ private:
 	void LoadSkin();
 
 	void LoadSkin(
-		const FbxGeometry &fbxGeometry// The FBX mesh geometry node to extract data from
+		const FbxGeometry &fbxGeometry,// The FBX mesh geometry node to extract data from
+		mesh::MeshNode &meshNode //Mesh node to store this skin data
 		);
 
 	/**
@@ -168,8 +169,8 @@ private:
 	// Store the mesh nodes temporarily in case they are needed for skinning
 	struct MeshNodeInfo
 	{
-		mesh::MeshNode *m_meshNode;
-		FbxNode *m_fbxMeshNode;
+		std::vector<mesh::MeshNode *> m_meshNode;
+		std::vector<FbxNode*> m_fbxMeshNode;
 	};
 
 	MeshNodeInfo m_meshNodeInfo;

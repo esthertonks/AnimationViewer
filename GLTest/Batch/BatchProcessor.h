@@ -7,6 +7,7 @@
 namespace mesh
 {
 	class Mesh;
+	class MeshNode;
 }
 
 namespace render //TODO render or batch namespace?
@@ -40,6 +41,14 @@ public:
 		);
 
 	void SortBatches();//TODO
+
+private:
+	void BatchProcessor::CreateBatchesInternal(
+		mesh::MeshPtr &mesh,
+		mesh::MeshNode* meshNode,
+		render::AppearanceTable& appearances,
+		render::BatchList &renderBatches // Batch vector to fill in
+	);
 
 };
 

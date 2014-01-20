@@ -25,8 +25,6 @@ FBXImport::FBXImport()
 m_fbxScene(NULL),
 m_mesh(NULL)
 {
-	m_meshNodeInfo.m_meshNode = NULL;
-	m_meshNodeInfo.m_fbxMeshNode = NULL;
 }
 
 FBXImport::~FBXImport()
@@ -203,8 +201,8 @@ mesh::MeshNode *FBXImport::LoadMeshNode(
 		meshNode = new mesh::MeshNode();
 		m_mesh->AddChildMeshNode(parent, meshNode);
 
-		m_meshNodeInfo.m_meshNode = meshNode;	// We are only supporting one mesh, so store it to add loading the skin
-		m_meshNodeInfo.m_fbxMeshNode = &fbxNode;
+		m_meshNodeInfo.m_meshNode.push_back(meshNode);	// We are only supporting one mesh, so store it to add loading the skin
+		m_meshNodeInfo.m_fbxMeshNode.push_back(&fbxNode);
 
 		std::string name = fbxNode.GetName();
 		meshNode->SetName(name);
@@ -407,38 +405,44 @@ void FBXImport::LoadAnimationLayerInfo()
 
 void FBXImport::LoadSkin()
 {
-	if(!m_meshNodeInfo.m_fbxMeshNode)
+	int numMeshNodes = m_meshNodeInfo.m_fbxMeshNode.size();
+	if(numMeshNodes == 0)
 	{
 		return;
 	}
 
-	FbxGeometry* const fbxGeometry = m_meshNodeInfo.m_fbxMeshNode->GetGeometry();
-	if (!fbxGeometry)
+	for(int meshIndex = 0; meshIndex < numMeshNodes; meshIndex++)
 	{
-		return;
-	}
+		FbxGeometry* const fbxGeometry = m_meshNodeInfo.m_fbxMeshNode[meshIndex]->GetGeometry();
+		if (!fbxGeometry)
+		{
+			return;
+		}
 
-	const FbxSkin* const fbxskin = static_cast<const FbxSkin*>(fbxGeometry->GetDeformer(0, FbxDeformer::eSkin));
-	if (!fbxskin)
-	{
-		return;
-	}
+		const FbxSkin* const fbxskin = static_cast<const FbxSkin*>(fbxGeometry->GetDeformer(0, FbxDeformer::eSkin));
+		if (!fbxskin)
+		{
+			return;
+		}
 
-    const FbxSkin::EType fbxSkinningType = fbxskin->GetSkinningType();
-	switch(fbxSkinningType)
-	{
-	case FbxSkin::eLinear:
-	case FbxSkin::eRigid:
-		LoadSkin(*fbxGeometry);
-		break;
+		const FbxSkin::EType fbxSkinningType = fbxskin->GetSkinningType();
+		switch(fbxSkinningType)
+		{
+		case FbxSkin::eLinear:
+		case FbxSkin::eRigid:
+		case FbxSkin::eDualQuaternion: //TODO does this work?
+			LoadSkin(*fbxGeometry, *m_meshNodeInfo.m_meshNode[meshIndex]);
+			break;
 
-	default:
-		FBXSDK_printf("Unsupported skin type used");
+		default:
+			FBXSDK_printf("Unsupported skin type used");
+		}
 	}
 }
 
 void FBXImport::LoadSkin(
-	const FbxGeometry &fbxGeometry// The FBX mesh geometry node to extract data from
+	const FbxGeometry &fbxGeometry,// The FBX mesh geometry node to extract data from
+	mesh::MeshNode &meshNode //Mesh node to store this skin data
 	)
 {
 	const int numVertices = fbxGeometry.GetControlPointsCount();
@@ -488,7 +492,7 @@ void FBXImport::LoadSkin(
 
 			linkedBone->SetInverseReferenceMatrix(inverseBoneReferenceMatrix);
 
-			m_meshNodeInfo.m_meshNode->FlagAsSkinned(true);
+			meshNode.FlagAsSkinned(true);
 
 			const int numClusterIndices = cluster->GetControlPointIndicesCount();
 			const int *controlPointIndices = cluster->GetControlPointIndices();
@@ -496,7 +500,7 @@ void FBXImport::LoadSkin(
 
 			// Store them
 			int vertexInfluenceNum = 0;
-			mesh::MeshVertexArray vertexArray = m_meshNodeInfo.m_meshNode->GetVertices();
+			mesh::MeshVertexArray vertexArray = meshNode.GetVertices();
 			for(int clusterIndex = 0; clusterIndex < numClusterIndices; clusterIndex++)
 			{
 				const int controlPointIndex = controlPointIndices[clusterIndex];
