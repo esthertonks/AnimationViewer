@@ -103,9 +103,9 @@ void Batch::Prepare()
 	offset += sizeof(glm::vec3);
 	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)offset);
 	offset += sizeof(glm::vec2);
-	glVertexAttribIPointer(4, 4, GL_INT, sizeof(render::TexturedSkinnedVertex), (GLubyte *)offset);
+	glVertexAttribIPointer(4, MAX_INFLUENCES, GL_INT, sizeof(render::TexturedSkinnedVertex), (GLubyte *)offset);
 	offset += sizeof(glm::ivec4);
-	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)offset);
+	glVertexAttribPointer(5, MAX_INFLUENCES, GL_FLOAT, GL_FALSE, sizeof(render::TexturedSkinnedVertex), (GLubyte *)offset);
 
 	glEnableVertexAttribArray(0);  // Vertex position
 	glEnableVertexAttribArray(1);  // Vertex colour
