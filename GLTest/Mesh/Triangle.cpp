@@ -3,7 +3,11 @@
 namespace mesh
 {
 
+	Triangle::Triangle()
+		: m_materialId(-1)
+	{
 
+	}
 
 
 

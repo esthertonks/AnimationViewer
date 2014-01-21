@@ -12,5 +12,5 @@ namespace mesh
 	typedef boost::shared_ptr<AnimationInfo> AnimationInfoPtr;
 
 	#define MAX_BONES 128;
-	#define MAX_INFLUENCES 4
+	#define MAX_INFLUENCES 4 // Note this number is currently hardcoded separately in the skinning shaders and will need changing if this changes
 }

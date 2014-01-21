@@ -27,6 +27,10 @@ bool RenderableBoneList::Update(
 	mesh::BoneNode *boneHierarchyRoot
 	)
 {
+	if(!boneHierarchyRoot)
+	{
+		return false;
+	}
 	m_vertexArray.clear();
 
 	AddPositionToVertexList(boneHierarchyRoot);

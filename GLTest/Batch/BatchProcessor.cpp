@@ -76,7 +76,8 @@ void BatchProcessor::CreateBatchesInternal(
 
 		for(int triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
 		{
-			unsigned int materialId = triangleArray[triangleIndex].GetMaterialId();
+			int materialId = triangleArray[triangleIndex].GetMaterialId();
+			assert(materialId != -1); // Every triangle must have a material
 			std::vector<int> previouslyAssignedVertexIndexMap = perMaterialPreviouslyAssignedVertexIndexMap[materialId];
 
 			if(!renderBatches[materialId]) // If a batch for this material does not already exist then create it
@@ -147,7 +148,7 @@ void BatchProcessor::CreateBatchesInternal(
 		std::pair<unsigned int, render::BatchList> renderBatchWithMeshId(meshNode->GetId(), renderBatches);
 		perNodeRenderBatches.insert(renderBatchWithMeshId);
 
-		for(mesh::MeshNode *childNode = meshNode->m_firstChild; childNode != NULL; childNode++)
+		for(mesh::MeshNode *childNode = meshNode->m_firstChild; childNode != NULL; childNode = childNode->m_next)
 		{
 			CreateBatchesInternal(mesh, childNode, appearances, perNodeRenderBatches);
 		}
@@ -192,7 +193,10 @@ void BatchProcessor::PrepareBatches(
 		render::BatchList::const_iterator batchIterator;
 		for(batchIterator = renderBatches.begin(); batchIterator != renderBatches.end(); batchIterator++)
 		{
-			(*batchIterator)->Prepare();
+			if(*batchIterator != NULL) // This will be a case if an appearance exists but is not uses by this node //TODO get rid of this?
+			{
+				(*batchIterator)->Prepare();
+			}
 		}
 	}
 }

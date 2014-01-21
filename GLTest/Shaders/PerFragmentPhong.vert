@@ -22,30 +22,24 @@ uniform mat4 boneMatrixPalette[128]; // TODO Max 128 bones per batch - split if 
 void main()
 {
 	// Skin the verts
-	//vec4 skinnedPosition = vec4(0.0, 0.0, 0.0, 1.0);
+	mat4 weightedBoneMatrix = mat4(1.0);
 
-	// for(int weightIndex = 0; weightIndex < 4; weightIndex++)
-	//{
-		//if(boneWeights[weightIndex] > 0.0)
-		//{
-			//skinnedPosition += boneWeights[weightIndex] * boneMatrixPalette[int(boneIds[weightIndex])] * vec4(vertexPosition, 1.0);
-		//}
-	// }
+	for(int weightIndex = 0; weightIndex < 4; weightIndex++) // Put the verts into position and THEN skin them //TODO could do this in software on batching and remove the need for the model matrix (and thus have many less batches)
+	{
+		if(boneWeights[weightIndex] > 0.0)
+		{
+			weightedBoneMatrix += boneMatrixPalette[int(boneIds[weightIndex])] * boneWeights[weightIndex];
+		}
+	 }
 
-	vec4 worldPosition = modelMatrix * vec4(vertexPosition, 1.0); // Put the verts into position and THEN skin them
-	mat4 weightedBoneMatrix = //boneMatrixPalette[int(boneIds[2])] * boneWeights[1];
-							boneMatrixPalette[int(boneIds[0])] * boneWeights[0]
-							+ boneMatrixPalette[int(boneIds[1])] * boneWeights[1]
-							+ boneMatrixPalette[int(boneIds[2])] * boneWeights[2]
-							+ boneMatrixPalette[int(boneIds[3])] * boneWeights[3];
-
-	vec4 skinnedPosition = weightedBoneMatrix * worldPosition;
+	 // Put the verts into position and THEN skin them //TODO could do this in software on batching and remove the need for the model matrix (and thus have many less batches)
+	vec4 skinnedPosition = weightedBoneMatrix * modelMatrix * vec4(vertexPosition, 1.0);
 
 	// Convert to eye coordinates
 	position = vec3(viewMatrix * skinnedPosition);
 	normal = normalize(normalMatrix * vertexNormal);
-	//colour = vec3(boneMatrixPalette[1][0][0], 1.0, 1.0);
-	colour = vec3(skinnedPosition);
+	//colour = vec3(weightedBoneMatrix[1][0], 1.0, 1.0);
+	colour = vec3(boneWeights[0], boneWeights[1], boneWeights[2]);
 	textureCoord = vertexTexCoord;
 	gl_Position = projectionMatrix * viewMatrix * skinnedPosition;
 

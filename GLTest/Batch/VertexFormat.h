@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm\glm.hpp>
+#include "../Mesh/MeshFwdDecl.h"
 
 namespace render
 {
@@ -26,8 +27,8 @@ struct TexturedSkinnedVertex
 	glm::vec3 m_colour;
 	glm::vec3 m_normal;
 	glm::vec2 m_uv;
-	float m_boneIds[4];//TODO unfloat???
-	float m_boneWeights[4];
+	float m_boneIds[MAX_INFLUENCES];//TODO unfloat???
+	float m_boneWeights[MAX_INFLUENCES];
 };
 
 

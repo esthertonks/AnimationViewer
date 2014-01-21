@@ -32,7 +32,11 @@ static unsigned int boneIdCheck = 0;
 bool RenderableMesh::Update(
 	mesh::BoneNode *boneHierarchyRoot
 	)
-{		
+{	
+	if(!boneHierarchyRoot)
+	{
+		return false;
+	}
 	m_matrixPalette.clear();
 	boneIdCheck = 0;
 	UpdateInternal(boneHierarchyRoot);
@@ -90,6 +94,10 @@ void RenderableMesh::Render(
 
 		for(batchIterator = renderBatches.begin(); batchIterator != renderBatches.end(); batchIterator++)
 		{
+			if(*batchIterator == NULL) // This will be a case if an appearance exists but is not uses by this node //TODO get rid of this?
+			{
+				continue;
+			}
 
 			ShaderProgramType batchShaderProgramType = (*batchIterator)->GetShaderProgramType();
 			if(batchShaderProgramType != shaderManager.GetCurrentProgramType())

@@ -15,7 +15,7 @@ public:
 		const float weight
 		)
 	{
-		assert(m_numInfluences <= MAX_INFLUENCES);
+		assert(m_numInfluences < MAX_INFLUENCES);
 		m_boneInfluenceIds[m_numInfluences] = boneInfluenceid;
 		m_boneWeights[m_numInfluences] = weight;
 		m_numInfluences++;
@@ -62,8 +62,8 @@ public:
 private:
 	
 	FbxVector4 m_position;
-	unsigned int m_boneInfluenceIds[4]; //Max 4 joints per vertex (could use uint8) //TODO has to be float to pass to gl?
-	float m_boneWeights[4];
+	unsigned int m_boneInfluenceIds[MAX_INFLUENCES]; //MAX_INFLUENCES joints per vertex (could use uint8) //TODO has to be float to pass to gl?
+	float m_boneWeights[MAX_INFLUENCES];
 	unsigned int m_numInfluences;
 };
 
