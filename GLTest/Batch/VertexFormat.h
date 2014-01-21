@@ -27,7 +27,7 @@ struct TexturedSkinnedVertex
 	glm::vec3 m_colour;
 	glm::vec3 m_normal;
 	glm::vec2 m_uv;
-	float m_boneIds[MAX_INFLUENCES];//TODO unfloat???
+	int m_boneIds[MAX_INFLUENCES];
 	float m_boneWeights[MAX_INFLUENCES];
 };
 

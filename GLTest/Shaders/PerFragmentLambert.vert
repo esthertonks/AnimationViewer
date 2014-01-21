@@ -4,7 +4,7 @@ layout (location = 0) in vec3 vertexPosition;
 layout (location = 1) in vec3 vertexColour;
 layout (location = 2) in vec3 vertexNormal;
 layout (location = 3) in vec2 vertexTexCoord;
-layout (location = 4) in vec4 boneIds;
+layout (location = 4) in ivec4 boneIds;
 layout (location = 5) in vec4 boneWeights;
 
 out vec3 position;
@@ -28,7 +28,7 @@ void main()
 	{
 		if(boneWeights[weightIndex] > 0.0)
 		{
-			weightedBoneMatrix += boneMatrixPalette[int(boneIds[weightIndex])] * boneWeights[weightIndex];
+			weightedBoneMatrix += boneMatrixPalette[boneIds[weightIndex]] * boneWeights[weightIndex];
 		}
 	 }
 
