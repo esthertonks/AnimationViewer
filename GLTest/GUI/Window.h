@@ -3,7 +3,7 @@
 #include "wx/wx.h"
 #include <wx/log.h>
 
-namespace render
+namespace gui
 {
 class Window : public wxFrame
 {
@@ -21,7 +21,11 @@ public:
 		wxCommandEvent& event
 		);
 
-	void OnOpen(
+	void OnOpenFBX(
+		wxCommandEvent& event
+		);
+
+	void OnCloseFBX(
 		wxCommandEvent& event
 		);
 

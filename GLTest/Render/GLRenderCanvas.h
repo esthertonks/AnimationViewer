@@ -78,6 +78,8 @@ public:
 		wxMouseEvent& event
 		);
 
+	void CentreCamera();
+
 	void InitGL();
 
 	void AddRenderable(
@@ -118,6 +120,8 @@ private:
 	ShaderManager *m_shaderManager;
 
 	bool m_initialised;
+
+	static glm::vec3 m_clearColour;
 };
 
 }

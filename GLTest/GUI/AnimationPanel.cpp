@@ -3,17 +3,21 @@
 #include "wx\statline.h"
 #include "wx\stattext.h"
 
-const int ID_PLAY_ANIMATION_BUTTON = wxID_HIGHEST + 1;
-const int ID_PAUSE_ANIMATION_BUTTON = wxID_HIGHEST + 2;
-const int ID_STOP_ANIMATION_BUTTON = wxID_HIGHEST + 3;
-
 namespace gui
 {
+	enum
+{
+	PlayAnimationButton = wxID_HIGHEST + 100,
+	PauseAnimationButton,
+	StopAnimationButton,
+	LoopCheckbox
+};
 
 BEGIN_EVENT_TABLE(AnimationPanel, wxPanel)
-	EVT_BUTTON(ID_PLAY_ANIMATION_BUTTON, AnimationPanel::OnPlayClicked)
-	EVT_BUTTON(ID_PAUSE_ANIMATION_BUTTON, AnimationPanel::OnPauseClicked)
-	EVT_BUTTON(ID_STOP_ANIMATION_BUTTON, AnimationPanel::OnStopClicked)
+	EVT_BUTTON(PlayAnimationButton, AnimationPanel::OnPlayClicked)
+	EVT_BUTTON(PauseAnimationButton, AnimationPanel::OnPauseClicked)
+	EVT_BUTTON(StopAnimationButton, AnimationPanel::OnStopClicked)
+	EVT_CHECKBOX(LoopCheckbox, AnimationPanel::OnLoopAnimation)
 END_EVENT_TABLE()
 
 AnimationPanel::AnimationPanel(
@@ -23,21 +27,38 @@ AnimationPanel::AnimationPanel(
 {	
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText *panelTitleText = new wxStaticText(this, wxID_ANY, wxT("ANIMATION:"));
-	panelTitleText->SetForegroundColour(*wxWHITE);
+	wxStaticLine *separator = new wxStaticLine(this);
+	separator->SetForegroundColour(*wxWHITE);
+	separator->SetMinSize(wxSize(450, 3));
+	sizer->Add(separator, 0, wxALIGN_CENTER | wxALL);
+
+	wxStaticText *panelTitleText = new wxStaticText(this, wxID_ANY, wxT("Animation:"));
+	panelTitleText->SetForegroundColour(AnimationApp::m_guiTextColour);
 	sizer->Add(panelTitleText, 0, wxALIGN_LEFT | wxALL, 10);
 
-	wxButton *playAnimButton = new wxButton(this, ID_PLAY_ANIMATION_BUTTON, _T("Play Animation"));
+	wxCheckBox *loopCheckBox = new wxCheckBox(this, LoopCheckbox, wxT("Loop Animation"));
+	loopCheckBox->SetForegroundColour(AnimationApp::m_guiTextColour);
+	loopCheckBox->SetValue(true);
+	loopCheckBox->SetToolTip(wxT("Set the animation to loop when playing."));
+	sizer->Add(loopCheckBox, 0, wxALIGN_LEFT | wxALL, 10);
+
+	wxButton *playAnimButton = new wxButton(this, PlayAnimationButton, _T("Play"));
 	playAnimButton->SetMinSize(wxSize(100, 20));
+	playAnimButton->SetToolTip(wxT("Play the animation."));
 	sizer->Add(playAnimButton, 0, wxALIGN_LEFT | wxALL, 10);
 
-	wxButton *pauseAnimButton = new wxButton(this, ID_PAUSE_ANIMATION_BUTTON, _T("Pause Animation"));
+	wxButton *pauseAnimButton = new wxButton(this, PauseAnimationButton, _T("Pause"));
 	pauseAnimButton->SetMinSize(wxSize(100, 20));
+	pauseAnimButton->SetToolTip(wxT("Pause the animation."));
 	sizer->Add(pauseAnimButton, 0, wxALIGN_LEFT | wxALL, 10);
 
-	wxButton *stopAnimButton = new wxButton(this, ID_STOP_ANIMATION_BUTTON, _T("Stop Animation"));
+	wxButton *stopAnimButton = new wxButton(this, StopAnimationButton, _T("Stop"));
 	stopAnimButton->SetMinSize(wxSize(100, 20));
+	stopAnimButton->SetToolTip(wxT("Stop the animation."));
 	sizer->Add(stopAnimButton, 0, wxALIGN_LEFT | wxALL, 10);
+
+	SetMinSize(wxSize(450, 220));
+	SetMaxSize(wxSize(600, 220));
 
 	SetSizer(sizer);
 }
@@ -61,6 +82,13 @@ void AnimationPanel::OnStopClicked(
 	)
 {
 	wxGetApp().StopAnimation();
+}
+
+void AnimationPanel::OnLoopAnimation(
+	wxCommandEvent& event
+	)
+{
+	wxGetApp().LoopAnimation(event.IsChecked());
 }
 
 }

@@ -27,6 +27,9 @@ BoneNode* Mesh::GetBoneByName(
 
 Mesh::~Mesh()
 {
+	// Reset the node id's
+	mesh::BoneNode::ResetIdCounter();
+	mesh::MeshNode::ResetIdCounter();
 }
 
 }

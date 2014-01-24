@@ -32,6 +32,8 @@ BEGIN_EVENT_TABLE(GLRenderCanvas, wxGLCanvas)
 	EVT_KEY_DOWN(GLRenderCanvas::OnKeyDown)
 END_EVENT_TABLE()
 
+glm::vec3 GLRenderCanvas::m_clearColour(0.196f, 0.196f, 0.196f);
+
 GLRenderCanvas::GLRenderCanvas(
 	wxWindow *parent
 	)
@@ -96,7 +98,7 @@ void GLRenderCanvas::OnKeyDown(
 
 		case 'F':
 			//TODO focus on mesh if the mesh has moved from zero
-			m_camera->Reset();
+			CentreCamera();
 			break;
 	}
 }
@@ -238,6 +240,11 @@ void GLRenderCanvas::OnMouseMove(
 
 }
 
+void GLRenderCanvas::CentreCamera()
+{
+	m_camera->Reset();
+}
+
 void GLRenderCanvas::InitGL()
 {
 	if(m_context)
@@ -269,7 +276,7 @@ void GLRenderCanvas::InitGL()
 
 	utils::GLUtils::CheckOpenGLError(__FILE__,__LINE__);
 
-	glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+	glClearColor(m_clearColour.x, m_clearColour.y, m_clearColour.z, 1.0f);
 
 	int width = GetSize().GetWidth();
 	int height = GetSize().GetHeight();

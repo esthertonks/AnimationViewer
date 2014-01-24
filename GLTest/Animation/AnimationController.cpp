@@ -53,14 +53,15 @@ void AnimationController::StopAnimation()
 	m_animStartTime = 0;
 }
 
-void AnimationController::ClampTime(
-	const bool isLooping
-	)
+void AnimationController::ClampTime()
 {
-	if(isLooping)
+	if(m_isLooping)
 	{
-		long animLength = m_animEndTime - m_animStartTime;//TODO anim duration
-		m_localCurrentTime = m_localCurrentTime % animLength;
+		if(m_localCurrentTime > 0)
+		{
+			long animLength = m_animEndTime - m_animStartTime;//TODO anim duration
+			m_localCurrentTime = m_localCurrentTime % animLength;
+		}
 	}
 	else
 	{
@@ -71,8 +72,7 @@ void AnimationController::ClampTime(
 // Passing the scale and rotation matrices to avoid have to extract the rotation and scale from the parent global matrix which is non trivial (necessary to switch between scale inheritance types).
 void AnimationController::Update(
 	mesh::MeshPtr mesh,
-	const long globalTime,
-	const bool isLooping
+	const long globalTime
 	)
 {
 	mesh::BoneNode *root = mesh->GetBoneNodeHierarchy();
@@ -90,7 +90,7 @@ void AnimationController::Update(
 
 	mesh::AnimationInfoPtr animationInfo = mesh->GetAnimationInfo();
 
-	ClampTime(isLooping);
+	ClampTime();
 
 	int sample = animationInfo->ConvertMillisecondsToFrame(m_localCurrentTime);
 

@@ -17,6 +17,10 @@ class ViewPanel : public wxPanel
 		wxCommandEvent& event
 		);
 
+	void OnCentreCameraClicked(
+		wxCommandEvent& event
+		);
+
 	protected:
 		DECLARE_EVENT_TABLE()
 };

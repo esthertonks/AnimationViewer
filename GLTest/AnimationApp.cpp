@@ -1,6 +1,6 @@
 #include "AnimationApp.h"
 #include "Render/GLRenderCanvas.h"
-#include "Render/Window.h"
+#include "GUI/Window.h"
 #include "Import/FBXImport.h"
 #include "Mesh/Mesh.h"
 #include "Mesh/BoneNode.h"
@@ -9,6 +9,7 @@
 #include "RenderableMesh/RenderableMesh.h"
 #include "RenderableMesh/RenderableBoneList.h"
 #include "GUI/ControlsPanel.h"
+#include "GUI/HierarchyPanel.h"
 #include "Mesh/AnimationInfo.h"
 #include "Animation/AnimationController.h"
 
@@ -17,12 +18,15 @@ const int ID_NORMALS_CHECKBOX = 101;
 
 IMPLEMENT_APP(AnimationApp)
 
+wxColour AnimationApp::m_guiBackgroundColour(50, 50, 50);
+wxColour AnimationApp::m_guiTextColour(190, 190, 170);
+
 bool AnimationApp::OnInit()
 {	
 	int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
 	int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
-	wxFrame *frame = new render::Window(NULL, wxT("Animation App"), wxDefaultPosition, wxSize(width, height), wxDEFAULT_FRAME_STYLE);
-	frame->SetBackgroundColour(wxColour(25.0f, 25.0f, 25.0f));
+	wxFrame *frame = new gui::Window(NULL, wxT("Animation App"), wxDefaultPosition, wxSize(width, height), wxDEFAULT_FRAME_STYLE);
+	frame->SetBackgroundColour(m_guiBackgroundColour);
 	frame->SetMinSize(wxSize(800, 800));
 	frame->SetMaxSize(wxSize(width, height));
 	//m_renderCanvas = new render::GLRenderCanvas(frame, wxID_ANY, wxDefaultPosition, wxSize(800, 800), wxSUNKEN_BORDER, "Animation App");
@@ -31,16 +35,14 @@ bool AnimationApp::OnInit()
 	wxBoxSizer *leftVerticalSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *rightVerticalSizer = new wxBoxSizer(wxVERTICAL);
 
-	gui::ControlsPanel *leftPanel = new gui::ControlsPanel(frame, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER);//TODO create class
-
-	leftVerticalSizer->Add(leftPanel, 1, wxALIGN_LEFT | wxEXPAND, 0);
+	m_controlsPanel = new gui::ControlsPanel(frame, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER);//TODO create class
+	leftVerticalSizer->Add(m_controlsPanel, 1, wxALIGN_LEFT | wxEXPAND, 0);
 	rightVerticalSizer->Add(m_renderCanvas, 1, wxALIGN_RIGHT | wxEXPAND, 0);
 	horizontalSizer->Add(leftVerticalSizer, 25, wxEXPAND);
 	horizontalSizer->Add(rightVerticalSizer, 75, wxEXPAND);
 	frame->SetSizer(horizontalSizer);
 	//frame->SetAutoLayout(true);
 
-	m_fbxImporter = boost::shared_ptr<import::FBXImport>(new import::FBXImport());
 	m_meshAnimator = boost::shared_ptr<animation::AnimationController>(new animation::AnimationController());
 
 	m_currentMeshInfo.m_renderMesh = NULL;
@@ -67,7 +69,7 @@ void AnimationApp::OnIdle(
 		if(m_currentMeshInfo.m_mesh && m_meshAnimator && m_meshAnimator->IsAnimating())
 		{
 			//float delta = timeNow - m_lastTime;
-			m_meshAnimator->Update(m_currentMeshInfo.m_mesh, timeNow, false);
+			m_meshAnimator->Update(m_currentMeshInfo.m_mesh, timeNow);
 
 			if(m_currentMeshInfo.m_renderMesh)// TODO should just be an array of renderables to update? What about the array of renderable in the render component???
 			{
@@ -106,8 +108,14 @@ void AnimationApp::ImportFBX(
 	std::string filePath
 	)
 {
+	if(m_currentMeshInfo.m_renderMesh != NULL)
+	{
+		CloseFBX();
+	}
 	//TODO should the render mesh be a different type of mesh?
 	//TODO should the processing be done right away by the importer and the rest of the app only knows about the render compatible mesh?
+	
+	boost::shared_ptr<import::FBXImport> m_fbxImporter(new import::FBXImport());
 	m_currentMeshInfo.m_mesh = m_fbxImporter->Import(filePath);
 	if(m_currentMeshInfo.m_mesh)
 	{
@@ -120,8 +128,10 @@ void AnimationApp::ImportFBX(
 			m_currentMeshInfo.m_renderMesh = renderable;
 
 			// Make sure the bone hierarchy is correct //TODO but it always will be yes? May not be necessary
-			m_meshAnimator->Update(m_currentMeshInfo.m_mesh, 0, false);
+			m_meshAnimator->Update(m_currentMeshInfo.m_mesh, 0);
 			m_currentMeshInfo.m_renderMesh->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy());
+
+			m_controlsPanel->GetHierarchyPanel().SetBoneHierarchy(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy());
 		}
 		else
 		{
@@ -135,6 +145,19 @@ void AnimationApp::ImportFBX(
 		m_currentMeshInfo.m_renderMesh = NULL;
 	}
 
+}
+
+void AnimationApp::CloseFBX()
+{
+	m_meshAnimator->StopAnimation();
+	m_renderCanvas->RemoveRenderable(m_currentMeshInfo.m_renderMesh);
+	m_currentMeshInfo.m_renderMesh = NULL;
+	m_currentMeshInfo.m_mesh = NULL;
+
+	m_renderCanvas->RemoveRenderable(m_boneOverlay);
+	m_boneOverlay = NULL;
+
+	m_controlsPanel->GetHierarchyPanel().ClearData();
 }
 
 void AnimationApp::ShowBones(
@@ -218,6 +241,22 @@ void AnimationApp::StopAnimation()
 	{
 		m_meshAnimator->StopAnimation();
 	}
+}
+
+void AnimationApp::LoopAnimation(
+	bool looping
+	)
+{
+	if(m_meshAnimator)
+	{
+		m_meshAnimator->SetLooping(looping);
+	}
+}
+
+void AnimationApp::CentreCamera()
+{
+				//TODO focus on mesh if the mesh has moved from zero
+	m_renderCanvas->CentreCamera();
 }
 
 void AnimationApp::Destroy()

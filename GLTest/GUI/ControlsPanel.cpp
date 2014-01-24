@@ -2,6 +2,7 @@
 
 #include "ViewPanel.h"
 #include "AnimationPanel.h"
+#include "HierarchyPanel.h"
 
 namespace gui
 {
@@ -16,13 +17,21 @@ ControlsPanel::ControlsPanel(
 	: wxPanel(parent, windowId, position, size, style)
 {	
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-	ViewPanel *viewPanel = new ViewPanel(this);
-	AnimationPanel *animationPanel = new AnimationPanel(this);
+	viewPanel = new ViewPanel(this);
+	animationPanel = new AnimationPanel(this);
+	m_hierarchyPanel = new HierarchyPanel(this);
 
-	sizer->Add(viewPanel, 1, wxEXPAND, 0);
-	sizer->Add(animationPanel, 1, wxEXPAND, 0);
+	sizer->Add(viewPanel, 20, wxCENTER, 10);
+	sizer->Add(animationPanel, 20, wxCENTER, 10);
+	sizer->Add(m_hierarchyPanel, 40, wxCENTER, 10);
+
 	SetSizer(sizer);
 
+}
+
+HierarchyPanel& ControlsPanel::GetHierarchyPanel()
+{
+	return *m_hierarchyPanel;
 }
 
 }

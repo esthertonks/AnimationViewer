@@ -51,6 +51,11 @@ unsigned int GetId()
 	return m_id;
 }
 
+static void ResetIdCounter()
+{
+	 m_counter = 0;
+}
+
 void AllocateAnimationTracks(
 	int numFrames
 	);

@@ -158,9 +158,12 @@ private:
 		int vertexIndex										// The index of the vertex in the vertex array
 		);
 
+	void DestroyFBXManagers();
+
 	FbxManager *m_fbxManager;			// FBX SDK manager
 	FbxScene *m_fbxScene;				// FBX SDK scene which data will be extracted from
-	FbxImporter* m_fbxImporter;			// Scene importer for the FBX file
+	FbxImporter *m_fbxImporter;			// Scene importer for the FBX file
+	FbxIOSettings *m_ioSettings;
 
 	mesh::MeshPtr m_mesh;					// The mesh to hold the imported data
 

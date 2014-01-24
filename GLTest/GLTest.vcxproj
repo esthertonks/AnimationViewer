@@ -19,7 +19,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -50,7 +50,7 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;WINVER=0x0400;__WXMSW__;wxUSE_GUI=1;_DEBUG;__WXDEBUG__;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\..\glew-1.10.0\include;$(SolutionDir)\..\glm;$(WXWIN)\include;$(WXWIN)\lib\vc_dll\mswd;$(WXWIN)\include\msvc;C:\Program Files\Autodesk\FBX\FBX SDK\2014.1\include;C:\boost_1_54_0;C:\Users\ET\Documents\Visual Studio 2010\Projects\Simple OpenGL Image Library\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\glew-1.10.0\include;$(SolutionDir)\..\glm;$(WXWIN)\include;$(WXWIN)\lib\vc_dll\mswud;$(WXWIN)\include\msvc;C:\Program Files\Autodesk\FBX\FBX SDK\2014.1\include;C:\boost_1_54_0;C:\Users\ET\Documents\Visual Studio 2010\Projects\Simple OpenGL Image Library\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
     </ClCompile>
@@ -58,7 +58,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\glew-1.10.0\lib\Debug\Win32;$(WXWIN)\lib\vc_lib;C:\Program Files\Autodesk\FBX\FBX SDK\2014.1\lib\vs2010\x86\debug;C:\Users\ET\Documents\Visual Studio 2010\Projects\Simple OpenGL Image Library\lib;C:\boost_1_54_0\stage\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32sd.lib;opengl32.lib;glu32.lib;wxmsw28d_core.lib;wxbase28d.lib;comctl32.lib;rpcrt4.lib;winmm.lib;advapi32.lib;wsock32.lib;libfbxsdk.lib;SOILd.lib;libboost_filesystem-vc100-mt-gd-1_54.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glew32sd.lib;opengl32.lib;glu32.lib;wxmsw30ud_core.lib;wxbase30ud.lib;comctl32.lib;rpcrt4.lib;winmm.lib;advapi32.lib;wsock32.lib;libfbxsdk.lib;SOILd.lib;libboost_filesystem-vc100-mt-gd-1_54.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
     </Link>
@@ -93,9 +93,11 @@
     <ClCompile Include="Batch\BatchProcessor.cpp" />
     <ClCompile Include="Batch\LambertAppearance.cpp" />
     <ClCompile Include="Batch\PhongAppearance.cpp" />
+    <ClCompile Include="GUI\HierarchyPanel.cpp" />
     <ClCompile Include="GUI\AnimationPanel.cpp" />
     <ClCompile Include="GUI\ControlsPanel.cpp" />
     <ClCompile Include="GUI\ViewPanel.cpp" />
+    <ClCompile Include="GUI\Window.cpp" />
     <ClCompile Include="Import\FBXImport.cpp" />
     <ClCompile Include="AnimationApp.cpp" />
     <ClCompile Include="Mesh\AnimationInfo.cpp" />
@@ -112,7 +114,6 @@
     <ClCompile Include="Render\OrbitCamera.cpp" />
     <ClCompile Include="Render\GLRenderCanvas.cpp" />
     <ClCompile Include="Render\ShaderManager.cpp" />
-    <ClCompile Include="Render\Window.cpp" />
     <ClCompile Include="Utils\MathsUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -134,9 +135,11 @@
     <ClInclude Include="Batch\VertexFormat.h" />
     <ClInclude Include="Container\LinkedList .h" />
     <ClInclude Include="Container\LinkedTree.h" />
+    <ClInclude Include="GUI\HierarchyPanel.h" />
     <ClInclude Include="GUI\AnimationPanel.h" />
     <ClInclude Include="GUI\ControlsPanel.h" />
     <ClInclude Include="GUI\ViewPanel.h" />
+    <ClInclude Include="GUI\Window.h" />
     <ClInclude Include="Import\FBXImport.h" />
     <ClInclude Include="Mesh\AnimationInfo.h" />
     <ClInclude Include="Mesh\BoneNode.h" />
@@ -155,10 +158,14 @@
     <ClInclude Include="Render\GLRenderCanvas.h" />
     <ClInclude Include="Render\RenderFwdDecl.h" />
     <ClInclude Include="Render\ShaderManager.h" />
-    <ClInclude Include="Render\Window.h" />
     <ClInclude Include="Utils\MathsUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Icons\icon1.xpm" />
+    <None Include="Icons\icon2.xpm" />
+    <None Include="Icons\icon3.xpm" />
+    <None Include="Icons\icon4.xpm" />
+    <None Include="Icons\icon5.xpm" />
     <None Include="Shaders\Diffuse.frag" />
     <None Include="Shaders\Diffuse.vert" />
     <None Include="Shaders\Flat.frag" />

@@ -29,15 +29,15 @@ m_mesh(NULL)
 
 FBXImport::~FBXImport()
 {
-
-
+	m_mesh = NULL;
+	m_meshNodeInfo.m_meshNode.clear();
+	m_meshNodeInfo.m_fbxMeshNode.clear();
 }
 
 mesh::MeshPtr FBXImport::Import(
 	const std::string &fbxFilename
 	)
 {
-
 	m_fbxManager = FbxManager::Create();
 	if(!m_fbxManager)
 	{
@@ -46,8 +46,8 @@ mesh::MeshPtr FBXImport::Import(
 	}
 
 	// Set up the import settings
-	FbxIOSettings* ioSettings = FbxIOSettings::Create(m_fbxManager, IOSROOT);
-	m_fbxManager->SetIOSettings(ioSettings);
+	m_ioSettings = FbxIOSettings::Create(m_fbxManager, IOSROOT);
+	m_fbxManager->SetIOSettings(m_ioSettings);
 
 	//Create an FBX scene which holds the imported objects
 	m_fbxScene = FbxScene::Create(m_fbxManager, "My Scene");
@@ -59,7 +59,7 @@ mesh::MeshPtr FBXImport::Import(
 
 	m_fbxImporter = FbxImporter::Create(m_fbxManager,"");
 
-	if(!m_fbxImporter->Initialize(fbxFilename.c_str(), -1, ioSettings))
+	if(!m_fbxImporter->Initialize(fbxFilename.c_str(), -1, m_ioSettings))
 	{
 		FbxString error = m_fbxImporter->GetStatus().GetErrorString();
 		FBXSDK_printf("Call to FbxImporter::Initialize() failed.\n");
@@ -68,22 +68,17 @@ mesh::MeshPtr FBXImport::Import(
 		if (m_fbxImporter->GetStatus().GetCode() == FbxStatus::eInvalidFileVersion)
 		{
 			FBXSDK_printf("FBX file format version for file '%s' is not valid for this SDK version\n", fbxFilename);
-			return NULL;
 		}
 
-		m_fbxImporter->Destroy();
-		m_fbxScene->Destroy();
-		ioSettings->Destroy();
-		m_fbxManager->Destroy();
+		DestroyFBXManagers();
+
+		return NULL;
 	}
 
 	if(!m_fbxImporter->IsFBX())
 	{
 		FBXSDK_printf("File %s is not an FBX file. \n", fbxFilename);
-		m_fbxImporter->Destroy();
-		m_fbxScene->Destroy();
-		ioSettings->Destroy();
-		m_fbxManager->Destroy();
+		DestroyFBXManagers();
 		return NULL;
 	}
 
@@ -91,10 +86,7 @@ mesh::MeshPtr FBXImport::Import(
 	if(!m_fbxImporter->Import(m_fbxScene))
 	{
 		FBXSDK_printf("Import failed for file: %s \n", fbxFilename);
-		m_fbxImporter->Destroy();
-		m_fbxScene->Destroy();
-		ioSettings->Destroy();
-		m_fbxManager->Destroy();
+		DestroyFBXManagers();
 		return NULL;
 	}
 
@@ -120,12 +112,22 @@ mesh::MeshPtr FBXImport::Import(
 
 	// TODO revome duplicate keys
 
-	m_fbxImporter->Destroy();
-	m_fbxScene->Destroy();
-	ioSettings->Destroy();
-	m_fbxManager->Destroy();
+	DestroyFBXManagers();
 
 	return m_mesh;
+}
+
+void FBXImport::DestroyFBXManagers()
+{
+	m_fbxImporter->Destroy();
+	m_fbxScene->Destroy();
+	m_ioSettings->Destroy();
+	m_fbxManager->Destroy();
+
+	m_fbxImporter = NULL;
+	m_fbxScene = NULL;
+	m_ioSettings = NULL;
+	m_fbxManager = NULL;
 }
 
 bool FBXImport::LoadNodes(

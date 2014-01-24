@@ -1,14 +1,20 @@
 #include "Window.h"
 #include "../AnimationApp.h"
-#include "GLRenderCanvas.h"
+#include "../Render/GLRenderCanvas.h"
 
-namespace render
+namespace gui
 {
+	enum
+	{
+		OpenFBX = wxID_HIGHEST + 400,
+		CloseFBX
+	};
 
 BEGIN_EVENT_TABLE(Window, wxFrame)
 	EVT_SHOW(Window::OnShow)
 	EVT_CLOSE(Window::OnClose)
-	EVT_MENU(wxID_OPEN, Window::OnOpen)
+	EVT_MENU(OpenFBX, Window::OnOpenFBX)
+	EVT_MENU(CloseFBX, Window::OnCloseFBX)
 	EVT_MENU(wxID_EXIT, Window::OnQuit)
 	EVT_MENU(wxID_ABOUT, Window::OnAbout)
 
@@ -23,12 +29,12 @@ Window::Window(
 	)
 	: wxFrame(frame, wxID_ANY, title, pos, size, style)
 {
-	// Make the "File" menu
 	wxMenu *fileMenu = new wxMenu;
-	fileMenu->Append(wxID_OPEN, wxT("&Open FBX"));
+	fileMenu->Append(OpenFBX, wxT("&Open FBX"));
+	fileMenu->Append(CloseFBX, wxT("&Close FBX"));
 	fileMenu->AppendSeparator();
-	fileMenu->Append(wxID_EXIT, wxT("&Exit\tALT-X"));
-	// Make the "Help" menu
+	fileMenu->Append(wxID_EXIT, wxT("&Exit"));
+
 	wxMenu *helpMenu = new wxMenu;
 	helpMenu->Append(wxID_ABOUT, wxT("&About..."));
 
@@ -36,9 +42,6 @@ Window::Window(
 	menuBar->Append(fileMenu, wxT("&File"));
 	menuBar->Append(helpMenu, wxT("&Help"));
 	SetMenuBar(menuBar);
-
-	//CreateStatusBar();
-	//SetStatusText( "Welcome to wxWindows!" );
 }
  
 void Window::OnShow(
@@ -59,7 +62,7 @@ void Window::OnClose(
 	}
 
 // Menu events:
-void Window::OnOpen(
+void Window::OnOpenFBX(
 	wxCommandEvent& WXUNUSED(event)
 	)
 {
@@ -68,16 +71,20 @@ wxFileDialog* openDialog = new wxFileDialog(
 		_("FBX files (*.fbx)|*.fbx"),
 		wxFD_OPEN, wxDefaultPosition);
  
-	// Creates a "open file" dialog with 4 file types
-	if (openDialog->ShowModal() == wxID_OK) // if the user click "Open" instead of "Cancel"
+	if (openDialog->ShowModal() == wxID_OK)
 	{
 		wxString fbxFilePath = openDialog->GetPath();
-		// Sets our current document to the file the user selected
-		wxGetApp().ImportFBX(fbxFilePath.c_str());
+		wxGetApp().ImportFBX(std::string(fbxFilePath.c_str()));
 	}
  
-	// Clean up after ourselves
 	openDialog->Destroy();
+}
+
+void Window::OnCloseFBX(
+	wxCommandEvent& event
+	)
+{
+	wxGetApp().CloseFBX();
 }
 
 void Window::OnQuit(

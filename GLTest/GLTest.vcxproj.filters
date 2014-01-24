@@ -35,13 +35,13 @@
     <Filter Include="RenderableMesh">
       <UniqueIdentifier>{398d860d-aa58-40e5-a924-7b2e0ffb01c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Icons">
+      <UniqueIdentifier>{37885482-8720-4d20-9ac6-eb9075307f51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Import\FBXImport.cpp">
       <Filter>Import</Filter>
-    </ClCompile>
-    <ClCompile Include="Render\Window.cpp">
-      <Filter>Render</Filter>
     </ClCompile>
     <ClCompile Include="AnimationApp.cpp" />
     <ClCompile Include="Render\OrbitCamera.cpp">
@@ -125,13 +125,16 @@
     <ClCompile Include="Animation\VectorTrack.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
+    <ClCompile Include="GUI\Window.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\HierarchyPanel.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
       <Filter>Import</Filter>
-    </ClInclude>
-    <ClInclude Include="Render\Window.h">
-      <Filter>Render</Filter>
     </ClInclude>
     <ClInclude Include="AnimationApp.h" />
     <ClInclude Include="Container\LinkedList .h">
@@ -248,6 +251,12 @@
     <ClInclude Include="Animation\VectorTrack.h">
       <Filter>Animation</Filter>
     </ClInclude>
+    <ClInclude Include="GUI\Window.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\HierarchyPanel.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Diffuse.frag">
@@ -291,6 +300,21 @@
     </None>
     <None Include="Shaders\Overlay.vert">
       <Filter>Shaders</Filter>
+    </None>
+    <None Include="Icons\icon1.xpm">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="Icons\icon2.xpm">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="Icons\icon3.xpm">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="Icons\icon4.xpm">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="Icons\icon5.xpm">
+      <Filter>Icons</Filter>
     </None>
   </ItemGroup>
 </Project>

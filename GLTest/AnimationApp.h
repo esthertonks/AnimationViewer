@@ -13,6 +13,11 @@ namespace render
 	class Batch;
 }
 
+namespace gui
+{
+	class ControlsPanel;
+}
+
 namespace import
 {
 	class FBXImport;
@@ -30,9 +35,12 @@ class AnimationApp: public wxApp
 		return *m_renderCanvas;
 	};
 
+	// Menu controls
 	void ImportFBX(
 		std::string filePath
 	);
+
+	void CloseFBX();
 
 	// GUI controls
 	void ShowBones(
@@ -50,6 +58,14 @@ class AnimationApp: public wxApp
 	void PlayAnimation();
 	void PauseAnimation();
 	void StopAnimation();
+	void LoopAnimation(
+		bool looping
+		);
+
+	void CentreCamera();
+
+	static wxColour m_guiBackgroundColour;
+	static wxColour m_guiTextColour;
 
 	private:
 	virtual bool OnInit();
@@ -58,7 +74,6 @@ class AnimationApp: public wxApp
 		);
 
 	render::GLRenderCanvas *m_renderCanvas;
-	boost::shared_ptr<import::FBXImport> m_fbxImporter;
 	DWORD m_lastTime;
 
 	// Grouping of the original import mesh and the converted renderable mesh
@@ -70,8 +85,10 @@ class AnimationApp: public wxApp
 
 	CurrentMeshInfo m_currentMeshInfo;
 
-	render::RenderablePtr m_boneOverlay;//TODO so....where does this live? Needs storing so we can remove it from the renderer when we check bones off
+	render::RenderablePtr m_boneOverlay;
 	animation::AnimationControllerPtr m_meshAnimator;
+
+	gui::ControlsPanel *m_controlsPanel;
 };
 
 DECLARE_APP(AnimationApp)

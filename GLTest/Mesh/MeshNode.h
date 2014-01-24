@@ -42,6 +42,11 @@ public:
 		return m_id;
 	}
 
+	static void ResetIdCounter()
+	{
+		 m_counter = 0;
+	}
+
 	int GetNumTriangles()
 	{
 		return m_numTriangles;

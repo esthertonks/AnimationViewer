@@ -25,6 +25,10 @@ class AnimationPanel : public wxPanel
 		wxCommandEvent& event
 		);
 
+	void OnLoopAnimation(
+		wxCommandEvent& event
+		);
+
 	protected:
 		DECLARE_EVENT_TABLE()
 };

@@ -33,6 +33,18 @@ bool IsAnimating()
 	return m_animEndTime != 0;
 }
 
+void SetLooping(
+	bool looping
+	)
+{
+	m_isLooping = looping;
+}
+
+bool IsLooping()
+{
+	return m_isLooping;
+}
+
 void StartAnimation(
 	long globalStartTime,
 	long animStartTime,
@@ -45,14 +57,11 @@ void StopAnimation();
 
 void Update(
 	mesh::MeshPtr m_mesh,
-	const long globalTime,
-	const bool isLooping
+	const long globalTime
 	);
 
 private:
-	void ClampTime(
-		const bool isLooping
-		);
+	void ClampTime();
 
 void PrepareBoneHierarcy(
 	int sample,
@@ -104,6 +113,8 @@ void Slerp(
 	long m_localCurrentTime;
 	long m_animStartTime;
 	long m_animEndTime;
+
+	bool m_isLooping;
 };
 
 }
