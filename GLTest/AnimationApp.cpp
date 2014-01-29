@@ -150,12 +150,19 @@ void AnimationApp::ImportFBX(
 void AnimationApp::CloseFBX()
 {
 	m_meshAnimator->StopAnimation();
-	m_renderCanvas->RemoveRenderable(m_currentMeshInfo.m_renderMesh);
-	m_currentMeshInfo.m_renderMesh = NULL;
+
+	if(m_currentMeshInfo.m_renderMesh)
+	{
+		m_renderCanvas->RemoveRenderable(m_currentMeshInfo.m_renderMesh);
+		m_currentMeshInfo.m_renderMesh = NULL;
+	}
 	m_currentMeshInfo.m_mesh = NULL;
 
-	m_renderCanvas->RemoveRenderable(m_boneOverlay);
-	m_boneOverlay = NULL;
+	if(m_boneOverlay)
+	{
+		m_renderCanvas->RemoveRenderable(m_boneOverlay);
+		m_boneOverlay = NULL;
+	}
 
 	m_controlsPanel->GetHierarchyPanel().ClearData();
 }
@@ -164,15 +171,13 @@ void AnimationApp::ShowBones(
 	bool show
 	)
 {
-	//TODO actually better to create this on mesh load maybe???
-
 	if(show && m_currentMeshInfo.m_mesh) // If there is no mesh do nothing
 	{
 		render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(render::RenderableBoneListPtr(new render::RenderableBoneList()));
 
 		if(renderable->Create(m_currentMeshInfo.m_mesh))
 		{
-			m_renderCanvas->AddRenderable(renderable);
+			m_renderCanvas->AddOverlay(renderable);
 			m_boneOverlay = renderable;
 			m_boneOverlay->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy());
 		}
@@ -186,13 +191,6 @@ void AnimationApp::ShowBones(
 		m_renderCanvas->RemoveRenderable(m_boneOverlay);
 		m_boneOverlay = NULL;
 	}
-
-}
-
-void AnimationApp::ShowNormals(
-	bool show
-	)
-{
 
 }
 
@@ -217,13 +215,21 @@ void AnimationApp::PlayAnimation()
 		return;
 	}
 
-	mesh::AnimationInfoPtr animationInfo = m_currentMeshInfo.m_mesh->GetAnimationInfo();
 	if(m_meshAnimator)
 	{
-		long animStartTime = animationInfo->ConvertFrameToMilliseconds(animationInfo->GetStartSample());
-		long animEndTime = animationInfo->ConvertFrameToMilliseconds(animationInfo->GetEndSample());
+		if(m_meshAnimator->IsPaused())
+		{
+			m_meshAnimator->ResumeAnimation();
+		}
+		else
+		{
+			mesh::AnimationInfoPtr animationInfo = m_currentMeshInfo.m_mesh->GetAnimationInfo();
 
-		m_meshAnimator->StartAnimation(timeGetTime(), animStartTime, animEndTime);
+			long animStartTime = animationInfo->ConvertFrameToMilliseconds(animationInfo->GetStartSample());
+			long animEndTime = animationInfo->ConvertFrameToMilliseconds(animationInfo->GetEndSample());
+
+			m_meshAnimator->StartAnimation(timeGetTime(), animStartTime, animEndTime);
+		}
 	}
 }
 
@@ -237,9 +243,15 @@ void AnimationApp::PauseAnimation()
 
 void AnimationApp::StopAnimation()
 {
-	if(m_meshAnimator)
+	if(m_meshAnimator && m_currentMeshInfo.m_mesh)
 	{
 		m_meshAnimator->StopAnimation();
+		m_meshAnimator->Update(m_currentMeshInfo.m_mesh, 0);
+
+		if(m_currentMeshInfo.m_renderMesh)
+		{
+			m_currentMeshInfo.m_renderMesh->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy());
+		}
 	}
 }
 

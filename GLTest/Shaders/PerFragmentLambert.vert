@@ -23,20 +23,7 @@ uniform mat4 boneMatrixPalette[128]; // TODO Max 128 bones per batch - split if 
 
 void main()
 {
-	// Skin the verts
-	//mat4 weightedBoneMatrix = mat4(1.0);
-
-	//for(int weightIndex = 0; weightIndex < MAX_INFLUENCES; weightIndex++)
-	//{
-	//	if(boneWeights[weightIndex] > 0.0)
-	//	{
-	//		weightedBoneMatrix += boneMatrixPalette[boneIds[weightIndex]] * boneWeights[weightIndex];
-	//	}
-	// }
-
-	//vec4 skinnedPosition = weightedBoneMatrix * modelMatrix * vec4(vertexPosition, 1.0); // Put the verts into position and THEN skin them //TODO could do this in software on batching and remove the need for the model matrix (and thus have many less batches)
-
-	//TODO if skinned... could test with Dube.fbx
+	//TODO if skinned... could test with Dude.fbx
 	vec4 worldPosition = modelMatrix * vec4(vertexPosition, 1.0); // Put the verts into position and THEN skin them
 	mat4 weightedBoneMatrix = boneMatrixPalette[boneIds[0]] * boneWeights[0]
 							+ boneMatrixPalette[boneIds[1]] * boneWeights[1]
@@ -47,8 +34,7 @@ void main()
 
 	// Convert to eye coordinates
 	position = vec3(viewMatrix * skinnedPosition);
-	normal = normalize(normalMatrix * vertexNormal);//TODO mult by skinning matrix?
-	colour = vec3(boneMatrixPalette[1][0][0], 1.0, 1.0);
+	normal = normalize(mat3(weightedBoneMatrix) * normalMatrix * vertexNormal);//TODO mult by skinning matrix?
 	textureCoord = vertexTexCoord;
 	gl_Position = projectionMatrix * viewMatrix * skinnedPosition;
 

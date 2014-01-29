@@ -98,5 +98,6 @@ void main()
 	PhongShading(vec3(textureColour), ambient, diffuse);
 
 	vec3 ambientAndDiffuse = InterpolateVector(ambient, diffuse, material.diffuseFactor);
-	fragmentColour = vec4(colour, 1.0);
+	fragmentColour = vec4(ambientAndDiffuse, 1.0);
+	//fragmentColour = vec4(colour, 1.0);
 }

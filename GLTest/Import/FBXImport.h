@@ -71,6 +71,16 @@ private:
 		const unsigned int triangleCornerId
 		) const;
 
+	void AddPhongMaterial(
+		render::AppearancePtr appearance,// Appeararnce to store the data in
+		const FbxSurfacePhong& phongMaterial// FBX phong material to load info from
+		);
+
+	void AddLambertMaterial(
+		render::AppearancePtr appearance, // Appeararnce to store the data in
+		const FbxSurfaceLambert& lambertMaterial // FBX lambert material to load info from
+		);
+
 	/**
 		@brief Loads a material id for the given triangle
 	*/

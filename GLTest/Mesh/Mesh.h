@@ -5,7 +5,6 @@
 #pragma once
 
 #include "../Container/LinkedTree.h"
-#include "../Batch/BatchFwdDecl.h"
 #include "MeshFwdDecl.h"
 
 namespace mesh
@@ -63,23 +62,6 @@ public:
 		return m_numBoneNodes;
 	};
 
-	render::AppearanceTable &GetAppearanceTable()
-	{
-		return m_appearanceTable;
-	}
-
-	int GetNumVerticesWithMaterialId(
-		int materialId
-	)
-	{
-		return m_numVerticesPerMaterialArray[materialId];
-	}
-
-	std::vector<unsigned int> &GetNumVerticesPerMaterialArray()
-	{
-		return m_numVerticesPerMaterialArray;
-	}
-
 	mesh::AnimationInfoPtr GetAnimationInfo()
 	{
 		return m_animationInfo;
@@ -93,8 +75,6 @@ public:
 	}
 
 private:
-	render::AppearanceTable m_appearanceTable; // Mapping of material id's to material names //TODO pointer and set method
-	std::vector<unsigned int> m_numVerticesPerMaterialArray; // A count of the number of vertex indices per material batch. Necessary for creating batches later
 	container::LinkedTree<BoneNode> m_boneNodes;
 	container::LinkedTree<MeshNode> m_meshNodes;
 	mesh::AnimationInfoPtr m_animationInfo; // Extra info about all animation tracks

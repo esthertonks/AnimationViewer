@@ -46,7 +46,6 @@ private:
 	void BatchProcessor::CreateBatchesInternal(
 		mesh::MeshPtr &mesh,
 		mesh::MeshNode* meshNode,
-		render::AppearanceTable& appearances,
 		render::PerNodeBatchList &perNodeRenderBatches // Map of Batch vector lists to fill in - one for each mesh node (ie one per unique model matrix)
 	);
 

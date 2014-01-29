@@ -39,7 +39,7 @@ void PhongShading(in vec3 materialDiffuse, out vec3 ambient, out vec3 diffuse, o
 	vec3 lightDirection = normalize(vec3(light.position) - position);
 	vec3 viewDirection = normalize(-position.xyz);
 
-	vec3 reflection = reflect(-lightDirection, normalize(normal)); // gl reflect function 
+	vec3 reflection = reflect(-lightDirection, normalize(normal));
 
 	ambient = light.ambient * material.ambient;
 
@@ -92,24 +92,6 @@ vec3 InterpolateColour(vec3 colourA, vec3 colourB, float amount) // Amount must 
 	return HSVtoRGB(hsvResult);
 }
 
-//vec3 Hue(float hue)
-//{
-//	float red = abs(hue * 6 - 3) - 1;
-//	float green = 2 - abs(hue * 6 - 2);
-//	float blue = 2 - abs(hue * 6 - 4);
-
-//	vec3 rgb;
-//	rgb.r = clamp(red, 0.0, 1.0);
-//	rgb.g = clamp(green, 0.0, 1.0);
-//	rgb.b = clamp(blue, 0.0, 1.0);
-//	return rgb;
-//}
-
-//vec3 HSVtoRGB(in vec3 hsv)
-//{
-//	return vec3(((Hue(hsv.x) - 1) * hsv.y + 1) * hsv.z);
-//}
-
 vec3 InterpolateVector(vec3 start, vec3 end, float value)
 {
 	return start * (1.0 - value) + end * value;
@@ -126,10 +108,7 @@ void main()
 	// There is ALWAYS a texture added on import, so assume that there is one
 	PhongShading(vec3(textureColour), ambient, diffuse, specular);
 
-	//vec3 ambientAndDiffuse = InterpolateColour(ambient, diffuse, material.diffuseFactor);
-	//fragmentColour = (vec4(ambientAndDiffuse, 1.0) * textureColour) + vec4(specular, 1.0);
-
 	vec3 ambientAndDiffuse = InterpolateVector(ambient, diffuse, material.diffuseFactor);
-//	fragmentColour = vec4(ambientAndDiffuse, 1.0) + vec4(specular, 1.0);
-	fragmentColour = vec4(colour, 1.0);
+	fragmentColour = vec4(ambientAndDiffuse, 1.0) + vec4(specular, 1.0);
+	//fragmentColour = vec4(colour, 1.0);
 }

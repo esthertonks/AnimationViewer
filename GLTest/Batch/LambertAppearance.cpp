@@ -17,7 +17,7 @@ void LambertAppearance::ConvertToShaderParams(
 	glUniform3f(lightAmbientLocation, 0.5f, 0.5f, 0.5f);
 
 	GLint lightDiffuseLocation = glGetUniformLocation(programId, "light.diffuse");
-	glUniform3f(lightDiffuseLocation, 0.8f, 0.8f, 0.8f);
+	glUniform3f(lightDiffuseLocation, 0.9f, 0.9f, 0.9f);
 
 	GLint ambientLocation = glGetUniformLocation(programId, "material.ambient");
 	glUniform3f(ambientLocation, m_ambient.r, m_ambient.g, m_ambient.b);

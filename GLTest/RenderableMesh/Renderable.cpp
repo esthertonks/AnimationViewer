@@ -1,13 +1,12 @@
 #pragma once
 
 #include "Renderable.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace render
 {
 
 Renderable::Renderable()
-: m_rotAroundY(0),
-m_rotAroundX(0)
 {
 
 }

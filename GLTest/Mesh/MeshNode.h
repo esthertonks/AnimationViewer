@@ -4,6 +4,7 @@
 #include <map>
 #include <boost\shared_array.hpp>
 #include "../Container/LinkedTree.h"
+#include "../Batch/BatchFwdDecl.h" // TODO For appearances only - really needed here?
 
 namespace import
 {
@@ -92,6 +93,23 @@ public:
 		return m_globalTransform;
 	};
 
+	render::AppearanceTable &GetAppearanceTable()
+	{
+		return m_appearanceTable;
+	}
+
+	int GetNumVerticesWithMaterialId(
+		int materialId
+	)
+	{
+		return m_numVerticesPerMaterialArray[materialId];
+	}
+
+	std::vector<unsigned int> &GetNumVerticesPerMaterialArray()
+	{
+		return m_numVerticesPerMaterialArray;
+	}
+
 private:
 	// uvsets?
 	friend class import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
@@ -99,6 +117,9 @@ private:
 	MeshTriangleArray m_triangleArray;
 	int m_numTriangles;
 	int m_numVertices;
+
+	render::AppearanceTable m_appearanceTable; // Mapping of material id's to material names //TODO pointer and set method
+	std::vector<unsigned int> m_numVerticesPerMaterialArray; // A count of the number of vertex indices per material batch. Necessary for creating batches later
 
 	bool m_isSkinned;
 

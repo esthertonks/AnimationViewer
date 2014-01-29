@@ -30,7 +30,7 @@ public :
 
 bool IsAnimating()
 {
-	return m_animEndTime != 0;
+	return m_isAnimating;
 }
 
 void SetLooping(
@@ -45,11 +45,21 @@ bool IsLooping()
 	return m_isLooping;
 }
 
-void StartAnimation(
+bool IsPaused()
+{
+	return m_isPaused;
+}
+
+bool StartAnimation(
 	long globalStartTime,
 	long animStartTime,
 	long animEndTime
 	);
+
+/**
+	Resume playing a paused animation
+*/
+bool ResumeAnimation();
 
 void PauseAnimation();
 
@@ -115,6 +125,8 @@ void Slerp(
 	long m_animEndTime;
 
 	bool m_isLooping;
+	bool m_isAnimating;
+	bool m_isPaused;
 };
 
 }

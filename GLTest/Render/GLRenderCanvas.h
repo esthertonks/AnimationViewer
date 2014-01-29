@@ -86,15 +86,14 @@ public:
 		RenderablePtr &renderable
 		)
 	{
-		m_renderables.push_back(renderable);
+		m_renderables.push_front(renderable);
 	}
 
-	// Add to the front of the render list ie for overlays
-	void AddRenderableToFront(
+	void AddOverlay(
 		RenderablePtr &renderable
 		)
 	{
-		m_renderables.push_front(renderable);
+		m_renderables.push_back(renderable);
 	}
 
 	void RemoveRenderable(
@@ -110,6 +109,10 @@ protected:
 private:
 	void Render();
 
+	void SetLightPosition(
+		glm::vec4 position
+		);
+
 	wxGLContext* m_context;
 
 	OrbitCamera *m_camera;
@@ -122,6 +125,7 @@ private:
 	bool m_initialised;
 
 	static glm::vec3 m_clearColour;
+	glm::vec4 m_lightPosition;
 };
 
 }

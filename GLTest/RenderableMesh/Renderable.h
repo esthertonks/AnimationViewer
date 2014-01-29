@@ -33,19 +33,14 @@ public:
 		mesh::BoneNode *boneHierarchyRoot
 		) = 0;
 
-	virtual void Rotate(
-		const float rotY,
-		const float rotX
-		) = 0;
-
 	virtual void Render(
 		ShaderManager &shaderManager,
 		glm::mat4x4 &viewMatrix,
-		glm::mat4x4 &projectionMatrix
+		glm::mat4x4 &projectionMatrix,
+		glm::vec4 &lightPosition
 		) = 0;
 
 protected:
-	float m_rotAroundY;
-	float m_rotAroundX;
+
 };
 }

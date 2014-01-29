@@ -252,7 +252,7 @@ mesh::MeshNode *FBXImport::LoadMeshNode(
 
 			if(materialLayerCount != 0)
 			{
-				LoadMaterials(*fbxMesh, triangleIndex, *meshNode, m_mesh->GetAppearanceTable(), m_mesh->GetNumVerticesPerMaterialArray());
+				LoadMaterials(*fbxMesh, triangleIndex, *meshNode, meshNode->GetAppearanceTable(), meshNode->GetNumVerticesPerMaterialArray());
 			}
 			else
 			{
@@ -597,27 +597,7 @@ void FBXImport::LoadMaterials(
 				appearance = render::AppearancePtr(new render::PhongAppearance());
 					
 				const FbxSurfacePhong& phongMaterial = (const FbxSurfacePhong &)surfaceMaterial;
-				glm::vec3 ambientColour(phongMaterial.Ambient.Get()[0], phongMaterial.Ambient.Get()[1], phongMaterial.Ambient.Get()[3]);
-				glm::vec3 diffuseColour(phongMaterial.Diffuse.Get()[0], phongMaterial.Diffuse.Get()[1], phongMaterial.Diffuse.Get()[3]);
-				glm::vec3 specularColour(phongMaterial.Specular.Get()[0], phongMaterial.Specular.Get()[1], phongMaterial.Specular.Get()[3]);
-				glm::vec3 emmissiveColour(phongMaterial.Emissive.Get()[0], phongMaterial.Emissive.Get()[1], phongMaterial.Emissive.Get()[3]);
-
-				double transparency = phongMaterial.TransparencyFactor.Get();
-				double shininess = phongMaterial.Shininess.Get();
-				double reflectivity = phongMaterial.ReflectionFactor.Get();
-				double diffuseFactor = phongMaterial.DiffuseFactor.Get();
-
-				boost::shared_ptr<render::PhongAppearance> phongAppearancePtr = boost::static_pointer_cast<render::PhongAppearance>(appearance);
-
-				phongAppearancePtr->SetAmbient(ambientColour);
-				phongAppearancePtr->SetDiffuse(diffuseColour);
-				phongAppearancePtr->SetSpecular(specularColour);
-				phongAppearancePtr->SetEmissive(emmissiveColour);
-
-				phongAppearancePtr->SetTransparency(transparency);
-				phongAppearancePtr->SetShininess(shininess);
-				phongAppearancePtr->SetReflectivity(reflectivity);
-				phongAppearancePtr->SetDiffuseFactor(diffuseFactor);
+				AddPhongMaterial(appearance, phongMaterial);
 			}
 			else if(surfaceMaterial.GetClassId().Is(FbxSurfaceLambert::ClassId))
 			{
@@ -625,20 +605,7 @@ void FBXImport::LoadMaterials(
 
 				const FbxSurfaceLambert& lambertMaterial = (const FbxSurfaceLambert &)surfaceMaterial;
 
-				glm::vec3 ambientColour(lambertMaterial.Ambient.Get()[0], lambertMaterial.Ambient.Get()[1], lambertMaterial.Ambient.Get()[3]);
-				glm::vec3 diffuseColour(lambertMaterial.Diffuse.Get()[0], lambertMaterial.Diffuse.Get()[1], lambertMaterial.Diffuse.Get()[3]);
-				glm::vec3 emmissiveColour(lambertMaterial.Emissive.Get()[0], lambertMaterial.Emissive.Get()[1], lambertMaterial.Emissive.Get()[3]);
-
-				double transparency = lambertMaterial.TransparencyFactor.Get();
-				double diffuseFactor = lambertMaterial.DiffuseFactor.Get();
-				boost::shared_ptr<render::LambertAppearance> lambertAppearancePtr = boost::static_pointer_cast<render::LambertAppearance>(appearance);
-
-				lambertAppearancePtr->SetAmbient(ambientColour);
-				lambertAppearancePtr->SetDiffuse(diffuseColour);
-				lambertAppearancePtr->SetEmissive(emmissiveColour);
-
-				lambertAppearancePtr->SetTransparency(transparency);
-				lambertAppearancePtr->SetDiffuseFactor(diffuseFactor);
+				AddLambertMaterial(appearance, lambertMaterial);
 			}
 			else
 			{
@@ -677,6 +644,55 @@ void FBXImport::LoadMaterials(
 	{
 		FBXSDK_printf("Face %d has no associated material.\n", triangleIndex);
 	}
+}
+
+void FBXImport::AddPhongMaterial(
+	render::AppearancePtr appearance,// Appeararnce to store the data in
+	const FbxSurfacePhong& phongMaterial// FBX phong material to load info from
+)
+{
+	glm::vec3 ambientColour(phongMaterial.Ambient.Get()[0], phongMaterial.Ambient.Get()[1], phongMaterial.Ambient.Get()[3]);
+	glm::vec3 diffuseColour(phongMaterial.Diffuse.Get()[0], phongMaterial.Diffuse.Get()[1], phongMaterial.Diffuse.Get()[3]);
+	glm::vec3 specularColour(phongMaterial.Specular.Get()[0], phongMaterial.Specular.Get()[1], phongMaterial.Specular.Get()[3]);
+	glm::vec3 emmissiveColour(phongMaterial.Emissive.Get()[0], phongMaterial.Emissive.Get()[1], phongMaterial.Emissive.Get()[3]);
+
+	double transparency = phongMaterial.TransparencyFactor.Get();
+	double shininess = phongMaterial.Shininess.Get();
+	double reflectivity = phongMaterial.ReflectionFactor.Get();
+	double diffuseFactor = phongMaterial.DiffuseFactor.Get();
+
+	boost::shared_ptr<render::PhongAppearance> phongAppearancePtr = boost::static_pointer_cast<render::PhongAppearance>(appearance);
+
+	phongAppearancePtr->SetAmbient(ambientColour);
+	phongAppearancePtr->SetDiffuse(diffuseColour);
+	phongAppearancePtr->SetSpecular(specularColour);
+	phongAppearancePtr->SetEmissive(emmissiveColour);
+
+	phongAppearancePtr->SetTransparency(transparency);
+	phongAppearancePtr->SetShininess(shininess);
+	phongAppearancePtr->SetReflectivity(reflectivity);
+	phongAppearancePtr->SetDiffuseFactor(diffuseFactor);
+}
+
+void FBXImport::AddLambertMaterial(
+	render::AppearancePtr appearance, // Appeararnce to store the data in
+	const FbxSurfaceLambert& lambertMaterial // FBX lambert material to load info from
+	)
+{
+	glm::vec3 ambientColour(lambertMaterial.Ambient.Get()[0], lambertMaterial.Ambient.Get()[1], lambertMaterial.Ambient.Get()[3]);
+	glm::vec3 diffuseColour(lambertMaterial.Diffuse.Get()[0], lambertMaterial.Diffuse.Get()[1], lambertMaterial.Diffuse.Get()[3]);
+	glm::vec3 emmissiveColour(lambertMaterial.Emissive.Get()[0], lambertMaterial.Emissive.Get()[1], lambertMaterial.Emissive.Get()[3]);
+
+	double transparency = lambertMaterial.TransparencyFactor.Get();
+	double diffuseFactor = lambertMaterial.DiffuseFactor.Get();
+	boost::shared_ptr<render::LambertAppearance> lambertAppearancePtr = boost::static_pointer_cast<render::LambertAppearance>(appearance);
+
+	lambertAppearancePtr->SetAmbient(ambientColour);
+	lambertAppearancePtr->SetDiffuse(diffuseColour);
+	lambertAppearancePtr->SetEmissive(emmissiveColour);
+
+	lambertAppearancePtr->SetTransparency(transparency);
+	lambertAppearancePtr->SetDiffuseFactor(diffuseFactor);
 }
 
 /**

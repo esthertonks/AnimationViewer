@@ -36,11 +36,9 @@ void BatchProcessor::CreateBatches(
 {
 	// Each node needs a new batch (due to each node having a different matrix transform
 	//TODO could insist on node transforms being zero and thus create fewer batches). Within each node each material needs a new batch.
-	render::AppearanceTable& appearances = mesh->GetAppearanceTable();
-
 	mesh::MeshNode* rootMeshNode = mesh->GetMeshNodeHierarchy();
 
-	CreateBatchesInternal(mesh, rootMeshNode, appearances, perNodeRenderBatches);
+	CreateBatchesInternal(mesh, rootMeshNode, perNodeRenderBatches);
 
 	return;
 }
@@ -49,12 +47,13 @@ void BatchProcessor::CreateBatches(
 void BatchProcessor::CreateBatchesInternal(
 	mesh::MeshPtr &mesh,
 	mesh::MeshNode* meshNode,
-	render::AppearanceTable& appearances,
 	render::PerNodeBatchList &perNodeRenderBatches // Batch vector to fill in
 	)
 {
 	for(meshNode; meshNode != NULL; meshNode = meshNode->m_next)
 	{
+		render::AppearanceTable& appearances = meshNode->GetAppearanceTable();
+
 		render::BatchList renderBatches; // Each node needs a new set of batches (due to each node having a different matrix transform)
 		renderBatches.resize(appearances.size());//Worst case scenario - should usually be less than this.
 
@@ -83,7 +82,7 @@ void BatchProcessor::CreateBatchesInternal(
 			if(!renderBatches[materialId]) // If a batch for this material does not already exist then create it
 			{
 				renderBatches[materialId] = render::BatchPtr(new render::Batch(/*render::ColourFormat*/));
-				int numVertices = mesh->GetNumVerticesWithMaterialId(materialId);
+				int numVertices = meshNode->GetNumVerticesWithMaterialId(materialId);
 				renderBatches[materialId]->AllocateVertices(numVertices);
 				renderBatches[materialId]->AllocateIndices(numVertices);
 				renderBatches[materialId]->SetAppearance(appearances[materialId]);
@@ -150,7 +149,7 @@ void BatchProcessor::CreateBatchesInternal(
 
 		for(mesh::MeshNode *childNode = meshNode->m_firstChild; childNode != NULL; childNode = childNode->m_next)
 		{
-			CreateBatchesInternal(mesh, childNode, appearances, perNodeRenderBatches);
+			CreateBatchesInternal(mesh, childNode, perNodeRenderBatches);
 		}
 	}
 }
@@ -168,7 +167,7 @@ void BatchProcessor::AddDuplicateVertex(
 	vertex.m_colour = currentVertex.m_colour;
 	vertex.m_uv = currentVertex.m_uv;
 	vertex.m_normal += currentVertex.m_normal;
-	if(vertex.m_normal.length() != 0) // Deal with the mesh which has it's normals deliberately set to zero(!)
+	if(glm::length(vertex.m_normal) != 0) // Deal with the mesh which has it's normals deliberately set to zero(!)
 	{
 		vertex.m_normal = glm::normalize(vertex.m_normal); // Make sure these are normalised
 	}

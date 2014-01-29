@@ -32,7 +32,8 @@ BEGIN_EVENT_TABLE(GLRenderCanvas, wxGLCanvas)
 	EVT_KEY_DOWN(GLRenderCanvas::OnKeyDown)
 END_EVENT_TABLE()
 
-glm::vec3 GLRenderCanvas::m_clearColour(0.196f, 0.196f, 0.196f);
+//glm::vec3 GLRenderCanvas::m_clearColour(0.196f, 0.196f, 0.196f);
+glm::vec3 GLRenderCanvas::m_clearColour(0.3f, 0.3f, 0.3f);
 
 GLRenderCanvas::GLRenderCanvas(
 	wxWindow *parent
@@ -41,7 +42,8 @@ GLRenderCanvas::GLRenderCanvas(
 	m_context(NULL),
 	m_camera(new OrbitCamera(glm::vec3(100.0f, 0.0f, 0.0f))),
 	m_shaderManager(new ShaderManager()),
-	m_initialised(false)
+	m_initialised(false),
+	m_lightPosition(1000.0f, 1000.0f, 0.0f, 1.0f)
 {
 }
 
@@ -226,11 +228,14 @@ void GLRenderCanvas::OnMouseMove(
 
 		if(diffX != 0 || diffY != 0)
 		{
-			// For now rotate everything
-			Renderables::const_iterator renderableIterator;
-			for(renderableIterator = m_renderables.begin(); renderableIterator != m_renderables.end(); renderableIterator++)
+			if(diffX != 0)
 			{
-				(*renderableIterator)->Rotate((diffX / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 400, (diffY / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 400);
+				m_camera->RotateAroundY((diffX / wxSystemSettings::GetMetric (wxSYS_SCREEN_X)) * 100);
+			}
+
+			if(diffY != 0)
+			{
+				m_camera->RotateAroundX((diffY / wxSystemSettings::GetMetric (wxSYS_SCREEN_Y)) * 100);
 			}
 		}
 	}
@@ -243,6 +248,13 @@ void GLRenderCanvas::OnMouseMove(
 void GLRenderCanvas::CentreCamera()
 {
 	m_camera->Reset();
+}
+
+void GLRenderCanvas::SetLightPosition(
+	glm::vec4 position
+	)
+{
+	m_lightPosition = position;
 }
 
 void GLRenderCanvas::InitGL()
@@ -354,11 +366,12 @@ void GLRenderCanvas::Render(
 
 	glm::mat4x4 projectionMatrix = glm::perspective(40.0f, (float)width / (float) height, 1.0f, 600.f);
 
+	glm::vec4 lightPosition = viewMatrix * m_lightPosition;
 	
 	Renderables::const_iterator renderableIterator;
 	for(renderableIterator = m_renderables.begin(); renderableIterator != m_renderables.end(); renderableIterator++)
 	{
-		(*renderableIterator)->Render(*m_shaderManager, viewMatrix, projectionMatrix);
+		(*renderableIterator)->Render(*m_shaderManager, viewMatrix, projectionMatrix, lightPosition);
 	}
 
 	glFlush();

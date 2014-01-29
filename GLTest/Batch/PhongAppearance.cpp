@@ -16,10 +16,10 @@ void PhongAppearance::ConvertToShaderParams(
 {
 	// TODO need to be able to add more than one light
 	GLint lightAmbientLocation = glGetUniformLocation(programId, "light.ambient");
-	glUniform3f(lightAmbientLocation, 0.1f, 0.1f, 0.1f);
+	glUniform3f(lightAmbientLocation, 0.5f, 0.5f, 0.5f);
 
 	GLint lightDiffuseLocation = glGetUniformLocation(programId, "light.diffuse");
-	glUniform3f(lightDiffuseLocation, 0.5f, 0.5f, 0.5f);
+	glUniform3f(lightDiffuseLocation, 0.9f, 0.9f, 0.9f);
 
 	GLint lightSpecularLocation = glGetUniformLocation(programId, "light.specular");
 	glUniform3f(lightSpecularLocation, 0.9f, 0.9f, 0.9f);

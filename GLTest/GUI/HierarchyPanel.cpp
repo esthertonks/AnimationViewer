@@ -146,7 +146,9 @@ HierarchyPanel::HierarchyPanel(
 
 void HierarchyPanel::ClearData()
 {
+	SetEvtHandlerEnabled(false);
 	m_animationTree->DeleteAllItems();
+	SetEvtHandlerEnabled(true);
 
 	m_positionTextX->SetLabelText("");
 	m_positionTextY->SetLabelText("");

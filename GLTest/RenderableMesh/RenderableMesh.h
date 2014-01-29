@@ -41,20 +41,16 @@ public:
 		mesh::BoneNode *boneHierarchyRoot
 		);
 
-	virtual void Rotate(
-		const float rotY,
-		const float rotX
-		);
-
 	virtual void Render(
 		ShaderManager &shaderManager,
 		glm::mat4x4 &viewMatrix,
-		glm::mat4x4 &projectionMatrix
+		glm::mat4x4 &projectionMatrix,
+		glm::vec4 &lightPosition
 		);
 
 private:
 	bool UpdateInternal(
-		mesh::BoneNode *parent
+		mesh::BoneNode *node
 		);
 
 	render::PerNodeBatchList m_perNodeRenderBatches; //TODO rendermesh now is aware of nodes - do we really want this?

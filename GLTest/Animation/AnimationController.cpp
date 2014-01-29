@@ -19,38 +19,69 @@ AnimationController::AnimationController()
 	m_globalStartTime(0),
 	m_localCurrentTime(0),
 	m_animStartTime(0),
-	m_animEndTime(0)
+	m_animEndTime(0),
+	m_isLooping(true),
+	m_isAnimating(false),
+	m_isPaused(false)
 {
 
 
 }
 
-void AnimationController::StartAnimation(
+bool AnimationController::StartAnimation(
 	long globalStartTime,
 	long animStartTime,
 	long animEndTime
 	)
 {
+	if(animEndTime == 0)
+	{
+		return false;
+	}
+
 	m_globalStartTime = globalStartTime;
 
 	// Calculate the start and end times for this animation
 	m_animStartTime = animStartTime;
 	m_animEndTime = animEndTime;
+
+	m_isAnimating = true;
+	m_isPaused = false;
+
+	return true;
 }
 
-// TODO the bone list is currently controlling this = shouldn't be??!
+bool AnimationController::ResumeAnimation()
+{
+	if(!m_isPaused)
+	{
+		return false;
+	}
+
+	m_isAnimating = true;
+	m_isPaused = false;
+
+	return true;
+}
+
 void AnimationController::PauseAnimation()
 {
-	m_globalStartTime = 0;
+	if(m_isAnimating)
+	{
+		m_isAnimating = false;
+		m_isPaused = true;
+	}
 }
 
-// TODO the bone list is currently controlling this = shouldn't be??!
 void AnimationController::StopAnimation()
 {
 	m_globalStartTime = 0;
-	m_localCurrentTime = 0;//TODO use floats and seconds for times????
+	m_localCurrentTime = 0;
 	m_animEndTime = 0;
 	m_animStartTime = 0;
+
+	m_isAnimating = false;
+	m_isPaused = false;
 }
 
 void AnimationController::ClampTime()
@@ -168,6 +199,7 @@ void AnimationController::PrepareBoneHierarcy(
 		{
 			FbxAMatrix localTranslationMatrix;
 			localTranslationMatrix.SetT(localPositionKey.m_vector);
+
 			globalTransform = localTranslationMatrix * localRotationMatrix * localScaleMatrix;
 
 			if(boneNode->m_firstChild)
