@@ -64,6 +64,10 @@ class AnimationApp: public wxApp
 
 	void CentreCamera();
 
+	void SetLightPosition(
+		glm::vec4 lightPosition
+	);
+
 	static wxColour m_guiBackgroundColour;
 	static wxColour m_guiTextColour;
 

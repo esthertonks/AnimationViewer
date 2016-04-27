@@ -623,6 +623,7 @@ void FBXImport::LoadMaterials(
 			for(int textureIndex = 0; textureIndex < 1; textureIndex++)
 			{
 				FbxFileTexture* fbxFileTexture = materialProperty.GetSrcObject<FbxFileTexture>(textureIndex);
+				std::string texturePath = fbxFileTexture->GetFileName();
 				if(fbxFileTexture != NULL && boost::filesystem::exists(fbxFileTexture->GetFileName()))
 				{
 					appearance->SetDiffuseTexturePath(fbxFileTexture->GetFileName());

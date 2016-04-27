@@ -80,6 +80,15 @@ public:
 
 	void CentreCamera();
 
+	void SetLightPosition(
+		glm::vec4 position
+		);
+
+	const glm::vec4 &GetLightPosition()
+	{
+		return m_lightPosition;
+	}
+
 	void InitGL();
 
 	void AddRenderable(
@@ -108,10 +117,6 @@ protected:
 
 private:
 	void Render();
-
-	void SetLightPosition(
-		glm::vec4 position
-		);
 
 	wxGLContext* m_context;
 

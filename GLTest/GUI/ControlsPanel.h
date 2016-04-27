@@ -21,12 +21,14 @@ class ControlsPanel : public wxPanel
 	);
 
 	HierarchyPanel& GetHierarchyPanel();
+	AnimationPanel& GetAnimationPanel();
+	ViewPanel& GetViewPanel();
 
 	protected:
 
 private:
-	ViewPanel *viewPanel;
-	AnimationPanel *animationPanel;
+	ViewPanel *m_viewPanel;
+	AnimationPanel *m_animationPanel;
 	HierarchyPanel *m_hierarchyPanel;
 };
 

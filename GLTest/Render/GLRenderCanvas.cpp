@@ -43,7 +43,7 @@ GLRenderCanvas::GLRenderCanvas(
 	m_camera(new OrbitCamera(glm::vec3(100.0f, 0.0f, 0.0f))),
 	m_shaderManager(new ShaderManager()),
 	m_initialised(false),
-	m_lightPosition(1000.0f, 1000.0f, 0.0f, 1.0f)
+	m_lightPosition(1000.0f, 1000.0f, 50.0f, 1.0f)
 {
 }
 

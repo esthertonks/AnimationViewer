@@ -1,6 +1,7 @@
 #pragma once
 
 #include "wx/wx.h"
+#include "glm\glm.hpp"
 
 namespace gui
 {
@@ -13,6 +14,12 @@ class ViewPanel : public wxPanel
 		wxWindow *parent
 	);
 
+	void Initialise(
+		glm::vec4 lightPosition,
+		bool showBones,
+		bool showMesh
+	);
+
 	void OnCheckboxClicked(
 		wxCommandEvent& event
 		);
@@ -21,8 +28,25 @@ class ViewPanel : public wxPanel
 		wxCommandEvent& event
 		);
 
+	void OnSetLightPositionClicked(
+		wxCommandEvent& event
+		);
+
 	protected:
 		DECLARE_EVENT_TABLE()
+
+	private:
+
+	float m_xPositionValue;
+	float m_yPositionValue;
+	float m_zPositionValue;
+
+	wxCheckBox *m_meshCheckBox;
+	wxCheckBox *m_bonesCheckBox;
+
+	wxTextCtrl *m_lightPositionX;
+	wxTextCtrl *m_lightPositionY;
+	wxTextCtrl *m_lightPositionZ;
 };
 
 }

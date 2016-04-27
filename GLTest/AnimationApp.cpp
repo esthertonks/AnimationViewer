@@ -10,6 +10,7 @@
 #include "RenderableMesh/RenderableBoneList.h"
 #include "GUI/ControlsPanel.h"
 #include "GUI/HierarchyPanel.h"
+#include "GUI/ViewPanel.h""
 #include "Mesh/AnimationInfo.h"
 #include "Animation/AnimationController.h"
 
@@ -36,6 +37,7 @@ bool AnimationApp::OnInit()
 	wxBoxSizer *rightVerticalSizer = new wxBoxSizer(wxVERTICAL);
 
 	m_controlsPanel = new gui::ControlsPanel(frame, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER);//TODO create class
+	m_controlsPanel->GetViewPanel().Initialise(m_renderCanvas->GetLightPosition(), m_boneOverlay != NULL ? true : false, true);
 	leftVerticalSizer->Add(m_controlsPanel, 1, wxALIGN_LEFT | wxEXPAND, 0);
 	rightVerticalSizer->Add(m_renderCanvas, 1, wxALIGN_RIGHT | wxEXPAND, 0);
 	horizontalSizer->Add(leftVerticalSizer, 25, wxEXPAND);
@@ -267,8 +269,15 @@ void AnimationApp::LoopAnimation(
 
 void AnimationApp::CentreCamera()
 {
-				//TODO focus on mesh if the mesh has moved from zero
+	//TODO focus on mesh if the mesh has moved from zero
 	m_renderCanvas->CentreCamera();
+}
+
+void AnimationApp::SetLightPosition(
+	glm::vec4 lightPosition
+	)
+{
+	m_renderCanvas->SetLightPosition(lightPosition);
 }
 
 void AnimationApp::Destroy()
