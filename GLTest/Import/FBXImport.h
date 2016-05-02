@@ -85,11 +85,21 @@ private:
 		@brief Loads a material id for the given triangle
 	*/
 	void LoadMaterials(
-	FbxMesh &fbxMesh,			// FBX mesh to import data from
-	int triangleIndex,			// Index of the current triangle being loaded
-	mesh::MeshNode &meshNode,	// The mesh node which will store the imported material and texture data
-	render::AppearanceTable &appearanceTable,
-	std::vector<unsigned int> &numVerticesPerMaterial
+		FbxMesh &fbxMesh,			// FBX mesh to import data from
+		int triangleIndex,			// Index of the current triangle being loaded
+		mesh::MeshNode &meshNode,	// The mesh node which will store the imported material and texture data
+		render::AppearanceTable &appearanceTable,
+		std::vector<unsigned int> &numVerticesPerMaterial
+		);
+
+	/**
+		@brief Creates a dummy material and assigns it to the mesh appearance table
+	*/
+	void AssignDummyMaterial(
+		int triangleIndex,			// Index of the current triangle being loaded
+		mesh::MeshNode &meshNode,	// The mesh node which will store the imported material and texture data
+		render::AppearanceTable &appearanceTable,
+		std::vector<unsigned int> &numVerticesPerMaterial
 		);
 
 	/**

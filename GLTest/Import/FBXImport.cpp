@@ -246,7 +246,7 @@ mesh::MeshNode *FBXImport::LoadMeshNode(
 		for(int triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
 		{
 			int triangleSize = fbxMesh->GetPolygonSize(triangleIndex);
-			assert(triangleSize == 3); // The mesh was triangulated above.
+			assert(triangleSize == 3); // The mesh was triangulated above. Maybe sure it really is triangulated.
 
 			mesh::Triangle &triangle = triangleArray[triangleIndex];
 
@@ -256,9 +256,9 @@ mesh::MeshNode *FBXImport::LoadMeshNode(
 			}
 			else
 			{
-				//TODO assign default material
+				// There is no material on the mesh. Create and assign a dummy material for this triangle.
+				AssignDummyMaterial(triangleIndex, *meshNode, meshNode->GetAppearanceTable(), meshNode->GetNumVerticesPerMaterialArray());
 			}
-
 			LoadVertexIndices(*fbxMesh, triangleIndex, triangle);
 
 			LoadColours(*fbxMesh, triangleIndex, triangle);
@@ -577,7 +577,6 @@ void FBXImport::LoadMaterials(
 	mesh::MeshNode &meshNode,	// The mesh node which will store the imported material and texture data
 	render::AppearanceTable &appearanceTable,
 	std::vector<unsigned int> &numVerticesPerMaterial
-
 	)
 {
 	const FbxGeometryElementMaterial &materialElement = *fbxMesh.GetElementMaterial(0); // Get the first material layer element. Only one is supported.
@@ -647,6 +646,35 @@ void FBXImport::LoadMaterials(
 	}
 }
 
+/**
+	@brief Creates a dummy material and assigns it to the mesh appearance table
+*/
+void FBXImport::AssignDummyMaterial(
+	int triangleIndex,			// Index of the current triangle being loaded
+	mesh::MeshNode &meshNode,	// The mesh node which will store the imported material and texture data
+	render::AppearanceTable &appearanceTable,
+	std::vector<unsigned int> &numVerticesPerMaterial
+	)
+{
+	render::AppearanceTableEntry materialInfo;
+
+	const int materialId = 0;
+	meshNode.m_triangleArray[triangleIndex].SetMaterialId(materialId);
+
+	numVerticesPerMaterial.push_back(0);// Add another int initialised at 0 for this material
+	render::AppearancePtr appearance = render::AppearancePtr(new render::LambertAppearance());
+
+	const FbxSurfaceLambert& lambertMaterial = *FbxSurfaceLambert::Create(m_fbxManager, "DummyMaterial");
+	AddLambertMaterial(appearance, lambertMaterial);
+
+	materialInfo.first = materialId;
+	materialInfo.second = appearance;
+	appearanceTable.insert(materialInfo);
+}
+
+/**
+	@brief Extracts info from an fbx phong material and stores it in the appearance table
+*/
 void FBXImport::AddPhongMaterial(
 	render::AppearancePtr appearance,// Appeararnce to store the data in
 	const FbxSurfacePhong& phongMaterial// FBX phong material to load info from
@@ -675,6 +703,9 @@ void FBXImport::AddPhongMaterial(
 	phongAppearancePtr->SetDiffuseFactor(diffuseFactor);
 }
 
+/**
+	@brief Extracts info from an fbx lambert material and stores it in the appearance table
+*/
 void FBXImport::AddLambertMaterial(
 	render::AppearancePtr appearance, // Appeararnce to store the data in
 	const FbxSurfaceLambert& lambertMaterial // FBX lambert material to load info from
