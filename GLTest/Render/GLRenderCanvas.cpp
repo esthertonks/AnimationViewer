@@ -266,23 +266,13 @@ void GLRenderCanvas::InitGL()
 	}
 
 	wxGLContextAttrs contextAttributes;
-	contextAttributes.CoreProfile().OGLVersion(3, 3).Robust().ResetIsolation().EndList();
-	//contextAttributes.AddAttribBits(WGL_CONTEXT_PROFILE_MASK_ARB, WGL_NEW_BITS);
-	contextAttributes.AddAttribBits(WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB);
+	contextAttributes.PlatformDefaults().CoreProfile().OGLVersion(3, 3).EndList();
 
 	m_context = new wxGLContext(this, NULL, &contextAttributes);
-	if (!m_context->IsOK())
-	{
-		delete m_context;
-		contextAttributes.Reset();
-
-		contextAttributes.PlatformDefaults().CoreProfile().OGLVersion(3, 2).EndList();
-		m_context = new wxGLContext(this, NULL, &contextAttributes);
-	}
 
 	if (!m_context->IsOK())
 	{
-		wxMessageBox("This sample needs an OpenGL 3.2 capable driver.\nThe app will end now.",
+		wxMessageBox("This sample needs an OpenGL 3.3 capable driver.\nThe application will now close.",
 			"OpenGL version error", wxOK | wxICON_INFORMATION, this);
 		delete m_context;
 		m_context = NULL;

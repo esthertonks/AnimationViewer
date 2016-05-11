@@ -36,12 +36,14 @@ bool AnimationApp::OnInit()
 	// Defaults should be accepted
 	attributes.PlatformDefaults().Defaults().EndList();
 	attributes.AddAttribute(WX_GL_CORE_PROFILE);
+
 	bool accepted = wxGLCanvas::IsDisplaySupported(attributes);
 
 	if (!accepted)
 	{
 		// Try again without sample buffers
 		attributes.Reset();
+		attributes.AddAttribute(WX_GL_CORE_PROFILE);
 		attributes.PlatformDefaults().RGBA().DoubleBuffer().Depth(16).EndList();
 		accepted = wxGLCanvas::IsDisplaySupported(attributes);
 
