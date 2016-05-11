@@ -13,7 +13,7 @@ bool GLUtils::CheckOpenGLError(
 	)
 {
 	GLenum glErr = glGetError();
-	if(glErr != GL_NO_ERROR)
+	if(glErr != GL_NO_ERROR && glErr != GL_INVALID_ENUM)
 	{
 		wxLogDebug("glError in file %s @ line %d: %s\n", file, line, gluErrorString(glErr));
 		glErr = glGetError();
@@ -34,16 +34,16 @@ void GLUtils::DebugPrintGLInfo()
 	glGetIntegerv(GL_MINOR_VERSION, &minor);
 
 	wxLogDebug("Renderer info: %s version %s from %s", renderer, version, vendor);
-	wxLogDebug("GL version major: %s minor: %s", major, minor);
+	wxLogDebug("GL version major: %d minor: %d", major, minor);
 
 	wxLogDebug("GLSL version: %s", glslVersion);
 
-	GLint numExtensions;
-	glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
-	for(int extension = 0; extension < numExtensions; extension++)
-	{
-		wxLogDebug("Extension: %s\n", glGetStringi(GL_EXTENSIONS, extension));
-	}
+	//GLint numExtensions;
+	//glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+	//for(int extension = 0; extension < numExtensions; extension++)
+	//{
+	//	wxLogDebug("Extension: %s\n", glGetStringi(GL_EXTENSIONS, extension));
+	//}
 }
 
 }

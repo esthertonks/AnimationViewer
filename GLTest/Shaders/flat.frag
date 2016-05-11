@@ -1,4 +1,4 @@
-#version 330
+#version 330 core
 
 flat in vec3 lightIntensity;
 

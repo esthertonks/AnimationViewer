@@ -25,7 +25,8 @@ class GLRenderCanvas : public wxGLCanvas
 public:
 
 	GLRenderCanvas(
-		wxWindow *parent
+		wxWindow *parent,
+		wxGLAttributes &attributeList
 	);
 
 	~GLRenderCanvas();

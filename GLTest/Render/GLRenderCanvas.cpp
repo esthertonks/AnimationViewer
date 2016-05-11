@@ -14,6 +14,8 @@
 #include "ShaderManager.h"
 #include "GLUtils.h"
 
+#include "GL/wglew.h"
+
 namespace render
 {
 
@@ -36,9 +38,10 @@ END_EVENT_TABLE()
 glm::vec3 GLRenderCanvas::m_clearColour(0.3f, 0.3f, 0.3f);
 
 GLRenderCanvas::GLRenderCanvas(
-	wxWindow *parent
+	wxWindow *parent,
+	wxGLAttributes &attributeList
 	)
-	: wxGLCanvas(parent, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER), 
+	: wxGLCanvas(parent, attributeList), 
 	m_context(NULL),
 	m_camera(new OrbitCamera(glm::vec3(100.0f, 0.0f, 0.0f))),
 	m_shaderManager(new ShaderManager()),
@@ -51,9 +54,6 @@ void GLRenderCanvas::OnSize(
 	wxSizeEvent& event
 	)
 {
-    // Necessary to update the context on some platforms
-    wxGLCanvas::OnSize(event);
-
 	if(m_context)
 	{
 		SetCurrent(*m_context);
@@ -265,7 +265,30 @@ void GLRenderCanvas::InitGL()
 		return;
 	}
 
-	m_context = new wxGLContext(this);
+	wxGLContextAttrs contextAttributes;
+	contextAttributes.CoreProfile().OGLVersion(3, 3).Robust().ResetIsolation().EndList();
+	//contextAttributes.AddAttribBits(WGL_CONTEXT_PROFILE_MASK_ARB, WGL_NEW_BITS);
+	contextAttributes.AddAttribBits(WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB);
+
+	m_context = new wxGLContext(this, NULL, &contextAttributes);
+	if (!m_context->IsOK())
+	{
+		delete m_context;
+		contextAttributes.Reset();
+
+		contextAttributes.PlatformDefaults().CoreProfile().OGLVersion(3, 2).EndList();
+		m_context = new wxGLContext(this, NULL, &contextAttributes);
+	}
+
+	if (!m_context->IsOK())
+	{
+		wxMessageBox("This sample needs an OpenGL 3.2 capable driver.\nThe app will end now.",
+			"OpenGL version error", wxOK | wxICON_INFORMATION, this);
+		delete m_context;
+		m_context = NULL;
+		return;
+	}
+
 
 	SetCurrent(*m_context);
 
@@ -304,7 +327,7 @@ void GLRenderCanvas::InitGL()
 
 	m_initialised = true;
 
-	//DebugPrintGLInfo();
+	utils::GLUtils::DebugPrintGLInfo();
 }
 
 void GLRenderCanvas::Paint(
