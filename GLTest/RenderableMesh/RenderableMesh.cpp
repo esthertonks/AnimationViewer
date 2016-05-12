@@ -1,6 +1,6 @@
 #include "RenderableMesh.h"
 #include "../Render/ShaderManager.h"
-#include "../Batch/BatchProcessor.h"
+#include "BatchCreator.h"
 #include "../Batch/Batch.h"
 #include "../Mesh/BoneNode.h"
 #include "../Utils/MathsUtils.h"
@@ -20,7 +20,7 @@ bool RenderableMesh::Create()
 {	
 	assert(m_mesh);
 
-	batch::BatchCreator meshBatchCreator;
+	render::BatchCreator meshBatchCreator;
 		
 	meshBatchCreator.CreateBatches(m_mesh, m_perNodeRenderBatches);
 		

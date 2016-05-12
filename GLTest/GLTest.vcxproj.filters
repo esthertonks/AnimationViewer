@@ -56,9 +56,6 @@
     <ClCompile Include="Batch\Batch.cpp">
       <Filter>Batch</Filter>
     </ClCompile>
-    <ClCompile Include="Batch\BatchProcessor.cpp">
-      <Filter>Batch</Filter>
-    </ClCompile>
     <ClCompile Include="Batch\LambertAppearance.cpp">
       <Filter>Batch</Filter>
     </ClCompile>
@@ -132,6 +129,11 @@
       <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="RenderableMesh\RenderableNormalsList.cpp" />
+    <ClCompile Include="RenderableMesh\BatchCreator.cpp">
+      <Filter>Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableMesh\BoneListCreator.cpp" />
+    <ClCompile Include="RenderableMesh\NormalListCreator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
@@ -151,9 +153,6 @@
       <Filter>Batch</Filter>
     </ClInclude>
     <ClInclude Include="Batch\Batch.h">
-      <Filter>Batch</Filter>
-    </ClInclude>
-    <ClInclude Include="Batch\BatchProcessor.h">
       <Filter>Batch</Filter>
     </ClInclude>
     <ClInclude Include="Batch\VertexFormat.h">
@@ -259,6 +258,11 @@
       <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="RenderableMesh\RenderableNormalsList.h" />
+    <ClInclude Include="RenderableMesh\BatchCreator.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableMesh\BoneListCreator.h" />
+    <ClInclude Include="RenderableMesh\NormalListCreator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Diffuse.frag">

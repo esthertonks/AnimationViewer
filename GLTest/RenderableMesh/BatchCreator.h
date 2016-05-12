@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BatchFwdDecl.h"
+#include "../Batch/BatchFwdDecl.h"
 #include "../Mesh/MeshFwdDecl.h"
 #include <vector>
 
@@ -10,13 +10,9 @@ namespace mesh
 	class MeshNode;
 }
 
-namespace render //TODO render or batch namespace?
+namespace render
 {
-	class Batch;
-}
-
-namespace batch
-{
+class Batch;
 
 class BatchCreator
 {

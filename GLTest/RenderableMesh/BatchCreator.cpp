@@ -1,4 +1,4 @@
-#include "BatchProcessor.h"
+#include "BatchCreator.h"
 #include "../Mesh/Mesh.h"
 #include "../Mesh/MeshNode.h"
 #include "../Mesh/BoneNode.h"
@@ -11,7 +11,7 @@
 
 #include <wx\log.h>
 
-namespace batch
+namespace render
 {
 
 #define DOT_THESHOLD         0.9999f        /* Closeness to a dot product of 1 at which two normals are considered the same */

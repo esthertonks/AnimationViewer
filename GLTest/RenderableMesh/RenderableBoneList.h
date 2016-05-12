@@ -44,10 +44,6 @@ public:
 		);
 
 private:
-	void AddPositionToVertexList(
-		mesh::BoneNode *boneHierarchyRoot
-	);
-
 	void Prepare();
 
 	ColourVertexArrayPtr m_vertexArray;
