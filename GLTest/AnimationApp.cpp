@@ -142,9 +142,9 @@ void AnimationApp::ImportFBX(
 	m_currentMeshInfo.m_mesh = m_fbxImporter->Import(filePath);
 	if(m_currentMeshInfo.m_mesh)
 	{
-		render::RenderableMeshPtr renderableMesh = render::RenderableMeshPtr(new render::RenderableMesh());
+		render::RenderableMeshPtr renderableMesh = render::RenderableMeshPtr(new render::RenderableMesh(m_currentMeshInfo.m_mesh));
 
-		if(renderableMesh->Create(m_currentMeshInfo.m_mesh))
+		if(renderableMesh->Create())
 		{
 			render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(renderableMesh);
 			m_renderCanvas->AddRenderable(renderable);
@@ -198,7 +198,7 @@ void AnimationApp::ShowBones(
 	{
 		render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(render::RenderableBoneListPtr(new render::RenderableBoneList()));
 
-		if(renderable->Create(m_currentMeshInfo.m_mesh))
+		if(renderable->Create())
 		{
 			m_renderCanvas->AddOverlay(renderable);
 			m_boneOverlay = renderable;
@@ -239,7 +239,7 @@ void AnimationApp::ShowNormals(
 	{
 		render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(render::RenderableNormalsListPtr(new render::RenderableNormalsList()));
 
-		if (renderable->Create(m_currentMeshInfo.m_mesh))
+		if (renderable->Create())
 		{
 			m_renderCanvas->AddOverlay(renderable);
 			m_normalsOverlay = renderable;

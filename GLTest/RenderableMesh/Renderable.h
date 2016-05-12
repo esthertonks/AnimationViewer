@@ -25,9 +25,7 @@ public:
 
 	virtual ~Renderable();
 
-	virtual bool Create(
-		mesh::MeshPtr mesh
-		) = 0;
+	virtual bool Create() = 0;
 
 	virtual bool Update(
 		mesh::BoneNode *boneHierarchyRoot

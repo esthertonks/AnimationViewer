@@ -15,9 +15,7 @@ RenderableBoneList::RenderableBoneList()
 {
 }
 
-bool RenderableBoneList::Create(
-	mesh::MeshPtr mesh // Ignored - this particular overlay doesnt need the mesh itself
-	)
+bool RenderableBoneList::Create()
 {		
 	m_numVerts = 0;
 	return true;

@@ -24,7 +24,9 @@ class RenderableMesh : public Renderable
 
 public:
 
-	RenderableMesh();
+	RenderableMesh(
+		mesh::MeshPtr mesh
+	);
 
 	~RenderableMesh();
 
@@ -33,9 +35,7 @@ public:
 		return m_perNodeRenderBatches;
 	}
 
-	bool Create(
-		mesh::MeshPtr mesh
-		);
+	bool Create();
 
 	virtual bool Update(
 		mesh::BoneNode *boneHierarchyRoot
@@ -55,5 +55,6 @@ private:
 
 	render::PerNodeBatchList m_perNodeRenderBatches; //TODO rendermesh now is aware of nodes - do we really want this?
 	std::vector<glm::mat4x4> m_matrixPalette;//TODO 4x3
+	mesh::MeshPtr m_mesh;
 };
 }

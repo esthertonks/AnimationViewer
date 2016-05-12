@@ -6,9 +6,7 @@ namespace render {
 	{
 	}
 
-	bool RenderableNormalsList::Create(
-		mesh::MeshPtr mesh
-	)
+	bool RenderableNormalsList::Create()
 	{
 		return true;
 	}

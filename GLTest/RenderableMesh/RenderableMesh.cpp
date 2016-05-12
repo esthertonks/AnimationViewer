@@ -8,18 +8,21 @@
 namespace render
 {
 
-RenderableMesh::RenderableMesh()
+RenderableMesh::RenderableMesh(
+	mesh::MeshPtr mesh
+)
 	: Renderable()
 {
+	m_mesh = mesh;
 }
 
-bool RenderableMesh::Create(
-	mesh::MeshPtr mesh //TODO FIXME dont want to be passing this in here.
-	)
+bool RenderableMesh::Create()
 {	
+	assert(m_mesh);
+
 	batch::BatchCreator meshBatchCreator;
 		
-	meshBatchCreator.CreateBatches(mesh, m_perNodeRenderBatches);
+	meshBatchCreator.CreateBatches(m_mesh, m_perNodeRenderBatches);
 		
 	meshBatchCreator.PrepareBatches(m_perNodeRenderBatches);
 

@@ -10,9 +10,7 @@ namespace render
 		RenderableNormalsList();
 		~RenderableNormalsList();
 
-		virtual bool Create(
-			mesh::MeshPtr mesh
-		);
+		virtual bool Create();
 
 		virtual bool Update(
 			mesh::BoneNode *boneHierarchyRoot
