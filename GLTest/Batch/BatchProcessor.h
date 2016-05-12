@@ -18,11 +18,11 @@ namespace render //TODO render or batch namespace?
 namespace batch
 {
 
-class BatchProcessor
+class BatchCreator
 {
 public:
-	BatchProcessor();
-	~BatchProcessor();
+	BatchCreator();
+	~BatchCreator();
 
 	void CreateBatches(
 		mesh::MeshPtr &mesh,
@@ -36,14 +36,14 @@ public:
 		std::vector<int> &perMaterialOldToNewVertexIndexMap
 		);
 
-	void BatchProcessor::PrepareBatches(
+	void BatchCreator::PrepareBatches(
 		render::PerNodeBatchList &perNodeRenderBatches
 		);
 
 	void SortBatches();//TODO
 
 private:
-	void BatchProcessor::CreateBatchesInternal(
+	void BatchCreator::CreateBatchesInternal(
 		mesh::MeshPtr &mesh,
 		mesh::MeshNode* meshNode,
 		render::PerNodeBatchList &perNodeRenderBatches // Map of Batch vector lists to fill in - one for each mesh node (ie one per unique model matrix)

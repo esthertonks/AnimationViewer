@@ -17,11 +17,11 @@ bool RenderableMesh::Create(
 	mesh::MeshPtr mesh //TODO FIXME dont want to be passing this in here.
 	)
 {	
-	batch::BatchProcessor meshBatchProcessor; // FIXME rename to batchCreator? Also normals list creator, bone list creator etc
+	batch::BatchCreator meshBatchCreator;
 		
-	meshBatchProcessor.CreateBatches(mesh, m_perNodeRenderBatches);
+	meshBatchCreator.CreateBatches(mesh, m_perNodeRenderBatches);
 		
-	meshBatchProcessor.PrepareBatches(m_perNodeRenderBatches);
+	meshBatchCreator.PrepareBatches(m_perNodeRenderBatches);
 
 	return true;
 }

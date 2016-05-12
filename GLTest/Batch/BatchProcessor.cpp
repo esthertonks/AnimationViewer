@@ -16,12 +16,12 @@ namespace batch
 
 #define DOT_THESHOLD         0.9999f        /* Closeness to a dot product of 1 at which two normals are considered the same */
 
-BatchProcessor::BatchProcessor()
+BatchCreator::BatchCreator()
 {
 }
 
 
-BatchProcessor::~BatchProcessor()
+BatchCreator::~BatchCreator()
 {
 }
 
@@ -29,7 +29,7 @@ BatchProcessor::~BatchProcessor()
 //https://developer.apple.com/library/ios/documentation/3ddrawing/conceptual/opengles_programmingguide/TechniquesforWorkingwithVertexData/TechniquesforWorkingwithVertexData.html
 
 // Create per vertex data in per material batches. Extra vertices are created to accommodate per triangle corner information.
-void BatchProcessor::CreateBatches(
+void BatchCreator::CreateBatches(
 	mesh::MeshPtr &mesh,
 	render::PerNodeBatchList &perNodeRenderBatches // Batch vector to fill in
 	)
@@ -44,7 +44,7 @@ void BatchProcessor::CreateBatches(
 }
 
 
-void BatchProcessor::CreateBatchesInternal(
+void BatchCreator::CreateBatchesInternal(
 	mesh::MeshPtr &mesh,
 	mesh::MeshNode* meshNode,
 	render::PerNodeBatchList &perNodeRenderBatches // Batch vector to fill in
@@ -155,7 +155,7 @@ void BatchProcessor::CreateBatchesInternal(
 }
 
 //TODO override equals?
-void BatchProcessor::AddDuplicateVertex(
+void BatchCreator::AddDuplicateVertex(
 	const int oldVertexIndex,
 	const render::TexturedSkinnedVertex &currentVertex,
 	render::Batch &batch,
@@ -183,7 +183,7 @@ void BatchProcessor::AddDuplicateVertex(
 	batch.AddIndex(newIndex);
 }
 
-void BatchProcessor::PrepareBatches(
+void BatchCreator::PrepareBatches(
 	render::PerNodeBatchList &perNodeRenderBatches
 	)
 {
@@ -203,7 +203,7 @@ void BatchProcessor::PrepareBatches(
 	}
 }
 
-void BatchProcessor::SortBatches()
+void BatchCreator::SortBatches()
 {
 
 }
