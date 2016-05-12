@@ -131,6 +131,7 @@
     <ClCompile Include="GUI\HierarchyPanel.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="RenderableMesh\RenderableNormalsList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
@@ -257,6 +258,7 @@
     <ClInclude Include="GUI\HierarchyPanel.h">
       <Filter>GUI</Filter>
     </ClInclude>
+    <ClInclude Include="RenderableMesh\RenderableNormalsList.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Diffuse.frag">

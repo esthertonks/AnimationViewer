@@ -90,6 +90,7 @@ class AnimationApp: public wxApp
 	CurrentMeshInfo m_currentMeshInfo;
 
 	render::RenderablePtr m_boneOverlay;
+	render::RenderablePtr m_normalsOverlay;
 	animation::AnimationControllerPtr m_meshAnimator;
 
 	gui::ControlsPanel *m_controlsPanel;

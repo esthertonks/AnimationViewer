@@ -10,6 +10,7 @@ namespace gui
 	{
 		BonesCheckbox = wxID_HIGHEST + 200,
 		MeshCheckbox,
+		NormalsCheckbox,
 		CentreCamera,
 		SetLightPosition
 	};
@@ -17,6 +18,7 @@ namespace gui
 BEGIN_EVENT_TABLE(ViewPanel, wxPanel)
 	EVT_CHECKBOX(BonesCheckbox, ViewPanel::OnCheckboxClicked)
 	EVT_CHECKBOX(MeshCheckbox, ViewPanel::OnCheckboxClicked)
+	EVT_CHECKBOX(NormalsCheckbox, ViewPanel::OnCheckboxClicked)
 	EVT_BUTTON(CentreCamera, ViewPanel::OnCentreCameraClicked)
 	EVT_BUTTON(SetLightPosition, ViewPanel::OnSetLightPositionClicked)
 END_EVENT_TABLE()
@@ -34,16 +36,23 @@ ViewPanel::ViewPanel(
 
 	m_bonesCheckBox = new wxCheckBox(this, BonesCheckbox, wxT("Show Bones"));
 	m_bonesCheckBox->SetForegroundColour(AnimationApp::m_guiTextColour);
-	m_bonesCheckBox->SetValue(false);
+	//m_bonesCheckBox->SetValue(false);
 	m_bonesCheckBox->SetToolTip(wxT("Show bone overlay for current mesh"));
 	sizer->Add(m_bonesCheckBox, 0, wxALIGN_LEFT | wxALL, 10);
 
 	m_meshCheckBox = new wxCheckBox(this, MeshCheckbox, wxT("Show Mesh"));
 	m_meshCheckBox->SetForegroundColour(AnimationApp::m_guiTextColour);
-	m_meshCheckBox->SetValue(true);
+	//m_meshCheckBox->SetValue(true);
 	m_meshCheckBox->SetToolTip(wxT("Show the current mesh"));
 
 	sizer->Add(m_meshCheckBox, 0, wxALIGN_LEFT | wxALL, 10);
+
+	m_normalsCheckBox = new wxCheckBox(this, NormalsCheckbox, wxT("Show Normals"));
+	m_normalsCheckBox->SetForegroundColour(AnimationApp::m_guiTextColour);
+	//m_normalsCheckBox->SetValue(false);
+	m_normalsCheckBox->SetToolTip(wxT("Show normals overaly for the current mesh"));
+
+	sizer->Add(m_normalsCheckBox, 0, wxALIGN_LEFT | wxALL, 10);
 
 	wxButton *centreCameraButton = new wxButton(this, CentreCamera, wxT("Centre Camera"));
 	centreCameraButton->SetToolTip(wxT("Reset the camera to look directly at the mesh"));
@@ -94,7 +103,8 @@ ViewPanel::ViewPanel(
 void ViewPanel::Initialise(
 	glm::vec4 lightPosition,
 	bool showBones,
-	bool showMesh
+	bool showMesh,
+	bool showNormals
 )
 {
 	m_xPositionValue = lightPosition.x;
@@ -107,6 +117,7 @@ void ViewPanel::Initialise(
 
 	m_bonesCheckBox->SetValue(showBones);
 	m_meshCheckBox->SetValue(showMesh);
+	m_normalsCheckBox->SetValue(showNormals);
 }
 
 void ViewPanel::OnCheckboxClicked(
@@ -120,9 +131,9 @@ void ViewPanel::OnCheckboxClicked(
 		wxGetApp().ShowBones(event.GetInt() ? true : false);
 		break;
 
-	//case ID_NORMALS_CHECKBOX:
-	//	wxGetApp().ShowNormals(event.GetInt() ? true : false);
-	//	break;
+	case NormalsCheckbox:
+		wxGetApp().ShowNormals(event.GetInt() ? true : false);
+		break;
 
 	case MeshCheckbox:
 		wxGetApp().ShowMesh(event.GetInt() ? true : false);

@@ -111,6 +111,7 @@
     <ClCompile Include="RenderableMesh\Renderable.cpp" />
     <ClCompile Include="RenderableMesh\RenderableBoneList.cpp" />
     <ClCompile Include="RenderableMesh\RenderableMesh.cpp" />
+    <ClCompile Include="RenderableMesh\RenderableNormalsList.cpp" />
     <ClCompile Include="Render\FirstPersonCamera.cpp" />
     <ClCompile Include="Render\GLUtils.cpp" />
     <ClCompile Include="Render\OrbitCamera.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="RenderableMesh\Renderable.h" />
     <ClInclude Include="RenderableMesh\RenderableBoneList.h" />
     <ClInclude Include="RenderableMesh\RenderableMesh.h" />
+    <ClInclude Include="RenderableMesh\RenderableNormalsList.h" />
     <ClInclude Include="Render\FirstPersonCamera.h" />
     <ClInclude Include="Render\GLUtils.h" />
     <ClInclude Include="Render\OrbitCamera.h" />

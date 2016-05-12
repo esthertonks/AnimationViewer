@@ -8,14 +8,12 @@
 #include "RenderableMesh/Renderable.h"
 #include "RenderableMesh/RenderableMesh.h"
 #include "RenderableMesh/RenderableBoneList.h"
+#include "RenderableMesh/RenderableNormalsList.h"
 #include "GUI/ControlsPanel.h"
 #include "GUI/HierarchyPanel.h"
 #include "GUI/ViewPanel.h"
 #include "Mesh/AnimationInfo.h"
 #include "Animation/AnimationController.h"
-
-const int ID_BONES_CHECKBOX = 100;
-const int ID_NORMALS_CHECKBOX = 101;
 
 IMPLEMENT_APP(AnimationApp)
 
@@ -60,7 +58,7 @@ bool AnimationApp::OnInit()
 	wxBoxSizer *rightVerticalSizer = new wxBoxSizer(wxVERTICAL);
 
 	m_controlsPanel = new gui::ControlsPanel(frame, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER);//TODO create class
-	m_controlsPanel->GetViewPanel().Initialise(m_renderCanvas->GetLightPosition(), m_boneOverlay != NULL ? true : false, true);
+	m_controlsPanel->GetViewPanel().Initialise(m_renderCanvas->GetLightPosition(), m_boneOverlay != NULL ? true : false, true, false);
 	leftVerticalSizer->Add(m_controlsPanel, 1, wxEXPAND, 0);
 	rightVerticalSizer->Add(m_renderCanvas, 1, wxEXPAND, 0);
 	horizontalSizer->Add(leftVerticalSizer, 25, wxEXPAND);
@@ -230,6 +228,32 @@ void AnimationApp::ShowMesh(
 	else
 	{
 		m_renderCanvas->RemoveRenderable(m_currentMeshInfo.m_renderMesh);
+	}
+}
+
+void AnimationApp::ShowNormals(
+	bool show
+)
+{
+	if (show && m_currentMeshInfo.m_mesh) // If there is no mesh do nothing
+	{
+		render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(render::RenderableNormalsListPtr(new render::RenderableNormalsList()));
+
+		if (renderable->Create(m_currentMeshInfo.m_mesh))
+		{
+			m_renderCanvas->AddOverlay(renderable);
+			m_normalsOverlay = renderable;
+			//m_normalsOverlay->Update(m_currentMeshInfo.m_renderMesh->);
+		}
+		else
+		{
+			m_normalsOverlay = NULL;
+		}
+	}
+	else
+	{
+		m_renderCanvas->RemoveRenderable(m_normalsOverlay);
+		m_normalsOverlay = NULL;
 	}
 }
 

@@ -14,10 +14,10 @@ RenderableMesh::RenderableMesh()
 }
 
 bool RenderableMesh::Create(
-	mesh::MeshPtr mesh
+	mesh::MeshPtr mesh //TODO FIXME dont want to be passing this in here.
 	)
 {	
-	batch::BatchProcessor meshBatchProcessor;
+	batch::BatchProcessor meshBatchProcessor; // FIXME rename to batchCreator? Also normals list creator, bone list creator etc
 		
 	meshBatchProcessor.CreateBatches(mesh, m_perNodeRenderBatches);
 		
@@ -111,7 +111,7 @@ void RenderableMesh::Render(
 
 					//TODO this should not be here - light class please. Also the other light params currently in the appearances should be in the same place as this...
 					GLint lightPositionLocation = glGetUniformLocation(programId, "light.position");
-					lightPosition = viewMatrix * lightPosition;
+					//lightPosition = viewMatrix * lightPosition;
 					glUniform4f(lightPositionLocation, lightPosition.x, lightPosition.y, lightPosition.z, lightPosition.w);
 
 					glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &(*batchIterator)->GetModelMatrix()[0][0]);//TODO pass fewer matrices through!!!

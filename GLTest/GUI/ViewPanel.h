@@ -17,7 +17,8 @@ class ViewPanel : public wxPanel
 	void Initialise(
 		glm::vec4 lightPosition,
 		bool showBones,
-		bool showMesh
+		bool showMesh,
+		bool showNormals
 	);
 
 	void OnCheckboxClicked(
@@ -43,6 +44,7 @@ class ViewPanel : public wxPanel
 
 	wxCheckBox *m_meshCheckBox;
 	wxCheckBox *m_bonesCheckBox;
+	wxCheckBox *m_normalsCheckBox;
 
 	wxTextCtrl *m_lightPositionX;
 	wxTextCtrl *m_lightPositionY;
