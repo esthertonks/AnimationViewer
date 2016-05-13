@@ -197,7 +197,7 @@ void BatchCreator::PrepareBatches(
 		{
 			if(*batchIterator != NULL) // This will be a case if an appearance exists but is not uses by this node //TODO get rid of this?
 			{
-				(*batchIterator)->Prepare();
+				(*batchIterator)->PrepareForRendering();
 			}
 		}
 	}

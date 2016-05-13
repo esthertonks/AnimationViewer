@@ -83,7 +83,7 @@ void AnimationApp::OnIdle(
 	wxIdleEvent& evt
 	)
 {
-	//Prepare Mesh - update animation
+	//PrepareForRendering Mesh - update animation
 	DWORD timeNow = timeGetTime();
 
 	if(m_currentMeshInfo.m_renderMesh)

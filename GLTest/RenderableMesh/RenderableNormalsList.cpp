@@ -23,12 +23,12 @@ namespace render {
 
 		//CreateVertexListFromBonePositions(boneHierarchyRoot);
 		//m_numVerts = m_vertexArray.size(); // Keep a record of the new verts so that the draw calls can use it
-		Prepare(); // Prepare for rendering
+		PrepareForRendering(); // PrepareForRendering for rendering
 		//		   //wxLogDebug("tick3");
 		return true;
 	}
 
-	void RenderableNormalsList::Prepare()
+	void RenderableNormalsList::PrepareForRendering()
 	{
 		///////////////////// Create the VBO ////////////////////
 		//// Create and set-up the vertex array object

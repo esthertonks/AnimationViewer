@@ -45,12 +45,10 @@ public:
 		);
 
 private:
-	void Prepare();
+	void PrepareForRendering();
 
-	ColourVertexArrayPtr m_vertexArray;
 	GLuint m_vertexArrayHandle;
 	GLuint m_positionBufferHandle;
-	int m_numVerts;
 	VertexListCreatorPtr m_boneVertexListCreator;
 };
 }

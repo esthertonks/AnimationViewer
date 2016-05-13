@@ -24,7 +24,7 @@ namespace render
 		);
 
 	private:
-		void Prepare();
+		void PrepareForRendering();
 
 	};
 }

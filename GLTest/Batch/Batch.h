@@ -80,7 +80,7 @@ public:
 										const unsigned short numIndices
 										);
 
-	void Prepare();
+	void PrepareForRendering();
 
 	void Batch::PrepareShaderParams(
 		GLuint programId

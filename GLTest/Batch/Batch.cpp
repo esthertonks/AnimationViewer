@@ -50,7 +50,7 @@ ShaderProgramType Batch::GetShaderProgramType()
 	return m_appearance->GetType();
 };
 
-void Batch::Prepare()
+void Batch::PrepareForRendering()
 {
 	//for each in batchlist
 	//create and bind vbo - store id's in batchlist

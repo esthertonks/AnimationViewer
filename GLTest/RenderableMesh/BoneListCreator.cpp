@@ -5,13 +5,34 @@ namespace render
 {
 
 VertexListCreator::VertexListCreator()
+	: m_numVerts(0)
 {
 }
 
-static float col = 0.0f;
+int VertexListCreator::GetNumVertsInList()
+{
+	return m_numVerts; // Updated in CreateVertexListFromBonePositions
+}
+
+ColourVertexArrayPtr &VertexListCreator::GetVertexList()
+{
+	return m_vertexArray;
+}
+
 void VertexListCreator::CreateVertexListFromBonePositions(
-	mesh::BoneNode *boneNode,
-	ColourVertexArrayPtr &vertexArray
+	mesh::BoneNode *boneNode
+)
+{
+	m_vertexArray.clear();
+
+	CreateVertexListFromBonePositionsInternal(boneNode);
+
+	m_numVerts = m_vertexArray.size(); // Store so we dont access the size all the time
+}
+
+static float col = 0.0f;
+void VertexListCreator::CreateVertexListFromBonePositionsInternal(
+	mesh::BoneNode *boneNode
 )
 {
 	for (boneNode; boneNode != NULL; boneNode = boneNode->m_next)
@@ -26,7 +47,7 @@ void VertexListCreator::CreateVertexListFromBonePositions(
 			parentVertex.m_position.z = static_cast<float>(parentGlobalTransform[3][2]);
 			parentVertex.m_colour = glm::vec3(col, 0.0, 0.0);
 
-			vertexArray.push_back(parentVertex);
+			m_vertexArray.push_back(parentVertex);
 
 			// Add this nodes position
 			ColourVertex vertex;
@@ -37,12 +58,12 @@ void VertexListCreator::CreateVertexListFromBonePositions(
 			vertex.m_colour = glm::vec3(col, 0.0, 0.0);
 			col += 0.02f;
 
-			vertexArray.push_back(vertex);
+			m_vertexArray.push_back(vertex);
 		}
 
 		if (boneNode->m_firstChild)
 		{
-			CreateVertexListFromBonePositions(boneNode->m_firstChild, vertexArray); // If this node has any children then add their info two
+			CreateVertexListFromBonePositionsInternal(boneNode->m_firstChild); // If this node has any children then add their info two
 		}
 	}
 }
