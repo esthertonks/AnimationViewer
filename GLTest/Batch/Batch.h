@@ -25,7 +25,7 @@ public:
 		return m_vertexArrayHandle;
 	}
 
-	unsigned short GetNumIndices()
+	unsigned int GetNumIndices()
 	{
 		return m_indexArray.size();
 	}

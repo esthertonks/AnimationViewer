@@ -15,6 +15,7 @@ class Renderable;
 class RenderableMesh;
 class RenderableBoneList;
 class RenderableNormalsList;
+class VertexListCreator;
 
 typedef std::vector<ColourVertex> ColourVertexArrayPtr;
 typedef std::vector<TexturedVertex> TexturedVertexArrayPtr;
@@ -30,6 +31,7 @@ typedef boost::shared_ptr<render::RenderableMesh> RenderableMeshPtr;
 
 typedef boost::shared_ptr<render::RenderableBoneList> RenderableBoneListPtr;
 typedef boost::shared_ptr<render::RenderableNormalsList> RenderableNormalsListPtr;
+typedef boost::shared_ptr<render::VertexListCreator> VertexListCreatorPtr;
 
 typedef std::map<unsigned int, render::AppearancePtr> AppearanceTable;
 typedef std::pair<unsigned int, render::AppearancePtr> AppearanceTableEntry;
