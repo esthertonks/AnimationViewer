@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../Render/ShaderManager.h"
-#include "BoneListCreator.h"
+#include "BoneVertexListCreator.h"
 #include <wx/log.h>
 
 namespace render
@@ -12,7 +12,7 @@ namespace render
 
 RenderableBoneList::RenderableBoneList()
 	: Renderable(),
-	m_boneVertexListCreator(new VertexListCreator())
+	m_boneVertexListCreator(new BoneVertexListCreator())
 {
 }
 

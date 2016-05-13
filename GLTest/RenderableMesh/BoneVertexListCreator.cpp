@@ -1,25 +1,25 @@
-#include "BoneListCreator.h"
+#include "BoneVertexListCreator.h"
 #include "../Mesh/BoneNode.h"
 
 namespace render
 {
 
-VertexListCreator::VertexListCreator()
+BoneVertexListCreator::BoneVertexListCreator()
 	: m_numVerts(0)
 {
 }
 
-int VertexListCreator::GetNumVertsInList()
+int BoneVertexListCreator::GetNumVertsInList()
 {
 	return m_numVerts; // Updated in CreateVertexListFromBonePositions
 }
 
-ColourVertexArrayPtr &VertexListCreator::GetVertexList()
+ColourVertexArray &BoneVertexListCreator::GetVertexList()
 {
 	return m_vertexArray;
 }
 
-void VertexListCreator::CreateVertexListFromBonePositions(
+void BoneVertexListCreator::CreateVertexListFromBonePositions(
 	mesh::BoneNode *boneNode
 )
 {
@@ -31,7 +31,7 @@ void VertexListCreator::CreateVertexListFromBonePositions(
 }
 
 static float col = 0.0f;
-void VertexListCreator::CreateVertexListFromBonePositionsInternal(
+void BoneVertexListCreator::CreateVertexListFromBonePositionsInternal(
 	mesh::BoneNode *boneNode
 )
 {
@@ -68,7 +68,7 @@ void VertexListCreator::CreateVertexListFromBonePositionsInternal(
 	}
 }
 
-VertexListCreator::~VertexListCreator()
+BoneVertexListCreator::~BoneVertexListCreator()
 {
 }
 

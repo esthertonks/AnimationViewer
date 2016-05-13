@@ -18,7 +18,7 @@ namespace render
 	//Can thenget rid of m_shaderProgramByProgramType
 	//TODO only really current need one set of shaders - discuss...
 ShaderManager::ShaderManager()
-	: m_currentProgramType(ShaderProgramType::None)
+	: m_currentProgramType(None)
 {
 	//TODO these could be specified in a text file
 	//TODO the program id doesnt get setup until initialise - should all of this be done at once? Or could initialise setup the program id passed on this info here?
@@ -27,21 +27,21 @@ ShaderManager::ShaderManager()
 	phong.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_VERTEX_SHADER, "Shaders/PerFragmentPhong.vert"));
 	phong.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_FRAGMENT_SHADER, "Shaders/PerFragmentPhong.frag"));
 
-	m_shaderProgramByProgramType.insert(std::pair<ShaderProgramType, Program>(ShaderProgramType::Phong, phong));
+	m_shaderProgramByProgramType.insert(std::pair<ShaderProgramType, Program>(Phong, phong));
 
 	Program lambert;
 	lambert.m_programId = -1;//TODO umm constructor?!
 	lambert.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_VERTEX_SHADER, "Shaders/PerFragmentLambert.vert"));
 	lambert.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_FRAGMENT_SHADER, "Shaders/PerFragmentLambert.frag"));
 
-	m_shaderProgramByProgramType.insert(std::pair<ShaderProgramType, Program>(ShaderProgramType::Lambert, lambert));
+	m_shaderProgramByProgramType.insert(std::pair<ShaderProgramType, Program>(Lambert, lambert));
 
 	Program overlay;
 	overlay.m_programId = -1;//TODO umm constructor?!
 	overlay.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_VERTEX_SHADER, "Shaders/Overlay.vert"));
 	overlay.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_FRAGMENT_SHADER, "Shaders/Overlay.frag"));
 
-	m_shaderProgramByProgramType.insert(std::pair<ShaderProgramType, Program>(ShaderProgramType::Overlay, overlay));
+	m_shaderProgramByProgramType.insert(std::pair<ShaderProgramType, Program>(Overlay, overlay));
 }
 
 Program& ShaderManager::GetProgram(
@@ -84,16 +84,16 @@ void ShaderManager::SetProgramCurrent(
 bool ShaderManager::InitialiseShaders()
 {
 	// Setup the phong shaders
-	InitialiseShaders(ShaderProgramType::Phong);
-	LinkPrograms(ShaderProgramType::Phong);
+	InitialiseShaders(Phong);
+	LinkPrograms(Phong);
 
 	// Setup the lambert shaders
-	InitialiseShaders(ShaderProgramType::Lambert);
-	LinkPrograms(ShaderProgramType::Lambert);
+	InitialiseShaders(Lambert);
+	LinkPrograms(Lambert);
 
 	// Setup the overlay shaders
-	InitialiseShaders(ShaderProgramType::Overlay);
-	LinkPrograms(ShaderProgramType::Overlay);
+	InitialiseShaders(Overlay);
+	LinkPrograms(Overlay);
 
 	return true;
 }

@@ -132,8 +132,8 @@
     <ClCompile Include="RenderableMesh\BatchCreator.cpp">
       <Filter>Batch</Filter>
     </ClCompile>
-    <ClCompile Include="RenderableMesh\BoneListCreator.cpp" />
-    <ClCompile Include="RenderableMesh\NormalListCreator.cpp" />
+    <ClCompile Include="RenderableMesh\NormalsVertexListCreator.cpp" />
+    <ClCompile Include="RenderableMesh\BoneVertexListCreator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
@@ -261,8 +261,8 @@
     <ClInclude Include="RenderableMesh\BatchCreator.h">
       <Filter>Batch</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableMesh\BoneListCreator.h" />
-    <ClInclude Include="RenderableMesh\NormalListCreator.h" />
+    <ClInclude Include="RenderableMesh\NormalsVertexListCreator.h" />
+    <ClInclude Include="RenderableMesh\BoneVertexListCreator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Diffuse.frag">

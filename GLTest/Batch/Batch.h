@@ -35,7 +35,7 @@ public:
 		return m_vertexArray.size();
 	}
 
-	TexturedSkinnedVertexArrayPtr GetVertices()
+	TexturedSkinnedVertexArray GetVertices()
 	{
 		return m_vertexArray;
 	}
@@ -45,7 +45,7 @@ public:
 	//	return m_vertexFormatType;
 	//}
 
-	IndexArrayPtr GetIndices()
+	IndexArray GetIndices()
 	{
 		return m_indexArray;
 	}
@@ -102,8 +102,8 @@ public:
 
 private:
 
-	TexturedSkinnedVertexArrayPtr m_vertexArray;
-	IndexArrayPtr m_indexArray;
+	TexturedSkinnedVertexArray m_vertexArray;
+	IndexArray m_indexArray;
 	AppearancePtr m_appearance; // Several batches could have the same appearance
 	//VertexFormatType m_vertexFormatType;
 

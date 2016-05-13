@@ -92,8 +92,8 @@
     <ClCompile Include="Animation\VectorTrack.cpp" />
     <ClCompile Include="Batch\Appearance.cpp" />
     <ClCompile Include="Batch\Batch.cpp" />
-    <ClCompile Include="RenderableMesh\BoneListCreator.cpp" />
-    <ClCompile Include="RenderableMesh\NormalListCreator.cpp" />
+    <ClCompile Include="RenderableMesh\BoneVertexListCreator.cpp" />
+    <ClCompile Include="RenderableMesh\NormalsVertexListCreator.cpp" />
     <ClCompile Include="RenderableMesh\BatchCreator.cpp" />
     <ClCompile Include="Batch\LambertAppearance.cpp" />
     <ClCompile Include="Batch\PhongAppearance.cpp" />
@@ -134,8 +134,8 @@
     <ClInclude Include="Batch\Appearance.h" />
     <ClInclude Include="Batch\Batch.h" />
     <ClInclude Include="Batch\BatchFwdDecl.h" />
-    <ClInclude Include="RenderableMesh\BoneListCreator.h" />
-    <ClInclude Include="RenderableMesh\NormalListCreator.h" />
+    <ClInclude Include="RenderableMesh\BoneVertexListCreator.h" />
+    <ClInclude Include="RenderableMesh\NormalsVertexListCreator.h" />
     <ClInclude Include="RenderableMesh\BatchCreator.h" />
     <ClInclude Include="Batch\LambertAppearance.h" />
     <ClInclude Include="Batch\PhongAppearance.h" />

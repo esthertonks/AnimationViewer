@@ -19,7 +19,7 @@ namespace animation
 namespace render
 {
 
-class VertexListCreator;
+class BoneVertexListCreator;
 enum VertexFormatType;
 
 class RenderableBoneList : public Renderable

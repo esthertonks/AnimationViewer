@@ -8,15 +8,15 @@ namespace mesh {
 
 namespace render{
 
-class VertexListCreator
+class BoneVertexListCreator
 {
 public:
-	VertexListCreator();
-	~VertexListCreator();
+	BoneVertexListCreator();
+	~BoneVertexListCreator();
 
 	int GetNumVertsInList();
 
-	ColourVertexArrayPtr &GetVertexList();
+	ColourVertexArray &GetVertexList();
 
 	void CreateVertexListFromBonePositions(
 		mesh::BoneNode *boneHierarchyRoot
@@ -28,7 +28,7 @@ private:
 		mesh::BoneNode *boneHierarchyRoot
 	);
 
-	ColourVertexArrayPtr m_vertexArray;
+	ColourVertexArray m_vertexArray;
 	int m_numVerts;
 };
 
