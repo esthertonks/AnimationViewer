@@ -32,8 +32,8 @@ bool RenderableBoneList::Update(
 	}
 	m_vertexArray.clear();
 
-	render::BoneListCreator boneListCreator;
-	boneListCreator.AddPositionToVertexList(boneHierarchyRoot, m_vertexArray); // FIXME this should be a processor like in the renderable mesh
+	render::VertexListCreator boneListCreator;
+	boneListCreator.CreateVertexListFromBonePositions(boneHierarchyRoot, m_vertexArray); // FIXME this should be a processor like in the renderable mesh
 
 	m_numVerts = m_vertexArray.size(); // Keep a record of the new verts so that the draw calls can use it //FIXME weird place to put this
 	Prepare(); // Prepare for rendering

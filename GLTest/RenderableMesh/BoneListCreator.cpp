@@ -4,12 +4,12 @@
 namespace render
 {
 
-BoneListCreator::BoneListCreator()
+VertexListCreator::VertexListCreator()
 {
 }
 
 static float col = 0.0f;
-void BoneListCreator::AddPositionToVertexList(
+void VertexListCreator::CreateVertexListFromBonePositions(
 	mesh::BoneNode *boneNode,
 	ColourVertexArrayPtr &vertexArray
 )
@@ -42,12 +42,12 @@ void BoneListCreator::AddPositionToVertexList(
 
 		if (boneNode->m_firstChild)
 		{
-			AddPositionToVertexList(boneNode->m_firstChild, vertexArray); // If this node has any children then add their info two
+			CreateVertexListFromBonePositions(boneNode->m_firstChild, vertexArray); // If this node has any children then add their info two
 		}
 	}
 }
 
-BoneListCreator::~BoneListCreator()
+VertexListCreator::~VertexListCreator()
 {
 }
 

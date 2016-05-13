@@ -21,7 +21,7 @@ namespace render {
 		//}
 		//m_vertexArray.clear();
 
-		//AddPositionToVertexList(boneHierarchyRoot);
+		//CreateVertexListFromBonePositions(boneHierarchyRoot);
 		//m_numVerts = m_vertexArray.size(); // Keep a record of the new verts so that the draw calls can use it
 		Prepare(); // Prepare for rendering
 		//		   //wxLogDebug("tick3");

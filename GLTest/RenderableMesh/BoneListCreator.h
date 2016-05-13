@@ -8,13 +8,13 @@ namespace mesh {
 
 namespace render{
 
-class BoneListCreator
+class VertexListCreator
 {
 public:
-	BoneListCreator();
-	~BoneListCreator();
+	VertexListCreator();
+	~VertexListCreator();
 
-	void AddPositionToVertexList(
+	void CreateVertexListFromBonePositions(
 		mesh::BoneNode *boneHierarchyRoot,
 		ColourVertexArrayPtr &vertexArray
 	);
