@@ -17,6 +17,7 @@ class RenderableNormalsList;
 class BoneVertexListCreator;
 class NormalsVertexListCreator;
 class BatchCreator;
+class SkinningMatrixCreator;
 
 typedef std::vector<ColourVertex> ColourVertexArray;
 typedef std::vector<TexturedVertex> TexturedVertexArray;
@@ -36,6 +37,8 @@ typedef boost::shared_ptr<render::RenderableNormalsList> RenderableNormalsListPt
 typedef boost::shared_ptr<render::BoneVertexListCreator> VertexListCreatorPtr;
 typedef boost::shared_ptr<render::NormalsVertexListCreator> NormalsVertexListCreatorPtr;
 typedef boost::shared_ptr<render::BatchCreator> BatchCreatorPtr;
+typedef boost::shared_ptr<render::SkinningMatrixCreator> SkinningMatrixCreatorPtr;
+typedef std::vector<glm::mat4x4> BoneMatrixPalette;
 
 typedef std::map<unsigned int, render::AppearancePtr> AppearanceTable;
 typedef std::pair<unsigned int, render::AppearancePtr> AppearanceTableEntry;

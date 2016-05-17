@@ -4,6 +4,7 @@
 #include "../Batch/Batch.h"
 #include "../Mesh/BoneNode.h"
 #include "../Utils/MathsUtils.h"
+#include "SkinningMatrixCreator.h"
 
 namespace render
 {
@@ -12,7 +13,8 @@ RenderableMesh::RenderableMesh(
 	mesh::MeshPtr mesh
 )
 	: Renderable(),
-	m_meshBatchCreator(new BatchCreator(mesh))
+	m_meshBatchCreator(new BatchCreator(mesh)),
+	m_skinningMatrixCreator(new SkinningMatrixCreator())
 {
 }
 
@@ -31,35 +33,7 @@ bool RenderableMesh::Update(
 	mesh::BoneNode *boneHierarchyRoot
 	)
 {	
-	if(!boneHierarchyRoot)
-	{
-		return false;
-	}
-	m_matrixPalette.clear();
-	boneIdCheck = 0;
-
-	UpdateInternal(boneHierarchyRoot);
-
-	return true;
-}
-
-bool RenderableMesh::UpdateInternal(
-	mesh::BoneNode *node
-	)
-{		
-	//TODO these MUST be in the sameorder they were added in import so the id's match up //TODO createPalette method in either animator or mesh class?
-	assert(node->GetId() == boneIdCheck);
-	glm::mat4x4 bonePaletteMatrix;
-	utils::MathsUtils::ConvertFBXToGLMatrix(node->GetGlobalTransform() * node->GetInverseReferenceMatrix(), bonePaletteMatrix);
-
-	m_matrixPalette.push_back(bonePaletteMatrix);
-
-	boneIdCheck++;
-
-	for(mesh::BoneNode* childNode = node->m_firstChild; childNode != NULL; childNode = childNode->m_next)
-	{
-		UpdateInternal(childNode);
-	}
+	m_skinningMatrixCreator->CreateBoneMatrix(boneHierarchyRoot);
 
 	return true;
 }
@@ -80,7 +54,7 @@ void RenderableMesh::Render(
 
 		for(batchIterator = renderBatches.begin(); batchIterator != renderBatches.end(); batchIterator++)
 		{
-			if(*batchIterator == NULL) // This will be a case if an appearance exists but is not uses by this node //TODO get rid of this?
+			if(*batchIterator == NULL) // This will be a case if an appearance exists but is not used by this node //TODO get rid of this?
 			{
 				continue;
 			}
@@ -119,10 +93,11 @@ void RenderableMesh::Render(
 					glUniformMatrix3fv(normalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
 				}
 
+				BoneMatrixPalette boneMatrixPalette = m_skinningMatrixCreator->GetBoneMatrixPalette();
 				GLint bonePaletteMatrixLocation = glGetUniformLocation(programId, "boneMatrixPalette");
-				if(bonePaletteMatrixLocation >= 0 && m_matrixPalette.size() > 0)
+				if(bonePaletteMatrixLocation >= 0 && boneMatrixPalette.size() > 0)
 				{
-					glUniformMatrix4fv(bonePaletteMatrixLocation, m_matrixPalette.size(), GL_FALSE, &m_matrixPalette[0][0][0]);
+					glUniformMatrix4fv(bonePaletteMatrixLocation, boneMatrixPalette.size(), GL_FALSE, &boneMatrixPalette[0][0][0]);
 				}
 
 					//wxLogDebug("%u\n", GetVertexArrayHandle());

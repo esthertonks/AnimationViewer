@@ -6,6 +6,7 @@
 #include "../Mesh/Mesh.h"
 #include "../Mesh/Triangle.h"
 #include "../Mesh/Vertex.h"
+#include "SkinningMatrixCreator.h"
 
 namespace render
 {
@@ -14,7 +15,8 @@ namespace render
 		mesh::MeshPtr mesh
 	)
 		: m_numVerts(0),
-		m_mesh(mesh)
+		m_mesh(mesh),
+		m_skinningMatrixCreator(new SkinningMatrixCreator)
 	{
 	}
 
@@ -26,45 +28,6 @@ namespace render
 	ColourVertexArray &NormalsVertexListCreator::GetVertexList()
 	{
 		return m_normalsVertexArray;
-	}
-
-	static unsigned int boneIdCheck = 0;
-
-	bool NormalsVertexListCreator::CreateBoneMatrix( //FIXME duplicated from renderable mesh - remove
-		mesh::BoneNode *boneHierarchyRoot
-	)
-	{
-		if (!boneHierarchyRoot)
-		{
-			return false;
-		}
-		m_matrixPalette.clear();
-		boneIdCheck = 0;
-
-		CreateBoneMatrixInternal(boneHierarchyRoot);
-
-		return true;
-	}
-
-	bool NormalsVertexListCreator::CreateBoneMatrixInternal(
-		mesh::BoneNode *node
-	)
-	{
-		//TODO these MUST be in the sameorder they were added in import so the id's match up //TODO createPalette method in either animator or mesh class?
-		assert(node->GetId() == boneIdCheck);
-		glm::mat4x4 bonePaletteMatrix;
-		utils::MathsUtils::ConvertFBXToGLMatrix(node->GetGlobalTransform() * node->GetInverseReferenceMatrix(), bonePaletteMatrix);
-
-		m_matrixPalette.push_back(bonePaletteMatrix);
-
-		boneIdCheck++;
-
-		for (mesh::BoneNode* childNode = node->m_firstChild; childNode != NULL; childNode = childNode->m_next)
-		{
-			CreateBoneMatrixInternal(childNode);
-		}
-
-		return true;
 	}
 
 	// First go through bones to create matrix palettes.
@@ -79,7 +42,7 @@ namespace render
 		mesh::BoneNode *boneHierarchyRoot
 	)
 	{
-		CreateBoneMatrix(boneHierarchyRoot);
+		m_skinningMatrixCreator->CreateBoneMatrix(boneHierarchyRoot);
 
 		m_normalsVertexArray.clear();
 
@@ -120,10 +83,11 @@ namespace render
 					// Calcualte the skinned position of the verts
 					glm::vec4 position;
 					utils::MathsUtils::ConvertFBXVector4ToGlVec4(vertexArray[vertexIndex].GetPosition(), position);
-					glm::mat4 weightedBoneMatrix = m_matrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(0)] * vertexArray[vertexIndex].GetBoneWeight(0)
-						+ m_matrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(1)] * vertexArray[vertexIndex].GetBoneWeight(1)
-						+ m_matrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(2)] * vertexArray[vertexIndex].GetBoneWeight(2)
-						+ m_matrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(3)] * vertexArray[vertexIndex].GetBoneWeight(3);
+					BoneMatrixPalette boneMatrixPalette = m_skinningMatrixCreator->GetBoneMatrixPalette();
+					glm::mat4 weightedBoneMatrix = boneMatrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(0)] * vertexArray[vertexIndex].GetBoneWeight(0)
+						+ boneMatrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(1)] * vertexArray[vertexIndex].GetBoneWeight(1)
+						+ boneMatrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(2)] * vertexArray[vertexIndex].GetBoneWeight(2)
+						+ boneMatrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(3)] * vertexArray[vertexIndex].GetBoneWeight(3);
 
 					ColourVertex skinnedVertexPosition;
 					skinnedVertexPosition.m_position = glm::vec3(weightedBoneMatrix * position);

@@ -49,12 +49,8 @@ public:
 		);
 
 private:
-	bool UpdateInternal(
-		mesh::BoneNode *node
-		);
-
 	render::PerNodeBatchList m_perNodeRenderBatches; //TODO rendermesh now is aware of nodes - do we really want this?
-	std::vector<glm::mat4x4> m_matrixPalette;//TODO 4x3
 	BatchCreatorPtr m_meshBatchCreator;
+	SkinningMatrixCreatorPtr m_skinningMatrixCreator;
 };
 }

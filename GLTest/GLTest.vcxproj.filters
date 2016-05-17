@@ -134,6 +134,7 @@
     </ClCompile>
     <ClCompile Include="RenderableMesh\NormalsVertexListCreator.cpp" />
     <ClCompile Include="RenderableMesh\BoneVertexListCreator.cpp" />
+    <ClCompile Include="RenderableMesh\SkinningMatrixCreator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
@@ -263,6 +264,7 @@
     </ClInclude>
     <ClInclude Include="RenderableMesh\NormalsVertexListCreator.h" />
     <ClInclude Include="RenderableMesh\BoneVertexListCreator.h" />
+    <ClInclude Include="RenderableMesh\SkinningMatrixCreator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Diffuse.frag">

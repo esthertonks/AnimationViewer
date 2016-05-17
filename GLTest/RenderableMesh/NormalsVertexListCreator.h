@@ -10,6 +10,8 @@ namespace mesh {
 
 namespace render {
 
+	class SkinningMatrixCreator;
+
 	class NormalsVertexListCreator
 	{
 	public:
@@ -29,14 +31,6 @@ namespace render {
 
 	private:
 
-		bool CreateBoneMatrix(
-			mesh::BoneNode * boneHierarchyRoot
-		);
-
-		bool CreateBoneMatrixInternal(
-			mesh::BoneNode * node
-		);
-
 		void CreateVertexListFromNormalsInternal(
 			mesh::MeshNode* meshNode
 		);
@@ -44,7 +38,7 @@ namespace render {
 		ColourVertexArray m_normalsVertexArray;
 		int m_numVerts;
 		mesh::MeshPtr m_mesh;
-		std::vector<glm::mat4x4> m_matrixPalette;//TODO 4x3
+		render::SkinningMatrixCreatorPtr m_skinningMatrixCreator;
 	};
 
 }
