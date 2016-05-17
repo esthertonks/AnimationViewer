@@ -41,7 +41,7 @@ namespace render {
 			mesh::MeshNode* meshNode
 		);
 
-		ColourVertexArray m_vertexArray;
+		ColourVertexArray m_normalsVertexArray;
 		int m_numVerts;
 		mesh::MeshPtr m_mesh;
 		std::vector<glm::mat4x4> m_matrixPalette;//TODO 4x3

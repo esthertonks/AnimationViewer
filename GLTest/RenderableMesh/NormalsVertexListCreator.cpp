@@ -25,7 +25,7 @@ namespace render
 
 	ColourVertexArray &NormalsVertexListCreator::GetVertexList()
 	{
-		return m_vertexArray;
+		return m_normalsVertexArray;
 	}
 
 	static unsigned int boneIdCheck = 0;
@@ -81,13 +81,13 @@ namespace render
 	{
 		CreateBoneMatrix(boneHierarchyRoot);
 
-		m_vertexArray.clear();
+		m_normalsVertexArray.clear();
 
 		mesh::MeshNode* rootMeshNode = m_mesh->GetMeshNodeHierarchy();
 
 		CreateVertexListFromNormalsInternal(rootMeshNode);
 
-		m_numVerts = m_vertexArray.size(); // Store so we dont access the size all the time
+		m_numVerts = m_normalsVertexArray.size(); // Store so we dont access the size all the time
 	}
 
 	static float col = 4.0f;
@@ -113,11 +113,11 @@ namespace render
 
 			for (int triangleIndex = 0; triangleIndex < numTriangles; triangleIndex++)
 			{
-				// Assign the mesh information to batches. Reassigning the indices as the data is processed.
 				for (int triangleCornerIndex = 0; triangleCornerIndex < 3; triangleCornerIndex++)
 				{
 					unsigned int vertexIndex = triangleArray[triangleIndex].GetVertexIndex(triangleCornerIndex);
 
+					// Calcualte the skinned position of the verts
 					glm::vec4 position;
 					utils::MathsUtils::ConvertFBXVector4ToGlVec4(vertexArray[vertexIndex].GetPosition(), position);
 					glm::mat4 weightedBoneMatrix = m_matrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(0)] * vertexArray[vertexIndex].GetBoneWeight(0)
@@ -135,8 +135,8 @@ namespace render
 					extrudedNormalPosition.m_position = skinnedVertexPosition.m_position + (glm::normalize(normal) * extrudeFactor);
 					extrudedNormalPosition.m_colour = glm::vec3(col, 0.0, 0.0);
 
-					m_vertexArray.push_back(skinnedVertexPosition);
-					m_vertexArray.push_back(extrudedNormalPosition);
+					m_normalsVertexArray.push_back(skinnedVertexPosition);
+					m_normalsVertexArray.push_back(extrudedNormalPosition);
 				}
 			}
 
