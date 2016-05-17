@@ -94,16 +94,23 @@ void AnimationApp::OnIdle(
 			//float delta = timeNow - m_lastTime;
 			m_meshAnimator->Update(m_currentMeshInfo.m_mesh, timeNow);
 
+			// Update any render meshes with the new bone hierarchy
 			if(m_currentMeshInfo.m_renderMesh)// TODO should just be an array of renderables to update? What about the array of renderable in the render component???
 			{
 				m_currentMeshInfo.m_renderMesh->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy());
 			}
 
-			// Update any render meshes with the new bone hierarchy
+			// Update the bones if visible
 			if(m_boneOverlay)
 			{
-				// TODO this should have the bone hierarchy passed in? Certainly shouldn't be storing the mesh....
 				m_boneOverlay->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy()); // Update the render mesh with the new bone info
+			}
+
+			// Update the normals if visible
+			if (m_normalsOverlay)
+			{
+				m_normalsOverlay->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy()); // Update the render mesh with the new bone info
+
 			}
 		}
 
@@ -237,13 +244,13 @@ void AnimationApp::ShowNormals(
 {
 	if (show && m_currentMeshInfo.m_mesh) // If there is no mesh do nothing
 	{
-		render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(render::RenderableNormalsListPtr(new render::RenderableNormalsList()));
+		render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(render::RenderableNormalsListPtr(new render::RenderableNormalsList(m_currentMeshInfo.m_mesh)));
 
 		if (renderable->Create())
 		{
 			m_renderCanvas->AddOverlay(renderable);
 			m_normalsOverlay = renderable;
-			//m_normalsOverlay->Update(m_currentMeshInfo.m_renderMesh->);
+			m_normalsOverlay->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy());
 		}
 		else
 		{

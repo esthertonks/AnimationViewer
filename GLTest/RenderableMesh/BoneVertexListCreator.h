@@ -25,7 +25,7 @@ public:
 private:
 
 	void CreateVertexListFromBonePositionsInternal(
-		mesh::BoneNode *boneHierarchyRoot
+		mesh::BoneNode *boneNode
 	);
 
 	ColourVertexArray m_vertexArray;

@@ -20,12 +20,12 @@ ColourVertexArray &BoneVertexListCreator::GetVertexList()
 }
 
 void BoneVertexListCreator::CreateVertexListFromBonePositions(
-	mesh::BoneNode *boneNode
+	mesh::BoneNode *boneHierarchyRoot
 )
 {
 	m_vertexArray.clear();
 
-	CreateVertexListFromBonePositionsInternal(boneNode);
+	CreateVertexListFromBonePositionsInternal(boneHierarchyRoot);
 
 	m_numVerts = m_vertexArray.size(); // Store so we dont access the size all the time
 }

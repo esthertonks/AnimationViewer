@@ -3,6 +3,7 @@
 #include "../Render/RenderFwdDecl.h"
 #include "Renderable.h"
 #include "../Batch/BatchFwdDecl.h"
+#include "../Mesh/MeshFwdDecl.h"
 
 namespace mesh
 {
@@ -27,7 +28,9 @@ namespace render
 
 	public:
 
-		RenderableNormalsList();
+		RenderableNormalsList(
+			mesh::MeshPtr mesh
+		);
 
 		~RenderableNormalsList();
 
@@ -50,5 +53,6 @@ namespace render
 		GLuint m_vertexArrayHandle;
 		GLuint m_positionBufferHandle;
 		NormalsVertexListCreatorPtr m_normalsVertexListCreator;
+		mesh::MeshPtr m_mesh;
 	};
 }

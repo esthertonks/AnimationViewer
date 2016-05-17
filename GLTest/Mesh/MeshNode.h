@@ -2,7 +2,6 @@
 
 #include <fbxsdk.h>
 #include <map>
-#include <boost\shared_array.hpp>
 #include "../Container/LinkedTree.h"
 #include "../Batch/BatchFwdDecl.h" // TODO For appearances only - really needed here?
 
@@ -13,11 +12,6 @@ namespace import
 
 namespace mesh
 {
-	class Vertex;
-	class Triangle;
-
-	typedef boost::shared_array<Vertex> MeshVertexArray; //TODO any better container?
-	typedef boost::shared_array<Triangle> MeshTriangleArray;
 
 class MeshNode : public container::LinkedTreeItem<MeshNode>
 {

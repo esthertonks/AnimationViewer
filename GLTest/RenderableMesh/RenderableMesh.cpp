@@ -11,20 +11,16 @@ namespace render
 RenderableMesh::RenderableMesh(
 	mesh::MeshPtr mesh
 )
-	: Renderable()
+	: Renderable(),
+	m_meshBatchCreator(new BatchCreator(mesh))
 {
-	m_mesh = mesh;
 }
 
 bool RenderableMesh::Create()
-{	
-	assert(m_mesh);
-
-	render::BatchCreator meshBatchCreator;
+{			
+	m_meshBatchCreator->CreateBatches(m_perNodeRenderBatches);
 		
-	meshBatchCreator.CreateBatches(m_mesh, m_perNodeRenderBatches);
-		
-	meshBatchCreator.PrepareBatches(m_perNodeRenderBatches);
+	m_meshBatchCreator->PrepareBatches(m_perNodeRenderBatches);
 
 	return true;
 }

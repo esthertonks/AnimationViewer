@@ -16,7 +16,9 @@ namespace render
 
 #define DOT_THESHOLD         0.9999f        /* Closeness to a dot product of 1 at which two normals are considered the same */
 
-BatchCreator::BatchCreator()
+BatchCreator::BatchCreator(
+	mesh::MeshPtr &mesh
+) : m_mesh(mesh)
 {
 }
 
@@ -30,22 +32,21 @@ BatchCreator::~BatchCreator()
 
 // Create per vertex data in per material batches. Extra vertices are created to accommodate per triangle corner information.
 void BatchCreator::CreateBatches(
-	mesh::MeshPtr &mesh,
 	render::PerNodeBatchList &perNodeRenderBatches // Batch vector to fill in
 	)
 {
 	// Each node needs a new batch (due to each node having a different matrix transform
 	//TODO could insist on node transforms being zero and thus create fewer batches). Within each node each material needs a new batch.
-	mesh::MeshNode* rootMeshNode = mesh->GetMeshNodeHierarchy();
+	mesh::MeshNode* rootMeshNode = m_mesh->GetMeshNodeHierarchy();
 
-	CreateBatchesInternal(mesh, rootMeshNode, perNodeRenderBatches);
+	CreateBatchesInternal(m_mesh, rootMeshNode, perNodeRenderBatches);
 
 	return;
 }
 
 
 void BatchCreator::CreateBatchesInternal(
-	mesh::MeshPtr &mesh,
+	mesh::MeshPtr &mesh, //TODO is this used???
 	mesh::MeshNode* meshNode,
 	render::PerNodeBatchList &perNodeRenderBatches // Batch vector to fill in
 	)

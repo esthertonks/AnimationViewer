@@ -17,11 +17,12 @@ class Batch;
 class BatchCreator
 {
 public:
-	BatchCreator();
+	BatchCreator(
+		mesh::MeshPtr &mesh
+		);
 	~BatchCreator();
 
 	void CreateBatches(
-		mesh::MeshPtr &mesh,
 		render::PerNodeBatchList &renderBatches // Batch vector to fill in
 		);
 
@@ -44,6 +45,8 @@ private:
 		mesh::MeshNode* meshNode,
 		render::PerNodeBatchList &perNodeRenderBatches // Map of Batch vector lists to fill in - one for each mesh node (ie one per unique model matrix)
 	);
+
+	mesh::MeshPtr m_mesh;
 
 };
 
