@@ -90,16 +90,8 @@ namespace render
 		m_numVerts = m_vertexArray.size(); // Store so we dont access the size all the time
 	}
 
-	//vec4 worldPosition = modelMatrix * vec4(vertexPosition, 1.0); // Put the verts into position and THEN skin them
-	//mat4 weightedBoneMatrix = boneMatrixPalette[boneIds[0]] * boneWeights[0]
-	//	+ boneMatrixPalette[boneIds[1]] * boneWeights[1]
-	//	+ boneMatrixPalette[boneIds[2]] * boneWeights[2]
-	//	+ boneMatrixPalette[boneIds[3]] * boneWeights[3];
-
-	//vec4 skinnedPosition = weightedBoneMatrix * worldPosition;
-
 	static float col = 4.0f;
-	static float extrudeFactor = 2.0; //FIXME pass in as parameter - needs to changes with zoom
+	static float extrudeFactor = 2.0; //FIXME pass in as parameter
 	void NormalsVertexListCreator::CreateVertexListFromNormalsInternal(
 		mesh::MeshNode* meshNode
 	)
@@ -124,39 +116,23 @@ namespace render
 				// Assign the mesh information to batches. Reassigning the indices as the data is processed.
 				for (int triangleCornerIndex = 0; triangleCornerIndex < 3; triangleCornerIndex++)
 				{
-					unsigned int testVertexIndex = triangleArray[triangleIndex].GetVertexIndex(triangleCornerIndex);
+					unsigned int vertexIndex = triangleArray[triangleIndex].GetVertexIndex(triangleCornerIndex);
 
-					// Compile the per vertex data from the mesh triangles
-
-					// First create a per vertex vert - if a vert at this index has not been added previously then add it. 
-					// If a vert at this index has already been added then only add this one if it differs from the previous one
-					//TODO can bone indeces/weights be set by triangle corner vertex? If yes then these should also be split where they differ.
-					render::TexturedSkinnedVertex testVertex;
-					FbxVector4 position = vertexArray[testVertexIndex].GetPosition();
-					testVertex.m_position = glm::vec3(static_cast<float>(position[0]), static_cast<float>(position[1]), static_cast<float>(position[2])); //TODO method called CreatePerVertexVertex
-					testVertex.m_colour = triangleArray[triangleIndex].GetColour(triangleCornerIndex);
-					testVertex.m_normal = glm::vec3(triangleArray[triangleIndex].GetNormal(triangleCornerIndex));
-					testVertex.m_uv = triangleArray[triangleIndex].GetUV(triangleCornerIndex);
-					for (int weightIndex = 0; weightIndex < MAX_INFLUENCES; weightIndex++)
-					{
-						testVertex.m_boneWeights[weightIndex] = vertexArray[testVertexIndex].GetBoneWeight(weightIndex);
-						testVertex.m_boneIds[weightIndex] = vertexArray[testVertexIndex].GetBoneInfluenceId(weightIndex);
-					}
-
-					//glm::vec4 worldPosition = modelMatrix * glm::vec4(testVertex.m_position, 1.0); // Put the verts into position and THEN skin them
-					glm::vec4 vertexPosition = glm::vec4(testVertex.m_position, 1.0);
-					glm::mat4 weightedBoneMatrix = m_matrixPalette[testVertex.m_boneIds[0]] * testVertex.m_boneWeights[0]
-						+ m_matrixPalette[testVertex.m_boneIds[1]] * testVertex.m_boneWeights[1]
-						+ m_matrixPalette[testVertex.m_boneIds[2]] * testVertex.m_boneWeights[2]
-						+ m_matrixPalette[testVertex.m_boneIds[3]] * testVertex.m_boneWeights[3];
+					glm::vec4 position;
+					utils::MathsUtils::ConvertFBXVector4ToGlVec4(vertexArray[vertexIndex].GetPosition(), position);
+					glm::mat4 weightedBoneMatrix = m_matrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(0)] * vertexArray[vertexIndex].GetBoneWeight(0)
+						+ m_matrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(1)] * vertexArray[vertexIndex].GetBoneWeight(1)
+						+ m_matrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(2)] * vertexArray[vertexIndex].GetBoneWeight(2)
+						+ m_matrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(3)] * vertexArray[vertexIndex].GetBoneWeight(3);
 
 					ColourVertex skinnedVertexPosition;
-					skinnedVertexPosition.m_position = glm::vec3(weightedBoneMatrix * vertexPosition);
+					skinnedVertexPosition.m_position = glm::vec3(weightedBoneMatrix * position);
 					skinnedVertexPosition.m_colour = glm::vec3(col, 0.0, 0.0);
 
 					// Extrapolate normal
-					ColourVertex extrudedNormalPosition;					
-					extrudedNormalPosition.m_position = skinnedVertexPosition.m_position + (glm::normalize(testVertex.m_normal) * extrudeFactor);
+					ColourVertex extrudedNormalPosition;	
+					glm::vec3 normal = glm::vec3(triangleArray[triangleIndex].GetNormal(triangleCornerIndex));
+					extrudedNormalPosition.m_position = skinnedVertexPosition.m_position + (glm::normalize(normal) * extrudeFactor);
 					extrudedNormalPosition.m_colour = glm::vec3(col, 0.0, 0.0);
 
 					m_vertexArray.push_back(skinnedVertexPosition);

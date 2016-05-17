@@ -41,6 +41,22 @@ void MathsUtils::TranslateRotateScale(
 	result[2][2] = rotation[2][2] * scale.z;
 }
 
+void MathsUtils::ConvertFBXVector4ToGlVec3(
+	const FbxVector4 &fbxVec4,
+	glm::vec3 &glmVec3
+)
+{
+	glmVec3 = glm::vec3(static_cast<float>(fbxVec4[0]), static_cast<float>(fbxVec4[1]), static_cast<float>(fbxVec4[2]));
+}
+
+void MathsUtils::ConvertFBXVector4ToGlVec4(
+	const FbxVector4 &fbxVec4,
+	glm::vec4 &glmVec4
+)
+{
+	glmVec4 = glm::vec4(static_cast<float>(fbxVec4[0]), static_cast<float>(fbxVec4[1]), static_cast<float>(fbxVec4[2]), 1);
+}
+
 void MathsUtils::Decompose()
 {
 	assert("Not implemented");

@@ -20,6 +20,16 @@ static void TranslateRotateScale(
 
 static void Decompose();
 
+static void ConvertFBXVector4ToGlVec3(
+	const FbxVector4 & fbxVec4,
+	glm::vec3 & glmVec3
+	);
+
+static void ConvertFBXVector4ToGlVec4(
+	const FbxVector4 &fbxVec4,
+	glm::vec4 &glmVec4
+	);
+
 static void ConvertFBXToGLMatrix(
 	const FbxAMatrix &fbxMatrix,
 	glm::mat4x4 &glmMatrix
