@@ -92,9 +92,10 @@
     <ClCompile Include="Animation\VectorTrack.cpp" />
     <ClCompile Include="Batch\Appearance.cpp" />
     <ClCompile Include="Batch\Batch.cpp" />
-    <ClCompile Include="RenderableMesh\BoneVertexListCreator.cpp" />
-    <ClCompile Include="RenderableMesh\NormalsVertexListCreator.cpp" />
-    <ClCompile Include="RenderableMesh\BatchCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\RenderableComponentCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\BoneVertexListCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\NormalsVertexListCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\BatchCreator.cpp" />
     <ClCompile Include="Batch\LambertAppearance.cpp" />
     <ClCompile Include="Batch\PhongAppearance.cpp" />
     <ClCompile Include="GUI\HierarchyPanel.cpp" />
@@ -110,16 +111,16 @@
     <ClCompile Include="Mesh\MeshNode.cpp" />
     <ClCompile Include="Mesh\Triangle.cpp" />
     <ClCompile Include="Mesh\Vertex.cpp" />
-    <ClCompile Include="RenderableMesh\Renderable.cpp" />
-    <ClCompile Include="RenderableMesh\RenderableBoneList.cpp" />
-    <ClCompile Include="RenderableMesh\RenderableMesh.cpp" />
-    <ClCompile Include="RenderableMesh\RenderableNormalsList.cpp" />
+    <ClCompile Include="Renderable\Renderable.cpp" />
+    <ClCompile Include="Renderable\RenderableBoneList.cpp" />
+    <ClCompile Include="Renderable\RenderableMesh.cpp" />
+    <ClCompile Include="Renderable\RenderableNormalsList.cpp" />
     <ClCompile Include="Render\FirstPersonCamera.cpp" />
     <ClCompile Include="Render\GLUtils.cpp" />
     <ClCompile Include="Render\OrbitCamera.cpp" />
     <ClCompile Include="Render\GLRenderCanvas.cpp" />
     <ClCompile Include="Render\ShaderManager.cpp" />
-    <ClCompile Include="RenderableMesh\SkinningMatrixCreator.cpp" />
+    <ClCompile Include="Render\SkinningMatrixCreator.cpp" />
     <ClCompile Include="Utils\MathsUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -135,9 +136,10 @@
     <ClInclude Include="Batch\Appearance.h" />
     <ClInclude Include="Batch\Batch.h" />
     <ClInclude Include="Batch\BatchFwdDecl.h" />
-    <ClInclude Include="RenderableMesh\BoneVertexListCreator.h" />
-    <ClInclude Include="RenderableMesh\NormalsVertexListCreator.h" />
-    <ClInclude Include="RenderableMesh\BatchCreator.h" />
+    <ClInclude Include="Renderable\RenderableCreators\RenderableComponentCreator.h" />
+    <ClInclude Include="Renderable\RenderableCreators\BoneVertexListCreator.h" />
+    <ClInclude Include="Renderable\RenderableCreators\NormalsVertexListCreator.h" />
+    <ClInclude Include="Renderable\RenderableCreators\BatchCreator.h" />
     <ClInclude Include="Batch\LambertAppearance.h" />
     <ClInclude Include="Batch\PhongAppearance.h" />
     <ClInclude Include="Batch\VertexFormat.h" />
@@ -157,17 +159,17 @@
     <ClInclude Include="Mesh\Node.h" />
     <ClInclude Include="Mesh\Triangle.h" />
     <ClInclude Include="Mesh\Vertex.h" />
-    <ClInclude Include="RenderableMesh\Renderable.h" />
-    <ClInclude Include="RenderableMesh\RenderableBoneList.h" />
-    <ClInclude Include="RenderableMesh\RenderableMesh.h" />
-    <ClInclude Include="RenderableMesh\RenderableNormalsList.h" />
+    <ClInclude Include="Renderable\Renderable.h" />
+    <ClInclude Include="Renderable\RenderableBoneList.h" />
+    <ClInclude Include="Renderable\RenderableMesh.h" />
+    <ClInclude Include="Renderable\RenderableNormalsList.h" />
     <ClInclude Include="Render\FirstPersonCamera.h" />
     <ClInclude Include="Render\GLUtils.h" />
     <ClInclude Include="Render\OrbitCamera.h" />
     <ClInclude Include="Render\GLRenderCanvas.h" />
     <ClInclude Include="Render\RenderFwdDecl.h" />
     <ClInclude Include="Render\ShaderManager.h" />
-    <ClInclude Include="RenderableMesh\SkinningMatrixCreator.h" />
+    <ClInclude Include="Render\SkinningMatrixCreator.h" />
     <ClInclude Include="Utils\MathsUtils.h" />
   </ItemGroup>
   <ItemGroup>

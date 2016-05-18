@@ -1,0 +1,14 @@
+#include "RenderableComponentCreator.h"
+
+namespace render {
+
+	RenderableComponentCreator::RenderableComponentCreator()
+	{
+	}
+
+
+	RenderableComponentCreator::~RenderableComponentCreator()
+	{
+	}
+
+}

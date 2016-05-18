@@ -4,7 +4,7 @@
 #include <fstream>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "../RenderableMesh/RenderableMesh.h"
+#include "../Renderable/RenderableMesh.h"
 #include "../Batch/VertexFormat.h"
 #include "../Batch/Batch.h"
 #include "OrbitCamera.h"

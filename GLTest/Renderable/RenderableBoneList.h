@@ -20,7 +20,7 @@ namespace render
 {
 
 class BoneVertexListCreator;
-enum VertexFormatType;
+//enum VertexFormatType;
 
 class RenderableBoneList : public Renderable
 {

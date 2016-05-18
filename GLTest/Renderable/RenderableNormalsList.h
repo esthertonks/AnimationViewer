@@ -21,7 +21,6 @@ namespace render
 {
 
 	class NormalsVertexListCreator;
-	enum VertexFormatType;
 
 	class RenderableNormalsList : public Renderable
 	{

@@ -1,13 +1,13 @@
 #include "BatchCreator.h"
-#include "../Mesh/Mesh.h"
-#include "../Mesh/MeshNode.h"
-#include "../Mesh/BoneNode.h"
-#include "../Mesh/Triangle.h"
-#include "../Mesh/Vertex.h"
-#include "../Batch/VertexFormat.h"
-#include "../Batch/Batch.h"
-#include "../Batch/Appearance.h"
-#include "../Utils/MathsUtils.h"
+#include "../../Mesh/Mesh.h"
+#include "../../Mesh/MeshNode.h"
+#include "../../Mesh/BoneNode.h"
+#include "../../Mesh/Triangle.h"
+#include "../../Mesh/Vertex.h"
+#include "../../Batch/VertexFormat.h"
+#include "../../Batch/Batch.h"
+#include "../../Batch/Appearance.h"
+#include "../../Utils/MathsUtils.h"
 
 #include <wx\log.h>
 

@@ -1,12 +1,12 @@
 #include "NormalsVertexListCreator.h"
-#include "../Mesh/BoneNode.h"
-#include "../Mesh/MeshNode.h"
-#include "RenderableMesh.h"
-#include "../Utils/MathsUtils.h"
-#include "../Mesh/Mesh.h"
-#include "../Mesh/Triangle.h"
-#include "../Mesh/Vertex.h"
-#include "SkinningMatrixCreator.h"
+#include "../../Mesh/BoneNode.h"
+#include "../../Mesh/MeshNode.h"
+#include "../RenderableMesh.h"
+#include "../../Utils/MathsUtils.h"
+#include "../../Mesh/Mesh.h"
+#include "../../Mesh/Triangle.h"
+#include "../../Mesh/Vertex.h"
+#include "../../Render/SkinningMatrixCreator.h"
 
 namespace render
 {
@@ -82,7 +82,7 @@ namespace render
 					utils::MathsUtils::ConvertFBXVector4ToGlVec4(vertexArray[vertexIndex].GetPosition(), position);
 					BoneMatrixPalette boneMatrixPalette = m_skinningMatrixCreator->GetBoneMatrixPalette();
 
-					assert(MAX_INFLUENCES == 4, "Error - normals vertex list is out of sync with max influences definintion in shaders (currently vec4).");
+					assert(MAX_INFLUENCES == 4); // If it isn't 4 then this is out of sync with the  shaders which are using vec4 to pass in the parameters.
 
 					glm::mat4 weightedBoneMatrix(0); // Make sure this is zero'd - we dont want an identity matrix.
 					for (int boneInfluenceIndex = 0; boneInfluenceIndex < MAX_INFLUENCES; boneInfluenceIndex++)

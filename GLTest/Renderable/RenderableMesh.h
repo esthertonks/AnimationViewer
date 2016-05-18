@@ -17,7 +17,7 @@ namespace Animation
 namespace render
 {
 
-enum VertexFormatType;
+//enum VertexFormatType;
 
 class RenderableMesh : public Renderable
 {

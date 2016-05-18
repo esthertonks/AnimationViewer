@@ -1,10 +1,10 @@
 #include "RenderableMesh.h"
 #include "../Render/ShaderManager.h"
-#include "BatchCreator.h"
+#include "RenderableCreators/BatchCreator.h"
 #include "../Batch/Batch.h"
 #include "../Mesh/BoneNode.h"
 #include "../Utils/MathsUtils.h"
-#include "SkinningMatrixCreator.h"
+#include "../Render/SkinningMatrixCreator.h"
 
 namespace render
 {

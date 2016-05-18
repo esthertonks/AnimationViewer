@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Batch/BatchFwdDecl.h"
-#include "../Mesh/MeshFwdDecl.h"
+#include "../../Batch/BatchFwdDecl.h"
+#include "../../Mesh/MeshFwdDecl.h"
 
 namespace mesh {
 	class BoneNode;

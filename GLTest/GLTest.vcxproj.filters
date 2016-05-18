@@ -89,15 +89,6 @@
     <ClCompile Include="Animation\AnimationController.cpp">
       <Filter>Animation</Filter>
     </ClCompile>
-    <ClCompile Include="RenderableMesh\Renderable.cpp">
-      <Filter>RenderableMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderableMesh\RenderableBoneList.cpp">
-      <Filter>RenderableMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderableMesh\RenderableMesh.cpp">
-      <Filter>RenderableMesh</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh\BoneNode.cpp">
       <Filter>Mesh</Filter>
     </ClCompile>
@@ -128,13 +119,23 @@
     <ClCompile Include="GUI\HierarchyPanel.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="RenderableMesh\RenderableNormalsList.cpp" />
-    <ClCompile Include="RenderableMesh\BatchCreator.cpp">
+    <ClCompile Include="Renderable\RenderableCreators\BatchCreator.cpp">
       <Filter>Batch</Filter>
     </ClCompile>
-    <ClCompile Include="RenderableMesh\NormalsVertexListCreator.cpp" />
-    <ClCompile Include="RenderableMesh\BoneVertexListCreator.cpp" />
-    <ClCompile Include="RenderableMesh\SkinningMatrixCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\BoneVertexListCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\NormalsVertexListCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\RenderableComponentCreator.cpp" />
+    <ClCompile Include="Renderable\Renderable.cpp">
+      <Filter>RenderableMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable\RenderableBoneList.cpp">
+      <Filter>RenderableMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable\RenderableMesh.cpp">
+      <Filter>RenderableMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable\RenderableNormalsList.cpp" />
+    <ClCompile Include="Render\SkinningMatrixCreator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
@@ -213,15 +214,6 @@
     <ClInclude Include="Animation\AnimationController.h">
       <Filter>Animation</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableMesh\Renderable.h">
-      <Filter>RenderableMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderableMesh\RenderableBoneList.h">
-      <Filter>RenderableMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderableMesh\RenderableMesh.h">
-      <Filter>RenderableMesh</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh\BoneNode.h">
       <Filter>Mesh</Filter>
     </ClInclude>
@@ -258,13 +250,23 @@
     <ClInclude Include="GUI\HierarchyPanel.h">
       <Filter>GUI</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableMesh\RenderableNormalsList.h" />
-    <ClInclude Include="RenderableMesh\BatchCreator.h">
+    <ClInclude Include="Renderable\RenderableCreators\BatchCreator.h">
       <Filter>Batch</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableMesh\NormalsVertexListCreator.h" />
-    <ClInclude Include="RenderableMesh\BoneVertexListCreator.h" />
-    <ClInclude Include="RenderableMesh\SkinningMatrixCreator.h" />
+    <ClInclude Include="Renderable\RenderableCreators\BoneVertexListCreator.h" />
+    <ClInclude Include="Renderable\RenderableCreators\NormalsVertexListCreator.h" />
+    <ClInclude Include="Renderable\RenderableCreators\RenderableComponentCreator.h" />
+    <ClInclude Include="Renderable\Renderable.h">
+      <Filter>RenderableMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable\RenderableBoneList.h">
+      <Filter>RenderableMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable\RenderableMesh.h">
+      <Filter>RenderableMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable\RenderableNormalsList.h" />
+    <ClInclude Include="Render\SkinningMatrixCreator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Diffuse.frag">
