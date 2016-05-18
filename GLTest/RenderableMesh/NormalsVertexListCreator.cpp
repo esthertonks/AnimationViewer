@@ -30,14 +30,11 @@ namespace render
 		return m_normalsVertexArray;
 	}
 
-	// First go through bones to create matrix palettes.
-	// Each vert has 4 bone ids and 4 weights. Multiply for the weightedBoneMatrix
-	// Multiply this by the normal position (ie world space??? or can we use model space?)
+	// First go through bones to create matrix palette.
+	// Each vert has 4 bone ids and 4 weights (MAX_INFLUENCES). Multiply for the weightedBoneMatrix
+	// Multiply this by the normal position - we are using model space here.
 	// Extrude the normal position for the extra vert to show the normals
 	// Store in vertex list
-
-	// FIXME we are about to duplicate the bone matrix palette!!!
-
 	void NormalsVertexListCreator::CreateVertexListFromNormals(
 		mesh::BoneNode *boneHierarchyRoot
 	)
@@ -84,10 +81,14 @@ namespace render
 					glm::vec4 position;
 					utils::MathsUtils::ConvertFBXVector4ToGlVec4(vertexArray[vertexIndex].GetPosition(), position);
 					BoneMatrixPalette boneMatrixPalette = m_skinningMatrixCreator->GetBoneMatrixPalette();
-					glm::mat4 weightedBoneMatrix = boneMatrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(0)] * vertexArray[vertexIndex].GetBoneWeight(0)
-						+ boneMatrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(1)] * vertexArray[vertexIndex].GetBoneWeight(1)
-						+ boneMatrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(2)] * vertexArray[vertexIndex].GetBoneWeight(2)
-						+ boneMatrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(3)] * vertexArray[vertexIndex].GetBoneWeight(3);
+
+					assert(MAX_INFLUENCES == 4, "Error - normals vertex list is out of sync with max influences definintion in shaders (currently vec4).");
+
+					glm::mat4 weightedBoneMatrix(0); // Make sure this is zero'd - we dont want an identity matrix.
+					for (int boneInfluenceIndex = 0; boneInfluenceIndex < MAX_INFLUENCES; boneInfluenceIndex++)
+					{
+						weightedBoneMatrix += boneMatrixPalette[vertexArray[vertexIndex].GetBoneInfluenceId(boneInfluenceIndex)] * vertexArray[vertexIndex].GetBoneWeight(boneInfluenceIndex);
+					}
 
 					ColourVertex skinnedVertexPosition;
 					skinnedVertexPosition.m_position = glm::vec3(weightedBoneMatrix * position);

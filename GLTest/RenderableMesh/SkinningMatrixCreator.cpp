@@ -33,14 +33,12 @@ namespace render {
 		mesh::BoneNode *node
 	)
 	{
-		//TODO these MUST be in the sameorder they were added in import so the id's match up
-		assert(node->GetId() == m_boneIdCheck);
+		// These MUST be in the sameorder they were added on import so the id's match up
+		assert(node->GetId() == m_boneIdCheck++);
 		glm::mat4x4 bonePaletteMatrix;
 		utils::MathsUtils::ConvertFBXToGLMatrix(node->GetGlobalTransform() * node->GetInverseReferenceMatrix(), bonePaletteMatrix);
 
 		m_matrixPalette.push_back(bonePaletteMatrix);
-
-		m_boneIdCheck++;
 
 		for (mesh::BoneNode* childNode = node->m_firstChild; childNode != NULL; childNode = childNode->m_next)
 		{

@@ -506,7 +506,7 @@ void FBXImport::LoadSkin(
 			const int *controlPointIndices = cluster->GetControlPointIndices();
 			const double *controlPointWeights = cluster->GetControlPointWeights();
 
-			// Store them
+			// Store the weights for each control point
 			int vertexInfluenceNum = 0;
 			mesh::MeshVertexArray vertexArray = meshNode.GetVertices();
 			for(int clusterIndex = 0; clusterIndex < numClusterIndices; clusterIndex++)
@@ -527,7 +527,7 @@ void FBXImport::LoadSkin(
 }
 
 /**
-	\brief Bake all possible FBX transforms into the statndard rotation, trnaslate and scale variables so the can be extracted easily later
+	\brief Bake all possible FBX transforms into the standard rotation, translate and scale variables so the can be extracted easily later
 */
 
 void FBXImport::BakeNodeTransforms(
