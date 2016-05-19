@@ -14,6 +14,9 @@
 #include "GUI/ViewPanel.h"
 #include "Mesh/AnimationInfo.h"
 #include "Animation/AnimationController.h"
+#include "Renderable/RenderableCreators/BoneVertexListCreator.h"
+#include "Renderable/RenderableCreators/RenderableVertexListCreator.h"
+#include "Batch/BatchFwdDecl.h"
 
 IMPLEMENT_APP(AnimationApp)
 
@@ -203,7 +206,8 @@ void AnimationApp::ShowBones(
 {
 	if(show && m_currentMeshInfo.m_mesh) // If there is no mesh do nothing
 	{
-		render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(render::RenderableBoneListPtr(new render::RenderableBoneList()));
+		render::RenderableVertexListCreatorPtr renderableListCreator = boost::static_pointer_cast<render::RenderableVertexListCreator>(render::BoneVertexListCreatorPtr(new render::BoneVertexListCreator()));
+		render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(render::RenderableBoneListPtr(new render::RenderableBoneList(renderableListCreator)));
 
 		if(renderable->Create())
 		{

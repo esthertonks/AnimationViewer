@@ -1,5 +1,7 @@
 #pragma once
 
+// FIXME moved this file somewhere more general?
+
 #include <glm\glm.hpp>
 #include "../Mesh/MeshFwdDecl.h"
 

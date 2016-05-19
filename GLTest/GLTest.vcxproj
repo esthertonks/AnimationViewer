@@ -47,13 +47,14 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;WINVER=0x0400;__WXMSW__;wxUSE_GUI=1;_DEBUG;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\Libraries\glew-1.10.0\include;$(SolutionDir)..\..\Libraries\glm;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;$(WXWIN)\include\msvc;C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.1\include;C:\boost_1_54_0;C:\Users\mac_user\Documents\Visual Studio 2010\Projects\Simple OpenGL Image Library\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -92,6 +93,7 @@
     <ClCompile Include="Animation\VectorTrack.cpp" />
     <ClCompile Include="Batch\Appearance.cpp" />
     <ClCompile Include="Batch\Batch.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\RenderableVertexListCreator.cpp" />
     <ClCompile Include="Renderable\RenderableCreators\RenderableComponentCreator.cpp" />
     <ClCompile Include="Renderable\RenderableCreators\BoneVertexListCreator.cpp" />
     <ClCompile Include="Renderable\RenderableCreators\NormalsVertexListCreator.cpp" />
@@ -115,6 +117,7 @@
     <ClCompile Include="Renderable\RenderableBoneList.cpp" />
     <ClCompile Include="Renderable\RenderableMesh.cpp" />
     <ClCompile Include="Renderable\RenderableNormalsList.cpp" />
+    <ClCompile Include="Renderable\RenderableFwdDecl.h" />
     <ClCompile Include="Render\FirstPersonCamera.cpp" />
     <ClCompile Include="Render\GLUtils.cpp" />
     <ClCompile Include="Render\OrbitCamera.cpp" />
@@ -136,6 +139,7 @@
     <ClInclude Include="Batch\Appearance.h" />
     <ClInclude Include="Batch\Batch.h" />
     <ClInclude Include="Batch\BatchFwdDecl.h" />
+    <ClInclude Include="Renderable\RenderableCreators\RenderableVertexListCreator.h" />
     <ClInclude Include="Renderable\RenderableCreators\RenderableComponentCreator.h" />
     <ClInclude Include="Renderable\RenderableCreators\BoneVertexListCreator.h" />
     <ClInclude Include="Renderable\RenderableCreators\NormalsVertexListCreator.h" />

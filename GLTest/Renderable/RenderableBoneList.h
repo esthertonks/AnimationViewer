@@ -2,7 +2,7 @@
 
 #include "../Render/RenderFwdDecl.h"
 #include "Renderable.h"
-#include "../Batch/BatchFwdDecl.h"
+#include "RenderableFwdDecl.h"
 
 namespace mesh
 {
@@ -19,7 +19,7 @@ namespace animation
 namespace render
 {
 
-class BoneVertexListCreator;
+//class BoneVertexListCreator;
 //enum VertexFormatType;
 
 class RenderableBoneList : public Renderable
@@ -27,7 +27,9 @@ class RenderableBoneList : public Renderable
 
 public:
 
-	RenderableBoneList();
+	RenderableBoneList(
+		RenderableVertexListCreatorPtr boneListCreator
+	);
 
 	~RenderableBoneList();
 
@@ -49,6 +51,6 @@ private:
 
 	GLuint m_vertexArrayHandle;
 	GLuint m_positionBufferHandle;
-	VertexListCreatorPtr m_boneVertexListCreator;
+	RenderableVertexListCreatorPtr m_vertexListCreator;
 };
 }

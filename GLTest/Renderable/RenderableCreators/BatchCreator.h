@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../RenderableCreators/RenderableComponentCreator.h"
-#include "../../Batch/BatchFwdDecl.h"
 #include "../../Mesh/MeshFwdDecl.h"
+#include "../../Batch/BatchFwdDecl.h"
 #include <vector>
 
 namespace mesh

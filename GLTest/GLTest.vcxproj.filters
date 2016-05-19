@@ -136,6 +136,8 @@
     </ClCompile>
     <ClCompile Include="Renderable\RenderableNormalsList.cpp" />
     <ClCompile Include="Render\SkinningMatrixCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableFwdDecl.h" />
+    <ClCompile Include="Renderable\RenderableCreators\RenderableVertexListCreator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
@@ -267,6 +269,7 @@
     </ClInclude>
     <ClInclude Include="Renderable\RenderableNormalsList.h" />
     <ClInclude Include="Render\SkinningMatrixCreator.h" />
+    <ClInclude Include="Renderable\RenderableCreators\RenderableVertexListCreator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Diffuse.frag">

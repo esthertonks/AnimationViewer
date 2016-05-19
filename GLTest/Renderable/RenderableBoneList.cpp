@@ -4,15 +4,17 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../Render/ShaderManager.h"
-#include "RenderableCreators/BoneVertexListCreator.h"
+#include "RenderableCreators/RenderableVertexListCreator.h"
 #include <wx/log.h>
 
 namespace render
 {
 
-RenderableBoneList::RenderableBoneList()
+RenderableBoneList::RenderableBoneList(
+	RenderableVertexListCreatorPtr boneListCreator
+)
 	: Renderable(),
-	m_boneVertexListCreator(new BoneVertexListCreator())
+	m_vertexListCreator(boneListCreator)
 {
 }
 
@@ -30,7 +32,7 @@ bool RenderableBoneList::Update(
 		return false;
 	}
 
-	m_boneVertexListCreator->CreateVertexListFromBonePositions(boneHierarchyRoot);
+	m_vertexListCreator->Update(boneHierarchyRoot);
 
 	PrepareForRendering();
 
@@ -51,7 +53,7 @@ void RenderableBoneList::PrepareForRendering()
 	m_positionBufferHandle = vboHandles[0];
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_positionBufferHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(render::ColourVertex) * m_boneVertexListCreator->GetNumVertsInList(), &m_boneVertexListCreator->GetVertexList()[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(render::ColourVertex) * m_vertexListCreator->GetNumVertsInList(), &m_vertexListCreator->GetVertexList()[0], GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertex), (GLubyte *)0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertex), (GLubyte *)sizeof(glm::vec3));
@@ -71,7 +73,7 @@ void RenderableBoneList::Render(
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	glDisable(GL_DEPTH_TEST);
 
-	if(m_boneVertexListCreator->GetNumVertsInList() == 0)
+	if(m_vertexListCreator->GetNumVertsInList() == 0)
 	{
 		return;
 	}
@@ -105,8 +107,8 @@ void RenderableBoneList::Render(
 
 		glBindVertexArray(m_vertexArrayHandle);
 
-		glDrawArrays(GL_LINES, 0, m_boneVertexListCreator->GetNumVertsInList());
-		glDrawArrays(GL_POINTS, 0, m_boneVertexListCreator->GetNumVertsInList());
+		glDrawArrays(GL_LINES, 0, m_vertexListCreator->GetNumVertsInList());
+		glDrawArrays(GL_POINTS, 0, m_vertexListCreator->GetNumVertsInList());
 	}
 
 	glDisable(GL_POINT_SPRITE);

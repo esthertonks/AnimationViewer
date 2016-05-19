@@ -6,9 +6,4 @@ namespace render {
 	{
 	}
 
-
-	RenderableComponentCreator::~RenderableComponentCreator()
-	{
-	}
-
 }

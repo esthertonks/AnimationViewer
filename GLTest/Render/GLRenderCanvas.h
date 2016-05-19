@@ -11,6 +11,7 @@
 #include <list>
 #include <boost/shared_ptr.hpp>
 #include "../Batch/BatchFwdDecl.h"
+#include "../Renderable/RenderableFwdDecl.h"
 
 namespace render
 {

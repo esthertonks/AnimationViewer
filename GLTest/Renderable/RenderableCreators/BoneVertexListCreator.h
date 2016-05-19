@@ -1,6 +1,6 @@
-#pragma once
+//#pragma once
 
-#include "../../Batch/BatchFwdDecl.h"
+#include "RenderableVertexListCreator.h"
 
 namespace mesh {
 	class BoneNode;
@@ -8,23 +8,25 @@ namespace mesh {
 
 namespace render{
 
-class BoneVertexListCreator
+class BoneVertexListCreator : public RenderableVertexListCreator
 {
 public:
 	BoneVertexListCreator();
 	~BoneVertexListCreator();
 
-	int GetNumVertsInList();
+	virtual int GetNumVertsInList();
 
-	ColourVertexArray &GetVertexList();
+	virtual ColourVertexArray &GetVertexList();
 
-	void CreateVertexListFromBonePositions(
+	//virtual void Create();
+
+	virtual void Update(
 		mesh::BoneNode *boneHierarchyRoot
 	);
 
 private:
 
-	void CreateVertexListFromBonePositionsInternal(
+	void UpdateVertexListFromBonePositions(
 		mesh::BoneNode *boneNode
 	);
 

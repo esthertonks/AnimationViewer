@@ -3,9 +3,10 @@
 //#include <wchar.h>
 //#include "vld.h"
 #include "wx/wx.h"
-#include "Batch\BatchFwdDecl.h"
-#include "Mesh\MeshFwdDecl.h"
-#include "Animation\AnimationFwdDecl.h"
+#include "Batch/BatchFwdDecl.h"
+#include "Mesh/MeshFwdDecl.h"
+#include "Animation/AnimationFwdDecl.h"
+#include "Renderable/RenderableFwdDecl.h"
 
 namespace render
 {

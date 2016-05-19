@@ -11,14 +11,11 @@ namespace render {
 	{
 	public:
 		RenderableComponentCreator();
-		virtual ~RenderableComponentCreator();
+		virtual ~RenderableComponentCreator() {};
 
-		virtual RenderableComponetType GetType() = 0;
+		//virtual RenderableComponetType GetType() = 0;
 
-		virtual void Create() = 0;
-
-
-
+		//virtual void Create() = 0;
 	};
 
 }

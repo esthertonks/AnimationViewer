@@ -19,19 +19,24 @@ ColourVertexArray &BoneVertexListCreator::GetVertexList()
 	return m_vertexArray;
 }
 
-void BoneVertexListCreator::CreateVertexListFromBonePositions(
+//void BoneVertexListCreator::Create()
+//{
+//
+//}
+
+void BoneVertexListCreator::Update(
 	mesh::BoneNode *boneHierarchyRoot
 )
 {
 	m_vertexArray.clear();
 
-	CreateVertexListFromBonePositionsInternal(boneHierarchyRoot);
+	UpdateVertexListFromBonePositions(boneHierarchyRoot);
 
 	m_numVerts = m_vertexArray.size(); // Store so we dont access the size all the time
 }
 
 static float col = 0.0f;
-void BoneVertexListCreator::CreateVertexListFromBonePositionsInternal(
+void BoneVertexListCreator::UpdateVertexListFromBonePositions(
 	mesh::BoneNode *boneNode
 )
 {
@@ -63,7 +68,7 @@ void BoneVertexListCreator::CreateVertexListFromBonePositionsInternal(
 
 		if (boneNode->m_firstChild)
 		{
-			CreateVertexListFromBonePositionsInternal(boneNode->m_firstChild); // If this node has any children then add their info two
+			UpdateVertexListFromBonePositions(boneNode->m_firstChild); // If this node has any children then add their info two
 		}
 	}
 }
