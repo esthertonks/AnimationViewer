@@ -1,6 +1,6 @@
 //#pragma once
 
-#include "RenderableVertexListCreator.h"
+#include "VertexListCreatorBase.h"
 
 namespace mesh {
 	class BoneNode;
@@ -8,7 +8,7 @@ namespace mesh {
 
 namespace render{
 
-class BoneVertexListCreator : public RenderableVertexListCreator
+class BoneVertexListCreator : public VertexListCreatorBase
 {
 public:
 	BoneVertexListCreator();
@@ -18,9 +18,7 @@ public:
 
 	virtual ColourVertexArray &GetVertexList();
 
-	//virtual void Create();
-
-	virtual void Update(
+	virtual void CreateAnimatedVertexList(
 		mesh::BoneNode *boneHierarchyRoot
 	);
 

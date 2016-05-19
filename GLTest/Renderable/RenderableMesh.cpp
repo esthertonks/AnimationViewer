@@ -4,7 +4,7 @@
 #include "../Batch/Batch.h"
 #include "../Mesh/BoneNode.h"
 #include "../Utils/MathsUtils.h"
-#include "../Render/SkinningMatrixCreator.h"
+#include "RenderableCreators/SkinningMatrixCreator.h"
 
 namespace render
 {

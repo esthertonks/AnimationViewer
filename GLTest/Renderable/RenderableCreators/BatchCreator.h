@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../RenderableCreators/RenderableComponentCreator.h"
 #include "../../Mesh/MeshFwdDecl.h"
 #include "../../Batch/BatchFwdDecl.h"
 #include <vector>

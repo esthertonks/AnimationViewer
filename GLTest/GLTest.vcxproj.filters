@@ -124,20 +124,18 @@
     </ClCompile>
     <ClCompile Include="Renderable\RenderableCreators\BoneVertexListCreator.cpp" />
     <ClCompile Include="Renderable\RenderableCreators\NormalsVertexListCreator.cpp" />
-    <ClCompile Include="Renderable\RenderableCreators\RenderableComponentCreator.cpp" />
     <ClCompile Include="Renderable\Renderable.cpp">
-      <Filter>RenderableMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderable\RenderableBoneList.cpp">
       <Filter>RenderableMesh</Filter>
     </ClCompile>
     <ClCompile Include="Renderable\RenderableMesh.cpp">
       <Filter>RenderableMesh</Filter>
     </ClCompile>
-    <ClCompile Include="Renderable\RenderableNormalsList.cpp" />
-    <ClCompile Include="Render\SkinningMatrixCreator.cpp" />
     <ClCompile Include="Renderable\RenderableFwdDecl.h" />
-    <ClCompile Include="Renderable\RenderableCreators\RenderableVertexListCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableVertexList.cpp">
+      <Filter>RenderableMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable\RenderableCreators\SkinningMatrixCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\VertexListCreatorBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Import\FBXImport.h">
@@ -257,19 +255,17 @@
     </ClInclude>
     <ClInclude Include="Renderable\RenderableCreators\BoneVertexListCreator.h" />
     <ClInclude Include="Renderable\RenderableCreators\NormalsVertexListCreator.h" />
-    <ClInclude Include="Renderable\RenderableCreators\RenderableComponentCreator.h" />
     <ClInclude Include="Renderable\Renderable.h">
-      <Filter>RenderableMesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderable\RenderableBoneList.h">
       <Filter>RenderableMesh</Filter>
     </ClInclude>
     <ClInclude Include="Renderable\RenderableMesh.h">
       <Filter>RenderableMesh</Filter>
     </ClInclude>
-    <ClInclude Include="Renderable\RenderableNormalsList.h" />
-    <ClInclude Include="Render\SkinningMatrixCreator.h" />
-    <ClInclude Include="Renderable\RenderableCreators\RenderableVertexListCreator.h" />
+    <ClInclude Include="Renderable\RenderableVertexList.h">
+      <Filter>RenderableMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable\RenderableCreators\SkinningMatrixCreator.h" />
+    <ClInclude Include="Renderable\RenderableCreators\VertexListCreatorBase.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\Diffuse.frag">

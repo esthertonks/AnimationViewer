@@ -6,7 +6,7 @@
 #include "../../Mesh/Mesh.h"
 #include "../../Mesh/Triangle.h"
 #include "../../Mesh/Vertex.h"
-#include "../../Render/SkinningMatrixCreator.h"
+#include "SkinningMatrixCreator.h"
 
 namespace render
 {
@@ -35,7 +35,7 @@ namespace render
 	// Multiply this by the normal position - we are using model space here.
 	// Extrude the normal position for the extra vert to show the normals
 	// Store in vertex list
-	void NormalsVertexListCreator::CreateVertexListFromNormals(
+	void NormalsVertexListCreator::CreateAnimatedVertexList(
 		mesh::BoneNode *boneHierarchyRoot
 	)
 	{

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Batch/BatchFwdDecl.h"
+#include "../RenderableFwdDecl.h"
 
 namespace mesh {
 	class BoneNode;

@@ -1,29 +1,29 @@
-#include "RenderableBoneList.h"
+#include "RenderableVertexList.h"
 
 #include "../Mesh/BoneNode.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../Render/ShaderManager.h"
-#include "RenderableCreators/RenderableVertexListCreator.h"
+#include "RenderableCreators/VertexListCreatorBase.h"
 #include <wx/log.h>
 
 namespace render
 {
 
-RenderableBoneList::RenderableBoneList(
-	RenderableVertexListCreatorPtr boneListCreator
+RenderableVertexList::RenderableVertexList(
+	VertexListCreatorBasePtr boneListCreator
 )
 	: Renderable(),
 	m_vertexListCreator(boneListCreator)
 {
 }
 
-bool RenderableBoneList::Create()
+bool RenderableVertexList::Create()
 {		
 	return true;
 }
 
-bool RenderableBoneList::Update(
+bool RenderableVertexList::Update(
 	mesh::BoneNode *boneHierarchyRoot
 	)
 {
@@ -32,14 +32,14 @@ bool RenderableBoneList::Update(
 		return false;
 	}
 
-	m_vertexListCreator->Update(boneHierarchyRoot);
+	m_vertexListCreator->CreateAnimatedVertexList(boneHierarchyRoot);
 
 	PrepareForRendering();
 
 	return true;
 }
 
-void RenderableBoneList::PrepareForRendering()
+void RenderableVertexList::PrepareForRendering()
 {
 	// Create the VBO:
 
@@ -62,7 +62,7 @@ void RenderableBoneList::PrepareForRendering()
 	glEnableVertexAttribArray(1);  // Vertex colour
 }
 
-void RenderableBoneList::Render(
+void RenderableVertexList::Render(
 	ShaderManager &shaderManager,
 	glm::mat4x4& viewMatrix,
 	glm::mat4x4& projectionMatrix,
@@ -116,7 +116,7 @@ void RenderableBoneList::Render(
 	glEnable(GL_DEPTH_TEST);
 }
 
-RenderableBoneList::~RenderableBoneList()
+RenderableVertexList::~RenderableVertexList()
 {
 
 }

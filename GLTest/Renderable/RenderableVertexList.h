@@ -22,16 +22,16 @@ namespace render
 //class BoneVertexListCreator;
 //enum VertexFormatType;
 
-class RenderableBoneList : public Renderable
+class RenderableVertexList : public Renderable
 {
 
 public:
 
-	RenderableBoneList(
-		RenderableVertexListCreatorPtr boneListCreator
+	RenderableVertexList(
+		VertexListCreatorBasePtr boneListCreator
 	);
 
-	~RenderableBoneList();
+	~RenderableVertexList();
 
 	virtual bool Create();
 
@@ -51,6 +51,6 @@ private:
 
 	GLuint m_vertexArrayHandle;
 	GLuint m_positionBufferHandle;
-	RenderableVertexListCreatorPtr m_vertexListCreator;
+	VertexListCreatorBasePtr m_vertexListCreator;
 };
 }

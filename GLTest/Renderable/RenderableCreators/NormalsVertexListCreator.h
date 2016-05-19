@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../RenderableFwdDecl.h"
 #include "../../Mesh/MeshFwdDecl.h"
 #include "../../Batch/BatchFwdDecl.h"
+#include "VertexListCreatorBase.h"
 
 namespace mesh {
 	class BoneNode;
@@ -13,7 +13,7 @@ namespace render {
 
 	class SkinningMatrixCreator;
 
-	class NormalsVertexListCreator
+	class NormalsVertexListCreator : public VertexListCreatorBase
 	{
 	public:
 		NormalsVertexListCreator(
@@ -22,11 +22,11 @@ namespace render {
 
 		~NormalsVertexListCreator();
 
-		int GetNumVertsInList();
+		virtual int GetNumVertsInList();
 
-		ColourVertexArray &GetVertexList();
+		virtual ColourVertexArray &GetVertexList();
 
-		void CreateVertexListFromNormals(
+		void CreateAnimatedVertexList(
 			mesh::BoneNode *boneHierarchyRoot
 		);
 

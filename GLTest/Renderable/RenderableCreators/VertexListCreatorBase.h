@@ -1,6 +1,5 @@
 #pragma once
 
-#include "RenderableComponentCreator.h"
 #include "../RenderableFwdDecl.h"
 
 namespace mesh
@@ -11,18 +10,18 @@ namespace mesh
 namespace render
 {
 
-class RenderableVertexListCreator : public RenderableComponentCreator
+class VertexListCreatorBase abstract
 {
 public:
-	RenderableVertexListCreator();
+	VertexListCreatorBase();
 
 	virtual int GetNumVertsInList() = 0;
 	virtual ColourVertexArray &GetVertexList() = 0;
-	virtual void Update(
+	virtual void CreateAnimatedVertexList(
 		mesh::BoneNode *boneHierarchyRoot
 	) = 0;
 
-	virtual ~RenderableVertexListCreator() {};
+	virtual ~VertexListCreatorBase() {};
 };
 
 }

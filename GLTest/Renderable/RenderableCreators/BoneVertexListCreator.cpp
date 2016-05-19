@@ -19,12 +19,7 @@ ColourVertexArray &BoneVertexListCreator::GetVertexList()
 	return m_vertexArray;
 }
 
-//void BoneVertexListCreator::Create()
-//{
-//
-//}
-
-void BoneVertexListCreator::Update(
+void BoneVertexListCreator::CreateAnimatedVertexList(
 	mesh::BoneNode *boneHierarchyRoot
 )
 {
