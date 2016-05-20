@@ -11,7 +11,9 @@ namespace render{
 class BoneVertexListCreator : public VertexListCreatorBase
 {
 public:
-	BoneVertexListCreator();
+	BoneVertexListCreator(
+		glm::vec3 colour
+	);
 	~BoneVertexListCreator();
 
 	virtual int GetNumVertsInList();
@@ -30,6 +32,7 @@ private:
 
 	ColourVertexArray m_vertexArray;
 	int m_numVerts;
+	glm::vec3 m_colour;
 };
 
 }

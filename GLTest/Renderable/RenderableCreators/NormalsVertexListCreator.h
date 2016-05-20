@@ -17,7 +17,9 @@ namespace render {
 	{
 	public:
 		NormalsVertexListCreator(
-			mesh::MeshPtr mesh
+			mesh::MeshPtr mesh,
+			glm::vec3 colour,
+			float normalLength
 		);
 
 		~NormalsVertexListCreator();
@@ -38,6 +40,8 @@ namespace render {
 
 		ColourVertexArray m_normalsVertexArray;
 		int m_numVerts;
+		glm::vec3 m_colour;
+		float m_normalLength;
 		mesh::MeshPtr m_mesh;
 		render::SkinningMatrixCreatorPtr m_skinningMatrixCreator;
 	};

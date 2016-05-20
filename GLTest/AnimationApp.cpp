@@ -206,10 +206,12 @@ void AnimationApp::ShowBones(
 {
 	if(show && m_currentMeshInfo.m_mesh) // If there is no mesh do nothing
 	{
-		render::BoneVertexListCreatorPtr boneVertexListCreatorPtr = render::BoneVertexListCreatorPtr(new render::BoneVertexListCreator());
+		const glm::vec3 blueColour(0.04f, 0.3f, 0.6f);
+		const int pointSize = 10.0f;
+		render::BoneVertexListCreatorPtr boneVertexListCreatorPtr = render::BoneVertexListCreatorPtr(new render::BoneVertexListCreator(blueColour));
 		render::VertexListCreatorBasePtr vertexListCreator = boost::dynamic_pointer_cast<render::VertexListCreatorBase>(boneVertexListCreatorPtr);
 
-		render::RenderableVertexListPtr renderableVertexListPtr = render::RenderableVertexListPtr(new render::RenderableVertexList(vertexListCreator));
+		render::RenderableVertexListPtr renderableVertexListPtr = render::RenderableVertexListPtr(new render::RenderableVertexList(vertexListCreator, pointSize));
 		render::RenderablePtr renderable = boost::dynamic_pointer_cast<render::Renderable>(renderableVertexListPtr);
 
 		if(renderable->Create())
@@ -251,11 +253,13 @@ void AnimationApp::ShowNormals(
 {
 	if (show && m_currentMeshInfo.m_mesh) // If there is no mesh do nothing
 	{
-		// TODo change passed in to references
-		render::NormalsVertexListCreatorPtr normalsVertexListCreatorPtr = render::NormalsVertexListCreatorPtr(new render::NormalsVertexListCreator(m_currentMeshInfo.m_mesh));
+		const glm::vec3 whiteColour(1.0f, 1.0f, 1.0f);
+		const float normalLength = 1.7f;
+		const int pointSize = 1.0f;
+		render::NormalsVertexListCreatorPtr normalsVertexListCreatorPtr = render::NormalsVertexListCreatorPtr(new render::NormalsVertexListCreator(m_currentMeshInfo.m_mesh, whiteColour, normalLength));
 		render::VertexListCreatorBasePtr vertexListCreator = boost::dynamic_pointer_cast<render::VertexListCreatorBase>(normalsVertexListCreatorPtr);
 
-		render::RenderableVertexListPtr renderableVertexListPtr = render::RenderableVertexListPtr(new render::RenderableVertexList(vertexListCreator));
+		render::RenderableVertexListPtr renderableVertexListPtr = render::RenderableVertexListPtr(new render::RenderableVertexList(vertexListCreator, pointSize));
 		render::RenderablePtr renderable = boost::dynamic_pointer_cast<render::Renderable>(renderableVertexListPtr);
 
 		if (renderable->Create())

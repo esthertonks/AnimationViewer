@@ -11,10 +11,12 @@ namespace render
 {
 
 RenderableVertexList::RenderableVertexList(
-	VertexListCreatorBasePtr boneListCreator
+	VertexListCreatorBasePtr boneListCreator,
+	int pointSize
 )
 	: Renderable(),
-	m_vertexListCreator(boneListCreator)
+	m_vertexListCreator(boneListCreator),
+	m_pointSize(pointSize)
 {
 }
 
@@ -91,7 +93,6 @@ void RenderableVertexList::Render(
 		//wxLogDebug("pos y %f", m_vertexArray[0].m_position.y);
 		//wxLogDebug("pos z %f", m_vertexArray[0].m_position.z);
 		//TODO shader to draw linelists?
-		//TODO well most of this is duplicated in all renderables!!!!!!!!!
 		GLint modelMatrixLocation = glGetUniformLocation(programId, "modelMatrix");
 		GLint viewMatrixLocation = glGetUniformLocation(programId, "viewMatrix");
 		GLint projectionMatrixLocation = glGetUniformLocation(programId, "projectionMatrix"); //TODO only needs setting on resize
@@ -103,7 +104,7 @@ void RenderableVertexList::Render(
 		}
 
 		GLint pointSizeLocation = glGetUniformLocation(programId, "pointSize");
-		glUniform1f(pointSizeLocation, 10);
+		glUniform1f(pointSizeLocation, m_pointSize);
 
 		glBindVertexArray(m_vertexArrayHandle);
 

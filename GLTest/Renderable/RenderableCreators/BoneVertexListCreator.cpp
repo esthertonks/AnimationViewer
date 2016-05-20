@@ -4,8 +4,11 @@
 namespace render
 {
 
-BoneVertexListCreator::BoneVertexListCreator()
-	: m_numVerts(0)
+BoneVertexListCreator::BoneVertexListCreator(
+		glm::vec3 colour
+	)
+	: m_numVerts(0),
+	m_colour(colour)
 {
 }
 
@@ -30,7 +33,6 @@ void BoneVertexListCreator::CreateAnimatedVertexList(
 	m_numVerts = m_vertexArray.size(); // Store so we dont access the size all the time
 }
 
-static float col = 0.0f;
 void BoneVertexListCreator::UpdateVertexListFromBonePositions(
 	mesh::BoneNode *boneNode
 )
@@ -45,7 +47,7 @@ void BoneVertexListCreator::UpdateVertexListFromBonePositions(
 			parentVertex.m_position.x = static_cast<float>(parentGlobalTransform[3][0]);
 			parentVertex.m_position.y = static_cast<float>(parentGlobalTransform[3][1]);
 			parentVertex.m_position.z = static_cast<float>(parentGlobalTransform[3][2]);
-			parentVertex.m_colour = glm::vec3(col, 0.0, 0.0);
+			parentVertex.m_colour = m_colour;
 
 			m_vertexArray.push_back(parentVertex);
 
@@ -55,8 +57,7 @@ void BoneVertexListCreator::UpdateVertexListFromBonePositions(
 			vertex.m_position.x = static_cast<float>(globalTransform[3][0]);
 			vertex.m_position.y = static_cast<float>(globalTransform[3][1]);
 			vertex.m_position.z = static_cast<float>(globalTransform[3][2]);
-			vertex.m_colour = glm::vec3(col, 0.0, 0.0);
-			col += 0.02f;
+			vertex.m_colour = m_colour;
 
 			m_vertexArray.push_back(vertex);
 		}

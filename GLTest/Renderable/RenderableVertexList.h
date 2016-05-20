@@ -28,7 +28,8 @@ class RenderableVertexList : public Renderable
 public:
 
 	RenderableVertexList(
-		VertexListCreatorBasePtr boneListCreator
+		VertexListCreatorBasePtr boneListCreator,
+		int pointSize
 	);
 
 	~RenderableVertexList();
@@ -52,5 +53,6 @@ private:
 	GLuint m_vertexArrayHandle;
 	GLuint m_positionBufferHandle;
 	VertexListCreatorBasePtr m_vertexListCreator;
+	int m_pointSize;
 };
 }

@@ -12,9 +12,13 @@ namespace render
 {
 
 	NormalsVertexListCreator::NormalsVertexListCreator(
-		mesh::MeshPtr mesh
+		mesh::MeshPtr mesh,
+		glm::vec3 colour,
+		float normalLength
 	)
 		: m_numVerts(0),
+		m_colour(colour),
+		m_normalLength(normalLength),
 		m_mesh(mesh),
 		m_skinningMatrixCreator(new SkinningMatrixCreator)
 	{
@@ -50,8 +54,6 @@ namespace render
 		m_numVerts = m_normalsVertexArray.size(); // Store so we dont access the size all the time
 	}
 
-	static float col = 4.0f;
-	static float extrudeFactor = 2.0; //FIXME pass in as parameter
 	void NormalsVertexListCreator::CreateVertexListFromNormalsInternal(
 		mesh::MeshNode* meshNode
 	)
@@ -92,13 +94,13 @@ namespace render
 
 					ColourVertex skinnedVertexPosition;
 					skinnedVertexPosition.m_position = glm::vec3(weightedBoneMatrix * position);
-					skinnedVertexPosition.m_colour = glm::vec3(col, 0.0, 0.0);
+					skinnedVertexPosition.m_colour = m_colour;
 
 					// Extrapolate normal
 					ColourVertex extrudedNormalPosition;	
 					glm::vec3 normal = glm::vec3(triangleArray[triangleIndex].GetNormal(triangleCornerIndex));
-					extrudedNormalPosition.m_position = skinnedVertexPosition.m_position + (glm::normalize(normal) * extrudeFactor);
-					extrudedNormalPosition.m_colour = glm::vec3(col, 0.0, 0.0);
+					extrudedNormalPosition.m_position = skinnedVertexPosition.m_position + (glm::normalize(normal) * m_normalLength);
+					extrudedNormalPosition.m_colour = m_colour;
 
 					m_normalsVertexArray.push_back(skinnedVertexPosition);
 					m_normalsVertexArray.push_back(extrudedNormalPosition);
