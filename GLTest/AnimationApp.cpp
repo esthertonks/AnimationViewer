@@ -206,8 +206,11 @@ void AnimationApp::ShowBones(
 {
 	if(show && m_currentMeshInfo.m_mesh) // If there is no mesh do nothing
 	{
-		render::VertexListCreatorBasePtr vertexListCreator = boost::static_pointer_cast<render::VertexListCreatorBase>(render::BoneVertexListCreatorPtr(new render::BoneVertexListCreator()));
-		render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(render::RenderableVertexListPtr(new render::RenderableVertexList(vertexListCreator)));
+		render::BoneVertexListCreatorPtr boneVertexListCreatorPtr = render::BoneVertexListCreatorPtr(new render::BoneVertexListCreator());
+		render::VertexListCreatorBasePtr vertexListCreator = boost::dynamic_pointer_cast<render::VertexListCreatorBase>(boneVertexListCreatorPtr);
+
+		render::RenderableVertexListPtr renderableVertexListPtr = render::RenderableVertexListPtr(new render::RenderableVertexList(vertexListCreator));
+		render::RenderablePtr renderable = boost::dynamic_pointer_cast<render::Renderable>(renderableVertexListPtr);
 
 		if(renderable->Create())
 		{
@@ -250,10 +253,10 @@ void AnimationApp::ShowNormals(
 	{
 		// TODo change passed in to references
 		render::NormalsVertexListCreatorPtr normalsVertexListCreatorPtr = render::NormalsVertexListCreatorPtr(new render::NormalsVertexListCreator(m_currentMeshInfo.m_mesh));
-		render::VertexListCreatorBasePtr vertexListCreator = boost::static_pointer_cast<render::VertexListCreatorBase>(normalsVertexListCreatorPtr);
+		render::VertexListCreatorBasePtr vertexListCreator = boost::dynamic_pointer_cast<render::VertexListCreatorBase>(normalsVertexListCreatorPtr);
 
 		render::RenderableVertexListPtr renderableVertexListPtr = render::RenderableVertexListPtr(new render::RenderableVertexList(vertexListCreator));
-		render::RenderablePtr renderable = boost::static_pointer_cast<render::Renderable>(renderableVertexListPtr);
+		render::RenderablePtr renderable = boost::dynamic_pointer_cast<render::Renderable>(renderableVertexListPtr);
 
 		if (renderable->Create())
 		{
