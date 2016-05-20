@@ -9,7 +9,6 @@
 namespace mesh
 {
 
-	//TODO better called animation details?
 class AnimationInfo
 {
 public :

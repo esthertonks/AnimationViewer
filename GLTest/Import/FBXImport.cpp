@@ -106,11 +106,11 @@ mesh::MeshPtr FBXImport::Import(
 
 	LoadSkin();
 
-	// Now the all the animation is loaded adjust the time to make sure that it starts at zero //TODO function
+	// Now the all the animation is loaded adjust the time to make sure that it starts at zero
 	animationInfo->SetEndSample(animationInfo->GetEndSample() - animationInfo->GetStartSample());
 	animationInfo->SetStartSample(0);
 
-	// TODO revome duplicate keys
+	// TODO remove duplicate keys
 
 	DestroyFBXManagers();
 
@@ -438,7 +438,7 @@ void FBXImport::LoadSkin()
 		{
 		case FbxSkin::eLinear:
 		case FbxSkin::eRigid:
-		case FbxSkin::eDualQuaternion: //TODO does this work?
+		case FbxSkin::eDualQuaternion: //TODO dual quaterion? does this work??
 			LoadSkin(*fbxGeometry, *m_meshNodeInfo.m_meshNode[meshIndex]);
 			break;
 

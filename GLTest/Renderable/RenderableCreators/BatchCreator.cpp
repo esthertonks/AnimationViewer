@@ -39,14 +39,13 @@ void BatchCreator::CreateBatches(
 	//TODO could insist on node transforms being zero and thus create fewer batches). Within each node each material needs a new batch.
 	mesh::MeshNode* rootMeshNode = m_mesh->GetMeshNodeHierarchy();
 
-	CreateBatchesInternal(m_mesh, rootMeshNode, perNodeRenderBatches);
+	CreateBatchesInternal(rootMeshNode, perNodeRenderBatches);
 
 	return;
 }
 
 
 void BatchCreator::CreateBatchesInternal(
-	mesh::MeshPtr &mesh, //TODO is this used???
 	mesh::MeshNode* meshNode,
 	render::PerNodeBatchList &perNodeRenderBatches // Batch vector to fill in
 	)
@@ -150,7 +149,7 @@ void BatchCreator::CreateBatchesInternal(
 
 		for(mesh::MeshNode *childNode = meshNode->m_firstChild; childNode != NULL; childNode = childNode->m_next)
 		{
-			CreateBatchesInternal(mesh, childNode, perNodeRenderBatches);
+			CreateBatchesInternal(childNode, perNodeRenderBatches);
 		}
 	}
 }

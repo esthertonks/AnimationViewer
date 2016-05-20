@@ -12,7 +12,6 @@ class QuaternionKey : public Key
 {
 public :
 
-	// TODO dislike:-/
 QuaternionKey() 
 	: Key(0)
 {

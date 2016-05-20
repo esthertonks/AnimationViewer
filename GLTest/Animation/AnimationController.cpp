@@ -1,8 +1,7 @@
 #include "AnimationController.h"
 
-//#include "../Mesh/Node.h"
 #include "../Mesh/BoneNode.h"
-#include "../Mesh/MeshNode.h" //TODO ug why do I need this?
+#include "../Mesh/MeshNode.h" // FIXME why do I need this???
 #include "../Animation/QuaternionKey.h"
 #include "../Animation/VectorKey.h"
 #include "../Animation/QuaternionTrack.h"

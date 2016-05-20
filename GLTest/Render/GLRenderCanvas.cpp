@@ -337,7 +337,7 @@ void GLRenderCanvas::RenderImmediate()
 void GLRenderCanvas::Render(
 	)
 {
-	// TODO wxwidgets has not init callback so this has to be done here. bleugh.
+	// TODO wxwidgets has no init callback so this has to be done here. bleugh.
 	if(!m_context)
 	{
 		wxLogDebug("Error - no gl canvas available for rendering");
