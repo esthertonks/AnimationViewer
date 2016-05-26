@@ -35,7 +35,9 @@ void main()
 	// Convert to eye coordinates
 	position = vec3(viewMatrix * skinnedPosition);
 	normal = normalize(mat3(weightedBoneMatrix) * normalMatrix * vertexNormal);//TODO mult by skinning matrix?
-	textureCoord = vertexTexCoord;
+
+	// Flip the tex coord because SOIL is loading in textures upside down???
+	textureCoord = vec2(vertexTexCoord.x, 1 - vertexTexCoord.y);
 	gl_Position = projectionMatrix * viewMatrix * skinnedPosition;
 
 }
