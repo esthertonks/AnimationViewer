@@ -36,6 +36,8 @@ bool RenderableVertexList::Update(
 
 	m_vertexListCreator->CreateAnimatedVertexList(boneHierarchyRoot);
 
+	assert(m_vertexListCreator->GetNumVertsInList() != 0);
+
 	PrepareForRendering();
 
 	return true;
