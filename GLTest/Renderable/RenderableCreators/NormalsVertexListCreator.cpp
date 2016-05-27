@@ -99,7 +99,8 @@ namespace render
 					// Extrapolate normal
 					ColourVertex extrudedNormalPosition;	
 					glm::vec3 normal = glm::vec3(triangleArray[triangleIndex].GetNormal(triangleCornerIndex));
-					extrudedNormalPosition.m_position = skinnedVertexPosition.m_position + (glm::normalize(normal) * m_normalLength);
+					glm::vec3 extrudedNormal = glm::normalize(normal) * m_normalLength;
+					extrudedNormalPosition.m_position = skinnedVertexPosition.m_position + extrudedNormal;
 					extrudedNormalPosition.m_colour = m_colour;
 
 					m_normalsVertexArray.push_back(skinnedVertexPosition);

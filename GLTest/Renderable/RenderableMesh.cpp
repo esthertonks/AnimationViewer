@@ -84,7 +84,7 @@ void RenderableMesh::Render(
 
 					//TODO this should not be here - light class please. Also the other light params currently in the appearances should be in the same place as this...
 					GLint lightPositionLocation = glGetUniformLocation(programId, "light.position");
-					//lightPosition = viewMatrix * lightPosition;
+					//lightPosition = viewMatrix * lightPosition; // Multiply by the view matrix to move the light with the mesh
 					glUniform4f(lightPositionLocation, lightPosition.x, lightPosition.y, lightPosition.z, lightPosition.w);
 
 					glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &(*batchIterator)->GetModelMatrix()[0][0]);//TODO pass fewer matrices through!!!

@@ -24,6 +24,10 @@ virtual void ConvertToShaderParams(
 
 private:
 
-	// Shader Inputs?
+	glm::vec3 defaultMaterialAmbient;
+	glm::vec3 defaultMaterialDiffuse;
+	double defaultMaterialDiffuseFactor;
+	glm::vec3 defaultLightAmbient;
+	glm::vec3 defaultLightDiffuse;
 };
 }

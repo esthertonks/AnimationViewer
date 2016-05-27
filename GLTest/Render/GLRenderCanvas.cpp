@@ -46,7 +46,7 @@ GLRenderCanvas::GLRenderCanvas(
 	m_camera(new OrbitCamera(glm::vec3(100.0f, 0.0f, 0.0f))),
 	m_shaderManager(new ShaderManager()),
 	m_initialised(false),
-	m_lightPosition(1000.0f, 1000.0f, 50.0f, 1.0f)
+	m_lightPosition(1000.0f, 1000.0f, 1000.0f, 1.0f)
 {
 }
 
@@ -379,7 +379,7 @@ void GLRenderCanvas::Render(
 
 	glm::mat4x4 projectionMatrix = glm::perspective(40.0f, (float)width / (float) height, 1.0f, 600.f);
 
-	glm::vec4 lightPosition = viewMatrix * m_lightPosition;
+	glm::vec4 lightPosition = m_lightPosition;
 	
 	Renderables::const_iterator renderableIterator;
 	for(renderableIterator = m_renderables.begin(); renderableIterator != m_renderables.end(); renderableIterator++)
