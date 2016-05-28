@@ -107,6 +107,9 @@
     <ClCompile Include="Utils\MathsUtils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Renderable\RenderableVertexListFactory.cpp">
+      <Filter>Renderable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationApp.h" />
@@ -244,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="Utils\MathsUtils.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable\RenderableVertexListFactory.h">
+      <Filter>Renderable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

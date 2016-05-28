@@ -116,6 +116,7 @@
     <ClCompile Include="Renderable\RenderableVertexList.cpp" />
     <ClCompile Include="Renderable\RenderableMesh.cpp" />
     <ClCompile Include="Renderable\RenderableFwdDecl.h" />
+    <ClCompile Include="Renderable\RenderableVertexListFactory.cpp" />
     <ClCompile Include="Render\FirstPersonCamera.cpp" />
     <ClCompile Include="Render\GLUtils.cpp" />
     <ClCompile Include="Render\OrbitCamera.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="Renderable\Renderable.h" />
     <ClInclude Include="Renderable\RenderableVertexList.h" />
     <ClInclude Include="Renderable\RenderableMesh.h" />
+    <ClInclude Include="Renderable\RenderableVertexListFactory.h" />
     <ClInclude Include="Render\FirstPersonCamera.h" />
     <ClInclude Include="Render\GLUtils.h" />
     <ClInclude Include="Render\OrbitCamera.h" />
