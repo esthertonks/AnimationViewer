@@ -1,19 +1,19 @@
-#include "SkinningMatrixCreator.h"
+#include "SkinningMatrixProcessor.h"
 #include "../Utils/MathsUtils.h"
 #include "../Mesh/BoneNode.h"
 
 namespace render {
 
-	SkinningMatrixCreator::SkinningMatrixCreator()
+	SkinningMatrixProcessor::SkinningMatrixProcessor()
 		: m_boneIdCheck(0)
 	{
 	}
 
-	BoneMatrixPalette &SkinningMatrixCreator::GetBoneMatrixPalette() {
+	BoneMatrixPalette &SkinningMatrixProcessor::GetBoneMatrixPalette() {
 		return m_matrixPalette;
 	}
 
-	bool SkinningMatrixCreator::CreateBoneMatrix(
+	bool SkinningMatrixProcessor::CreateBoneMatrix(
 		mesh::BoneNode *boneHierarchyRoot
 	)
 	{
@@ -29,7 +29,7 @@ namespace render {
 		return true;
 	}
 
-	bool SkinningMatrixCreator::CreateBoneMatrixInternal(
+	bool SkinningMatrixProcessor::CreateBoneMatrixInternal(
 		mesh::BoneNode *node
 	)
 	{
@@ -48,7 +48,7 @@ namespace render {
 		return true;
 	}
 
-	SkinningMatrixCreator::~SkinningMatrixCreator()
+	SkinningMatrixProcessor::~SkinningMatrixProcessor()
 	{
 	}
 

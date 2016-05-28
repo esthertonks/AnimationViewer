@@ -2,7 +2,7 @@
 
 #include "../Mesh/MeshFwdDecl.h"
 #include "../Batch/BatchFwdDecl.h"
-#include "VertexListCreatorBase.h"
+#include "VertexListProcessor.h"
 
 namespace mesh {
 	class BoneNode;
@@ -11,18 +11,18 @@ namespace mesh {
 
 namespace render {
 
-	class SkinningMatrixCreator;
+	class SkinningMatrixProcessor;
 
-	class NormalsVertexListCreator : public VertexListCreatorBase
+	class NormalsVertexListProcessor : public VertexListProcessor
 	{
 	public:
-		NormalsVertexListCreator(
+		NormalsVertexListProcessor(
 			mesh::MeshPtr mesh,
 			glm::vec3 colour,
 			float normalLength
 		);
 
-		~NormalsVertexListCreator();
+		~NormalsVertexListProcessor();
 
 		virtual int GetNumVertsInList();
 
@@ -43,7 +43,7 @@ namespace render {
 		glm::vec3 m_colour;
 		float m_normalLength;
 		mesh::MeshPtr m_mesh;
-		render::SkinningMatrixCreatorPtr m_skinningMatrixCreator;
+		render::SkinningMatrixProcessorPtr m_skinningMatrixProcessor;
 	};
 
 }

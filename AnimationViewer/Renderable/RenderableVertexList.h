@@ -19,7 +19,7 @@ namespace animation
 namespace render
 {
 
-//class BoneVertexListCreator;
+//class BoneVertexListProcessor;
 //enum VertexFormatType;
 
 class RenderableVertexList : public Renderable
@@ -28,7 +28,7 @@ class RenderableVertexList : public Renderable
 public:
 
 	RenderableVertexList(
-		VertexListCreatorBasePtr boneListCreator,
+		VertexListProcessorPtr vertexListProcessor,
 		int pointSize
 	);
 
@@ -52,7 +52,7 @@ private:
 
 	GLuint m_vertexArrayHandle;
 	GLuint m_positionBufferHandle;
-	VertexListCreatorBasePtr m_vertexListCreator;
+	VertexListProcessorPtr m_vertexListProcessor;
 	int m_pointSize;
 };
 }

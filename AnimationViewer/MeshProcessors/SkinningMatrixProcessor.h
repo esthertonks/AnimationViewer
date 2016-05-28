@@ -8,13 +8,13 @@ namespace mesh {
 
 namespace render {
 
-class SkinningMatrixCreator
+class SkinningMatrixProcessor
 {
 public:
-	SkinningMatrixCreator();
-	~SkinningMatrixCreator();
+	SkinningMatrixProcessor();
+	~SkinningMatrixProcessor();
 
-	BoneMatrixPalette &SkinningMatrixCreator::GetBoneMatrixPalette();
+	BoneMatrixPalette &SkinningMatrixProcessor::GetBoneMatrixPalette();
 
 	bool CreateBoneMatrix(
 		mesh::BoneNode * boneHierarchyRoot

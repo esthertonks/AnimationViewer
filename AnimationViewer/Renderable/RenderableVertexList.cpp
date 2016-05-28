@@ -4,18 +4,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../Render/ShaderManager.h"
-#include "../RenderableCreators/VertexListCreatorBase.h"
+#include "../MeshProcessors/VertexListProcessor.h"
 #include <wx/log.h>
 
 namespace render
 {
 
 RenderableVertexList::RenderableVertexList(
-	VertexListCreatorBasePtr boneListCreator,
+	VertexListProcessorPtr vertexListProcessor,
 	int pointSize
 )
 	: Renderable(),
-	m_vertexListCreator(boneListCreator),
+	m_vertexListProcessor(vertexListProcessor),
 	m_pointSize(pointSize)
 {
 }
@@ -34,9 +34,9 @@ bool RenderableVertexList::Update(
 		return false;
 	}
 
-	m_vertexListCreator->CreateAnimatedVertexList(boneHierarchyRoot);
+	m_vertexListProcessor->CreateAnimatedVertexList(boneHierarchyRoot);
 
-	assert(m_vertexListCreator->GetNumVertsInList() != 0);
+	assert(m_vertexListProcessor->GetNumVertsInList() != 0);
 
 	PrepareForRendering();
 
@@ -57,7 +57,7 @@ void RenderableVertexList::PrepareForRendering()
 	m_positionBufferHandle = vboHandles[0];
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_positionBufferHandle);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(render::ColourVertex) * m_vertexListCreator->GetNumVertsInList(), &m_vertexListCreator->GetVertexList()[0], GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(render::ColourVertex) * m_vertexListProcessor->GetNumVertsInList(), &m_vertexListProcessor->GetVertexList()[0], GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertex), (GLubyte *)0);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(render::ColourVertex), (GLubyte *)sizeof(glm::vec3));
@@ -77,7 +77,7 @@ void RenderableVertexList::Render(
 	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 	glDisable(GL_DEPTH_TEST);
 
-	if(m_vertexListCreator->GetNumVertsInList() == 0)
+	if(m_vertexListProcessor->GetNumVertsInList() == 0)
 	{
 		return;
 	}
@@ -110,8 +110,8 @@ void RenderableVertexList::Render(
 
 		glBindVertexArray(m_vertexArrayHandle);
 
-		glDrawArrays(GL_LINES, 0, m_vertexListCreator->GetNumVertsInList());
-		glDrawArrays(GL_POINTS, 0, m_vertexListCreator->GetNumVertsInList());
+		glDrawArrays(GL_LINES, 0, m_vertexListProcessor->GetNumVertsInList());
+		glDrawArrays(GL_POINTS, 0, m_vertexListProcessor->GetNumVertsInList());
 	}
 
 	glDisable(GL_POINT_SPRITE);

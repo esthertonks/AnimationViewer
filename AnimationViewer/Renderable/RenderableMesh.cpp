@@ -1,10 +1,10 @@
 #include "RenderableMesh.h"
 #include "../Render/ShaderManager.h"
-#include "../RenderableCreators/BatchCreator.h"
+#include "../MeshProcessors/BatchProcessor.h"
 #include "../Batch/Batch.h"
 #include "../Mesh/BoneNode.h"
 #include "../Utils/MathsUtils.h"
-#include "../RenderableCreators/SkinningMatrixCreator.h"
+#include "../MeshProcessors/SkinningMatrixProcessor.h"
 
 namespace render
 {
@@ -13,16 +13,16 @@ RenderableMesh::RenderableMesh(
 	mesh::MeshPtr mesh
 )
 	: Renderable(),
-	m_meshBatchCreator(new BatchCreator(mesh)),
-	m_skinningMatrixCreator(new SkinningMatrixCreator())
+	m_meshBatchProcessor(new BatchProcessor(mesh)),
+	m_skinningMatrixProcessor(new SkinningMatrixProcessor())
 {
 }
 
 bool RenderableMesh::Create()
 {			
-	m_meshBatchCreator->CreateBatches(m_perNodeRenderBatches);
+	m_meshBatchProcessor->CreateBatches(m_perNodeRenderBatches);
 		
-	m_meshBatchCreator->PrepareBatches(m_perNodeRenderBatches);
+	m_meshBatchProcessor->PrepareBatches(m_perNodeRenderBatches);
 
 	return true;
 }
@@ -33,7 +33,7 @@ bool RenderableMesh::Update(
 	mesh::BoneNode *boneHierarchyRoot
 	)
 {	
-	m_skinningMatrixCreator->CreateBoneMatrix(boneHierarchyRoot);
+	m_skinningMatrixProcessor->CreateBoneMatrix(boneHierarchyRoot);
 
 	return true;
 }
@@ -93,7 +93,7 @@ void RenderableMesh::Render(
 					glUniformMatrix3fv(normalMatrixLocation, 1, GL_FALSE, &normalMatrix[0][0]);
 				}
 
-				BoneMatrixPalette boneMatrixPalette = m_skinningMatrixCreator->GetBoneMatrixPalette();
+				BoneMatrixPalette boneMatrixPalette = m_skinningMatrixProcessor->GetBoneMatrixPalette();
 				GLint bonePaletteMatrixLocation = glGetUniformLocation(programId, "boneMatrixPalette");
 				if(bonePaletteMatrixLocation >= 0 && boneMatrixPalette.size() > 0)
 				{

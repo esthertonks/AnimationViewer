@@ -1,4 +1,4 @@
-#include "NormalsVertexListCreator.h"
+#include "NormalsVertexListProcessor.h"
 #include "../Mesh/BoneNode.h"
 #include "../Mesh/MeshNode.h"
 #include "../Renderable/RenderableMesh.h"
@@ -6,12 +6,12 @@
 #include "../Mesh/Mesh.h"
 #include "../Mesh/Triangle.h"
 #include "../Mesh/Vertex.h"
-#include "SkinningMatrixCreator.h"
+#include "SkinningMatrixProcessor.h"
 
 namespace render
 {
 
-	NormalsVertexListCreator::NormalsVertexListCreator(
+	NormalsVertexListProcessor::NormalsVertexListProcessor(
 		mesh::MeshPtr mesh,
 		glm::vec3 colour,
 		float normalLength
@@ -20,16 +20,16 @@ namespace render
 		m_colour(colour),
 		m_normalLength(normalLength),
 		m_mesh(mesh),
-		m_skinningMatrixCreator(new SkinningMatrixCreator)
+		m_skinningMatrixProcessor(new SkinningMatrixProcessor)
 	{
 	}
 
-	int NormalsVertexListCreator::GetNumVertsInList()
+	int NormalsVertexListProcessor::GetNumVertsInList()
 	{
 		return m_numVerts; // Updated in CreateVertexListFromBonePositions
 	}
 
-	ColourVertexArray &NormalsVertexListCreator::GetVertexList()
+	ColourVertexArray &NormalsVertexListProcessor::GetVertexList()
 	{
 		return m_normalsVertexArray;
 	}
@@ -39,11 +39,11 @@ namespace render
 	// Multiply this by the normal position - we are using model space here.
 	// Extrude the normal position for the extra vert to show the normals
 	// Store in vertex list
-	void NormalsVertexListCreator::CreateAnimatedVertexList(
+	void NormalsVertexListProcessor::CreateAnimatedVertexList(
 		mesh::BoneNode *boneHierarchyRoot
 	)
 	{
-		m_skinningMatrixCreator->CreateBoneMatrix(boneHierarchyRoot);
+		m_skinningMatrixProcessor->CreateBoneMatrix(boneHierarchyRoot);
 
 		m_normalsVertexArray.clear();
 
@@ -54,7 +54,7 @@ namespace render
 		m_numVerts = m_normalsVertexArray.size(); // Store so we dont access the size all the time
 	}
 
-	void NormalsVertexListCreator::CreateVertexListFromNormalsInternal(
+	void NormalsVertexListProcessor::CreateVertexListFromNormalsInternal(
 		mesh::MeshNode* meshNode
 	)
 	{
@@ -82,7 +82,7 @@ namespace render
 					// Calcualte the skinned position of the verts
 					glm::vec4 position;
 					utils::MathsUtils::ConvertFBXVector4ToGlVec4(vertexArray[vertexIndex].GetPosition(), position);
-					BoneMatrixPalette boneMatrixPalette = m_skinningMatrixCreator->GetBoneMatrixPalette();
+					BoneMatrixPalette boneMatrixPalette = m_skinningMatrixProcessor->GetBoneMatrixPalette();
 
 					assert(MAX_INFLUENCES == 4); // If it isn't 4 then this is out of sync with the  shaders which are using vec4 to pass in the parameters.
 
@@ -115,7 +115,7 @@ namespace render
 		}
 	}
 
-	NormalsVertexListCreator::~NormalsVertexListCreator()
+	NormalsVertexListProcessor::~NormalsVertexListProcessor()
 	{
 	}
 

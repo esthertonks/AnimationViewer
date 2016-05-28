@@ -51,7 +51,7 @@ public:
 
 private:
 	render::PerNodeBatchList m_perNodeRenderBatches; //TODO rendermesh now is aware of nodes - do we really want this?
-	BatchCreatorPtr m_meshBatchCreator;
-	SkinningMatrixCreatorPtr m_skinningMatrixCreator;
+	BatchProcessorPtr m_meshBatchProcessor;
+	SkinningMatrixProcessorPtr m_skinningMatrixProcessor;
 };
 }

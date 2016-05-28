@@ -1,10 +1,10 @@
-#include "BoneVertexListCreator.h"
+#include "BoneVertexListProcessor.h"
 #include "../Mesh/BoneNode.h"
 
 namespace render
 {
 
-BoneVertexListCreator::BoneVertexListCreator(
+BoneVertexListProcessor::BoneVertexListProcessor(
 		glm::vec3 colour
 	)
 	: m_numVerts(0),
@@ -12,17 +12,17 @@ BoneVertexListCreator::BoneVertexListCreator(
 {
 }
 
-int BoneVertexListCreator::GetNumVertsInList()
+int BoneVertexListProcessor::GetNumVertsInList()
 {
 	return m_numVerts; // Updated in CreateVertexListFromBonePositions
 }
 
-ColourVertexArray &BoneVertexListCreator::GetVertexList()
+ColourVertexArray &BoneVertexListProcessor::GetVertexList()
 {
 	return m_vertexArray;
 }
 
-void BoneVertexListCreator::CreateAnimatedVertexList(
+void BoneVertexListProcessor::CreateAnimatedVertexList(
 	mesh::BoneNode *boneHierarchyRoot
 )
 {
@@ -33,7 +33,7 @@ void BoneVertexListCreator::CreateAnimatedVertexList(
 	m_numVerts = m_vertexArray.size(); // Store so we dont access the size all the time
 }
 
-void BoneVertexListCreator::UpdateVertexListFromBonePositions(
+void BoneVertexListProcessor::UpdateVertexListFromBonePositions(
 	mesh::BoneNode *boneNode
 )
 {
@@ -69,7 +69,7 @@ void BoneVertexListCreator::UpdateVertexListFromBonePositions(
 	}
 }
 
-BoneVertexListCreator::~BoneVertexListCreator()
+BoneVertexListProcessor::~BoneVertexListProcessor()
 {
 }
 

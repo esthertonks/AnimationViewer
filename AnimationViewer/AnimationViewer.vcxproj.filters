@@ -95,20 +95,20 @@
     <ClCompile Include="Renderable\RenderableVertexListFactory.cpp">
       <Filter>Renderable</Filter>
     </ClCompile>
-    <ClCompile Include="RenderableCreators\BatchCreator.cpp">
-      <Filter>RenderableCreators</Filter>
+    <ClCompile Include="MeshProcessors\BatchProcessor.cpp">
+      <Filter>MeshProcessors</Filter>
     </ClCompile>
-    <ClCompile Include="RenderableCreators\BoneVertexListCreator.cpp">
-      <Filter>RenderableCreators</Filter>
+    <ClCompile Include="MeshProcessors\BoneVertexListProcessor.cpp">
+      <Filter>MeshProcessors</Filter>
     </ClCompile>
-    <ClCompile Include="RenderableCreators\NormalsVertexListCreator.cpp">
-      <Filter>RenderableCreators</Filter>
+    <ClCompile Include="MeshProcessors\NormalsVertexListProcessor.cpp">
+      <Filter>MeshProcessors</Filter>
     </ClCompile>
-    <ClCompile Include="RenderableCreators\SkinningMatrixCreator.cpp">
-      <Filter>RenderableCreators</Filter>
+    <ClCompile Include="MeshProcessors\SkinningMatrixProcessor.cpp">
+      <Filter>MeshProcessors</Filter>
     </ClCompile>
-    <ClCompile Include="RenderableCreators\VertexListCreatorBase.cpp">
-      <Filter>RenderableCreators</Filter>
+    <ClCompile Include="MeshProcessors\VertexListProcessor.cpp">
+      <Filter>MeshProcessors</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -236,20 +236,20 @@
     <ClInclude Include="Renderable\RenderableVertexListFactory.h">
       <Filter>Renderable</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableCreators\BatchCreator.h">
-      <Filter>RenderableCreators</Filter>
+    <ClInclude Include="MeshProcessors\BatchProcessor.h">
+      <Filter>MeshProcessors</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableCreators\BoneVertexListCreator.h">
-      <Filter>RenderableCreators</Filter>
+    <ClInclude Include="MeshProcessors\BoneVertexListProcessor.h">
+      <Filter>MeshProcessors</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableCreators\NormalsVertexListCreator.h">
-      <Filter>RenderableCreators</Filter>
+    <ClInclude Include="MeshProcessors\NormalsVertexListProcessor.h">
+      <Filter>MeshProcessors</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableCreators\SkinningMatrixCreator.h">
-      <Filter>RenderableCreators</Filter>
+    <ClInclude Include="MeshProcessors\SkinningMatrixProcessor.h">
+      <Filter>MeshProcessors</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableCreators\VertexListCreatorBase.h">
-      <Filter>RenderableCreators</Filter>
+    <ClInclude Include="MeshProcessors\VertexListProcessor.h">
+      <Filter>MeshProcessors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -345,7 +345,7 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{d724eb99-3c68-4d89-b495-498e9ff0bdfb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="RenderableCreators">
+    <Filter Include="MeshProcessors">
       <UniqueIdentifier>{9c579cbc-6a9c-4265-b9bf-bc14f6d05dab}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

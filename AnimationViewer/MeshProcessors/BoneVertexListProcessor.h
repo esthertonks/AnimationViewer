@@ -1,6 +1,6 @@
 //#pragma once
 
-#include "VertexListCreatorBase.h"
+#include "VertexListProcessor.h"
 
 namespace mesh {
 	class BoneNode;
@@ -8,13 +8,13 @@ namespace mesh {
 
 namespace render{
 
-class BoneVertexListCreator : public VertexListCreatorBase
+class BoneVertexListProcessor : public VertexListProcessor
 {
 public:
-	BoneVertexListCreator(
+	BoneVertexListProcessor(
 		glm::vec3 colour
 	);
-	~BoneVertexListCreator();
+	~BoneVertexListProcessor();
 
 	virtual int GetNumVertsInList();
 

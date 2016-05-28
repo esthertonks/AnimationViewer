@@ -10,10 +10,10 @@ namespace mesh
 namespace render
 {
 
-class VertexListCreatorBase abstract
+class VertexListProcessor abstract
 {
 public:
-	VertexListCreatorBase();
+	VertexListProcessor();
 
 	virtual int GetNumVertsInList() = 0;
 	virtual ColourVertexArray &GetVertexList() = 0;
@@ -21,7 +21,7 @@ public:
 		mesh::BoneNode *boneHierarchyRoot
 	) = 0;
 
-	virtual ~VertexListCreatorBase() {};
+	virtual ~VertexListProcessor() {};
 };
 
 }

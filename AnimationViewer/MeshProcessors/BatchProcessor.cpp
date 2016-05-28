@@ -1,4 +1,4 @@
-#include "BatchCreator.h"
+#include "BatchProcessor.h"
 #include "../Mesh/Mesh.h"
 #include "../Mesh/MeshNode.h"
 #include "../Mesh/BoneNode.h"
@@ -16,14 +16,14 @@ namespace render
 
 #define DOT_THESHOLD         0.9999f        /* Closeness to a dot product of 1 at which two normals are considered the same */
 
-BatchCreator::BatchCreator(
+BatchProcessor::BatchProcessor(
 	mesh::MeshPtr &mesh
 ) : m_mesh(mesh)
 {
 }
 
 
-BatchCreator::~BatchCreator()
+BatchProcessor::~BatchProcessor()
 {
 }
 
@@ -31,7 +31,7 @@ BatchCreator::~BatchCreator()
 //https://developer.apple.com/library/ios/documentation/3ddrawing/conceptual/opengles_programmingguide/TechniquesforWorkingwithVertexData/TechniquesforWorkingwithVertexData.html
 
 // Create per vertex data in per material batches. Extra vertices are created to accommodate per triangle corner information.
-void BatchCreator::CreateBatches(
+void BatchProcessor::CreateBatches(
 	render::PerNodeBatchList &perNodeRenderBatches // Batch vector to fill in
 	)
 {
@@ -45,7 +45,7 @@ void BatchCreator::CreateBatches(
 }
 
 
-void BatchCreator::CreateBatchesInternal(
+void BatchProcessor::CreateBatchesInternal(
 	mesh::MeshNode* meshNode,
 	render::PerNodeBatchList &perNodeRenderBatches // Batch vector to fill in
 	)
@@ -155,7 +155,7 @@ void BatchCreator::CreateBatchesInternal(
 }
 
 //TODO override equals?
-void BatchCreator::AddDuplicateVertex(
+void BatchProcessor::AddDuplicateVertex(
 	const int oldVertexIndex,
 	const render::TexturedSkinnedVertex &currentVertex,
 	render::Batch &batch,
@@ -183,7 +183,7 @@ void BatchCreator::AddDuplicateVertex(
 	batch.AddIndex(newIndex);
 }
 
-void BatchCreator::PrepareBatches(
+void BatchProcessor::PrepareBatches(
 	render::PerNodeBatchList &perNodeRenderBatches
 	)
 {
@@ -203,7 +203,7 @@ void BatchCreator::PrepareBatches(
 	}
 }
 
-void BatchCreator::SortBatches()
+void BatchProcessor::SortBatches()
 {
 
 }

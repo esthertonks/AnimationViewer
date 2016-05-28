@@ -14,13 +14,13 @@ namespace render
 {
 class Batch;
 
-class BatchCreator
+class BatchProcessor
 {
 public:
-	BatchCreator(
+	BatchProcessor(
 		mesh::MeshPtr &mesh
 		);
-	~BatchCreator();
+	~BatchProcessor();
 
 	void CreateBatches(
 		render::PerNodeBatchList &renderBatches // Batch vector to fill in
@@ -33,14 +33,14 @@ public:
 		std::vector<int> &perMaterialOldToNewVertexIndexMap
 		);
 
-	void BatchCreator::PrepareBatches(
+	void BatchProcessor::PrepareBatches(
 		render::PerNodeBatchList &perNodeRenderBatches
 		);
 
 	void SortBatches();//TODO
 
 private:
-	void BatchCreator::CreateBatchesInternal(
+	void BatchProcessor::CreateBatchesInternal(
 		mesh::MeshNode* meshNode,
 		render::PerNodeBatchList &perNodeRenderBatches // Map of Batch vector lists to fill in - one for each mesh node (ie one per unique model matrix)
 	);

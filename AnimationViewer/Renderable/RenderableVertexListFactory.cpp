@@ -1,7 +1,7 @@
 #include "RenderableVertexListFactory.h"
 #include "RenderableVertexList.h"
-#include "../RenderableCreators/NormalsVertexListCreator.h"
-#include "../RenderableCreators/BoneVertexListCreator.h"
+#include "../MeshProcessors/NormalsVertexListProcessor.h"
+#include "../MeshProcessors/BoneVertexListProcessor.h"
 
 namespace render 
 {
@@ -10,9 +10,9 @@ namespace render
 		const int pointSize
 		)
 	{
-		BoneVertexListCreatorPtr boneVertexListCreatorPtr = render::BoneVertexListCreatorPtr(new BoneVertexListCreator(blueColour));
-		VertexListCreatorBasePtr vertexListCreator = boost::dynamic_pointer_cast<render::VertexListCreatorBase>(boneVertexListCreatorPtr);
-		return render::RenderableVertexListPtr(new render::RenderableVertexList(vertexListCreator, pointSize));
+		BoneVertexListProcessorPtr boneVertexListProcessorPtr = render::BoneVertexListProcessorPtr(new BoneVertexListProcessor(blueColour));
+		VertexListProcessorPtr vertexListProcessor = boost::dynamic_pointer_cast<render::VertexListProcessor>(boneVertexListProcessorPtr);
+		return render::RenderableVertexListPtr(new render::RenderableVertexList(vertexListProcessor, pointSize));
 
 	}
 
@@ -23,8 +23,8 @@ namespace render
 		const int pointSize
 	)
 	{
-		NormalsVertexListCreatorPtr normalsVertexListCreatorPtr = render::NormalsVertexListCreatorPtr(new NormalsVertexListCreator(mesh, colour, normalLength));
-		VertexListCreatorBasePtr vertexListCreator = boost::dynamic_pointer_cast<render::VertexListCreatorBase>(normalsVertexListCreatorPtr);
-		return RenderableVertexListPtr(new RenderableVertexList(vertexListCreator, pointSize));
+		NormalsVertexListProcessorPtr normalsVertexListProcessorPtr = render::NormalsVertexListProcessorPtr(new NormalsVertexListProcessor(mesh, colour, normalLength));
+		VertexListProcessorPtr vertexListProcessor = boost::dynamic_pointer_cast<render::VertexListProcessor>(normalsVertexListProcessorPtr);
+		return RenderableVertexListPtr(new RenderableVertexList(vertexListProcessor, pointSize));
 	}
 }
