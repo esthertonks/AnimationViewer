@@ -1,0 +1,329 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Import">
+      <UniqueIdentifier>{4d54d905-f8e4-47f1-bd1d-c0a8dcdbdbf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render">
+      <UniqueIdentifier>{963d48bb-219d-4b8d-a960-59a9281ed1f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{2fa95ea1-dfaf-47aa-9581-cc708fed176a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Batch">
+      <UniqueIdentifier>{bb134ee9-2e1b-4a38-b244-7966a397090e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Container">
+      <UniqueIdentifier>{06e421f6-1fb3-44d3-b505-a38b90259bde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Animation">
+      <UniqueIdentifier>{a64912b7-24f7-48e2-8290-d1483fee2010}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{a0a5dc1b-3f5b-4dde-9696-61abfc354208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{8d3b13a8-4a4e-41c8-89f1-8d9cd4434aa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mesh">
+      <UniqueIdentifier>{adef16f5-2916-40ed-8fef-446a6d7383c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderableMesh">
+      <UniqueIdentifier>{398d860d-aa58-40e5-a924-7b2e0ffb01c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Icons">
+      <UniqueIdentifier>{37885482-8720-4d20-9ac6-eb9075307f51}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Import\FBXImport.cpp">
+      <Filter>Import</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationApp.cpp" />
+    <ClCompile Include="Render\OrbitCamera.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\FirstPersonCamera.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Batch\Appearance.cpp">
+      <Filter>Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="Batch\Batch.cpp">
+      <Filter>Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="Batch\LambertAppearance.cpp">
+      <Filter>Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="Batch\PhongAppearance.cpp">
+      <Filter>Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\ShaderManager.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\GLRenderCanvas.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\ControlsPanel.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\GLUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\MathsUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\Track.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\AnimationPanel.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\ViewPanel.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\AnimationController.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\BoneNode.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\Mesh.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\MeshNode.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\Triangle.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\Vertex.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh\AnimationInfo.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\QuaternionTrack.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation\VectorTrack.cpp">
+      <Filter>Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Window.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\HierarchyPanel.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable\RenderableCreators\BatchCreator.cpp">
+      <Filter>Batch</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable\RenderableCreators\BoneVertexListCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\NormalsVertexListCreator.cpp" />
+    <ClCompile Include="Renderable\Renderable.cpp">
+      <Filter>RenderableMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable\RenderableMesh.cpp">
+      <Filter>RenderableMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable\RenderableFwdDecl.h" />
+    <ClCompile Include="Renderable\RenderableVertexList.cpp">
+      <Filter>RenderableMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable\RenderableCreators\SkinningMatrixCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\VertexListCreatorBase.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Import\FBXImport.h">
+      <Filter>Import</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationApp.h" />
+    <ClInclude Include="Container\LinkedList .h">
+      <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\OrbitCamera.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\FirstPersonCamera.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\Appearance.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\Batch.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\VertexFormat.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\BatchFwdDecl.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\LambertAppearance.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch\PhongAppearance.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\ShaderManager.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderFwdDecl.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\GLRenderCanvas.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\ControlsPanel.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Container\LinkedTree.h">
+      <Filter>Container</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimationFwdDecl.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\GLUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\MathsUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\Track.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\Key.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\QuaternionKey.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\VectorKey.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\AnimationPanel.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\ViewPanel.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\AnimationController.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\BoneNode.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\Mesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\MeshFwdDecl.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\MeshNode.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\Node.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\Triangle.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\Vertex.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh\AnimationInfo.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\QuaternionTrack.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\VectorTrack.h">
+      <Filter>Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Window.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\HierarchyPanel.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable\RenderableCreators\BatchCreator.h">
+      <Filter>Batch</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable\RenderableCreators\BoneVertexListCreator.h" />
+    <ClInclude Include="Renderable\RenderableCreators\NormalsVertexListCreator.h" />
+    <ClInclude Include="Renderable\Renderable.h">
+      <Filter>RenderableMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable\RenderableMesh.h">
+      <Filter>RenderableMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable\RenderableVertexList.h">
+      <Filter>RenderableMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable\RenderableCreators\SkinningMatrixCreator.h" />
+    <ClInclude Include="Renderable\RenderableCreators\VertexListCreatorBase.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\Diffuse.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Diffuse.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Flat.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Flat.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PerVertexPhong.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PerVertexPhong.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PerVertexPhongLights.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PerVertexPhongLights.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PerFragmentPhong.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PerFragmentPhong.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PerFragmentLambert.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\PerFragmentLambert.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Overlay.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Overlay.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Icons\icon1.xpm">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="Icons\icon2.xpm">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="Icons\icon3.xpm">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="Icons\icon4.xpm">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="Icons\icon5.xpm">
+      <Filter>Icons</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A88B055E-A4AC-4E77-A78A-04B6197B19AC}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>GLTest</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;WINVER=0x0400;__WXMSW__;wxUSE_GUI=1;_DEBUG;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Libraries\glew-1.10.0\include;$(SolutionDir)..\..\Libraries\glm;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;$(WXWIN)\include\msvc;C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.1\include;C:\boost_1_54_0;C:\Users\mac_user\Documents\Visual Studio 2010\Projects\Simple OpenGL Image Library\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\Libraries\glew-1.10.0\lib\Debug\Win32;$(WXWIN)\lib\vc_lib;C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.1\lib\vs2015\x86\debug;C:\Users\mac_user\Documents\Visual Studio 2010\Projects\Simple OpenGL Image Library\lib;C:\boost_1_54_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32sd.lib;glu32.lib;wxmsw31ud_core.lib;wxmsw31ud_gl.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;comctl32.lib;rpcrt4.lib;winmm.lib;advapi32.lib;wsock32.lib;libfbxsdk.lib;SOILd.lib;libboost_filesystem-vc100-mt-gd-1_54.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <ShowProgress>NotSet</ShowProgress>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WXMSW__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_dll\msw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(WXWIN)\lib;$(WXWIN)\lib\vc_lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>wxmsw26_core.lib wxbase26.lib wxtiff.lib wxjpeg.lib;wxpng.lib wxzlib.lib wxregex.lib wxexpat.lib;winmm.lib comctl32.lib rpcrt4.lib wsock32.lib oleacc.lib;odbc32.lib kernel32.lib user32.lib gdi32.lib;winspool.lib comdlg32.lib advapi32.lib shell32.lib;ole32.lib oleaut32.lib uuid.lib odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Animation\AnimationController.cpp" />
+    <ClCompile Include="Animation\QuaternionTrack.cpp" />
+    <ClCompile Include="Animation\Track.cpp" />
+    <ClCompile Include="Animation\VectorTrack.cpp" />
+    <ClCompile Include="Batch\Appearance.cpp" />
+    <ClCompile Include="Batch\Batch.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\VertexListCreatorBase.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\BoneVertexListCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\NormalsVertexListCreator.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\BatchCreator.cpp" />
+    <ClCompile Include="Batch\LambertAppearance.cpp" />
+    <ClCompile Include="Batch\PhongAppearance.cpp" />
+    <ClCompile Include="GUI\HierarchyPanel.cpp" />
+    <ClCompile Include="GUI\AnimationPanel.cpp" />
+    <ClCompile Include="GUI\ControlsPanel.cpp" />
+    <ClCompile Include="GUI\ViewPanel.cpp" />
+    <ClCompile Include="GUI\Window.cpp" />
+    <ClCompile Include="Import\FBXImport.cpp" />
+    <ClCompile Include="AnimationApp.cpp" />
+    <ClCompile Include="Mesh\AnimationInfo.cpp" />
+    <ClCompile Include="Mesh\BoneNode.cpp" />
+    <ClCompile Include="Mesh\Mesh.cpp" />
+    <ClCompile Include="Mesh\MeshNode.cpp" />
+    <ClCompile Include="Mesh\Triangle.cpp" />
+    <ClCompile Include="Mesh\Vertex.cpp" />
+    <ClCompile Include="Renderable\Renderable.cpp" />
+    <ClCompile Include="Renderable\RenderableVertexList.cpp" />
+    <ClCompile Include="Renderable\RenderableMesh.cpp" />
+    <ClCompile Include="Renderable\RenderableFwdDecl.h" />
+    <ClCompile Include="Render\FirstPersonCamera.cpp" />
+    <ClCompile Include="Render\GLUtils.cpp" />
+    <ClCompile Include="Render\OrbitCamera.cpp" />
+    <ClCompile Include="Render\GLRenderCanvas.cpp" />
+    <ClCompile Include="Render\ShaderManager.cpp" />
+    <ClCompile Include="Renderable\RenderableCreators\SkinningMatrixCreator.cpp" />
+    <ClCompile Include="Utils\MathsUtils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AnimationApp.h" />
+    <ClInclude Include="Animation\AnimationFwdDecl.h" />
+    <ClInclude Include="Animation\AnimationController.h" />
+    <ClInclude Include="Animation\Key.h" />
+    <ClInclude Include="Animation\QuaternionKey.h" />
+    <ClInclude Include="Animation\QuaternionTrack.h" />
+    <ClInclude Include="Animation\Track.h" />
+    <ClInclude Include="Animation\VectorKey.h" />
+    <ClInclude Include="Animation\VectorTrack.h" />
+    <ClInclude Include="Batch\Appearance.h" />
+    <ClInclude Include="Batch\Batch.h" />
+    <ClInclude Include="Batch\BatchFwdDecl.h" />
+    <ClInclude Include="Renderable\RenderableCreators\VertexListCreatorBase.h" />
+    <ClInclude Include="Renderable\RenderableCreators\BoneVertexListCreator.h" />
+    <ClInclude Include="Renderable\RenderableCreators\NormalsVertexListCreator.h" />
+    <ClInclude Include="Renderable\RenderableCreators\BatchCreator.h" />
+    <ClInclude Include="Batch\LambertAppearance.h" />
+    <ClInclude Include="Batch\PhongAppearance.h" />
+    <ClInclude Include="Batch\VertexFormat.h" />
+    <ClInclude Include="Container\LinkedList .h" />
+    <ClInclude Include="Container\LinkedTree.h" />
+    <ClInclude Include="GUI\HierarchyPanel.h" />
+    <ClInclude Include="GUI\AnimationPanel.h" />
+    <ClInclude Include="GUI\ControlsPanel.h" />
+    <ClInclude Include="GUI\ViewPanel.h" />
+    <ClInclude Include="GUI\Window.h" />
+    <ClInclude Include="Import\FBXImport.h" />
+    <ClInclude Include="Mesh\AnimationInfo.h" />
+    <ClInclude Include="Mesh\BoneNode.h" />
+    <ClInclude Include="Mesh\Mesh.h" />
+    <ClInclude Include="Mesh\MeshFwdDecl.h" />
+    <ClInclude Include="Mesh\MeshNode.h" />
+    <ClInclude Include="Mesh\Node.h" />
+    <ClInclude Include="Mesh\Triangle.h" />
+    <ClInclude Include="Mesh\Vertex.h" />
+    <ClInclude Include="Renderable\Renderable.h" />
+    <ClInclude Include="Renderable\RenderableVertexList.h" />
+    <ClInclude Include="Renderable\RenderableMesh.h" />
+    <ClInclude Include="Render\FirstPersonCamera.h" />
+    <ClInclude Include="Render\GLUtils.h" />
+    <ClInclude Include="Render\OrbitCamera.h" />
+    <ClInclude Include="Render\GLRenderCanvas.h" />
+    <ClInclude Include="Render\RenderFwdDecl.h" />
+    <ClInclude Include="Render\ShaderManager.h" />
+    <ClInclude Include="Renderable\RenderableCreators\SkinningMatrixCreator.h" />
+    <ClInclude Include="Utils\MathsUtils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\icon1.xpm" />
+    <None Include="Icons\icon2.xpm" />
+    <None Include="Icons\icon3.xpm" />
+    <None Include="Icons\icon4.xpm" />
+    <None Include="Icons\icon5.xpm" />
+    <None Include="Shaders\Diffuse.frag" />
+    <None Include="Shaders\Diffuse.vert" />
+    <None Include="Shaders\Flat.frag" />
+    <None Include="Shaders\Flat.vert" />
+    <None Include="Shaders\Overlay.frag" />
+    <None Include="Shaders\Overlay.vert" />
+    <None Include="Shaders\PerFragmentLambert.frag" />
+    <None Include="Shaders\PerFragmentLambert.vert" />
+    <None Include="Shaders\PerFragmentPhong.frag" />
+    <None Include="Shaders\PerFragmentPhong.vert" />
+    <None Include="Shaders\PerVertexPhong.frag" />
+    <None Include="Shaders\PerVertexPhong.vert" />
+    <None Include="Shaders\PerVertexPhongLights.frag" />
+    <None Include="Shaders\PerVertexPhongLights.vert" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
