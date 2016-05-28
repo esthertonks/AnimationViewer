@@ -26,6 +26,13 @@ public:
 		render::PerNodeBatchList &renderBatches // Batch vector to fill in
 		);
 
+	void AddNewBatch(
+		render::BatchList &renderBatches,
+		mesh::MeshNode* meshNode,
+		render::AppearanceTable& appearances,
+		const int materialId
+	);
+
 	void CreateRenderVertex(
 		render::TexturedSkinnedVertex &vertex, // Vertex to create
 		const mesh::MeshVertexArray &vertexArray, // Vertex array containing the vertices
