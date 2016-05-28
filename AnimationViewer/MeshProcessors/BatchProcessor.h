@@ -26,6 +26,15 @@ public:
 		render::PerNodeBatchList &renderBatches // Batch vector to fill in
 		);
 
+	void CreateRenderVertex(
+		render::TexturedSkinnedVertex &vertex, // Vertex to create
+		const mesh::MeshVertexArray &vertexArray, // Vertex array containing the vertices
+		const int vertexIndex, // The index of a vertex to copy
+		const mesh::MeshTriangleArray &triangleArray, // The traingle array containing all the triangles
+		const int triangleIndex, // The index of the triangle we need to copy a vert from
+		const int triangleCornerIndex // The specific vertex in the traingle that we need to copy
+	);
+
 	void AddDuplicateVertex(
 		const int oldVertexIndex,
 		const render::TexturedSkinnedVertex &currentVertex,

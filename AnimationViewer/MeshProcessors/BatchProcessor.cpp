@@ -11,6 +11,14 @@
 
 #include <wx\log.h>
 
+// This class converts the triangle mesh information loaded from the FBX file into a format that the renderer can use.
+// A batch is a strip of vertex and index information gathered from triangles which have the same material applied. 
+// Batches are created for each material, as the renderer will switch to the correct shader for the material and then pass the vertex and index info for each batch to openGL.
+// The class loops through each triangle (for each mesh node). It checks the material info and creates a new batch if it has not seen the material before.
+// When the mesh info is loaded from the fbx file the vertex information is per triangle - but we need vertex strips for rendering.
+// As such this class is cycling through each triangle, checking every adjoining vertex, and where the vertex is different from the vertices in the mesh next to it, it creates a duplicate vertex
+// for the renderer to use. In this way the additional vertex information from the triangle mesh is preserved.
+
 namespace render
 {
 
@@ -91,30 +99,23 @@ void BatchProcessor::CreateBatchesInternal(
 				renderBatches[materialId]->SetModelMatrix(batchModelMatrix);
 			}
 
-			// Assign the mesh information to batches. Reassigning the indices as the data is processed.
+			// Assign the mesh information to batches. Reassigning the indices as the data is processed to account for duplicated vertices being added.
 			for(int triangleCornerIndex = 0; triangleCornerIndex < 3; triangleCornerIndex++)
 			{
 				unsigned int testVertexIndex = triangleArray[triangleIndex].GetVertexIndex(triangleCornerIndex);
 
-				// Compile the per vertex data from the mesh triangles
+				// Here we create the per vertex data from the mesh triangles
 
-				// First create a per vertex vert - if a vert at this index has not been added previously then add it. 
-				// If a vert at this index has already been added then only add this one if it differs from the previous one
-				//TODO can bone indeces/weights be set by triangle corner vertex? If yes then these should also be split where they differ.
+				// First create a vertex which contains the vertex data from the various mesh data arrays.
+				// If a vertex at this index has not been added previously then we can just add it to the correct render batch. 
+				// If a vertex at this index has already been added then we only add this one if it differs from the previous one.
+				// TODO can bone indeces/weights be set by triangle corner vertex? If yes then these should also be split where they differ.
+				// FIXME this can be improved as it is currently potentially wasteful - we only compare to the first added vertex at an index - so if there are 4 more verts at this index which are different from this one but the same as each other they will all be duplicated.
 				render::TexturedSkinnedVertex testVertex;
-				FbxVector4 position = vertexArray[testVertexIndex].GetPosition();
-				testVertex.m_position = glm::vec3(static_cast<float>(position[0]), static_cast<float>(position[1]), static_cast<float>(position[2])); //TODO method called CreatePerVertexVertex
-				testVertex.m_colour = triangleArray[triangleIndex].GetColour(triangleCornerIndex);
-				testVertex.m_normal = glm::vec3(triangleArray[triangleIndex].GetNormal(triangleCornerIndex));
-				testVertex.m_uv = triangleArray[triangleIndex].GetUV(triangleCornerIndex);
-				for(int weightIndex = 0; weightIndex < MAX_INFLUENCES; weightIndex++)
-				{
-					testVertex.m_boneWeights[weightIndex] = vertexArray[testVertexIndex].GetBoneWeight(weightIndex);
-					testVertex.m_boneIds[weightIndex] = vertexArray[testVertexIndex].GetBoneInfluenceId(weightIndex);
-				}
+				CreateRenderVertex(testVertex, vertexArray, testVertexIndex, triangleArray, triangleIndex, triangleCornerIndex);
 
 				int previouslyCreatedIndex = previouslyAssignedVertexIndexMap[testVertexIndex];
-				if(previouslyCreatedIndex == -1) // If this is the first time we have seen this index in this batch create a new vertex for the batch
+				if(previouslyCreatedIndex == -1) // If this is the first time we have seen this index in this batch create a new vertex for the batch and store the index in the map
 				{
 					AddDuplicateVertex(testVertexIndex, testVertex, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
 					continue;
@@ -123,7 +124,7 @@ void BatchProcessor::CreateBatchesInternal(
 				render::TexturedSkinnedVertex previouslyCreatedVertex = renderBatches[materialId]->GetVertices()[previouslyCreatedIndex];
 				
 				// If we have seen this vertex before, but this triangle corner has a different colour, uv coord or normal 
-				// then still create a new vertex for it (this will increase the vertex count in the mesh but will allow for
+				// then duplicate the vertex to preserve the extra info (this will increase the vertex count in the mesh but will allow for
 				// hard edges and texture seams which will otherwise have to be averaged for opengl).
 				if(testVertex.m_colour != previouslyCreatedVertex.m_colour)
 				{
@@ -137,7 +138,7 @@ void BatchProcessor::CreateBatchesInternal(
 				{
 					AddDuplicateVertex(testVertexIndex, testVertex, *renderBatches[materialId], previouslyAssignedVertexIndexMap);
 				}
-				else // Any identical vertex was already added - just add the index to refer to the existing vert when rendering
+				else // An identical vertex was already added so don't add this one - just add the index and we refer to the existing vertex when rendering.
 				{
 					renderBatches[materialId]->AddIndex(previouslyCreatedIndex);
 				}
@@ -154,7 +155,31 @@ void BatchProcessor::CreateBatchesInternal(
 	}
 }
 
-//TODO override equals?
+void BatchProcessor::CreateRenderVertex(
+	render::TexturedSkinnedVertex &vertex, // Vertex to create
+	const mesh::MeshVertexArray &vertexArray, // Vertex array containing the vertices
+	const int vertexIndex, // The index of a vertex to copy
+	const mesh::MeshTriangleArray &triangleArray, // The traingle array containing all the triangles
+	const int triangleIndex, // The index of the triangle we need to copy a vert from
+	const int triangleCornerIndex // The specific vertex in the triangle that we need to copy
+)
+{
+	// Copy the vertex data from the correct triangle. Positions are stored per vertex in fbx so get that as well.
+	// TODO override equals or put this in a copy method (see add duplicate vertex which is doing the same thing here)
+	FbxVector4 position = vertexArray[vertexIndex].GetPosition();
+	vertex.m_position = glm::vec3(static_cast<float>(position[0]), static_cast<float>(position[1]), static_cast<float>(position[2]));
+	vertex.m_colour = triangleArray[triangleIndex].GetColour(triangleCornerIndex);
+	vertex.m_normal = glm::vec3(triangleArray[triangleIndex].GetNormal(triangleCornerIndex));
+	vertex.m_uv = triangleArray[triangleIndex].GetUV(triangleCornerIndex);
+
+	// Copy the bone info
+	for (int weightIndex = 0; weightIndex < MAX_INFLUENCES; weightIndex++)
+	{
+		vertex.m_boneWeights[weightIndex] = vertexArray[vertexIndex].GetBoneWeight(weightIndex);
+		vertex.m_boneIds[weightIndex] = vertexArray[vertexIndex].GetBoneInfluenceId(weightIndex);
+	}
+}
+
 void BatchProcessor::AddDuplicateVertex(
 	const int oldVertexIndex,
 	const render::TexturedSkinnedVertex &currentVertex,
@@ -163,11 +188,11 @@ void BatchProcessor::AddDuplicateVertex(
 	)
 {
 	render::TexturedSkinnedVertex vertex;
-	vertex.m_position = currentVertex.m_position; //TODO override equals?
+	vertex.m_position = currentVertex.m_position; //TODO override equals or put this in a copy method
 	vertex.m_colour = currentVertex.m_colour;
 	vertex.m_uv = currentVertex.m_uv;
 	vertex.m_normal += currentVertex.m_normal;
-	if(glm::length(vertex.m_normal) != 0) // Deal with the mesh which has it's normals deliberately set to zero(!)
+	if(glm::length(vertex.m_normal) != 0) // Dont crash please on the bugged mesh which has it's normals set to zero(!)
 	{
 		vertex.m_normal = glm::normalize(vertex.m_normal); // Make sure these are normalised
 	}
@@ -177,6 +202,7 @@ void BatchProcessor::AddDuplicateVertex(
 		vertex.m_boneIds[weightIndex] = currentVertex.m_boneIds[weightIndex];
 	}
 
+	// Add the data to the batch
 	int newIndex = batch.GetNumVertices();
 	perMaterialPreviouslyAssignedVertexIndexMap[oldVertexIndex] = newIndex; //TODO uh shorter name?
 	batch.AddVertex(vertex);
@@ -195,7 +221,7 @@ void BatchProcessor::PrepareBatches(
 		render::BatchList::const_iterator batchIterator;
 		for(batchIterator = renderBatches.begin(); batchIterator != renderBatches.end(); batchIterator++)
 		{
-			if(*batchIterator != NULL) // This will be a case if an appearance exists but is not used by this node //TODO get rid of this?
+			if(*batchIterator != NULL) // This will be the case if an appearance exists but is not used by this node //TODO get rid of this?
 			{
 				(*batchIterator)->PrepareForRendering();
 			}
