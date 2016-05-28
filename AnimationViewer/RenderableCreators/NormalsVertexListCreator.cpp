@@ -1,11 +1,11 @@
 #include "NormalsVertexListCreator.h"
-#include "../../Mesh/BoneNode.h"
-#include "../../Mesh/MeshNode.h"
-#include "../RenderableMesh.h"
-#include "../../Utils/MathsUtils.h"
-#include "../../Mesh/Mesh.h"
-#include "../../Mesh/Triangle.h"
-#include "../../Mesh/Vertex.h"
+#include "../Mesh/BoneNode.h"
+#include "../Mesh/MeshNode.h"
+#include "../Renderable/RenderableMesh.h"
+#include "../Utils/MathsUtils.h"
+#include "../Mesh/Mesh.h"
+#include "../Mesh/Triangle.h"
+#include "../Mesh/Vertex.h"
 #include "SkinningMatrixCreator.h"
 
 namespace render

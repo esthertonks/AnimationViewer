@@ -1,7 +1,7 @@
 #include "RenderableVertexListFactory.h"
 #include "RenderableVertexList.h"
-#include "RenderableCreators/NormalsVertexListCreator.h"
-#include "RenderableCreators/BoneVertexListCreator.h"
+#include "../RenderableCreators/NormalsVertexListCreator.h"
+#include "../RenderableCreators/BoneVertexListCreator.h"
 
 namespace render 
 {

@@ -1,5 +1,5 @@
 #include "BoneVertexListCreator.h"
-#include "../../Mesh/BoneNode.h"
+#include "../Mesh/BoneNode.h"
 
 namespace render
 {

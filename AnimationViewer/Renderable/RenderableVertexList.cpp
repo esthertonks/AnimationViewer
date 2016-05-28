@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../Render/ShaderManager.h"
-#include "RenderableCreators/VertexListCreatorBase.h"
+#include "../RenderableCreators/VertexListCreatorBase.h"
 #include <wx/log.h>
 
 namespace render

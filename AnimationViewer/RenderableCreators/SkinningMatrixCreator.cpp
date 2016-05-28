@@ -1,6 +1,6 @@
 #include "SkinningMatrixCreator.h"
-#include "../../Utils/MathsUtils.h"
-#include "../../Mesh/BoneNode.h"
+#include "../Utils/MathsUtils.h"
+#include "../Mesh/BoneNode.h"
 
 namespace render {
 

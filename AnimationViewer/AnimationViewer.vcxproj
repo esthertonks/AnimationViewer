@@ -93,10 +93,6 @@
     <ClCompile Include="Animation\VectorTrack.cpp" />
     <ClCompile Include="Batch\Appearance.cpp" />
     <ClCompile Include="Batch\Batch.cpp" />
-    <ClCompile Include="Renderable\RenderableCreators\VertexListCreatorBase.cpp" />
-    <ClCompile Include="Renderable\RenderableCreators\BoneVertexListCreator.cpp" />
-    <ClCompile Include="Renderable\RenderableCreators\NormalsVertexListCreator.cpp" />
-    <ClCompile Include="Renderable\RenderableCreators\BatchCreator.cpp" />
     <ClCompile Include="Batch\LambertAppearance.cpp" />
     <ClCompile Include="Batch\PhongAppearance.cpp" />
     <ClCompile Include="GUI\HierarchyPanel.cpp" />
@@ -112,6 +108,11 @@
     <ClCompile Include="Mesh\MeshNode.cpp" />
     <ClCompile Include="Mesh\Triangle.cpp" />
     <ClCompile Include="Mesh\Vertex.cpp" />
+    <ClCompile Include="RenderableCreators\BatchCreator.cpp" />
+    <ClCompile Include="RenderableCreators\BoneVertexListCreator.cpp" />
+    <ClCompile Include="RenderableCreators\NormalsVertexListCreator.cpp" />
+    <ClCompile Include="RenderableCreators\SkinningMatrixCreator.cpp" />
+    <ClCompile Include="RenderableCreators\VertexListCreatorBase.cpp" />
     <ClCompile Include="Renderable\Renderable.cpp" />
     <ClCompile Include="Renderable\RenderableVertexList.cpp" />
     <ClCompile Include="Renderable\RenderableMesh.cpp" />
@@ -122,7 +123,6 @@
     <ClCompile Include="Render\OrbitCamera.cpp" />
     <ClCompile Include="Render\GLRenderCanvas.cpp" />
     <ClCompile Include="Render\ShaderManager.cpp" />
-    <ClCompile Include="Renderable\RenderableCreators\SkinningMatrixCreator.cpp" />
     <ClCompile Include="Utils\MathsUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -138,10 +138,6 @@
     <ClInclude Include="Batch\Appearance.h" />
     <ClInclude Include="Batch\Batch.h" />
     <ClInclude Include="Batch\BatchFwdDecl.h" />
-    <ClInclude Include="Renderable\RenderableCreators\VertexListCreatorBase.h" />
-    <ClInclude Include="Renderable\RenderableCreators\BoneVertexListCreator.h" />
-    <ClInclude Include="Renderable\RenderableCreators\NormalsVertexListCreator.h" />
-    <ClInclude Include="Renderable\RenderableCreators\BatchCreator.h" />
     <ClInclude Include="Batch\LambertAppearance.h" />
     <ClInclude Include="Batch\PhongAppearance.h" />
     <ClInclude Include="Batch\VertexFormat.h" />
@@ -161,6 +157,11 @@
     <ClInclude Include="Mesh\Node.h" />
     <ClInclude Include="Mesh\Triangle.h" />
     <ClInclude Include="Mesh\Vertex.h" />
+    <ClInclude Include="RenderableCreators\BatchCreator.h" />
+    <ClInclude Include="RenderableCreators\BoneVertexListCreator.h" />
+    <ClInclude Include="RenderableCreators\NormalsVertexListCreator.h" />
+    <ClInclude Include="RenderableCreators\SkinningMatrixCreator.h" />
+    <ClInclude Include="RenderableCreators\VertexListCreatorBase.h" />
     <ClInclude Include="Renderable\Renderable.h" />
     <ClInclude Include="Renderable\RenderableVertexList.h" />
     <ClInclude Include="Renderable\RenderableMesh.h" />
@@ -171,7 +172,6 @@
     <ClInclude Include="Render\GLRenderCanvas.h" />
     <ClInclude Include="Render\RenderFwdDecl.h" />
     <ClInclude Include="Render\ShaderManager.h" />
-    <ClInclude Include="Renderable\RenderableCreators\SkinningMatrixCreator.h" />
     <ClInclude Include="Utils\MathsUtils.h" />
   </ItemGroup>
   <ItemGroup>

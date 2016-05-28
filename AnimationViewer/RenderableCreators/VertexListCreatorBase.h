@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../RenderableFwdDecl.h"
+#include "../Renderable/RenderableFwdDecl.h"
 
 namespace mesh
 {

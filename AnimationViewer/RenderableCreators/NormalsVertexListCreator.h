@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../Mesh/MeshFwdDecl.h"
-#include "../../Batch/BatchFwdDecl.h"
+#include "../Mesh/MeshFwdDecl.h"
+#include "../Batch/BatchFwdDecl.h"
 #include "VertexListCreatorBase.h"
 
 namespace mesh {
