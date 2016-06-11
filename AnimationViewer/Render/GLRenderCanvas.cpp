@@ -13,7 +13,7 @@
 #include "../Batch/LambertAppearance.h"
 #include "ShaderManager.h"
 #include "GLUtils.h"
-#include "../Colour.h"
+#include "../Colours.h"
 
 #include "GL/wglew.h"
 
@@ -299,7 +299,7 @@ void GLRenderCanvas::InitGL()
 
 	utils::GLUtils::CheckOpenGLError(__FILE__,__LINE__);
 
-	glClearColor(theme::Colour::m_grey.x, theme::Colour::m_grey.y, theme::Colour::m_grey.z, 1.0f);
+	glClearColor(theme::Colours::m_grey.r, theme::Colours::m_grey.b, theme::Colours::m_grey.b, 1.0f);
 
 	int width = GetSize().GetWidth();
 	int height = GetSize().GetHeight();

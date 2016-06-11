@@ -14,7 +14,7 @@
 #include "Animation/AnimationController.h"
 #include "Renderable/RenderableVertexListFactory.h"
 #include "Renderable/RenderableVertexList.h"
-#include "Colour.h"
+#include "Colours.h"
 
 const int AnimationApp::m_boneOverlayPointSize = 10.0f;
 
@@ -25,7 +25,7 @@ bool AnimationApp::OnInit()
 	int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
 	int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
 	wxFrame *frame = new gui::Window(NULL, wxT("Animation App"), wxDefaultPosition, wxSize(width, height), wxDEFAULT_FRAME_STYLE);
-	frame->SetBackgroundColour(wxColor(theme::Colour::m_darkGrey.r, theme::Colour::m_darkGrey.g, theme::Colour::m_darkGrey.b));
+	frame->SetBackgroundColour(wxColor(theme::Colours::m_darkGrey.r, theme::Colours::m_darkGrey.g, theme::Colours::m_darkGrey.b));
 	frame->SetMinSize(wxSize(800, 800));
 	frame->SetMaxSize(wxSize(width, height));
 	wxGLAttributes attributes;
@@ -202,7 +202,7 @@ void AnimationApp::ShowBones(
 {
 	if(show && m_currentMeshInfo.m_mesh) // If there is no mesh do nothing
 	{
-		render::RenderableVertexListPtr renderableVertexBoneListPtr = render::RenderableVertexListFactory::CreateBoneVertexList(theme::Colour::m_duskyBlue, m_boneOverlayPointSize);
+		render::RenderableVertexListPtr renderableVertexBoneListPtr = render::RenderableVertexListFactory::CreateBoneVertexList(glm::vec3(theme::Colours::m_duskyBlue.r, theme::Colours::m_duskyBlue.g, theme::Colours::m_duskyBlue.b), m_boneOverlayPointSize);
 		render::RenderablePtr renderable = boost::dynamic_pointer_cast<render::Renderable>(renderableVertexBoneListPtr);
 
 		if(renderable->Create())

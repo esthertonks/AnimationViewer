@@ -1,7 +1,7 @@
 #include "HierarchyPanel.h"
 #include "../AnimationApp.h"
 #include "../Mesh/BoneNode.h"
-#include "../Colour.h"
+#include "../Colours.h"
 #include "../Utils/WXUtils.h"
 #include "../Icons/icon1.xpm"
 #include "../Icons/icon2.xpm"
@@ -66,14 +66,14 @@ HierarchyPanel::HierarchyPanel(
 	sizer->Add(separator, 0, wxALIGN_CENTER | wxALL, 10);
 
 	wxStaticText *hierarchyTitleText = new wxStaticText(this, wxID_ANY, wxT("BONE HIERARCHY"));
-	hierarchyTitleText->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	hierarchyTitleText->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	utils::WXUtils::SetFont(hierarchyTitleText, 10, wxFONTWEIGHT_BOLD);
 	sizer->Add(hierarchyTitleText, 0, wxALIGN_CENTER | wxALL, 10);
 
 	// Set up the tree
 	m_animationTree = new wxTreeCtrl(this, BoneSelected, wxDefaultPosition, wxSize(400, 250), wxTR_DEFAULT_STYLE | wxRAISED_BORDER);
-	m_animationTree->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
-	m_animationTree->SetBackgroundColour(wxColor(theme::Colour::m_darkGrey.r, theme::Colour::m_darkGrey.g, theme::Colour::m_darkGrey.b));
+	m_animationTree->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
+	m_animationTree->SetBackgroundColour(wxColor(theme::Colours::m_darkGrey.r, theme::Colours::m_darkGrey.g, theme::Colours::m_darkGrey.b));
 	m_animationTree->SetMinSize(wxSize(340, 250));
 	m_animationTree->SetToolTip("Select a bone to show its transforms in the box below.");
 
@@ -82,14 +82,14 @@ HierarchyPanel::HierarchyPanel(
 	sizer->Add(m_animationTree, 0, wxALIGN_CENTER | wxALL, 10);
 
 	wxStaticText *transformsTitleText = new wxStaticText(this, wxID_ANY, wxT("BONE TRANSFORMS"));
-	transformsTitleText->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	transformsTitleText->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	utils::WXUtils::SetFont(transformsTitleText, 10, wxFONTWEIGHT_BOLD);
 	sizer->Add(transformsTitleText, 0, wxALIGN_CENTER | wxALL, 10);
 
 	// Add the bone stats panel:
 	wxPanel *boneTransformsPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(360, 250), wxTR_DEFAULT_STYLE | wxRAISED_BORDER , "");
-	boneTransformsPanel->SetBackgroundColour(wxColor(theme::Colour::m_darkGrey.r, theme::Colour::m_darkGrey.g, theme::Colour::m_darkGrey.b));
-	boneTransformsPanel->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	boneTransformsPanel->SetBackgroundColour(wxColor(theme::Colours::m_darkGrey.r, theme::Colours::m_darkGrey.g, theme::Colours::m_darkGrey.b));
+	boneTransformsPanel->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	boneTransformsPanel->SetMinSize(wxSize(340, 250));
 	boneTransformsPanel->SetToolTip("Shows the global transforms of the selected bone");
 
@@ -101,33 +101,33 @@ HierarchyPanel::HierarchyPanel(
 	// Set up the text for the bone transforms. Separate strings so they can be positioned by the layout.
 	m_positionText = new wxStaticText(boneTransformsPanel, wxID_ANY, "POSITION ");
 	utils::WXUtils::SetFont(m_positionText, 8, wxFONTWEIGHT_BOLD);
-	m_positionText->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_positionText->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	m_positionTextX = new wxStaticText(boneTransformsPanel, wxID_ANY, "");
-	m_positionTextX->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_positionTextX->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	m_positionTextY = new wxStaticText(boneTransformsPanel, wxID_ANY, "");
-	m_positionTextY->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_positionTextY->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	m_positionTextZ = new wxStaticText(boneTransformsPanel, wxID_ANY, "");
-	m_positionTextZ->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_positionTextZ->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 
 	m_rotateText = new wxStaticText(boneTransformsPanel, wxID_ANY, "ROTATION ");
 	utils::WXUtils::SetFont(m_rotateText, 8, wxFONTWEIGHT_BOLD);
-	m_rotateText->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_rotateText->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	m_rotateTextX = new wxStaticText(boneTransformsPanel, wxID_ANY, "");
-	m_rotateTextX->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_rotateTextX->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	m_rotateTextY = new wxStaticText(boneTransformsPanel, wxID_ANY, "");
-	m_rotateTextY->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_rotateTextY->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	m_rotateTextZ = new wxStaticText(boneTransformsPanel, wxID_ANY, "");
-	m_rotateTextZ->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_rotateTextZ->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 
 	m_scaleText = new wxStaticText(boneTransformsPanel, wxID_ANY, "SCALE ");
 	utils::WXUtils::SetFont(m_scaleText, 8, wxFONTWEIGHT_BOLD);
-	m_scaleText->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_scaleText->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	m_scaleTextX = new wxStaticText(boneTransformsPanel, wxID_ANY, "");
-	m_scaleTextX->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_scaleTextX->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	m_scaleTextY = new wxStaticText(boneTransformsPanel, wxID_ANY, "");
-	m_scaleTextY->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_scaleTextY->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	m_scaleTextZ = new wxStaticText(boneTransformsPanel, wxID_ANY, "");
-	m_scaleTextZ->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_scaleTextZ->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 
 	transformPanelSizer->Add(m_positionText, 0, wxALIGN_LEFT | wxALL, 10);
 	transformPanelSizer->Add(m_positionTextX, 0, wxALIGN_LEFT | wxALL, 10);

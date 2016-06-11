@@ -1,6 +1,6 @@
 #include "ViewPanel.h"
 #include "../AnimationApp.h"
-#include "../Colour.h"
+#include "../Colours.h"
 #include "../Utils/WXUtils.h"
 #include "wx\statline.h"
 #include "wx\stattext.h"
@@ -40,19 +40,19 @@ ViewPanel::ViewPanel(
 	sizer->Add(separator, 0, wxALIGN_CENTER | wxALL, 10);
 
 	wxStaticText *viewOptionsText = new wxStaticText(this, wxID_ANY, wxT("VIEW OPTIONS"));
-	viewOptionsText->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	viewOptionsText->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	utils::WXUtils::SetFont(viewOptionsText, 10, wxFONTWEIGHT_BOLD);
 	sizer->Add(viewOptionsText, 0, wxALIGN_CENTER | wxALL, 10);
 
 	m_bonesCheckBox = new wxCheckBox(this, BonesCheckbox, wxT("SHOW BONES"));
-	m_bonesCheckBox->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_bonesCheckBox->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	utils::WXUtils::SetFont(m_bonesCheckBox, 8, wxFONTWEIGHT_BOLD);
 	//m_bonesCheckBox->SetValue(false);
 	m_bonesCheckBox->SetToolTip(wxT("Show bone overlay for current mesh"));
 	sizer->Add(m_bonesCheckBox, 0, wxALIGN_CENTER | wxALL, 10);
 
 	m_meshCheckBox = new wxCheckBox(this, MeshCheckbox, wxT("SHOW MESH"));
-	m_meshCheckBox->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_meshCheckBox->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	utils::WXUtils::SetFont(m_meshCheckBox, 8, wxFONTWEIGHT_BOLD);
 	//m_meshCheckBox->SetValue(true);
 	m_meshCheckBox->SetToolTip(wxT("Show the current mesh"));
@@ -61,7 +61,7 @@ ViewPanel::ViewPanel(
 
 	m_normalsCheckBox = new wxCheckBox(this, NormalsCheckbox, wxT("SHOW NORMALS"));
 	utils::WXUtils::SetFont(m_normalsCheckBox, 8, wxFONTWEIGHT_BOLD);
-	m_normalsCheckBox->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_normalsCheckBox->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 	//m_normalsCheckBox->SetValue(false);
 	m_normalsCheckBox->SetToolTip(wxT("Show normals overaly for the current mesh"));
 
@@ -70,8 +70,8 @@ ViewPanel::ViewPanel(
 	wxButton *centreCameraButton = new wxButton(this, CentreCamera, wxT("CENTRE CAMERA"));
 	centreCameraButton->SetToolTip(wxT("Reset the camera to look directly at the mesh"));
 	utils::WXUtils::SetFont(centreCameraButton, 8, wxFONTWEIGHT_BOLD);
-	centreCameraButton->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
-	centreCameraButton->SetBackgroundColour(wxColor(theme::Colour::m_darkGrey.r, theme::Colour::m_darkGrey.g, theme::Colour::m_darkGrey.b));
+	centreCameraButton->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
+	centreCameraButton->SetBackgroundColour(wxColor(theme::Colours::m_darkGrey.r, theme::Colours::m_darkGrey.g, theme::Colours::m_darkGrey.b));
 	centreCameraButton->SetMinSize(wxSize(120, 30));
 	sizer->Add(centreCameraButton, 0, wxALIGN_CENTER | wxALL, 10);
 
@@ -86,13 +86,13 @@ ViewPanel::ViewPanel(
 	m_lightPositionX = new wxTextCtrl(this, wxID_ANY, "0.0", wxDefaultPosition, wxDefaultSize, 0, positionValidatorX, "0.0");
 	m_lightPositionY = new wxTextCtrl(this, wxID_ANY, "0.0", wxDefaultPosition, wxDefaultSize, 0, positionValidatorY, "0.0");
 	m_lightPositionZ = new wxTextCtrl(this, wxID_ANY, "0.0", wxDefaultPosition, wxDefaultSize, 0, positionValidatorZ, "0.0");
-	m_lightPositionX->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
-	m_lightPositionY->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
-	m_lightPositionZ->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_lightPositionX->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
+	m_lightPositionY->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
+	m_lightPositionZ->SetForegroundColour(wxColor(theme::Colours::m_lightGrey.r, theme::Colours::m_lightGrey.g, theme::Colours::m_lightGrey.b));
 
-	m_lightPositionX->SetBackgroundColour(wxColor(theme::Colour::m_darkGrey.r, theme::Colour::m_darkGrey.g, theme::Colour::m_darkGrey.b));
-	m_lightPositionY->SetBackgroundColour(wxColor(theme::Colour::m_darkGrey.r, theme::Colour::m_darkGrey.g, theme::Colour::m_darkGrey.b));
-	m_lightPositionZ->SetBackgroundColour(wxColor(theme::Colour::m_darkGrey.r, theme::Colour::m_darkGrey.g, theme::Colour::m_darkGrey.b));
+	m_lightPositionX->SetBackgroundColour(wxColor(theme::Colours::m_darkGrey.r, theme::Colours::m_darkGrey.g, theme::Colours::m_darkGrey.b));
+	m_lightPositionY->SetBackgroundColour(wxColor(theme::Colours::m_darkGrey.r, theme::Colours::m_darkGrey.g, theme::Colours::m_darkGrey.b));
+	m_lightPositionZ->SetBackgroundColour(wxColor(theme::Colours::m_darkGrey.r, theme::Colours::m_darkGrey.g, theme::Colours::m_darkGrey.b));
 
 	m_lightPositionX->SetMinSize(wxSize(50, 20));
 	m_lightPositionY->SetMinSize(wxSize(50, 20));
