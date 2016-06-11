@@ -299,7 +299,8 @@ void GLRenderCanvas::InitGL()
 
 	utils::GLUtils::CheckOpenGLError(__FILE__,__LINE__);
 
-	glClearColor(theme::Colours::m_grey.r, theme::Colours::m_grey.b, theme::Colours::m_grey.b, 1.0f);
+	glm::vec3 backbroundColour = theme::Colours::m_grey.GetAsRenderColour();
+	glClearColor(backbroundColour.r, backbroundColour.g, backbroundColour.b, 1.0f);
 
 	int width = GetSize().GetWidth();
 	int height = GetSize().GetHeight();
@@ -359,9 +360,7 @@ void GLRenderCanvas::Render(
 	// if different mesh bind vertex array
 	// draw
 
-	//glClearColor(1.0f,0.5f,0.5f,1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glViewport(0, 0, (GLint)GetSize().x, (GLint)GetSize().y);
 
 	if(m_renderables.size() == 0)
 	{

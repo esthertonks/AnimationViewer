@@ -4,11 +4,20 @@
 #include <glm\glm.hpp>
 
 struct Colour {
-	float r;
-	float g;
-	float b;
 
-	inline Colour(float red, float green, float blue) { r = red; g = green; b = blue; };
+	inline Colour(const float red, const float green, const float blue) : r(red), g(green),  b(blue) {};
+
+	inline const wxColour GetAsUIColour() const { 
+		return wxColour(r * 255.0f, g * 255.0f, b * 255.0f);
+	};
+
+	inline const glm::vec3 GetAsRenderColour() const { 
+		return glm::vec3(r, g, b);
+	};
+
+	const float r;
+	const float g;
+	const float b;
 };
 
 
@@ -17,7 +26,6 @@ namespace theme
 class Colours
 {
 public:
-
 	const static Colour m_darkGrey;
 	const static Colour m_lightGrey;
 	const static Colour m_duskyBlue;

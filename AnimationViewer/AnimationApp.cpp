@@ -25,7 +25,7 @@ bool AnimationApp::OnInit()
 	int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
 	int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
 	wxFrame *frame = new gui::Window(NULL, wxT("Animation App"), wxDefaultPosition, wxSize(width, height), wxDEFAULT_FRAME_STYLE);
-	frame->SetBackgroundColour(wxColor(theme::Colours::m_darkGrey.r, theme::Colours::m_darkGrey.g, theme::Colours::m_darkGrey.b));
+	frame->SetBackgroundColour(theme::Colours::m_darkGrey.GetAsUIColour());
 	frame->SetMinSize(wxSize(800, 800));
 	frame->SetMaxSize(wxSize(width, height));
 	wxGLAttributes attributes;
@@ -202,7 +202,7 @@ void AnimationApp::ShowBones(
 {
 	if(show && m_currentMeshInfo.m_mesh) // If there is no mesh do nothing
 	{
-		render::RenderableVertexListPtr renderableVertexBoneListPtr = render::RenderableVertexListFactory::CreateBoneVertexList(glm::vec3(theme::Colours::m_duskyBlue.r, theme::Colours::m_duskyBlue.g, theme::Colours::m_duskyBlue.b), m_boneOverlayPointSize);
+		render::RenderableVertexListPtr renderableVertexBoneListPtr = render::RenderableVertexListFactory::CreateBoneVertexList(glm::vec3(theme::Colours::m_duskyBlue.GetAsRenderColour()), m_boneOverlayPointSize);
 		render::RenderablePtr renderable = boost::dynamic_pointer_cast<render::Renderable>(renderableVertexBoneListPtr);
 
 		if(renderable->Create())
