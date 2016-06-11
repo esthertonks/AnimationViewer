@@ -10,7 +10,9 @@ class AnimationPanel : public wxPanel
 	public:
 
 	AnimationPanel::AnimationPanel(
-		wxWindow *parent
+		wxWindow *parent,
+		wxSize minSize,
+		wxSize maxSize
 	);
 
 	void OnPlayClicked(

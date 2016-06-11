@@ -68,9 +68,6 @@
     <ClCompile Include="Render\GLRenderCanvas.cpp">
       <Filter>Render</Filter>
     </ClCompile>
-    <ClCompile Include="Render\GLUtils.cpp">
-      <Filter>Render</Filter>
-    </ClCompile>
     <ClCompile Include="Render\OrbitCamera.cpp">
       <Filter>Render</Filter>
     </ClCompile>
@@ -110,6 +107,13 @@
     <ClCompile Include="MeshProcessors\VertexListProcessor.cpp">
       <Filter>MeshProcessors</Filter>
     </ClCompile>
+    <ClCompile Include="Render\GLUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\WXUtils.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Colour.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationApp.h" />
@@ -206,9 +210,6 @@
     <ClInclude Include="Render\FirstPersonCamera.h">
       <Filter>Render</Filter>
     </ClInclude>
-    <ClInclude Include="Render\GLUtils.h">
-      <Filter>Render</Filter>
-    </ClInclude>
     <ClInclude Include="Render\GLRenderCanvas.h">
       <Filter>Render</Filter>
     </ClInclude>
@@ -251,6 +252,13 @@
     <ClInclude Include="MeshProcessors\VertexListProcessor.h">
       <Filter>MeshProcessors</Filter>
     </ClInclude>
+    <ClInclude Include="Render\GLUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\WXUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Colour.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Icons\icon1.xpm">

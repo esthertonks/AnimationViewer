@@ -1,5 +1,7 @@
 #include "ViewPanel.h"
 #include "../AnimationApp.h"
+#include "../Colour.h"
+#include "../Utils/WXUtils.h"
 #include "wx\statline.h"
 #include "wx\stattext.h"
 #include "wx\valnum.h"
@@ -24,40 +26,54 @@ BEGIN_EVENT_TABLE(ViewPanel, wxPanel)
 END_EVENT_TABLE()
 
 ViewPanel::ViewPanel(
-	wxWindow *parent
+	wxWindow *parent,
+	wxSize minSize,
+	wxSize maxSize
 	)
 	: wxPanel(parent)
 {	
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText *viewOptionsText = new wxStaticText(this, wxID_ANY, wxT("View Options:"));
-	viewOptionsText->SetForegroundColour(AnimationApp::m_guiTextColour);
-	sizer->Add(viewOptionsText, 0, wxALIGN_LEFT | wxALL, 10);
+	wxStaticLine *separator = new wxStaticLine(this);
+	separator->SetForegroundColour(*wxWHITE);
+	separator->SetMinSize(wxSize(450, 3));
+	sizer->Add(separator, 0, wxALIGN_CENTER | wxALL, 10);
 
-	m_bonesCheckBox = new wxCheckBox(this, BonesCheckbox, wxT("Show Bones"));
-	m_bonesCheckBox->SetForegroundColour(AnimationApp::m_guiTextColour);
+	wxStaticText *viewOptionsText = new wxStaticText(this, wxID_ANY, wxT("VIEW OPTIONS"));
+	viewOptionsText->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	utils::WXUtils::SetFont(viewOptionsText, 10, wxFONTWEIGHT_BOLD);
+	sizer->Add(viewOptionsText, 0, wxALIGN_CENTER | wxALL, 10);
+
+	m_bonesCheckBox = new wxCheckBox(this, BonesCheckbox, wxT("SHOW BONES"));
+	m_bonesCheckBox->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	utils::WXUtils::SetFont(m_bonesCheckBox, 8, wxFONTWEIGHT_BOLD);
 	//m_bonesCheckBox->SetValue(false);
 	m_bonesCheckBox->SetToolTip(wxT("Show bone overlay for current mesh"));
-	sizer->Add(m_bonesCheckBox, 0, wxALIGN_LEFT | wxALL, 10);
+	sizer->Add(m_bonesCheckBox, 0, wxALIGN_CENTER | wxALL, 10);
 
-	m_meshCheckBox = new wxCheckBox(this, MeshCheckbox, wxT("Show Mesh"));
-	m_meshCheckBox->SetForegroundColour(AnimationApp::m_guiTextColour);
+	m_meshCheckBox = new wxCheckBox(this, MeshCheckbox, wxT("SHOW MESH"));
+	m_meshCheckBox->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	utils::WXUtils::SetFont(m_meshCheckBox, 8, wxFONTWEIGHT_BOLD);
 	//m_meshCheckBox->SetValue(true);
 	m_meshCheckBox->SetToolTip(wxT("Show the current mesh"));
 
-	sizer->Add(m_meshCheckBox, 0, wxALIGN_LEFT | wxALL, 10);
+	sizer->Add(m_meshCheckBox, 0, wxALIGN_CENTER | wxALL, 10);
 
-	m_normalsCheckBox = new wxCheckBox(this, NormalsCheckbox, wxT("Show Normals"));
-	m_normalsCheckBox->SetForegroundColour(AnimationApp::m_guiTextColour);
+	m_normalsCheckBox = new wxCheckBox(this, NormalsCheckbox, wxT("SHOW NORMALS"));
+	utils::WXUtils::SetFont(m_normalsCheckBox, 8, wxFONTWEIGHT_BOLD);
+	m_normalsCheckBox->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
 	//m_normalsCheckBox->SetValue(false);
 	m_normalsCheckBox->SetToolTip(wxT("Show normals overaly for the current mesh"));
 
-	sizer->Add(m_normalsCheckBox, 0, wxALIGN_LEFT | wxALL, 10);
+	sizer->Add(m_normalsCheckBox, 0, wxALIGN_CENTER | wxALL, 10);
 
-	wxButton *centreCameraButton = new wxButton(this, CentreCamera, wxT("Centre Camera"));
+	wxButton *centreCameraButton = new wxButton(this, CentreCamera, wxT("CENTRE CAMERA"));
 	centreCameraButton->SetToolTip(wxT("Reset the camera to look directly at the mesh"));
-	centreCameraButton->SetMinSize(wxSize(120, 20));
-	sizer->Add(centreCameraButton, 0, wxALIGN_LEFT | wxALL, 10);
+	utils::WXUtils::SetFont(centreCameraButton, 8, wxFONTWEIGHT_BOLD);
+	centreCameraButton->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	centreCameraButton->SetBackgroundColour(wxColor(theme::Colour::m_darkGrey.r, theme::Colour::m_darkGrey.g, theme::Colour::m_darkGrey.b));
+	centreCameraButton->SetMinSize(wxSize(120, 30));
+	sizer->Add(centreCameraButton, 0, wxALIGN_CENTER | wxALL, 10);
 
 	wxButton *lightPositionButton = new wxButton(this, SetLightPosition, wxT("Set Light Position"));
 	lightPositionButton->SetToolTip(wxT("Set the position of the light"));
@@ -70,13 +86,13 @@ ViewPanel::ViewPanel(
 	m_lightPositionX = new wxTextCtrl(this, wxID_ANY, "0.0", wxDefaultPosition, wxDefaultSize, 0, positionValidatorX, "0.0");
 	m_lightPositionY = new wxTextCtrl(this, wxID_ANY, "0.0", wxDefaultPosition, wxDefaultSize, 0, positionValidatorY, "0.0");
 	m_lightPositionZ = new wxTextCtrl(this, wxID_ANY, "0.0", wxDefaultPosition, wxDefaultSize, 0, positionValidatorZ, "0.0");
-	m_lightPositionX->SetForegroundColour(AnimationApp::m_guiTextColour);
-	m_lightPositionY->SetForegroundColour(AnimationApp::m_guiTextColour);
-	m_lightPositionZ->SetForegroundColour(AnimationApp::m_guiTextColour);
+	m_lightPositionX->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_lightPositionY->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
+	m_lightPositionZ->SetForegroundColour(wxColor(theme::Colour::m_lightGrey.r, theme::Colour::m_lightGrey.g, theme::Colour::m_lightGrey.b));
 
-	m_lightPositionX->SetBackgroundColour(AnimationApp::m_guiBackgroundColour);
-	m_lightPositionY->SetBackgroundColour(AnimationApp::m_guiBackgroundColour);
-	m_lightPositionZ->SetBackgroundColour(AnimationApp::m_guiBackgroundColour);
+	m_lightPositionX->SetBackgroundColour(wxColor(theme::Colour::m_darkGrey.r, theme::Colour::m_darkGrey.g, theme::Colour::m_darkGrey.b));
+	m_lightPositionY->SetBackgroundColour(wxColor(theme::Colour::m_darkGrey.r, theme::Colour::m_darkGrey.g, theme::Colour::m_darkGrey.b));
+	m_lightPositionZ->SetBackgroundColour(wxColor(theme::Colour::m_darkGrey.r, theme::Colour::m_darkGrey.g, theme::Colour::m_darkGrey.b));
 
 	m_lightPositionX->SetMinSize(wxSize(50, 20));
 	m_lightPositionY->SetMinSize(wxSize(50, 20));
@@ -92,8 +108,8 @@ ViewPanel::ViewPanel(
 	positionSizer->Add(m_lightPositionY, 0, wxALIGN_LEFT | wxALL, 2);
 	positionSizer->Add(m_lightPositionZ, 0, wxALIGN_LEFT | wxALL, 2);
 
-	SetMinSize(wxSize(450, 200));
-	SetMaxSize(wxSize(600, 200));
+	SetMinSize(minSize);
+	SetMaxSize(maxSize);
 
 	sizer->Add(positionSizer, 0, wxALIGN_LEFT | wxALL, 8);
 

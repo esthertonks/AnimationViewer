@@ -123,6 +123,8 @@
     <ClCompile Include="Render\OrbitCamera.cpp" />
     <ClCompile Include="Render\GLRenderCanvas.cpp" />
     <ClCompile Include="Render\ShaderManager.cpp" />
+    <ClCompile Include="Colour.cpp" />
+    <ClCompile Include="Utils\WXUtils.cpp" />
     <ClCompile Include="Utils\MathsUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +174,8 @@
     <ClInclude Include="Render\GLRenderCanvas.h" />
     <ClInclude Include="Render\RenderFwdDecl.h" />
     <ClInclude Include="Render\ShaderManager.h" />
+    <ClInclude Include="Colour.h" />
+    <ClInclude Include="Utils\WXUtils.h" />
     <ClInclude Include="Utils\MathsUtils.h" />
   </ItemGroup>
   <ItemGroup>

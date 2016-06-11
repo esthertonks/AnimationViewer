@@ -131,7 +131,6 @@ private:
 
 	bool m_initialised;
 
-	static glm::vec3 m_clearColour;
 	glm::vec4 m_lightPosition;
 };
 

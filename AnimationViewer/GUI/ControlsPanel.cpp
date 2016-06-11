@@ -17,12 +17,13 @@ ControlsPanel::ControlsPanel(
 	: wxPanel(parent, windowId, position, size, style)
 {	
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-	m_viewPanel = new ViewPanel(this);
-	m_animationPanel = new AnimationPanel(this);
-	m_hierarchyPanel = new HierarchyPanel(this);
 
+	m_animationPanel = new AnimationPanel(this, wxSize(340, 240), wxSize(360, 240));
+	m_viewPanel = new ViewPanel(this, wxSize(340, 220), wxSize(360, 220));
+	m_hierarchyPanel = new HierarchyPanel(this, wxSize(340, 500), wxSize(360, 500));
+
+	sizer->Add(m_animationPanel, 30, wxCENTER, 10);
 	sizer->Add(m_viewPanel, 20, wxCENTER, 10);
-	sizer->Add(m_animationPanel, 20, wxCENTER, 10);
 	sizer->Add(m_hierarchyPanel, 40, wxCENTER, 10);
 
 	SetSizer(sizer);

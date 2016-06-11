@@ -14,18 +14,18 @@
 #include "Animation/AnimationController.h"
 #include "Renderable/RenderableVertexListFactory.h"
 #include "Renderable/RenderableVertexList.h"
+#include "Colour.h"
+
+const int AnimationApp::m_boneOverlayPointSize = 10.0f;
 
 IMPLEMENT_APP(AnimationApp)
-
-wxColour AnimationApp::m_guiBackgroundColour(50, 50, 50);
-wxColour AnimationApp::m_guiTextColour(190, 190, 170);
 
 bool AnimationApp::OnInit()
 {	
 	int width = wxSystemSettings::GetMetric (wxSYS_SCREEN_X);
 	int height = wxSystemSettings::GetMetric (wxSYS_SCREEN_Y);
 	wxFrame *frame = new gui::Window(NULL, wxT("Animation App"), wxDefaultPosition, wxSize(width, height), wxDEFAULT_FRAME_STYLE);
-	frame->SetBackgroundColour(m_guiBackgroundColour);
+	frame->SetBackgroundColour(wxColor(theme::Colour::m_darkGrey.r, theme::Colour::m_darkGrey.g, theme::Colour::m_darkGrey.b));
 	frame->SetMinSize(wxSize(800, 800));
 	frame->SetMaxSize(wxSize(width, height));
 	wxGLAttributes attributes;
@@ -56,12 +56,12 @@ bool AnimationApp::OnInit()
 	wxBoxSizer *leftVerticalSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *rightVerticalSizer = new wxBoxSizer(wxVERTICAL);
 
-	m_controlsPanel = new gui::ControlsPanel(frame, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER);//TODO create class
+	m_controlsPanel = new gui::ControlsPanel(frame, -1, wxDefaultPosition, wxDefaultSize, wxDOUBLE_BORDER);
 	m_controlsPanel->GetViewPanel().Initialise(m_renderCanvas->GetLightPosition(), m_boneOverlay != NULL ? true : false, true, false);
 	leftVerticalSizer->Add(m_controlsPanel, 1, wxEXPAND, 0);
 	rightVerticalSizer->Add(m_renderCanvas, 1, wxEXPAND, 0);
-	horizontalSizer->Add(leftVerticalSizer, 25, wxEXPAND);
-	horizontalSizer->Add(rightVerticalSizer, 75, wxEXPAND);
+	horizontalSizer->Add(leftVerticalSizer, 10, wxEXPAND);
+	horizontalSizer->Add(rightVerticalSizer, 90, wxEXPAND);
 	frame->SetSizer(horizontalSizer);
 	//frame->SetAutoLayout(true);
 
@@ -202,10 +202,7 @@ void AnimationApp::ShowBones(
 {
 	if(show && m_currentMeshInfo.m_mesh) // If there is no mesh do nothing
 	{
-		const glm::vec3 blueColour(0.04f, 0.3f, 0.6f);
-		const int pointSize = 10.0f;
-
-		render::RenderableVertexListPtr renderableVertexBoneListPtr = render::RenderableVertexListFactory::CreateBoneVertexList(blueColour, pointSize);
+		render::RenderableVertexListPtr renderableVertexBoneListPtr = render::RenderableVertexListFactory::CreateBoneVertexList(theme::Colour::m_duskyBlue, m_boneOverlayPointSize);
 		render::RenderablePtr renderable = boost::dynamic_pointer_cast<render::Renderable>(renderableVertexBoneListPtr);
 
 		if(renderable->Create())

@@ -69,10 +69,8 @@ class AnimationApp: public wxApp
 		glm::vec4 lightPosition
 	);
 
-	static wxColour m_guiBackgroundColour;
-	static wxColour m_guiTextColour;
-
 	private:
+
 	virtual bool OnInit();
 	void OnIdle(
 		wxIdleEvent& evt
@@ -90,6 +88,7 @@ class AnimationApp: public wxApp
 
 	CurrentMeshInfo m_currentMeshInfo;
 
+	const static int m_boneOverlayPointSize;
 	render::RenderablePtr m_boneOverlay;
 	render::RenderablePtr m_normalsOverlay;
 	animation::AnimationControllerPtr m_meshAnimator;

@@ -13,6 +13,7 @@
 #include "../Batch/LambertAppearance.h"
 #include "ShaderManager.h"
 #include "GLUtils.h"
+#include "../Colour.h"
 
 #include "GL/wglew.h"
 
@@ -33,9 +34,6 @@ BEGIN_EVENT_TABLE(GLRenderCanvas, wxGLCanvas)
 
 	EVT_KEY_DOWN(GLRenderCanvas::OnKeyDown)
 END_EVENT_TABLE()
-
-//glm::vec3 GLRenderCanvas::m_clearColour(0.196f, 0.196f, 0.196f);
-glm::vec3 GLRenderCanvas::m_clearColour(0.3f, 0.3f, 0.3f);
 
 GLRenderCanvas::GLRenderCanvas(
 	wxWindow *parent,
@@ -301,7 +299,7 @@ void GLRenderCanvas::InitGL()
 
 	utils::GLUtils::CheckOpenGLError(__FILE__,__LINE__);
 
-	glClearColor(m_clearColour.x, m_clearColour.y, m_clearColour.z, 1.0f);
+	glClearColor(theme::Colour::m_grey.x, theme::Colour::m_grey.y, theme::Colour::m_grey.z, 1.0f);
 
 	int width = GetSize().GetWidth();
 	int height = GetSize().GetHeight();

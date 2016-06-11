@@ -19,7 +19,9 @@ class HierarchyPanel : public wxPanel
 	public:
 
 	HierarchyPanel::HierarchyPanel(
-		wxWindow *parent
+		wxWindow *parent,
+		wxSize minSize,
+		wxSize maxSize
 	);
 
 	void ClearData();

@@ -11,7 +11,9 @@ class ViewPanel : public wxPanel
 	public:
 
 	ViewPanel::ViewPanel(
-		wxWindow *parent
+		wxWindow *parent,
+		wxSize minSize,
+		wxSize maxSize
 	);
 
 	void Initialise(
