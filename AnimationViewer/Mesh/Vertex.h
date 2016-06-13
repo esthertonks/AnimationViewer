@@ -10,10 +10,10 @@ class Vertex
 public:
 	Vertex::Vertex();
 
-	void AddWeight(
+	inline void AddWeight(
 		const unsigned int boneInfluenceid,
 		const float weight
-		)
+	)
 	{
 		assert(m_numInfluences < MAX_INFLUENCES);
 		m_boneInfluenceIds[m_numInfluences] = boneInfluenceid;
@@ -21,40 +21,50 @@ public:
 		m_numInfluences++;
 	}
 
-	float GetBoneWeight(
+	inline float GetBoneWeight(
 		int influenceIndex
-		)
+	)
 	{
 		return m_boneWeights[influenceIndex];
 	}
 
-	unsigned int GetBoneInfluence(
+	inline float* GetBoneWeights()
+	{
+		return m_boneWeights;
+	}
+
+	inline unsigned int GetBoneInfluence(
 		int influenceIndex
 		)
 	{
 		return m_boneInfluenceIds[influenceIndex];
 	}
 
-	unsigned int GetNumInfluences()
+	inline unsigned int *GetBoneInfluences()
+	{
+		return m_boneInfluenceIds;
+	}
+
+	inline unsigned int GetNumInfluences()
 	{
 		return m_numInfluences;
 	}
 
-	unsigned int GetBoneInfluenceId(
+	inline unsigned int GetBoneInfluenceId(
 		int influenceIndex
 		)
 	{
 		return m_boneInfluenceIds[influenceIndex];
 	}
 
-	void SetPosition(
+	inline void SetPosition(
 		FbxVector4 position
 	)
 	{
 		m_position = position;
 	}
 
-	FbxVector4 GetPosition()
+	inline FbxVector4 GetPosition()
 	{
 		return m_position;
 	}

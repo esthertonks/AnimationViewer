@@ -5,7 +5,11 @@
 
 struct Colour {
 
-	inline Colour(const float red, const float green, const float blue) : r(red), g(green),  b(blue) {};
+	inline Colour(
+		const float red,
+		const float green, 
+		const float blue
+	) : r(red), g(green),  b(blue) {};
 
 	inline const wxColour GetAsUIColour() const { 
 		return wxColour(r * 255.0f, g * 255.0f, b * 255.0f);

@@ -27,18 +27,18 @@ public:
 		const int materialId
 	);
 
-	void CreateRenderVertex(
-		render::TexturedSkinnedVertex &vertex, // Vertex to create
-		const mesh::MeshVertexArray &vertexArray, // Vertex array containing the vertices
-		const int vertexIndex, // The index of a vertex to copy
-		const mesh::MeshTriangleArray &triangleArray, // The traingle array containing all the triangles
-		const int triangleIndex, // The index of the triangle we need to copy a vert from
-		const int triangleCornerIndex // The specific vertex in the traingle that we need to copy
-	);
+	//void CreateRenderVertex(
+	//	render::TexturedSkinnedVertex &vertex, // Vertex to create
+	//	const mesh::MeshVertexArray &vertexArray, // Vertex array containing the vertices
+	//	const int vertexIndex, // The index of a vertex to copy
+	//	const mesh::MeshTriangleArray &triangleArray, // The traingle array containing all the triangles
+	//	const int triangleIndex, // The index of the triangle we need to copy a vert from
+	//	const int triangleCornerIndex // The specific vertex in the traingle that we need to copy
+	//);
 
-	void AddDuplicateVertex(
+	void AddVertexToBatch(
 		const int oldVertexIndex,
-		const render::TexturedSkinnedVertex &currentVertex,
+		const render::TexturedSkinnedVertex &vertex,
 		render::Batch &batch,
 		std::vector<int> &perMaterialOldToNewVertexIndexMap
 		);
