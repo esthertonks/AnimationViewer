@@ -9,14 +9,14 @@ class GLUtils
 {
 public:
 
-static bool CheckOpenGLError(
-	const char * file, 
-	int line
-	);
+	static bool CheckOpenGLError(
+		const char * file, 
+		int line
+		);
 
-static void DebugPrintGLInfo();
+	static void DebugPrintGLInfo();
 
-};
+	};
 
 }
 

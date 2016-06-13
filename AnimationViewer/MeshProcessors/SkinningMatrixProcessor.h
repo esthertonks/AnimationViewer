@@ -26,7 +26,7 @@ private:
 		mesh::BoneNode * node
 	);
 
-	BoneMatrixPalette m_matrixPalette;//TODO 4x3
+	BoneMatrixPalette m_matrixPalette;	//TODO 4x3 matrix could be used here to save space
 	unsigned int m_boneIdCheck;
 };
 

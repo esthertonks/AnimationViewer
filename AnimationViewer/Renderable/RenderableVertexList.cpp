@@ -1,11 +1,7 @@
 #include "RenderableVertexList.h"
 
-#include "../Mesh/BoneNode.h"
-#include <glm/gtc/matrix_transform.hpp>
-
 #include "../Render/ShaderManager.h"
 #include "../MeshProcessors/VertexListProcessor.h"
-#include <wx/log.h>
 
 namespace render
 {
@@ -94,13 +90,13 @@ void RenderableVertexList::Render(
 		//wxLogDebug("pos x %f", m_vertexArray[0].m_position.x);
 		//wxLogDebug("pos y %f", m_vertexArray[0].m_position.y);
 		//wxLogDebug("pos z %f", m_vertexArray[0].m_position.z);
-		//TODO shader to draw linelists?
+
 		GLint modelMatrixLocation = glGetUniformLocation(programId, "modelMatrix");
 		GLint viewMatrixLocation = glGetUniformLocation(programId, "viewMatrix");
 		GLint projectionMatrixLocation = glGetUniformLocation(programId, "projectionMatrix"); //TODO only needs setting on resize
 		if(modelMatrixLocation >= 0 && viewMatrixLocation >= 0 && projectionMatrixLocation >= 0)
 		{
-			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &glm::mat4(1.0f)[0][0]);//&GetModelMatrix()[0][0]);//TODO pass fewer matrices through!!!
+			glUniformMatrix4fv(modelMatrixLocation, 1, GL_FALSE, &glm::mat4(1.0f)[0][0]);//TODO pass fewer matrices through to the sahders. Some of these can be pre-multiplied.
 			glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
 			glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
 		}

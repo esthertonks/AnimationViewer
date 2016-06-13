@@ -353,13 +353,6 @@ void GLRenderCanvas::Render(
 
 	SetCurrent(*m_context);
 
-		// for each in batchlist
-	// set transform matrix
-	// if different shader bind shader
-	// if different shader params setup params
-	// if different mesh bind vertex array
-	// draw
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if(m_renderables.size() == 0)

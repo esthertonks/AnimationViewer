@@ -15,13 +15,12 @@
 namespace render
 {
 	// TODO redo this with a phong shader program and lambert shader program class which keep track of their own types etc. So one class per type in use.
-	//Can thenget rid of m_shaderProgramByProgramType
-	//TODO only really current need one set of shaders - discuss...
+	// Can then get rid of m_shaderProgramByProgramType
 ShaderManager::ShaderManager()
 	: m_currentProgramType(None)
 {
 	//TODO these could be specified in a text file
-	//TODO the program id doesnt get setup until initialise - should all of this be done at once? Or could initialise setup the program id passed on this info here?
+	//TODO the program id doesnt get setup until initialise - should all of this be done at once? Or could initialise setup the program id based on this info here?
 	Program phong;
 	phong.m_programId = -1;
 	phong.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_VERTEX_SHADER, "Shaders/PerFragmentPhong.vert"));
@@ -30,14 +29,14 @@ ShaderManager::ShaderManager()
 	m_shaderProgramByProgramType.insert(std::pair<ShaderProgramType, Program>(Phong, phong));
 
 	Program lambert;
-	lambert.m_programId = -1;//TODO umm constructor?!
+	lambert.m_programId = -1;
 	lambert.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_VERTEX_SHADER, "Shaders/PerFragmentLambert.vert"));
 	lambert.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_FRAGMENT_SHADER, "Shaders/PerFragmentLambert.frag"));
 
 	m_shaderProgramByProgramType.insert(std::pair<ShaderProgramType, Program>(Lambert, lambert));
 
 	Program overlay;
-	overlay.m_programId = -1;//TODO umm constructor?!
+	overlay.m_programId = -1;
 	overlay.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_VERTEX_SHADER, "Shaders/Overlay.vert"));
 	overlay.m_pathByShaderType.insert(std::pair<GLuint, std::string>(GL_FRAGMENT_SHADER, "Shaders/Overlay.frag"));
 
@@ -76,11 +75,6 @@ void ShaderManager::SetProgramCurrent(
 	//OutputDebugShaderAttributeInfo(programType);
 }
 
-/**
-	Takes a map of all available shaders and the type of that shader.
-	Stores a map of all loaded shaders and the openGL id assigned to that shader
-
-*/
 bool ShaderManager::InitialiseShaders()
 {
 	// Setup the phong shaders
@@ -127,8 +121,8 @@ bool ShaderManager::InitialiseShaders(
 	@return GL_FALSE if failed or GL_TRUE if successfully loaded
 */
 GLuint ShaderManager::LoadShader(
-	const std::string &shaderName, // The name of the shader to load
-	const GLenum shaderType	// The type of the shader ie GL_VERTEX_SHADER etc
+	const std::string &shaderName,	// The name of the shader to load
+	const GLenum shaderType			// The type of the shader ie GL_VERTEX_SHADER etc
 	)
 {
 	const char *shaderTextBuffer = ReadShaderSourceFile(shaderName);
@@ -188,8 +182,8 @@ const char* ShaderManager::ReadShaderSourceFile(
 	@return GL_FALSE if failed or GL_TRUE if successfully loaded
 */
 GLenum ShaderManager::CompileShader(
-	const std::string &shaderName, // The name of the shader to load
-	const GLuint shaderId //GLuint id for the shader source
+	const std::string &shaderName,	// The name of the shader to load
+	const GLuint shaderId			//GLuint id for the shader source
 	)
 {
 	// Compile the shader

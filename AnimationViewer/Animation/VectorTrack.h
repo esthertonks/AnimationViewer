@@ -10,32 +10,32 @@ class VectorTrack : public Track
 {
 public:
 
-VectorTrack(
-	const int totalNumKeys
-	) : Track()
-{
-	m_keys.reserve(totalNumKeys);
+	VectorTrack(
+		const int totalNumKeys
+		) : Track()
+	{
+		m_keys.reserve(totalNumKeys);
 
-}
+	}
 
-void VectorTrack::AddKey(
-	const VectorKey &key
-	)
-{
-	m_keys.push_back(key);
-}
+	void VectorTrack::AddKey(
+		const VectorKey &key
+		)
+	{
+		m_keys.push_back(key);
+	}
 
-const VectorKey &VectorTrack::GetKey(
-	int key
-	)
-{
-	return m_keys[key];
-}
+	const VectorKey &VectorTrack::GetKey(
+		int key
+		)
+	{
+		return m_keys[key];
+	}
 
 
-private:
-	VectorKeyArray m_keys;
+	private:
+		VectorKeyArray m_keys;
 
-};
+	};
 
 }

@@ -63,8 +63,8 @@ void MathsUtils::Decompose()
 }
 
 void MathsUtils::ConvertFBXToGLMatrix(
-	const FbxAMatrix &fbxMatrix,// Matrix to convert
-	glm::mat4x4 &glmMatrix// Converted matrix
+	const FbxAMatrix &fbxMatrix,	// Matrix to convert
+	glm::mat4x4 &glmMatrix			// Converted matrix
 	)
 {
 	glmMatrix[0][0] = static_cast<float>(fbxMatrix[0][0]);
@@ -90,8 +90,8 @@ void MathsUtils::ConvertFBXToGLMatrix(
 }
 
 void MathsUtils::ConvertGLToFBXMatrix(
-	const glm::mat4x4 &glmMatrix, // Matrix to convert
-	FbxAMatrix &fbxMatrix // Converted matrix
+	const glm::mat4x4 &glmMatrix,	// Matrix to convert
+	FbxAMatrix &fbxMatrix			// Converted matrix
 	)
 {
 	fbxMatrix[0][0] = glmMatrix[0][0];

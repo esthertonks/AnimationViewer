@@ -99,7 +99,6 @@ void AnimationController::ClampTime()
 	}
 }
 
-// Passing the scale and rotation matrices to avoid have to extract the rotation and scale from the parent global matrix which is non trivial (necessary to switch between scale inheritance types).
 void AnimationController::Update(
 	mesh::MeshPtr mesh,
 	const long globalTime
@@ -129,6 +128,7 @@ void AnimationController::Update(
 	const FbxAMatrix parentGlobalScaleMatrix;// These will be identity for the root node
 	const FbxAMatrix parentGlobalRotationMatrix;
 
+	// Passing the scale and rotation matrices to avoid have to extract the rotation and scale from the parent global matrix which is non trivial (necessary to switch between scale inheritance types).
 	PrepareBoneHierarcy(sample, root, parentGlobalScaleMatrix, parentGlobalRotationMatrix);
 }
 
@@ -247,7 +247,7 @@ void AnimationController::InterpolateRotation(
 	{
 		const QuaternionKey &nextRotationKey = rotationTrack->GetKey(sample + 1);
 
-		// Find the current time value as a 0 - 1 proporion between the two keys
+		// Find the current time value as a 0 - 1 proportion between the two keys
 		const float normalizedTime = utils::MathsUtils::NormalizeValue(m_localCurrentTime, lastRotationKey.m_time, nextRotationKey.m_time);
 		Slerp(normalizedTime, lastRotationKey, nextRotationKey, result);
 	}

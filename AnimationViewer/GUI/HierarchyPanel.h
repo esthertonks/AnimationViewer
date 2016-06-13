@@ -16,7 +16,7 @@ namespace gui
 
 class HierarchyPanel : public wxPanel
 {
-	public:
+public:
 
 	HierarchyPanel::HierarchyPanel(
 		wxWindow *parent,

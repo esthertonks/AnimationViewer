@@ -1,7 +1,6 @@
 #include "OrbitCamera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
-//#include <glm/gtc/constants.hpp>
 
 #include <wx/log.h>
 
@@ -14,15 +13,15 @@ OrbitCamera::OrbitCamera(
 	glm::vec3 &position
 	)
 	: m_up(0.0f,1.0f,0.0f),		// Y axis
-	m_forward(0.0f,0.0f,-1.0f),	//Z axis
-	m_right(1.0f,0.0f,0.0f)	,	//X axis
+	m_forward(0.0f,0.0f,-1.0f),	// Z axis
+	m_right(1.0f,0.0f,0.0f)	,	// X axis
 	m_position(position),
 	m_startPosition(position),
 	m_pivot(0.0f, 0.0f, 0.0f),
 	m_yaw(0.0f),
 	m_pitch(0.0f),
 	m_maxZoom(500.0f),
-	m_minZoom(-500/*10 - glm::length(m_position)*/),
+	m_minZoom(-500),
 	m_zoom(0.0f)
 {
 	RotateCamera();

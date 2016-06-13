@@ -12,7 +12,10 @@ namespace mesh
 	class Vertex;
 	class Triangle;
 
-	typedef boost::shared_array<Vertex> MeshVertexArray; //TODO any better container?
+	class BoneNode;
+	class MeshNode;
+
+	typedef boost::shared_array<Vertex> MeshVertexArray;
 	typedef boost::shared_array<Triangle> MeshTriangleArray;
 
 	typedef boost::shared_ptr<Mesh> MeshPtr;

@@ -4,8 +4,8 @@
 
 namespace container
 {
-	template<class TYPE> class LinkedList
-	{
+template<class TYPE> class LinkedList
+{
 	public:
 
 	LinkedList::LinkedList()
@@ -72,6 +72,6 @@ namespace container
 
 	ITEM *m_next;
 	ITEM *m_previous;
-	};
+};
 
 }

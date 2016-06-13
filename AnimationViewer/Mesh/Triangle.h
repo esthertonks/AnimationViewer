@@ -182,8 +182,6 @@ public :
 	};
 
 private:
-		
-	//TODO fbx colour etc?
 
 	unsigned int m_vertexIndices[3];	// Vertex Indices for the 3 triangle corners
 	glm::vec4 m_normals[3];				// Normals for the 3 triangle corners (thus multiple normals per vertex)
@@ -191,7 +189,7 @@ private:
 	glm::vec4 m_tangents[3];			// Tangents for the 3 triangle corners (thus multiple normals per vertex)
 	glm::vec2 m_uvs[3];					// UVs for the 3 triangle corners (thus multiple uvs per vertex)
 	glm::vec3 m_colours[3];				// Colours for the 3 triangle corners (thus multiple colours per vertex)
-	int m_materialId;			// Material Id. The mesh must have a material - a default one will be assigned if it does not
+	int m_materialId;					// Material Id. The mesh must have a material - a default one will be assigned if it does not
 };
 
 }

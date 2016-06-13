@@ -100,10 +100,8 @@ void RenderableMesh::Render(
 					glUniformMatrix4fv(bonePaletteMatrixLocation, boneMatrixPalette.size(), GL_FALSE, &boneMatrixPalette[0][0][0]);
 				}
 
-					//wxLogDebug("%u\n", GetVertexArrayHandle());
 				glBindVertexArray((*batchIterator)->GetVertexArrayHandle());
 
-				//m_indexBufferHandle
 				glDrawElements(GL_TRIANGLES, (*batchIterator)->GetNumIndices(), GL_UNSIGNED_SHORT, (GLvoid*)0);
 			}
 		}

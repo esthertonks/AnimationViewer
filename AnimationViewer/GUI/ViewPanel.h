@@ -8,7 +8,7 @@ namespace gui
 
 class ViewPanel : public wxPanel
 {
-	public:
+public:
 
 	ViewPanel::ViewPanel(
 		wxWindow *parent,
@@ -35,10 +35,10 @@ class ViewPanel : public wxPanel
 		wxCommandEvent& event
 		);
 
-	protected:
+protected:
 		DECLARE_EVENT_TABLE()
 
-	private:
+private:
 
 	float m_xPositionValue;
 	float m_yPositionValue;

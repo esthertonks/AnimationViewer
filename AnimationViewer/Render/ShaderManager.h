@@ -11,8 +11,8 @@ namespace render
 	struct Program
 	{
 		int m_programId;
-		std::map<GLuint, std::string> m_pathByShaderType; // The type of shader ie vertex, fragment, tessellation and the path to load the physical shader
-		std::map<GLuint, GLuint> m_idByShaderType; // The type of this shader ie vertex, fragment, tessellation and the allocated gl id for this shader
+		std::map<GLuint, std::string> m_pathByShaderType;	// The type of shader ie vertex, fragment, tessellation and the path to load the physical shader
+		std::map<GLuint, GLuint> m_idByShaderType;			// The type of this shader ie vertex, fragment, tessellation and the allocated gl id for this shader
 	};
 
 class ShaderManager
@@ -56,8 +56,8 @@ private:
 		);
 
 	GLuint LoadShader(
-		const std::string &shaderName, // The name of the shader to load
-		const GLenum shaderType	// The type of the shader ie GL_VERTEX_SHADER etc
+		const std::string &shaderName,	// The name of the shader to load
+		const GLenum shaderType			// The type of the shader ie GL_VERTEX_SHADER etc
 	);
 
 	const char* ReadShaderSourceFile(
@@ -65,8 +65,8 @@ private:
 	);
 
 	GLenum CompileShader(
-		const std::string &shaderName, // The name of the shader to load
-		const GLuint shaderId //GLuint id for the shader source
+		const std::string &shaderName,	// The name of the shader to load
+		const GLuint shaderId			//GLuint id for the shader source
 	);
 
 	GLenum LinkPrograms(
@@ -80,11 +80,6 @@ private:
 	ShaderProgramType m_currentProgramType;
 
 	std::map<ShaderProgramType, Program> m_shaderProgramByProgramType;
-
-	//std::map<std::string, GLuint> &m_phongShaders;
-	//std::map<std::string, GLuint> &m_lambertShaders;
-	//std::map<std::string, GLuint> m_shaderPathToIds;
-	//std::map<ShaderType, GLuint> m_shaderTypeToProgramId;
 };
 
 }

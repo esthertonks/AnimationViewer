@@ -3,7 +3,7 @@
 #include <fbxsdk.h>
 #include <map>
 #include "../Container/LinkedTree.h"
-#include "../Batch/BatchFwdDecl.h" // TODO For appearances only - really needed here?
+#include "../Batch/BatchFwdDecl.h"
 
 namespace import
 {
@@ -62,13 +62,13 @@ public:
 		return m_triangleArray;
 	}
 
-	void							AllocateVertices(
-										const int numVertices
-										);
+	void AllocateVertices(
+		const int numVertices
+		);
 
-	void							AllocateTriangles(
-										const int numTriangles
-										);
+	void AllocateTriangles(
+		const int numTriangles
+		);
 
 	inline void FlagAsSkinned(
 		bool isSkinned
@@ -105,21 +105,22 @@ public:
 	}
 
 private:
-	// uvsets?
-	friend class import::FBXImport; // Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
+	// TODO import and deal with uvsets?
+
+	friend class import::FBXImport;							// Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
 	MeshVertexArray m_vertexArray;
 	MeshTriangleArray m_triangleArray;
 	int m_numTriangles;
 	int m_numVertices;
 
-	render::AppearanceTable m_appearanceTable; // Mapping of material id's to material names //TODO pointer and set method
-	std::vector<unsigned int> m_numVerticesPerMaterialArray; // A count of the number of vertex indices per material batch. Necessary for creating batches later
+	render::AppearanceTable m_appearanceTable;				// Mapping of material id's to material names
+	std::vector<unsigned int> m_numVerticesPerMaterialArray;// A count of the number of vertex indices per material batch. Necessary for creating batches later
 
 	bool m_isSkinned;
 
 	std::string m_name;
 
-	FbxAMatrix m_globalTransform;		// Transform from this node to the global model transform. This is updated each tick during animation
+	FbxAMatrix m_globalTransform;							// Transform from this node to the global model transform. This is updated each tick during animation
 
 	unsigned int m_id;
 	static unsigned int m_counter;

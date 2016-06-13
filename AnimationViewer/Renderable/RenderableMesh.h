@@ -5,20 +5,8 @@
 #include "../Mesh/MeshFwdDecl.h"
 #include "../Batch/BatchFwdDecl.h"
 
-namespace mesh
-{
-	class Mesh;
-}
-
-namespace Animation
-{
-	class AnimationInfo;
-}
-
 namespace render
 {
-
-//enum VertexFormatType;
 
 class RenderableMesh : public Renderable
 {

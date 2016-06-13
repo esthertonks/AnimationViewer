@@ -12,8 +12,8 @@ float FirstPersonCamera::TWOPI = glm::pi<float>() * 2;
 
 FirstPersonCamera::FirstPersonCamera()
 	: m_up(0.0f,1.0f,0.0f),		// Y axis
-	m_forward(0.0f,0.0f,1.0f),	//Z axis
-	m_right(1.0f,0.0f,0.0f)	,	//X axis
+	m_forward(0.0f,0.0f,1.0f),	// Z axis
+	m_right(1.0f,0.0f,0.0f)	,	// X axis
 	m_position(0.0f, 0.0f, -20.f),
 	m_yaw(0.0f),
 	m_pitch(0.0f),
@@ -26,8 +26,8 @@ FirstPersonCamera::FirstPersonCamera(
 	glm::vec3 position
 	)
 	: m_up(0.0f,1.0f,0.0f),		// Y axis
-	m_forward(0.0f,0.0f,1.0f),	//Z axis
-	m_right(1.0f,0.0f,0.0f)	,	//X axis
+	m_forward(0.0f,0.0f,1.0f),	// Z axis
+	m_right(1.0f,0.0f,0.0f)	,	// X axis
 	m_position(position)
 {
 }

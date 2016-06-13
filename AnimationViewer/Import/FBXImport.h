@@ -5,15 +5,6 @@
 #include "../Batch/BatchFwdDecl.h"
 #include "../Mesh/MeshFwdDecl.h"
 
-namespace mesh
-{
-	class Mesh;
-	class BoneNode;
-	class MeshNode;
-	class Triangle;
-	class TexturedSkinnedVertex;
-}
-
 namespace import
 {
 
@@ -35,8 +26,8 @@ private:
 
 	bool LoadNodes(
 		FbxNode& fbxNode,	// The FBX mesh to extract data from and add to m_mesh
-		mesh::BoneNode *parentBone,
-		mesh::MeshNode *parentMesh
+		mesh::BoneNode *parentBoneNode,
+		mesh::MeshNode *parentMeshNode
 	);
 
 	mesh::MeshNode *LoadMeshNode(

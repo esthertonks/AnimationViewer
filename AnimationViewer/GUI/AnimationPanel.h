@@ -7,7 +7,7 @@ namespace gui
 
 class AnimationPanel : public wxPanel
 {
-	public:
+public:
 
 	AnimationPanel::AnimationPanel(
 		wxWindow *parent,
@@ -31,8 +31,8 @@ class AnimationPanel : public wxPanel
 		wxCommandEvent& event
 		);
 
-	protected:
-		DECLARE_EVENT_TABLE()
+protected:
+	DECLARE_EVENT_TABLE()
 };
 
 }

@@ -1,23 +1,21 @@
 #pragma once
 
 #include "AnimationFwdDecl.h"
-/*
-	Track base class
-*/
+
 namespace animation
 {
 
 class Key
 {
-public :
+	public :
 
-Key(long time){
-	m_time = time;
-};
+	Key(long time){
+		m_time = time;
+	};
 
-virtual ~Key(){};
+	virtual ~Key(){};
 
-long m_time;
+	long m_time;
 };
 
 }

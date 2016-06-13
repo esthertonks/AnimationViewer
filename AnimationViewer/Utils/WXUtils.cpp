@@ -2,7 +2,6 @@
 
 namespace utils
 {
-
 	void WXUtils::SetFont(
 		wxControl *control, 
 		const int pointSize,

@@ -8,13 +8,6 @@
 namespace render
 {
 
-//enum VertexFormatType //TODO may not need this?
-//{
-//	ColourFormat,
-//	TextureFormat,
-//	SkinnedTexturedFormat
-//};
-
 struct TexturedVertex
 {
 	glm::vec3 m_position;

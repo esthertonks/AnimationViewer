@@ -4,12 +4,6 @@
 #include "../Batch/BatchFwdDecl.h"
 #include <vector>
 
-namespace mesh
-{
-	class Mesh;
-	class MeshNode;
-}
-
 namespace render
 {
 class Batch;

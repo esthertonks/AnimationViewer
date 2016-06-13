@@ -13,14 +13,14 @@ public:
 	LambertAppearance();
 	~LambertAppearance(){};
 
-virtual ShaderProgramType GetType()
-{
-	return Lambert;
-}
+	virtual ShaderProgramType GetType()
+	{
+		return Lambert;
+	}
 
-virtual void ConvertToShaderParams(
-	const GLuint programId
-	) const;
+	virtual void ConvertToShaderParams(
+		const GLuint programId
+		) const;
 
 private:
 

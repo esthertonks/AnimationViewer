@@ -161,7 +161,6 @@
     <ClInclude Include="Mesh\Mesh.h" />
     <ClInclude Include="Mesh\MeshFwdDecl.h" />
     <ClInclude Include="Mesh\MeshNode.h" />
-    <ClInclude Include="Mesh\Node.h" />
     <ClInclude Include="Mesh\Triangle.h" />
     <ClInclude Include="Mesh\Vertex.h" />
     <ClInclude Include="Renderable\Renderable.h" />

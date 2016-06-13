@@ -4,11 +4,6 @@
 #include "Renderable.h"
 #include "RenderableFwdDecl.h"
 
-namespace mesh
-{
-	class Mesh;
-	class Node;
-}
 
 namespace animation
 {
@@ -18,9 +13,6 @@ namespace animation
 
 namespace render
 {
-
-//class BoneVertexListProcessor;
-//enum VertexFormatType;
 
 class RenderableVertexList : public Renderable
 {

@@ -65,9 +65,6 @@ private:
 	glm::vec3 m_right;
 	glm::vec3 m_forward;
 
-	//float m_speed;
-	//float m_zoom;
-
 	float m_yaw;	//Rotation around y axis
 	float m_pitch; // Rotation around x axis;
 

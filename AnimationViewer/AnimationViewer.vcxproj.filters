@@ -195,9 +195,6 @@
     <ClInclude Include="Mesh\MeshFwdDecl.h">
       <Filter>Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh\Node.h">
-      <Filter>Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh\MeshNode.h">
       <Filter>Mesh</Filter>
     </ClInclude>

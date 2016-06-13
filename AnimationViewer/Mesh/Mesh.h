@@ -1,6 +1,6 @@
 /**
 	This class contains a mesh suitable for loaded information which is stored per triangle (and not per vertex as will be required to render
-	This class stores the root of the mesh node hierarchy. The mesh hierarchy a flat linked list of parent->child nodes.
+	This class stores the root of the mesh node hierarchy. The mesh hierarchy is a linked tree of parent->child nodes.
 */
 #pragma once
 
@@ -9,9 +9,6 @@
 
 namespace mesh
 {
-
-class MeshNode;
-class BoneNode;
 
 class Mesh
 {

@@ -1,16 +1,10 @@
 #pragma once
 
 #include <glm\glm.hpp>
-#include "../Mesh/MeshFwdDecl.h"
 
 namespace mesh
 {
 	class BoneNode;
-}
-
-namespace animation
-{
-	class AnimationInfo;//TODO urgh get rid
 }
 
 namespace render

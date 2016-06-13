@@ -62,7 +62,7 @@ public:
 private:
 	
 	FbxVector4 m_position;
-	unsigned int m_boneInfluenceIds[MAX_INFLUENCES]; //MAX_INFLUENCES joints per vertex (could use uint8) //TODO has to be float to pass to gl?
+	unsigned int m_boneInfluenceIds[MAX_INFLUENCES]; //MAX_INFLUENCES joints per vertex (could use uint8)
 	float m_boneWeights[MAX_INFLUENCES];
 	unsigned int m_numInfluences;
 };

@@ -10,7 +10,7 @@ namespace gui
 
 class ControlsPanel : public wxPanel
 {
-	public:
+public:
 
 	ControlsPanel::ControlsPanel(
 		wxWindow *parent,
@@ -23,8 +23,6 @@ class ControlsPanel : public wxPanel
 	HierarchyPanel& GetHierarchyPanel();
 	AnimationPanel& GetAnimationPanel();
 	ViewPanel& GetViewPanel();
-
-	protected:
 
 private:
 	ViewPanel *m_viewPanel;

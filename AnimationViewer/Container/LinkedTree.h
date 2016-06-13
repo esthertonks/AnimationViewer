@@ -4,9 +4,9 @@
 
 namespace container
 {
-	template<class TYPE> class LinkedTree
-	{
-	public:
+template<class TYPE> class LinkedTree
+{
+public:
 
 	LinkedTree::LinkedTree()
 	{
@@ -129,12 +129,12 @@ namespace container
 		}
 	};
 
-	ITEM *m_next;// Next sibling item at this hierarchy level
-	ITEM *m_previous;// Previous sibling item at this hierarchy level
-	ITEM *m_parent;	// Parent of these siblings
-	ITEM *m_firstChild; // First child of this item at this hierarchy level
-	ITEM *m_endChild; // End child of this item at this hierarchy level
-	//int hierarchyDepth; // Depth of this item in the tree hierarchy
-	};
+	ITEM *m_next;			// Next sibling item at this hierarchy level
+	ITEM *m_previous;		// Previous sibling item at this hierarchy level
+	ITEM *m_parent;			// Parent of these siblings
+	ITEM *m_firstChild;		// First child of this item at this hierarchy level
+	ITEM *m_endChild;		// End child of this item at this hierarchy level
+	//int hierarchyDepth;	// Depth of this item in the tree hierarchy
+};
 
 }

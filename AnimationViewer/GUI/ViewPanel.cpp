@@ -47,14 +47,12 @@ ViewPanel::ViewPanel(
 	m_bonesCheckBox = new wxCheckBox(this, BonesCheckbox, wxT("SHOW BONES"));
 	m_bonesCheckBox->SetForegroundColour(theme::Colours::m_lightGrey.GetAsUIColour());
 	utils::WXUtils::SetFont(m_bonesCheckBox, 8, wxFONTWEIGHT_BOLD);
-	//m_bonesCheckBox->SetValue(false);
 	m_bonesCheckBox->SetToolTip(wxT("Show bone overlay for current mesh"));
 	sizer->Add(m_bonesCheckBox, 0, wxALIGN_CENTER | wxALL, 10);
 
 	m_meshCheckBox = new wxCheckBox(this, MeshCheckbox, wxT("SHOW MESH"));
 	m_meshCheckBox->SetForegroundColour(theme::Colours::m_lightGrey.GetAsUIColour());
 	utils::WXUtils::SetFont(m_meshCheckBox, 8, wxFONTWEIGHT_BOLD);
-	//m_meshCheckBox->SetValue(true);
 	m_meshCheckBox->SetToolTip(wxT("Show the current mesh"));
 
 	sizer->Add(m_meshCheckBox, 0, wxALIGN_CENTER | wxALL, 10);
@@ -62,7 +60,6 @@ ViewPanel::ViewPanel(
 	m_normalsCheckBox = new wxCheckBox(this, NormalsCheckbox, wxT("SHOW NORMALS"));
 	utils::WXUtils::SetFont(m_normalsCheckBox, 8, wxFONTWEIGHT_BOLD);
 	m_normalsCheckBox->SetForegroundColour(theme::Colours::m_lightGrey.GetAsUIColour());
-	//m_normalsCheckBox->SetValue(false);
 	m_normalsCheckBox->SetToolTip(wxT("Show normals overaly for the current mesh"));
 
 	sizer->Add(m_normalsCheckBox, 0, wxALIGN_CENTER | wxALL, 10);
@@ -140,7 +137,6 @@ void ViewPanel::OnCheckboxClicked(
 	wxCommandEvent& event
 	)
 {
-	//wxCheckBox* checkbox = (wxCheckBox*)event.GetEventObject();
 	switch (event.GetId())
 	{
 	case BonesCheckbox:

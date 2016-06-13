@@ -4,46 +4,41 @@
 #include "../Batch/BatchFwdDecl.h"
 #include "VertexListProcessor.h"
 
-namespace mesh {
-	class BoneNode;
-	class MeshNode;
-}
-
 namespace render {
 
-	class SkinningMatrixProcessor;
+class SkinningMatrixProcessor;
 
-	class NormalsVertexListProcessor : public VertexListProcessor
-	{
-	public:
-		NormalsVertexListProcessor(
-			mesh::MeshPtr mesh,
-			glm::vec3 colour,
-			float normalLength
-		);
+class NormalsVertexListProcessor : public VertexListProcessor
+{
+public:
+	NormalsVertexListProcessor(
+		mesh::MeshPtr mesh,
+		glm::vec3 colour,
+		float normalLength
+	);
 
-		~NormalsVertexListProcessor();
+	~NormalsVertexListProcessor();
 
-		virtual int GetNumVertsInList();
+	virtual int GetNumVertsInList();
 
-		virtual ColourVertexArray &GetVertexList();
+	virtual ColourVertexArray &GetVertexList();
 
-		void CreateAnimatedVertexList(
-			mesh::BoneNode *boneHierarchyRoot
-		);
+	void CreateAnimatedVertexList(
+		mesh::BoneNode *boneHierarchyRoot
+	);
 
-	private:
+private:
 
-		void CreateVertexListFromNormalsInternal(
-			mesh::MeshNode* meshNode
-		);
+	void CreateVertexListFromNormalsInternal(
+		mesh::MeshNode* meshNode
+	);
 
-		ColourVertexArray m_normalsVertexArray;
-		int m_numVerts;
-		glm::vec3 m_colour;
-		float m_normalLength;
-		mesh::MeshPtr m_mesh;
-		render::SkinningMatrixProcessorPtr m_skinningMatrixProcessor;
-	};
+	ColourVertexArray m_normalsVertexArray;
+	int m_numVerts;
+	glm::vec3 m_colour;
+	float m_normalLength;
+	mesh::MeshPtr m_mesh;
+	render::SkinningMatrixProcessorPtr m_skinningMatrixProcessor;
+};
 
 }

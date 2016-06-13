@@ -34,21 +34,6 @@ public :
 		m_name = name;
 	}
 
-	// Use the frames for comparision rather than the raw times as due to rounding errors they may not quite match up
-	//void SetStartTime(
-	//	long startTime
-	//	)
-	//{
-	//	m_startTime = startTime;
-	//}
-
-	//void SetEndTime(
-	//	long endTime
-	//	)
-	//{
-	//	m_endTime = endTime;
-	//}
-
 	void SetStartSample(
 		int startSample
 		)
@@ -82,16 +67,6 @@ public :
 	{
 		return m_name;
 	}
-
-	//const long GetStartTime() const
-	//{
-	//	return m_startTime;
-	//}
-
-	//const long GetEndTime() const
-	//{
-	//	return m_endTime;
-	//}
 
 	const int GetStartSample() const
 	{
@@ -130,8 +105,8 @@ private:
 	int m_startSample;
 	int m_endSample;
 	float m_fps;
-	float m_millisecondsPerFrame;	//1000.0f/m_fps;
-	float m_millisecondsPerHalfFrame; //500.0f/m_fps;
+	float m_millisecondsPerFrame;		//1000.0f/m_fps;
+	float m_millisecondsPerHalfFrame;	//500.0f/m_fps;
 };
 
 }

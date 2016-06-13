@@ -4,23 +4,22 @@
 
 namespace render
 {
-	class RenderableVertexListFactory
-	{
-	public:
+class RenderableVertexListFactory
+{
+public:
 
-		static RenderableVertexListPtr CreateBoneVertexList(
-			const glm::vec3 colour,
-			const int pointSize
+	static RenderableVertexListPtr CreateBoneVertexList(
+		const glm::vec3 colour,
+		const int pointSize
+	);
+
+	static RenderableVertexListPtr CreateNormalsVertexList(
+		mesh::MeshPtr mesh,
+		const glm::vec3 colour,
+		const float normalLength,
+		const int pointSize
 		);
-
-		static RenderableVertexListPtr CreateNormalsVertexList(
-			mesh::MeshPtr mesh,
-			const glm::vec3 colour,
-			const float normalLength,
-			const int pointSize
-			);
-	};
-
+};
 
 }
 

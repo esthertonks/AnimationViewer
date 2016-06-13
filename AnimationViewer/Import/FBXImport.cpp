@@ -132,8 +132,8 @@ void FBXImport::DestroyFBXManagers()
 
 bool FBXImport::LoadNodes(
 	FbxNode& fbxNode,
-	mesh::BoneNode *parentBone,
-	mesh::MeshNode *parentMesh
+	mesh::BoneNode *parentBoneNode,
+	mesh::MeshNode *parentMeshNode
 	)
 {
 	mesh::MeshNode *newMeshNode = NULL;
@@ -148,10 +148,10 @@ bool FBXImport::LoadNodes(
 		switch(fbxAttributeType)
 		{
 		case FbxNodeAttribute::eMesh:
-			newMeshNode = LoadMeshNode(fbxNode, parentMesh);
+			newMeshNode = LoadMeshNode(fbxNode, parentMeshNode);
 			break;
 		case FbxNodeAttribute::eSkeleton:
-			newBoneNode = LoadBoneNode(fbxNode, parentBone);
+			newBoneNode = LoadBoneNode(fbxNode, parentBoneNode);
 			break;
 		default:
 			FBXSDK_printf("Node %s type is %d. Only node of type eMesh (4) or eSkeleton (3) can be loaded\n", fbxNode.GetName(), fbxAttributeType);
@@ -166,7 +166,7 @@ bool FBXImport::LoadNodes(
 	{
 		FbxNode &fbxChildNode = *fbxNode.GetChild(childIndex);
 
-		LoadNodes(fbxChildNode, newBoneNode != NULL ? newBoneNode : parentBone, newMeshNode != NULL ? newMeshNode : parentMesh); // If we didnt load a node just pass through the parent. Otherwise pass the new node as the parent
+		LoadNodes(fbxChildNode, newBoneNode != NULL ? newBoneNode : parentBoneNode, newMeshNode != NULL ? newMeshNode : parentMeshNode); // If we didnt load a node just pass through the parent. Otherwise pass the new node as the parent
 	}
 
 	return true;
@@ -289,24 +289,6 @@ mesh::BoneNode *FBXImport::LoadBoneNode(
 	// Add the bone to the mesh as a parent->child list
 	boneNode = new mesh::BoneNode();
 
-	// Find out and record whether this is a leaf node (in case we need to know the hierarchy and not just what the parent was)
-	//const FbxSkeleton::EType skeletonType = fbxSkeleton->GetSkeletonType();
-	//switch(skeletonType)
-	//{
-	//case FbxSkeleton::eLimb: // This is a leaf node ie the node is only connected to one other node
-
-	//	break;
-
-	//case FbxSkeleton::eLimbNode:// This is a limb node ie the node is connected to two other nodes
-
-	//	break;
-
-	//case FbxSkeleton::eRoot:// This node is not usually drawn. Discarding the node.
-	//case FbxSkeleton::eEffector:// This node is not usually drawn. Discarding the node.
-
-	//	return false;
-	//}
-
 	m_mesh->AddChildBoneNode(parent, boneNode);
 
 	std::string name = fbxNode.GetName();
@@ -342,8 +324,6 @@ mesh::BoneNode *FBXImport::LoadBoneNode(
 
 		const FbxAMatrix fbxLocalTransform = fbxNode.EvaluateLocalTransform(fbxTime, FbxNode::eDestinationPivot);
 
-		//FbxVector4 rotTestTemp = fbxLocalTransform.GetR();//TODO remove
-
 		// Store the keys with the adjusted time (ie the time starting at 0 regardless or where it started in the FBX file
 		animation::VectorKey scaleKey(fbxLocalTransform.GetS(), sampleTime);
 		animation::VectorKey positionKey(fbxLocalTransform.GetT(), sampleTime);
@@ -356,7 +336,7 @@ mesh::BoneNode *FBXImport::LoadBoneNode(
 		boneNode->AddScaleKey(scaleKey);
 	}
 
-	// Record node scale inheritance //TODO scale inheritance
+	// Record node scale inheritance
 	if (parent)
 	{
 		FbxEnum inheritType = fbxNode.InheritType.Get();
@@ -622,7 +602,6 @@ void FBXImport::LoadMaterials(
 			for(int textureIndex = 0; textureIndex < 1; textureIndex++)
 			{
 				FbxFileTexture* fbxFileTexture = materialProperty.GetSrcObject<FbxFileTexture>(textureIndex);
-				//std::string texturePath = fbxFileTexture->GetFileName();
 				if(fbxFileTexture != NULL && boost::filesystem::exists(fbxFileTexture->GetFileName()))
 				{
 					appearance->SetDiffuseTexturePath(fbxFileTexture->GetFileName());

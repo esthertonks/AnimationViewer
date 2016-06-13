@@ -112,10 +112,6 @@ void AnimationApp::OnIdle(
 
 			}
 		}
-
-		//m_input->Do SomethingWithCamera();
-		//m_camera->GetView();
-		//animate(delta);
 	}
 	m_renderCanvas->RenderImmediate();
 	m_lastTime = timeNow;
@@ -141,8 +137,6 @@ void AnimationApp::ImportFBX(
 	{
 		CloseFBX();
 	}
-	//TODO should the render mesh be a different type of mesh?
-	//TODO should the processing be done right away by the importer and the rest of the app only knows about the render compatible mesh?
 	
 	boost::shared_ptr<import::FBXImport> m_fbxImporter(new import::FBXImport());
 	m_currentMeshInfo.m_mesh = m_fbxImporter->Import(filePath);

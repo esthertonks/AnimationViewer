@@ -7,16 +7,12 @@
 namespace render
 {
 
-//enum VertexFormatType;
-
 class Batch
 {
 
 public:
 
-	Batch(
-		//VertexFormatType vertexFormatType
-		);
+	Batch();
 
 	~Batch();
 
@@ -39,11 +35,6 @@ public:
 	{
 		return m_vertexArray;
 	}
-
-	//VertexFormatType Batch::GetVertexFormatType()
-	//{
-	//	return m_vertexFormatType;
-	//}
 
 	IndexArray GetIndices()
 	{
@@ -72,13 +63,13 @@ public:
 		const unsigned short vertexIndex
 		);
 
-	void							AllocateVertices(
-										const int numVertices
-										);
+	void AllocateVertices(
+		const int numVertices
+		);
 
-	void							AllocateIndices(
-										const unsigned short numIndices
-										);
+	void AllocateIndices(
+		const unsigned short numIndices
+		);
 
 	void PrepareForRendering();
 
@@ -105,7 +96,6 @@ private:
 	TexturedSkinnedVertexArray m_vertexArray;
 	IndexArray m_indexArray;
 	AppearancePtr m_appearance; // Several batches could have the same appearance
-	//VertexFormatType m_vertexFormatType;
 
 	GLuint m_vertexArrayHandle;
 
