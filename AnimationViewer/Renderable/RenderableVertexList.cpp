@@ -16,6 +16,11 @@ RenderableVertexList::RenderableVertexList(
 {
 }
 
+bool RenderableVertexList::ShouldCreate()
+{
+	return false; // Bones are recreated each time on update.
+}
+
 bool RenderableVertexList::Create()
 {		
 	return true;

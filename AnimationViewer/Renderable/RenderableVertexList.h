@@ -26,6 +26,8 @@ public:
 
 	~RenderableVertexList();
 
+	virtual bool ShouldCreate();
+
 	virtual bool Create();
 
 	virtual bool Update(

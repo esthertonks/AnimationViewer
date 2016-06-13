@@ -24,7 +24,9 @@ public:
 		return m_perNodeRenderBatches;
 	}
 
-	bool Create();
+	virtual bool ShouldCreate();
+
+	virtual bool Create();
 
 	virtual bool Update(
 		mesh::BoneNode *boneHierarchyRoot

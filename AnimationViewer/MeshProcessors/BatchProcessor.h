@@ -12,7 +12,7 @@ class BatchProcessor
 {
 public:
 	BatchProcessor(
-		mesh::MeshPtr &mesh
+		const mesh::MeshPtr &mesh
 		);
 	~BatchProcessor();
 
@@ -26,15 +26,6 @@ public:
 		render::AppearanceTable& appearances,
 		const int materialId
 	);
-
-	//void CreateRenderVertex(
-	//	render::TexturedSkinnedVertex &vertex, // Vertex to create
-	//	const mesh::MeshVertexArray &vertexArray, // Vertex array containing the vertices
-	//	const int vertexIndex, // The index of a vertex to copy
-	//	const mesh::MeshTriangleArray &triangleArray, // The traingle array containing all the triangles
-	//	const int triangleIndex, // The index of the triangle we need to copy a vert from
-	//	const int triangleCornerIndex // The specific vertex in the traingle that we need to copy
-	//);
 
 	void AddVertexToBatch(
 		const int oldVertexIndex,
@@ -52,10 +43,10 @@ public:
 private:
 	void BatchProcessor::CreateBatchesInternal(
 		mesh::MeshNode* meshNode,
-		render::PerNodeBatchList &perNodeRenderBatches // Map of Batch vector lists to fill in - one for each mesh node (ie one per unique model matrix)
+		render::PerNodeBatchList &m_perNodeRenderBatches // Map of Batch vector lists to fill in - one for each mesh node (ie one per unique model matrix)
 	);
 
-	mesh::MeshPtr m_mesh;
+	const mesh::MeshPtr m_mesh;
 
 };
 

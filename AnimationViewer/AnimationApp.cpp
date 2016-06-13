@@ -63,7 +63,6 @@ bool AnimationApp::OnInit()
 	horizontalSizer->Add(leftVerticalSizer, 10, wxEXPAND);
 	horizontalSizer->Add(rightVerticalSizer, 90, wxEXPAND);
 	frame->SetSizer(horizontalSizer);
-	//frame->SetAutoLayout(true);
 
 	m_meshAnimator = boost::shared_ptr<animation::AnimationController>(new animation::AnimationController());
 
@@ -199,16 +198,9 @@ void AnimationApp::ShowBones(
 		render::RenderableVertexListPtr renderableVertexBoneListPtr = render::RenderableVertexListFactory::CreateBoneVertexList(glm::vec3(theme::Colours::m_duskyBlue.GetAsRenderColour()), m_boneOverlayPointSize);
 		render::RenderablePtr renderable = boost::dynamic_pointer_cast<render::Renderable>(renderableVertexBoneListPtr);
 
-		if(renderable->Create())
-		{
-			m_renderCanvas->AddOverlay(renderable);
-			m_boneOverlay = renderable;
-			m_boneOverlay->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy());
-		}
-		else
-		{
-			m_boneOverlay = NULL;
-		}
+		m_renderCanvas->AddOverlay(renderable);
+		m_boneOverlay = renderable;
+		m_boneOverlay->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy());
 	}
 	else
 	{
@@ -245,16 +237,9 @@ void AnimationApp::ShowNormals(
 		render::RenderableVertexListPtr renderableVertexNormalsListPtr = render::RenderableVertexListFactory::CreateNormalsVertexList(m_currentMeshInfo.m_mesh, whiteColour, normalLength, pointSize);
 		render::RenderablePtr renderable = boost::dynamic_pointer_cast<render::Renderable>(renderableVertexNormalsListPtr);
 
-		if (renderable->Create())
-		{
-			m_renderCanvas->AddOverlay(renderable);
-			m_normalsOverlay = renderable;
-			m_normalsOverlay->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy());
-		}
-		else
-		{
-			m_normalsOverlay = NULL;
-		}
+		m_renderCanvas->AddOverlay(renderable);
+		m_normalsOverlay = renderable;
+		m_normalsOverlay->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy());
 	}
 	else
 	{
@@ -306,6 +291,14 @@ void AnimationApp::StopAnimation()
 		if(m_currentMeshInfo.m_renderMesh)
 		{
 			m_currentMeshInfo.m_renderMesh->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy());
+			if(m_boneOverlay)
+			{
+				m_boneOverlay->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy());
+			}
+			if (m_normalsOverlay)
+			{
+				m_normalsOverlay->Update(m_currentMeshInfo.m_mesh->GetBoneNodeHierarchy());
+			}
 		}
 	}
 }

@@ -18,8 +18,15 @@ RenderableMesh::RenderableMesh(
 {
 }
 
+bool RenderableMesh::ShouldCreate()
+{
+	return m_perNodeRenderBatches.size() == 0;
+}
+
 bool RenderableMesh::Create()
 {			
+	m_perNodeRenderBatches.clear();
+
 	m_meshBatchProcessor->CreateBatches(m_perNodeRenderBatches);
 		
 	m_meshBatchProcessor->PrepareBatches(m_perNodeRenderBatches);

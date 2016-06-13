@@ -19,6 +19,8 @@ public:
 
 	virtual ~Renderable();
 
+	virtual bool ShouldCreate() = 0;
+
 	virtual bool Create() = 0;
 
 	virtual bool Update(
