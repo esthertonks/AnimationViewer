@@ -14,4 +14,22 @@ namespace mesh
 
 	}
 
+	bool Vertex::AddWeight(
+		const unsigned int boneInfluenceid,
+		const float weight
+	)
+	{
+		if (m_numInfluences > MAX_INFLUENCES)
+		{
+			FBXSDK_printf("This mesh contains more than %d bone influences, which is not currently supported. Aborting load.", MAX_INFLUENCES);
+			return false;
+		}
+
+		m_boneInfluenceIds[m_numInfluences] = boneInfluenceid;
+		m_boneWeights[m_numInfluences] = weight;
+		m_numInfluences++;
+
+		return true;
+	}
+
 }

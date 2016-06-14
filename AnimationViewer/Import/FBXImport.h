@@ -42,9 +42,9 @@ private:
 
 	void LoadAnimationLayerInfo();
 
-	void LoadSkin();
+	bool LoadSkin();
 
-	void LoadSkin(
+	bool LoadSkin(
 		const FbxGeometry &fbxGeometry,// The FBX mesh geometry node to extract data from
 		mesh::MeshNode &meshNode //Mesh node to store this skin data
 		);

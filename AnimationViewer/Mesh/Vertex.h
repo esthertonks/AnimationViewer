@@ -10,16 +10,10 @@ class Vertex
 public:
 	Vertex::Vertex();
 
-	inline void AddWeight(
+	bool AddWeight(
 		const unsigned int boneInfluenceid,
 		const float weight
-	)
-	{
-		assert(m_numInfluences < MAX_INFLUENCES);
-		m_boneInfluenceIds[m_numInfluences] = boneInfluenceid;
-		m_boneWeights[m_numInfluences] = weight;
-		m_numInfluences++;
-	}
+	);
 
 	inline float GetBoneWeight(
 		int influenceIndex

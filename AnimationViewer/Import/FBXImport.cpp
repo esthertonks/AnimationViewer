@@ -104,7 +104,13 @@ mesh::MeshPtr FBXImport::Import(
 
 	LoadNodes(fbxRootNode, m_mesh->GetBoneNodeHierarchy(), m_mesh->GetMeshNodeHierarchy());
 
-	LoadSkin();
+	// TODO proper error reporting.
+	if (!LoadSkin())
+	{
+		FBXSDK_printf("Import failed for file: %s \n", fbxFilename);
+		DestroyFBXManagers();
+		return NULL;
+	}
 
 	// Now the all the animation is loaded adjust the time to make sure that it starts at zero
 	animationInfo->SetEndSample(animationInfo->GetEndSample() - animationInfo->GetStartSample());
@@ -391,12 +397,12 @@ void FBXImport::LoadAnimationLayerInfo()
 	m_mesh->SetAnimationInfo(animationInfo);
 }
 
-void FBXImport::LoadSkin()
+bool FBXImport::LoadSkin()
 {
 	int numMeshNodes = m_meshNodeInfo.m_fbxMeshNode.size();
 	if(numMeshNodes == 0)
 	{
-		return;
+		return false;
 	}
 
 	for(int meshIndex = 0; meshIndex < numMeshNodes; meshIndex++)
@@ -404,13 +410,13 @@ void FBXImport::LoadSkin()
 		FbxGeometry* const fbxGeometry = m_meshNodeInfo.m_fbxMeshNode[meshIndex]->GetGeometry();
 		if (!fbxGeometry)
 		{
-			return;
+			return false;
 		}
 
 		const FbxSkin* const fbxskin = static_cast<const FbxSkin*>(fbxGeometry->GetDeformer(0, FbxDeformer::eSkin));
 		if (!fbxskin)
 		{
-			return;
+			return false;
 		}
 
 		const FbxSkin::EType fbxSkinningType = fbxskin->GetSkinningType();
@@ -418,17 +424,22 @@ void FBXImport::LoadSkin()
 		{
 		case FbxSkin::eLinear:
 		case FbxSkin::eRigid:
-		case FbxSkin::eDualQuaternion: //TODO dual quaterion? does this work??
-			LoadSkin(*fbxGeometry, *m_meshNodeInfo.m_meshNode[meshIndex]);
+		case FbxSkin::eDualQuaternion: //TODO dual quaterion? does this work???!
+			if (!LoadSkin(*fbxGeometry, *m_meshNodeInfo.m_meshNode[meshIndex]))
+			{
+				return false;
+			}
 			break;
 
 		default:
 			FBXSDK_printf("Unsupported skin type used");
 		}
 	}
+
+	return true;
 }
 
-void FBXImport::LoadSkin(
+bool FBXImport::LoadSkin(
 	const FbxGeometry &fbxGeometry,// The FBX mesh geometry node to extract data from
 	mesh::MeshNode &meshNode //Mesh node to store this skin data
 	)
@@ -487,7 +498,6 @@ void FBXImport::LoadSkin(
 			const double *controlPointWeights = cluster->GetControlPointWeights();
 
 			// Store the weights for each control point
-			int vertexInfluenceNum = 0;
 			mesh::MeshVertexArray vertexArray = meshNode.GetVertices();
 			for(int clusterIndex = 0; clusterIndex < numClusterIndices; clusterIndex++)
 			{
@@ -498,12 +508,15 @@ void FBXImport::LoadSkin(
 				if (controlPointWeight < 0.00001f) // Ignore really small weights
 					continue;
 
-				vertexArray[controlPointIndex].AddWeight(linkedBone->m_id, controlPointWeight);
-
-				vertexInfluenceNum++;
+				if (!vertexArray[controlPointIndex].AddWeight(linkedBone->m_id, controlPointWeight))
+				{
+					return false;
+				}
 			}
 		}
 	}
+
+	return true;
 }
 
 /**
