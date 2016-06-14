@@ -94,7 +94,12 @@ mesh::MeshPtr FBXImport::Import(
 	m_mesh = mesh::MeshPtr(new mesh::Mesh());
 	FbxNode &fbxRootNode = *m_fbxScene->GetRootNode();
 
-	LoadAnimationLayerInfo();
+	if (!LoadAnimationLayerInfo())
+	{
+		FBXSDK_printf("Import failed for file: %s \n", fbxFilename);
+		DestroyFBXManagers();
+		return NULL;
+	}
 	mesh::AnimationInfoPtr animationInfo = m_mesh->GetAnimationInfo();
 
 	// Bake all FBX transforms ie pivots and offsets into standard scale, rotation etc
@@ -367,12 +372,17 @@ mesh::BoneNode *FBXImport::LoadBoneNode(
 	return boneNode;
 }
 
-void FBXImport::LoadAnimationLayerInfo()
+bool FBXImport::LoadAnimationLayerInfo()
 {
 	// Get the fps and calculate the number of frames that should be loaded
 	mesh::AnimationInfoPtr animationInfo = mesh::AnimationInfoPtr(new mesh::AnimationInfo());
 
-	const FbxTakeInfo &takeInfo = *m_fbxImporter->GetTakeInfo(0);
+	const FbxTakeInfo *takeInfo = m_fbxImporter->GetTakeInfo(0);
+	if (!takeInfo)
+	{
+		FBXSDK_printf("Unsupported animation format. Animation does not contain take info. Aborting.");
+		return false;
+	}
 
 	// Set the frame rate as millisecond to frame conversion is based on this
 	double frameRate = 30.0f;
@@ -385,8 +395,8 @@ void FBXImport::LoadAnimationLayerInfo()
 	animationInfo->SetFPS(frameRate);
 
 	// Set the start and end frame. Use frame and not time to prevent rounding errors
-	const long startTime = takeInfo.mLocalTimeSpan.GetStart().GetMilliSeconds();
-	const long endTime = takeInfo.mLocalTimeSpan.GetStop().GetMilliSeconds();
+	const long startTime = takeInfo->mLocalTimeSpan.GetStart().GetMilliSeconds();
+	const long endTime = takeInfo->mLocalTimeSpan.GetStop().GetMilliSeconds();
 	animationInfo->SetStartSample(animationInfo->ConvertMillisecondsToFrame(startTime));
 	animationInfo->SetEndSample(animationInfo->ConvertMillisecondsToFrame(endTime));
 
@@ -395,6 +405,8 @@ void FBXImport::LoadAnimationLayerInfo()
 	animationInfo->SetNumFrames(numFrames);
 
 	m_mesh->SetAnimationInfo(animationInfo);
+
+	return true;
 }
 
 bool FBXImport::LoadSkin()

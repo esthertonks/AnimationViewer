@@ -40,7 +40,7 @@ private:
 		mesh::BoneNode *parent
 	);
 
-	void LoadAnimationLayerInfo();
+	bool LoadAnimationLayerInfo();
 
 	bool LoadSkin();
 
