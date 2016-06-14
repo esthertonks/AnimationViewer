@@ -411,9 +411,11 @@ bool FBXImport::LoadAnimationLayerInfo()
 
 bool FBXImport::LoadSkin()
 {
+	bool loadedSkin = false;
 	int numMeshNodes = m_meshNodeInfo.m_fbxMeshNode.size();
 	if(numMeshNodes == 0)
 	{
+		wxLogDebug("Loading skin failed - there are no mesh loaded mesh nodes");
 		return false;
 	}
 
@@ -422,13 +424,15 @@ bool FBXImport::LoadSkin()
 		FbxGeometry* const fbxGeometry = m_meshNodeInfo.m_fbxMeshNode[meshIndex]->GetGeometry();
 		if (!fbxGeometry)
 		{
-			return false;
+			wxLogDebug("Unsupported skin type used");
+			continue;
 		}
 
 		const FbxSkin* const fbxskin = static_cast<const FbxSkin*>(fbxGeometry->GetDeformer(0, FbxDeformer::eSkin));
 		if (!fbxskin)
 		{
-			return false;
+			wxLogDebug("Skin deformer is null");
+			continue;
 		}
 
 		const FbxSkin::EType fbxSkinningType = fbxskin->GetSkinningType();
@@ -437,18 +441,19 @@ bool FBXImport::LoadSkin()
 		case FbxSkin::eLinear:
 		case FbxSkin::eRigid:
 		case FbxSkin::eDualQuaternion: //TODO dual quaterion? does this work???!
-			if (!LoadSkin(*fbxGeometry, *m_meshNodeInfo.m_meshNode[meshIndex]))
+			if (LoadSkin(*fbxGeometry, *m_meshNodeInfo.m_meshNode[meshIndex]))
 			{
-				return false;
+				loadedSkin = true;
 			}
-			break;
+
+			continue;
 
 		default:
 			wxLogDebug("Unsupported skin type used");
 		}
 	}
 
-	return true;
+	return loadedSkin;
 }
 
 bool FBXImport::LoadSkin(
@@ -954,7 +959,7 @@ void FBXImport::LoadVector4VertexElement(
 		}
 		default:
 			// TODO eDirect is currently not supported - should be easy enough to add this in?
-			wxLogDebug("Trying to load %s with an unsupported mapping mode\n", element.GetName());
+			//wxLogDebug("Trying to load %s with an unsupported mapping mode\n", element.GetName());
 		break;
 	}
 }
