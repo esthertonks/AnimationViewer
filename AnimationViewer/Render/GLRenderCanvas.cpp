@@ -38,7 +38,7 @@ END_EVENT_TABLE()
 // GL Perspective parameters. TODO move and add UI controls
 const float GLRenderCanvas::m_fovy = 40.0f;
 const float GLRenderCanvas::m_nearPlane = 1.0f;
-const float GLRenderCanvas::m_farPlane = 1500.0f;
+const float GLRenderCanvas::m_farPlane = 2000.0f;
 
 GLRenderCanvas::GLRenderCanvas(
 	wxWindow *parent,
