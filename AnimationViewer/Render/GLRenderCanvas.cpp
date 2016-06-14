@@ -35,13 +35,18 @@ BEGIN_EVENT_TABLE(GLRenderCanvas, wxGLCanvas)
 	EVT_KEY_DOWN(GLRenderCanvas::OnKeyDown)
 END_EVENT_TABLE()
 
+// GL Perspective parameters. TODO move and add UI controls
+const float GLRenderCanvas::m_fovy = 40.0f;
+const float GLRenderCanvas::m_nearPlane = 1.0f;
+const float GLRenderCanvas::m_farPlane = 1500.0f;
+
 GLRenderCanvas::GLRenderCanvas(
 	wxWindow *parent,
 	wxGLAttributes &attributeList
 	)
 	: wxGLCanvas(parent, attributeList), 
 	m_context(NULL),
-	m_camera(new OrbitCamera(glm::vec3(100.0f, 0.0f, 0.0f))),
+	m_camera(new OrbitCamera(glm::vec3(1000.0f, 0.0f, 0.0f))),
 	m_shaderManager(new ShaderManager()),
 	m_initialised(false),
 	m_lightPosition(1000.0f, 1000.0f, 1000.0f, 1.0f)
@@ -367,7 +372,7 @@ void GLRenderCanvas::Render(
 	int width = GetSize().GetWidth();
 	int height = GetSize().GetHeight();
 
-	glm::mat4x4 projectionMatrix = glm::perspective(40.0f, (float)width / (float) height, 1.0f, 600.f);
+	glm::mat4x4 projectionMatrix = glm::perspective(m_fovy, (float)width / (float) height, m_nearPlane, m_farPlane);
 
 	glm::vec4 lightPosition = m_lightPosition;
 	

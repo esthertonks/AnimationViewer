@@ -132,6 +132,11 @@ private:
 	bool m_initialised;
 
 	glm::vec4 m_lightPosition;
+
+	const static float m_fovy;
+	const static float m_aspectRatio;
+	const static float m_nearPlane;
+	const static float m_farPlane;
 };
 
 }
