@@ -1,5 +1,6 @@
 #include "Vertex.h"
 #include "BoneNode.h"
+#include <wx/log.h>
 
 namespace mesh
 {
@@ -21,7 +22,7 @@ namespace mesh
 	{
 		if (m_numInfluences > MAX_INFLUENCES)
 		{
-			FBXSDK_printf("This mesh contains more than %d bone influences, which is not currently supported. Aborting load.", MAX_INFLUENCES);
+			wxLogDebug("This mesh contains more than %d bone influences, which is not currently supported. Aborting load.", MAX_INFLUENCES);
 			return false;
 		}
 

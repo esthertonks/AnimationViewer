@@ -41,7 +41,7 @@ mesh::MeshPtr FBXImport::Import(
 	m_fbxManager = FbxManager::Create();
 	if(!m_fbxManager)
 	{
-		FBXSDK_printf("Can't create fbx manager.\n");
+		wxLogDebug("Can't create fbx manager.\n");
 		return NULL;
 	}
 
@@ -53,7 +53,7 @@ mesh::MeshPtr FBXImport::Import(
 	m_fbxScene = FbxScene::Create(m_fbxManager, "My Scene");
 	if(!m_fbxScene)
 	{
-		FBXSDK_printf("Can't create fbx scene.\n");
+		wxLogDebug("Can't create fbx scene.\n");
 		return NULL;
 	}
 
@@ -62,12 +62,12 @@ mesh::MeshPtr FBXImport::Import(
 	if(!m_fbxImporter->Initialize(fbxFilename.c_str(), -1, m_ioSettings))
 	{
 		FbxString error = m_fbxImporter->GetStatus().GetErrorString();
-		FBXSDK_printf("Call to FbxImporter::Initialize() failed.\n");
-		FBXSDK_printf("FBX Import failed with error: %s\n", error.Buffer());
+		wxLogDebug("Call to FbxImporter::Initialize() failed.\n");
+		wxLogDebug("FBX Import failed with error: %s\n", error.Buffer());
 
 		if (m_fbxImporter->GetStatus().GetCode() == FbxStatus::eInvalidFileVersion)
 		{
-			FBXSDK_printf("FBX file format version for file '%s' is not valid for this SDK version\n", fbxFilename);
+			wxLogDebug("FBX file format version for file '%s' is not valid for this SDK version\n", fbxFilename);
 		}
 
 		DestroyFBXManagers();
@@ -77,7 +77,7 @@ mesh::MeshPtr FBXImport::Import(
 
 	if(!m_fbxImporter->IsFBX())
 	{
-		FBXSDK_printf("File %s is not an FBX file. \n", fbxFilename);
+		wxLogDebug("File %s is not an FBX file. \n", fbxFilename);
 		DestroyFBXManagers();
 		return NULL;
 	}
@@ -85,7 +85,7 @@ mesh::MeshPtr FBXImport::Import(
 	// Import the scene.
 	if(!m_fbxImporter->Import(m_fbxScene))
 	{
-		FBXSDK_printf("Import failed for file: %s \n", fbxFilename);
+		wxLogDebug("Import failed for file: %s \n", fbxFilename);
 		DestroyFBXManagers();
 		return NULL;
 	}
@@ -96,7 +96,7 @@ mesh::MeshPtr FBXImport::Import(
 
 	if (!LoadAnimationLayerInfo())
 	{
-		FBXSDK_printf("Import failed for file: %s \n", fbxFilename);
+		wxLogDebug("Import failed for file: %s \n", fbxFilename);
 		DestroyFBXManagers();
 		return NULL;
 	}
@@ -112,7 +112,7 @@ mesh::MeshPtr FBXImport::Import(
 	// TODO proper error reporting.
 	if (!LoadSkin())
 	{
-		FBXSDK_printf("Import failed for file: %s \n", fbxFilename);
+		wxLogDebug("Import failed for file: %s \n", fbxFilename);
 		DestroyFBXManagers();
 		return NULL;
 	}
@@ -165,7 +165,7 @@ bool FBXImport::LoadNodes(
 			newBoneNode = LoadBoneNode(fbxNode, parentBoneNode);
 			break;
 		default:
-			FBXSDK_printf("Node %s type is %d. Only node of type eMesh (4) or eSkeleton (3) can be loaded\n", fbxNode.GetName(), fbxAttributeType);
+			wxLogDebug("Node %s type is %d. Only node of type eMesh (4) or eSkeleton (3) can be loaded\n", fbxNode.GetName(), fbxAttributeType);
 
 			break;
 
@@ -194,7 +194,7 @@ mesh::MeshNode *FBXImport::LoadMeshNode(
 	{
 		//if(m_meshNodeInfo.m_meshNode != NULL)
 		//{
-		//	FBXSDK_printf("Ignoring attempt to load mesh - more than one mesh is not supported.\n");
+		//	wxLogDebug("Ignoring attempt to load mesh - more than one mesh is not supported.\n");
 		//	return NULL; // We have already loaded a mesh so ignore this one
 		//}
 
@@ -205,7 +205,7 @@ mesh::MeshNode *FBXImport::LoadMeshNode(
 			FbxNodeAttribute* fbxNodeAttribute = fbxGeometryConverter.Triangulate(fbxNode.GetMesh(), true);
 			if(!fbxNodeAttribute)
 			{
-				FBXSDK_printf("Mesh Triangulation failed. Node Import aborted.\n");
+				wxLogDebug("Mesh Triangulation failed. Node Import aborted.\n");
 				return NULL;
 			}
 			fbxMesh = (FbxMesh *)fbxNodeAttribute;
@@ -250,7 +250,7 @@ mesh::MeshNode *FBXImport::LoadMeshNode(
 		const int materialLayerCount = fbxMesh->GetElementMaterialCount();
 		if(materialLayerCount > 1)
 		{
-			FBXSDK_printf("Only one material layer is supported. Only the first layer will be loaded.\n");
+			wxLogDebug("Only one material layer is supported. Only the first layer will be loaded.\n");
 		}
 
 		// Load per triangle data
@@ -293,7 +293,7 @@ mesh::BoneNode *FBXImport::LoadBoneNode(
 	mesh::BoneNode *boneNode = NULL;
 	if (!fbxSkeleton)
 	{
-		FBXSDK_printf("Could not extract skeleton from node");
+		wxLogDebug("Could not extract skeleton from node");
 		return NULL;
 	}
 
@@ -357,7 +357,7 @@ mesh::BoneNode *FBXImport::LoadBoneNode(
 			boneNode->SetInheritScale(false);
 			break;
 		case FbxTransform::eInheritRrSs:
-			FBXSDK_printf("Unsupported scale type used");
+			wxLogDebug("Unsupported scale type used");
 			break;
 		case FbxTransform::eInheritRSrs:
 			boneNode->SetInheritScale(true);
@@ -380,7 +380,7 @@ bool FBXImport::LoadAnimationLayerInfo()
 	const FbxTakeInfo *takeInfo = m_fbxImporter->GetTakeInfo(0);
 	if (!takeInfo)
 	{
-		FBXSDK_printf("Unsupported animation format. Animation does not contain take info. Aborting.");
+		wxLogDebug("Unsupported animation format. Animation does not contain take info. Aborting.");
 		return false;
 	}
 
@@ -444,7 +444,7 @@ bool FBXImport::LoadSkin()
 			break;
 
 		default:
-			FBXSDK_printf("Unsupported skin type used");
+			wxLogDebug("Unsupported skin type used");
 		}
 	}
 
@@ -480,14 +480,14 @@ bool FBXImport::LoadSkin(
 				break;
 
 			default: // Currently this must be eAdditive - weights could add up to more than 1 - not currently supported
-				FBXSDK_printf("Unsupported skin cluster type used. Please ensure that the skin weights total one or have been normalized.");
+				wxLogDebug("Unsupported skin cluster type used. Please ensure that the skin weights total one or have been normalized.");
 			}
 
 			// The bone node that this cluster is influenced by
 			FbxNode* const fbxLinkedBoneNode = cluster->GetLink();
 			if (!fbxLinkedBoneNode)
 			{
-				FBXSDK_printf("Failed to find linked bone node importing skin");
+				wxLogDebug("Failed to find linked bone node importing skin");
 				continue;
 			}
 
@@ -613,7 +613,7 @@ void FBXImport::LoadMaterials(
 			}
 			else
 			{
-				FBXSDK_printf("Material Id %d, name &s is not supported", materialId, surfaceMaterial.GetName());
+				wxLogDebug("Material Id %d, name &s is not supported", materialId, surfaceMaterial.GetName());
 				//TODO assign default material
 			}
 
@@ -622,7 +622,7 @@ void FBXImport::LoadMaterials(
 			unsigned int textureCount = materialProperty.GetSrcObjectCount<FbxTexture>();
 			if(textureCount > 1)
 			{
-				FBXSDK_printf("Currently only 1 diffuse texture is supported. Others have not been loaded", materialId, surfaceMaterial.GetName());
+				wxLogDebug("Currently only 1 diffuse texture is supported. Others have not been loaded", materialId, surfaceMaterial.GetName());
 			}
 			for(int textureIndex = 0; textureIndex < 1; textureIndex++)
 			{
@@ -646,7 +646,7 @@ void FBXImport::LoadMaterials(
 	}
 	else
 	{
-		FBXSDK_printf("Face %d has no associated material.\n", triangleIndex);
+		wxLogDebug("Face %d has no associated material.\n", triangleIndex);
 	}
 }
 
@@ -759,7 +759,7 @@ void FBXImport::LoadColours(
 {
 	if(fbxMesh.GetElementVertexColorCount() > 1)
 	{
-		FBXSDK_printf("Only one set of vertex colours supported\n");
+		wxLogDebug("Only one set of vertex colours supported\n");
 	}
 
 	FbxGeometryElementVertexColor* vertexColourElement = fbxMesh.GetElementVertexColor();
@@ -786,7 +786,7 @@ void FBXImport::LoadUVs(
 {
 	if(fbxMesh.GetElementUVCount() != 1)
 	{
-		FBXSDK_printf("Mesh must have one sest of uvs. This mesh has %d uv sets.\n", fbxMesh.GetElementUVCount()); // May support more uv sets later
+		wxLogDebug("Mesh must have one sest of uvs. This mesh has %d uv sets.\n", fbxMesh.GetElementUVCount()); // May support more uv sets later
 	}
 
 	FbxGeometryElementUV* uvElement = fbxMesh.GetElementUV(/*uvIndex*/);
@@ -813,7 +813,7 @@ void FBXImport::LoadNormals(
 {
 	if(fbxMesh.GetElementNormalCount() > 1)
 	{
-		FBXSDK_printf("Only one set of normals currently supported\n");
+		wxLogDebug("Only one set of normals currently supported\n");
 	}
 
 	FbxGeometryElementNormal* normalElement = fbxMesh.GetElementNormal();
@@ -840,7 +840,7 @@ void FBXImport::LoadBinormals(
 {
 	if(fbxMesh.GetElementBinormalCount() > 1)
 	{
-		FBXSDK_printf("Only one set of binormals currently supported\n");
+		wxLogDebug("Only one set of binormals currently supported\n");
 	}
 
 	FbxGeometryElementBinormal* binormalElement = fbxMesh.GetElementBinormal();
@@ -867,7 +867,7 @@ void FBXImport::LoadTangents(
 {
 	if(fbxMesh.GetElementTangentCount() > 1)
 	{
-		FBXSDK_printf("Only one set of tangents currently supported\n");
+		wxLogDebug("Only one set of tangents currently supported\n");
 	}
 
 	FbxGeometryElementTangent* tangentElement = fbxMesh.GetElementTangent();
@@ -917,7 +917,7 @@ void FBXImport::LoadVector4VertexElement(
 				}
 				break;
 			default:
-				FBXSDK_printf("Trying to load %s with an unsupported reference mode\n", element.GetName());
+				wxLogDebug("Trying to load %s with an unsupported reference mode\n", element.GetName());
 			break;
 			}
 		}
@@ -948,12 +948,13 @@ void FBXImport::LoadVector4VertexElement(
 				break;
 
 				default:
-					FBXSDK_printf("Trying to load %s with an unsupported reference mode\n", element.GetName());
+					wxLogDebug("Trying to load %s with an unsupported reference mode\n", element.GetName());
 					break;
 			}
 		}
 		default:
-			FBXSDK_printf("Trying to load %s with an unsupported mapping mode\n", element.GetName());
+			// TODO eDirect is currently not supported - should be easy enough to add this in?
+			wxLogDebug("Trying to load %s with an unsupported mapping mode\n", element.GetName());
 		break;
 	}
 }
@@ -996,7 +997,7 @@ void FBXImport::LoadVector2VertexElement(
 				}
 				break;
 				default:
-					FBXSDK_printf("Trying to load %s with an unsupported reference mode\n", element.GetName());
+					wxLogDebug("Trying to load %s with an unsupported reference mode\n", element.GetName());
 					break;
 			}
 		}
@@ -1015,13 +1016,13 @@ void FBXImport::LoadVector2VertexElement(
 				}
 				break;
 				default:
-					FBXSDK_printf("Trying to load %s with an unsupported reference mode\n", element.GetName());
+					wxLogDebug("Trying to load %s with an unsupported reference mode\n", element.GetName());
 				break;
 			}
 		}
 		break;
 		default:
-			FBXSDK_printf("Trying to load %s with an unsupported mapping mode\n", element.GetName());
+			wxLogDebug("Trying to load %s with an unsupported mapping mode\n", element.GetName());
 		break;
 	}
 }
@@ -1056,7 +1057,7 @@ void FBXImport::LoadColourVertexElement(
 				}
 				break;
 			default:
-				FBXSDK_printf("Trying to load %s with an unsupported reference mode\n", element.GetName());
+				wxLogDebug("Trying to load %s with an unsupported reference mode\n", element.GetName());
 				break;
 			}
 			break;
@@ -1083,13 +1084,13 @@ void FBXImport::LoadColourVertexElement(
 				}
 				break;
 			default:
-				FBXSDK_printf("Trying to load %s with an unsupported reference mode\n", element.GetName());
+				wxLogDebug("Trying to load %s with an unsupported reference mode\n", element.GetName());
 				break;
 			}
 		}
 		break;
 		default:
-			FBXSDK_printf("Trying to load %s with an unsupported mapping mode\n", element.GetName());
+			wxLogDebug("Trying to load %s with an unsupported mapping mode\n", element.GetName());
 			break;
 	}
 
