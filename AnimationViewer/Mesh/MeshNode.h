@@ -52,12 +52,12 @@ public:
 		return m_numVertices;
 	}
 
-	MeshVertexArray GetVertices()
+	MeshVertexArrayPtr GetVertices()
 	{
 		return m_vertexArray;
 	}
 
-	MeshTriangleArray GetTriangles()
+	MeshTriangleArrayPtr GetTriangles()
 	{
 		return m_triangleArray;
 	}
@@ -108,8 +108,8 @@ private:
 	// TODO import and deal with uvsets?
 
 	friend class import::FBXImport;							// Friend as the import class needs direct access to these arrays. All other classes accessing a mesh node should use the access function provided.
-	MeshVertexArray m_vertexArray;
-	MeshTriangleArray m_triangleArray;
+	MeshVertexArrayPtr m_vertexArray;
+	MeshTriangleArrayPtr m_triangleArray;
 	int m_numTriangles;
 	int m_numVertices;
 

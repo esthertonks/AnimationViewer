@@ -232,7 +232,7 @@ mesh::MeshNode *FBXImport::LoadMeshNode(
 		// Extract and store vertices
 		const unsigned int numVertices = fbxMesh->GetControlPointsCount();
 		meshNode->AllocateVertices(numVertices);
-		mesh::MeshVertexArray vertexArray = meshNode->GetVertices();
+		mesh::MeshVertexArrayPtr vertexArray = meshNode->GetVertices();
 
 		const FbxVector4* const fbxVertices = fbxMesh->GetControlPoints();
 		for(unsigned int vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
@@ -244,7 +244,7 @@ mesh::MeshNode *FBXImport::LoadMeshNode(
 		int numTriangles = fbxMesh->GetPolygonCount();
 
 		meshNode->AllocateTriangles(numTriangles);
-		mesh::MeshTriangleArray triangleArray = meshNode->GetTriangles();
+		mesh::MeshTriangleArrayPtr triangleArray = meshNode->GetTriangles();
 
 			// Get the per triangle material index
 		const int materialLayerCount = fbxMesh->GetElementMaterialCount();
@@ -515,7 +515,7 @@ bool FBXImport::LoadSkin(
 			const double *controlPointWeights = cluster->GetControlPointWeights();
 
 			// Store the weights for each control point
-			mesh::MeshVertexArray vertexArray = meshNode.GetVertices();
+			mesh::MeshVertexArrayPtr vertexArray = meshNode.GetVertices();
 			for(int clusterIndex = 0; clusterIndex < numClusterIndices; clusterIndex++)
 			{
 				const int controlPointIndex = controlPointIndices[clusterIndex];

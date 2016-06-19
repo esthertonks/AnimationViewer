@@ -20,7 +20,7 @@ void MeshNode::AllocateVertices(
 	const int numVertices
 	)		
 {
-	m_vertexArray = MeshVertexArray(new Vertex[numVertices]);
+	m_vertexArray = MeshVertexArrayPtr(new Vertex[numVertices]);
 	m_numVertices = numVertices;
 }
 
@@ -28,7 +28,7 @@ void MeshNode::AllocateTriangles(
 	const int numTriangles
 	)		
 {
-	m_triangleArray = MeshTriangleArray(new Triangle[numTriangles]);
+	m_triangleArray = MeshTriangleArrayPtr(new Triangle[numTriangles]);
 	m_numTriangles = numTriangles;
 }
 

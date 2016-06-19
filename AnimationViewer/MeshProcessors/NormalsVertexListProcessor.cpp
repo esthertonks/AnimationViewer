@@ -60,13 +60,13 @@ namespace render
 	{
 		for (meshNode; meshNode != NULL; meshNode = meshNode->m_next)
 		{
-			mesh::MeshTriangleArray triangleArray = meshNode->GetTriangles();
+			mesh::MeshTriangleArrayPtr triangleArray = meshNode->GetTriangles();
 			int numTriangles = meshNode->GetNumTriangles();
 			if (numTriangles == 0)
 			{
 				continue;
 			}
-			mesh::MeshVertexArray vertexArray = meshNode->GetVertices();
+			mesh::MeshVertexArrayPtr vertexArray = meshNode->GetVertices();
 			int numVertices = meshNode->GetNumVertices();
 			if (numVertices == 0)
 			{

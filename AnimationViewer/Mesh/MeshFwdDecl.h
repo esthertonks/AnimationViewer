@@ -15,8 +15,8 @@ namespace mesh
 	class BoneNode;
 	class MeshNode;
 
-	typedef boost::shared_array<Vertex> MeshVertexArray;
-	typedef boost::shared_array<Triangle> MeshTriangleArray;
+	typedef boost::shared_array<Vertex> MeshVertexArrayPtr;
+	typedef boost::shared_array<Triangle> MeshTriangleArrayPtr;
 
 	typedef boost::shared_ptr<Mesh> MeshPtr;
 	typedef boost::shared_ptr<AnimationInfo> AnimationInfoPtr;

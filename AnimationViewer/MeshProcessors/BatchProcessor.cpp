@@ -66,13 +66,13 @@ void BatchProcessor::CreateBatchesInternal(
 		render::BatchList renderBatches; // Each node needs a new set of batches (due to each node having a different matrix transform)
 		renderBatches.resize(appearances.size());//Worst case scenario - should usually be less than this.
 
-		mesh::MeshTriangleArray triangleArray = meshNode->GetTriangles();
+		mesh::MeshTriangleArrayPtr triangleArray = meshNode->GetTriangles();
 		int numTriangles = meshNode->GetNumTriangles();
 		if(numTriangles == 0)
 		{
 			continue;
 		}
-		mesh::MeshVertexArray vertexArray = meshNode->GetVertices();
+		mesh::MeshVertexArrayPtr vertexArray = meshNode->GetVertices();
 		int numVertices = meshNode->GetNumVertices();
 		if(numVertices == 0)
 		{
