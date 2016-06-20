@@ -1,8 +1,7 @@
 #include "Batch.h"
 #include "VertexFormat.h"
 #include "Appearance.h"
-#include "SOIL.h"
-#include <wx/log.h>
+#include "../TextureLoaders/TextureLoader.h"
 
 namespace render
 {
@@ -56,30 +55,12 @@ void Batch::PrepareForRendering()
 	//create and bind vbo - store id's in batchlist
 	//load textures - store in batch list
 	std::string texturePath = m_appearance->GetDiffuseTexturePath();
-	if(!texturePath.empty())
+	if (!texturePath.empty())
 	{
-		int width;
-		int height;
-		int channels;
-		unsigned char* texture = SOIL_load_image(texturePath.c_str(), &width, &height, &channels, SOIL_LOAD_RGBA);
-		if(texture)
-		{
-			glActiveTexture(GL_TEXTURE0);
-			GLuint textureId;
-			glGenTextures(1, &textureId);
-			glBindTexture(GL_TEXTURE_2D, textureId);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture);
-
-			SOIL_free_image_data(texture);
-
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		}
-		else
-		{
-			wxLogDebug("Failed to load texture, image may not display correctly. Error is %s", SOIL_last_result());
-		}
+		TextureLoader textureLoader;
+		textureLoader.Load(texturePath);
 	}
+
 	/////////////////// Create the VBO ////////////////////
 	// Create and set-up the vertex array object
 	glGenVertexArrays( 1, &m_vertexArrayHandle);

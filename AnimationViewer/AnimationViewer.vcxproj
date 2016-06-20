@@ -50,7 +50,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;WINVER=0x0400;__WXMSW__;wxUSE_GUI=1;_DEBUG;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Libraries\glew-1.10.0\include;$(SolutionDir)..\..\Libraries\glm;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;$(WXWIN)\include\msvc;C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.1\include;C:\boost_1_54_0;C:\Users\mac_user\Documents\Visual Studio 2010\Projects\Simple OpenGL Image Library\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\Libraries\tiff-3.8.2-1-lib\include;$(SolutionDir)..\..\Libraries\glew-1.10.0\include;$(SolutionDir)..\..\Libraries\glm;$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswud;$(WXWIN)\include\msvc;C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.1\include;C:\boost_1_54_0;$(SolutionDir)..\..\Libraries\Simple OpenGL Image Library\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -59,8 +59,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\..\Libraries\glew-1.10.0\lib\Debug\Win32;$(WXWIN)\lib\vc_lib;C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.1\lib\vs2015\x86\debug;C:\Users\mac_user\Documents\Visual Studio 2010\Projects\Simple OpenGL Image Library\lib;C:\boost_1_54_0\stage\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glew32sd.lib;glu32.lib;wxmsw31ud_core.lib;wxmsw31ud_gl.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;comctl32.lib;rpcrt4.lib;winmm.lib;advapi32.lib;wsock32.lib;libfbxsdk.lib;SOILd.lib;libboost_filesystem-vc100-mt-gd-1_54.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\Libraries\tiff-3.8.2-1-lib\lib;$(SolutionDir)..\..\Libraries\glew-1.10.0\lib\Debug\Win32;$(WXWIN)\lib\vc_lib;C:\Program Files\Autodesk\FBX\FBX SDK\2016.1.1\lib\vs2015\x86\debug;$(SolutionDir)..\..\Libraries\Simple OpenGL Image Library\lib;C:\boost_1_54_0\stage\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glew32sd.lib;glu32.lib;wxmsw31ud_core.lib;wxmsw31ud_gl.lib;wxbase31ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;comctl32.lib;rpcrt4.lib;winmm.lib;advapi32.lib;wsock32.lib;libfbxsdk.lib;SOILd.lib;libboost_filesystem-vc100-mt-gd-1_54.lib;libtiff.lib;libtiff.dll.a;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <ShowProgress>NotSet</ShowProgress>
@@ -124,6 +124,7 @@
     <ClCompile Include="Render\GLRenderCanvas.cpp" />
     <ClCompile Include="Render\ShaderManager.cpp" />
     <ClCompile Include="Colours.cpp" />
+    <ClCompile Include="TextureLoaders\TextureLoader.cpp" />
     <ClCompile Include="Utils\WXUtils.cpp" />
     <ClCompile Include="Utils\MathsUtils.cpp" />
   </ItemGroup>
@@ -174,6 +175,8 @@
     <ClInclude Include="Render\RenderFwdDecl.h" />
     <ClInclude Include="Render\ShaderManager.h" />
     <ClInclude Include="Colours.h" />
+    <ClInclude Include="TextureLoaders\TextureLoader.h" />
+    <ClInclude Include="Utils\StringToEnumConvertor.h" />
     <ClInclude Include="Utils\WXUtils.h" />
     <ClInclude Include="Utils\MathsUtils.h" />
   </ItemGroup>
